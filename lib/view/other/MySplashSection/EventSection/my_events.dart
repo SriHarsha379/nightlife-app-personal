@@ -1,0 +1,1046 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:night_life/utilities/app_color.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
+
+import '../../../../utilities/app_constant.dart';
+import '../../../../utilities/app_font.dart';
+import '../../../../utilities/app_image.dart';
+import '../../../../utilities/app_language.dart';
+import '../MembersSection/Members.dart';
+import '../VenuesSection/my_venue.dart';
+
+class MyEvents extends StatefulWidget {
+  static const String routeName = '/MyEvents';
+  const MyEvents({super.key});
+
+  @override
+  State<MyEvents> createState() => _MyEventsState();
+}
+
+class _MyEventsState extends State<MyEvents> {
+  int selectedIndex = 0;
+  List Likedlist = [
+    {
+      'image': AppImage.eventimg,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+      'button': 'View Details',
+    },
+    {
+      'image': AppImage.brewandbloomIcon,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+      'button': 'Book Now',
+    },
+  ];
+
+  List Bookedlist = [
+    {
+      'image': AppImage.eventImage1,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+    },
+    {
+      'image': AppImage.eventImage2,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+    },
+  ];
+
+  List pastEventlist = [
+    {
+      'image': AppImage.eventImage3,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+    },
+    {
+      'image': AppImage.eventImage4,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+    },
+    {
+      'image': AppImage.eventImage5,
+      'title': 'Base Drop Fridays',
+      'date': 'Fri, 10 PM - 4 AM',
+      'address': 'Club Neon, Downtown',
+      'text': 'Mark',
+    },
+  ];
+  bool isDropdownOpen = false;
+
+  @override
+  Widget build(BuildContext context) {
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: AppColor.primaryColor,
+        statusBarIconBrightness: Brightness.light));
+    final size = MediaQuery.of(context).size;
+
+    SystemChrome.setSystemUIOverlayStyle(AppConstant.systemUiOverlayStyle);
+    return GestureDetector(
+      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+      child: Scaffold(
+        appBar: PreferredSize(
+            preferredSize: const Size.fromHeight(0),
+            child: AppBar(
+                backgroundColor: AppColor.primaryColor,
+                systemOverlayStyle: const SystemUiOverlayStyle(
+                    systemNavigationBarColor: AppColor.primaryColor,
+                    systemNavigationBarIconBrightness: Brightness.light,
+                    statusBarColor: AppColor.primaryColor,
+                    statusBarIconBrightness: Brightness.light))),
+        body: SafeArea(
+          child: Container(
+            width: size.width * 100 / 100,
+            height: size.height * 100 / 100,
+            color: AppColor.primaryColor,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Center(
+                  child: SizedBox(
+                    width: MediaQuery.of(context).size.width * 90 / 100,
+                    height: MediaQuery.of(context).size.height * 7 / 100,
+                    child: Row(
+                      // mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                          child: Container(
+                            height:
+                                MediaQuery.of(context).size.height * 7 / 100,
+                            alignment: Alignment.center,
+                            child: Image.asset(
+                              AppImage.backarrow,
+                              fit: BoxFit.cover,
+                              color: AppColor.secondryColor,
+                              height:
+                                  MediaQuery.of(context).size.width * 5 / 100,
+                              width:
+                                  MediaQuery.of(context).size.width * 5 / 100,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 25 / 100,
+                        ),
+                          Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLanguage.myeventText[language],
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFont.fontFamily,
+                            ),
+                          ),
+                        ),
+                    
+                        SizedBox(width: size.width * 2 / 100),
+
+                        GestureDetector(
+                          onTap: () {
+                            showPopupDropdown(context);
+                            setState(() {
+                              isDropdownOpen = !isDropdownOpen;
+                            });
+                          },
+                          child: Transform.rotate(
+                            angle: isDropdownOpen ? 0 : 3.14,
+                            child: Image.asset(
+                              AppImage.downArrow,
+                              fit: BoxFit.cover,
+                              color: AppColor.secondryColor,
+                              height:
+                                  MediaQuery.of(context).size.width * 5 / 100,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: size.height * 2 / 100),
+                Container(
+                  color: AppColor.darlpurpalColor,
+                  width: MediaQuery.of(context).size.width * 100 / 100,
+                  height: MediaQuery.of(context).size.height * 8 / 100,
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 0;
+                            });
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 50 / 100,
+                            // height:
+                            //     MediaQuery.of(context).size.height * 6 / 100,
+                            child: Center(
+                              child: Text(
+                                AppLanguage.likedText[language],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: selectedIndex == 0
+                                      ? AppColor.pinkColor
+                                      : AppColor.secondryColor,
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              selectedIndex = 1;
+                            });
+                          },
+                          child: Container(
+                            width: MediaQuery.of(context).size.width * 50 / 100,
+                            // height:
+                            //     MediaQuery.of(context).size.height * 6 / 100,
+                            child: Center(
+                              child: Text(
+                                AppLanguage.BookedText[language],
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w500,
+                                  color: selectedIndex == 1
+                                      ? AppColor.pinkColor
+                                      : AppColor.secondryColor,
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                Container(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = 0;
+                          });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 50 / 100,
+                          height:
+                              MediaQuery.of(context).size.height * 0.3 / 100,
+                          color: selectedIndex == 0
+                              ? AppColor.pinkColor
+                              : AppColor.secondryColor,
+                        ),
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            selectedIndex = 0;
+                          });
+                        },
+                        child: Container(
+                          width: MediaQuery.of(context).size.width * 50 / 100,
+                          height:
+                              MediaQuery.of(context).size.height * 0.3 / 100,
+                          color: selectedIndex == 1
+                              ? AppColor.pinkColor
+                              : AppColor.secondryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 2 / 100,
+                ),
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Center(
+                      child: Container(
+                        // width: size.width * 90 / 100,
+                        child: Column(children: [
+                          if (selectedIndex == 0) ...[
+                            Wrap(
+                              runSpacing: 10,
+                              children: List.generate(
+                                Likedlist.length,
+                                (index) => GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              const LikedEventDetail()),
+                                    );
+                                  },
+                                  child: Container(
+                                    width: size.width * 90 / 100,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.primaryColor,
+                                      borderRadius: BorderRadius.circular(15),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          width: size.width * 3 / 100,
+                                        ),
+                                        Container(
+                                          width: size.width * 90 / 100,
+                                          height: size.width * 42 / 100,
+                                          decoration: const BoxDecoration(),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(15),
+                                                topRight: Radius.circular(15),
+                                              ),
+                                              child: Image.asset(
+                                                Likedlist[index]['image'],
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          width: size.width * 3 / 100,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: size.width * 3 / 100,
+                                            vertical: size.height * 1 / 100,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Likedlist[index]['title'],
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                  Container(
+                                                    width: size.width * 8 / 100,
+                                                    height:
+                                                        size.width * 8 / 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            boxShadow: []),
+                                                    child: ClipRRect(
+                                                        child: Image.asset(
+                                                      AppImage.liked_heart_icon,
+                                                      fit: BoxFit.cover,
+                                                    )),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 0.4 / 100,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        size.width * 4.5 / 100,
+                                                    height:
+                                                        size.width * 4.5 / 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            boxShadow: []),
+                                                    child: ClipRRect(
+                                                      child: Image.asset(
+                                                        AppImage
+                                                            .calenderPinkIcon,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            1 /
+                                                            100,
+                                                  ),
+                                                  Text(
+                                                    Likedlist[index]['date'],
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 1 / 100,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: size.width * 5 / 100,
+                                                    height:
+                                                        size.width * 5 / 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            boxShadow: []),
+                                                    child: ClipRRect(
+                                                        child: Image.asset(
+                                                      AppImage.locationIcon,
+                                                      fit: BoxFit.cover,
+                                                    )),
+                                                  ),
+                                                  Text(
+                                                    Likedlist[index]['address'],
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    1.5 /
+                                                    100,
+                                              ),
+                                              Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    6 /
+                                                    100,
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Center(
+                                                  child: Text(
+                                                    Likedlist[index]["button"],
+                                                    style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColor.pinkColor),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ] else if (selectedIndex == 1) ...[
+                            Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 90 / 100,
+                              child: Text(
+                                AppLanguage.confirmBookeddetailsText[language],
+                                style: const TextStyle(
+                                    fontSize: 14,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.normal,
+                                    color: AppColor.secondryColor),
+                              ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100,
+                            ),
+                            Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 90 / 100,
+                              child: Text(
+                                AppLanguage.upcomingEventstext[language],
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.pinkColor),
+                              ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100,
+                            ),
+                            Wrap(
+                              runSpacing: 10,
+                              children: List.generate(
+                                Likedlist.length,
+                                (index) => GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: ((context) =>
+                                                LikedEventDetail())));
+                                  },
+                                  child: Container(
+                                    width: size.width * 90 / 100,
+                                    decoration: BoxDecoration(
+                                        color: AppColor.primaryColor,
+                                        borderRadius: BorderRadius.circular(15),
+                                        border: Border.all(
+                                            color:
+                                                AppColor.startingscreenColor)),
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          width: size.width * 3 / 100,
+                                        ),
+                                        Container(
+                                          width: size.width * 90 / 100,
+                                          height: size.width * 42 / 100,
+                                          decoration: const BoxDecoration(),
+                                          child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(15),
+                                                topRight: Radius.circular(15),
+                                              ),
+                                              child: Image.asset(
+                                                Bookedlist[index]['image'],
+                                                fit: BoxFit.cover,
+                                              )),
+                                        ),
+                                        SizedBox(
+                                          width: size.width * 3 / 100,
+                                        ),
+                                        Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: size.width * 3 / 100,
+                                            vertical: size.height * 1 / 100,
+                                          ),
+                                          child: Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Text(
+                                                    Bookedlist[index]['title'],
+                                                    style: const TextStyle(
+                                                        fontSize: 18,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w700,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 0.4 / 100,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        size.width * 4.5 / 100,
+                                                    height:
+                                                        size.width * 4.5 / 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            boxShadow: []),
+                                                    child: ClipRRect(
+                                                      child: Image.asset(
+                                                        AppImage
+                                                            .calenderPinkIcon,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            1 /
+                                                            100,
+                                                  ),
+                                                  Text(
+                                                    Bookedlist[index]['date'],
+                                                    style: const TextStyle(
+                                                        fontSize: 15,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 1 / 100,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  Container(
+                                                    width: size.width * 5 / 100,
+                                                    height:
+                                                        size.width * 5 / 100,
+                                                    decoration:
+                                                        const BoxDecoration(
+                                                            boxShadow: []),
+                                                    child: ClipRRect(
+                                                        child: Image.asset(
+                                                      AppImage.locationIcon,
+                                                      fit: BoxFit.cover,
+                                                    )),
+                                                  ),
+                                                  Text(
+                                                    Bookedlist[index]
+                                                        ['address'],
+                                                    style: const TextStyle(
+                                                        fontSize: 14,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color: AppColor
+                                                            .secondryColor),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    1.5 /
+                                                    100,
+                                              ),
+                                              Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    6 /
+                                                    100,
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Center(
+                                                  child: Text(
+                                                    AppLanguage.viewDetailstext[
+                                                        language],
+                                                    style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColor.pinkColor),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100,
+                            ),
+                            Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 90 / 100,
+                              child: Text(
+                                AppLanguage.pastEventsText[language],
+                                style: const TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.pinkColor),
+                              ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100,
+                            ),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 100 / 100,
+                              height: size.height *
+                                  28 /
+                                  100, // Fixed height for horizontal list
+                              child: ListView.builder(
+                                scrollDirection: Axis.horizontal,
+                                itemCount: pastEventlist.length,
+                                padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 5 / 100),
+                                itemBuilder: (context, index) => Padding(
+                                  padding: EdgeInsets.only(
+                                      right: size.width * 4 / 100),
+                                  child: GestureDetector(
+                                    onTap: () {},
+                                    child: Container(
+                                      width:
+                                          size.width * 36 / 100, // Card width
+                                      decoration: BoxDecoration(
+                                        color: AppColor.primaryColor,
+                                        borderRadius: BorderRadius.circular(10),
+                                        border: Border.all(
+                                            color:
+                                                AppColor.startingscreenColor),
+                                      ),
+                                      child: Column(
+                                        children: [
+                                          // Image section
+                                          Container(
+                                            width: size.width * 35 / 100,
+                                            height: size.height * 15 / 100,
+                                            decoration: const BoxDecoration(),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  const BorderRadius.only(
+                                                topLeft: Radius.circular(10),
+                                                topRight: Radius.circular(10),
+                                              ),
+                                              child: Image.asset(
+                                                pastEventlist[index]['image'],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                30 /
+                                                100,
+                                            child: Text(
+                                              pastEventlist[index]['title'],
+                                              style: const TextStyle(
+                                                fontSize: 9,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColor.secondryColor,
+                                              ),
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.5 /
+                                                100,
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                30 /
+                                                100,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: size.width * 2.5 / 100,
+                                                  height:
+                                                      size.width * 2.5 / 100,
+                                                  child: Image.asset(
+                                                    AppImage.calenderPinkIcon,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        size.width * 1.5 / 100),
+                                                Text(
+                                                  pastEventlist[index]['date'],
+                                                  style: const TextStyle(
+                                                    fontSize: 7,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w400,
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.5 /
+                                                100,
+                                          ),
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                30 /
+                                                100,
+                                            child: Row(
+                                              children: [
+                                                Container(
+                                                  width: size.width * 2.5 / 100,
+                                                  height:
+                                                      size.width * 2.5 / 100,
+                                                  child: Image.asset(
+                                                    AppImage.locationIcon,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                                SizedBox(
+                                                    width:
+                                                        size.width * 1.5 / 100),
+                                                Text(
+                                                  pastEventlist[index]
+                                                      ['address'],
+                                                  style: const TextStyle(
+                                                    fontSize: 7,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w400,
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                2 /
+                                                100,
+                                          ),
+
+                                          // View Details button
+                                          Container(
+                                            height: size.height * 4.5 / 100,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                33 /
+                                                100,
+                                            decoration: BoxDecoration(
+                                              color: AppColor.secondryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(8),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                AppLanguage
+                                                    .viewDetailstext[language],
+                                                style: const TextStyle(
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: AppColor.pinkColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+
+                                          // Content section
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100,
+                            ),
+                          ],
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+   void showPopupDropdown(BuildContext context) {
+    showGeneralDialog(
+      context: context,
+      barrierDismissible: true,
+      barrierLabel: "",
+      transitionDuration: const Duration(milliseconds: 200),
+      pageBuilder: (_, __, ___) {
+        return Material(
+          color: Colors.transparent,
+          child: Stack(
+            children: [
+              GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(color: Colors.black54),
+              ),
+              Positioned(
+                top: 100, // AppBar ke niche adjust karo
+                left: MediaQuery.of(context).size.width / 2 -
+                    100, // center horizontally
+                child: Container(
+                  width: 202,
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+                  decoration: BoxDecoration(
+                    color: AppColor.primaryColor,
+                    borderRadius: BorderRadius.circular(15), // four side radius
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.4),
+                        blurRadius: 12,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 4), // shadow bottom
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      dropdownItem(
+                          "Events",
+                          () => Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyEvents(),
+                                ),
+                              ),
+                          false),
+                      divider(),
+                      dropdownItem(
+                          "Venues", () =>  Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => MyVenue(),
+                                ),
+                              ),
+                          false),
+                      divider(),
+                      dropdownItem(
+                          "Members", () =>   Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => splashMembers(),
+                                ),
+                              ),
+                          false),
+                    ],
+                  ),
+                ),
+              )
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget dropdownItem(String text, VoidCallback onTap, bool isActive) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+        decoration: BoxDecoration(
+          color: isActive ? AppColor.dropdownColor : Colors.transparent,
+          borderRadius: isActive
+              ? const BorderRadius.only(
+                  bottomLeft: Radius.circular(15),
+                  bottomRight: Radius.circular(15),
+                )
+              : BorderRadius.zero,
+        ),
+        child: Text(
+          text,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: isActive ? AppColor.secondryColor : AppColor.greyLightColor,
+            fontSize: 16,
+            fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget divider() {
+    return const Divider(
+      color: Colors.grey,
+      height: 1,
+      thickness: 0.5,
+    );
+  }
+}
