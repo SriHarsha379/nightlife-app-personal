@@ -74,40 +74,42 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.transparentColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
 
-    // ignore: deprecated_member_use
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 40),
-        child: AppButton(
-          text: '${AppLanguage.continueText[language]}',
-          onPress: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeftWithFade,
-                child: EventPreference(),
-                duration: const Duration(milliseconds: 500),
-              ),
-            );
-          },
-        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      body: SafeArea(
-        child: Container(
+      child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 40),
+          child: AppButton(
+            text: '${AppLanguage.continueText[language]}',
+            onPress: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: EventPreference(),
+                  duration: const Duration(milliseconds: 500),
+                ),
+              );
+            },
+          ),
+        ),
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                  SizedBox(
+                            height: MediaQuery.of(context).size.height * 3 / 100,),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -151,7 +153,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                           ),
                         ],
                       ),
-
+              
                       // Row(
                       //   children: [
                       //     GestureDetector(
@@ -194,7 +196,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                     ],
                   ),
                 ),
-
+              
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 80 / 100,
                   child: Center(
@@ -210,7 +212,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                     ),
                   ),
                 ),
-
+              
                 SizedBox(height: size.height * 2 / 100),
                 Container(
                   width: size.width * 95 / 100,
@@ -310,7 +312,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                     ],
                   ),
                 ),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 1 / 100,
                 ),
@@ -334,12 +336,12 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                                         "id": Orders[index]['id'],
                                         "img": 1, // For image1
                                       };
-
+              
                                       bool alreadySelected = selectedItems.any(
                                           (e) =>
                                               e['id'] == Orders[index]['id'] &&
                                               e['img'] == 1);
-
+              
                                       if (alreadySelected) {
                                         selectedItems.removeWhere((e) =>
                                             e['id'] == Orders[index]['id'] &&
@@ -393,12 +395,12 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                                         "id": Orders[index]['id'],
                                         "img": 2,
                                       };
-
+              
                                       bool alreadySelected = selectedItems.any(
                                           (e) =>
                                               e['id'] == Orders[index]['id'] &&
                                               e['img'] == 2);
-
+              
                                       if (alreadySelected) {
                                         selectedItems.removeWhere((e) =>
                                             e['id'] == Orders[index]['id'] &&
@@ -548,15 +550,15 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                 //           MaterialPageRoute(
                 //               builder: (context) => EventPreference()));
                 //     }),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 18 / 100,
                 ),
-
+              
                 // ),
-
+              
                 // Container(
-
+              
                 //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
                 //   width: MediaQuery.of(context).size.width * 100 / 100,
                 //   height: MediaQuery.of(context).size.width *20 / 100,
@@ -565,7 +567,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                 //     fit: BoxFit.contain,
                 //   ),
                 // ),
-
+              
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height * 2 / 100,
                 // ),
@@ -573,9 +575,9 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 }

@@ -298,7 +298,7 @@ class _HomeState extends State<Home> {
                               Navigator.push(
                                 context,
                                 PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
+                                  type: PageTransitionType.topToBottom,
                                   child: Notifications(),
                                   duration: const Duration(milliseconds: 500),
                                 ),

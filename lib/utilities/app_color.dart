@@ -187,5 +187,9 @@ class AppColor {
 static const Color greenColor1 = Color(0xff0aa161);
 static const Color textfieldfilledColor = Color(0xff0f0616);
 static const Color hinttextcolor = Color(0xffb8b7bd);
+
+static const Color bookeventcontainercolor = Color(0xff191021);
+static const Color emojibackgroundColor = Color(0xff927dfe);
+
 static const Color refercontainercolor = Color(0xff171217);
 }

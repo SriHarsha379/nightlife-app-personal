@@ -4,7 +4,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/past_events_screen.dart';
 import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
@@ -161,10 +163,7 @@ class _MyEventsState extends State<MyEvents> {
 
                         GestureDetector(
                           onTap: () {
-                            showPopupDropdown(context);
-                            setState(() {
-                              isDropdownOpen = !isDropdownOpen;
-                            });
+                            documenttypebottomsheet(context);
                           },
                           child: Transform.rotate(
                             angle: isDropdownOpen ? 0 : 3.14,
@@ -881,28 +880,32 @@ class _MyEventsState extends State<MyEvents> {
                                           ),
 
                                           // View Details button
-                                          Container(
-                                            height: size.height * 4.5 / 100,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                33 /
-                                                100,
-                                            decoration: BoxDecoration(
-                                              color: AppColor.secondryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(8),
-                                            ),
-                                            child: Center(
-                                              child: Text(
-                                                AppLanguage
-                                                    .viewDetailstext[language],
-                                                style: const TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColor.pinkColor,
+                                          GestureDetector(
+                                            onTap: (){
+                                              Navigator.push(context,MaterialPageRoute(builder: ((context) =>PastEventScreen() )));
+                                            },
+                                            child: Container(
+                                              height: size.height * 4.5 / 100,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  33 /
+                                                  100,
+                                              decoration: BoxDecoration(
+                                                color: AppColor.secondryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(8),
+                                              ),
+                                              child: Center(
+                                                child: Text(
+                                                 "Review",
+                                                  style: const TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w500,
+                                                    color: AppColor.pinkColor,
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -933,6 +936,202 @@ class _MyEventsState extends State<MyEvents> {
       ),
     );
   }
+
+
+  
+  void documenttypebottomsheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setStateBottomSheet) {
+          return Container(
+            width: MediaQuery.of(context).size.width * 100 / 100,
+            height: MediaQuery.of(context).size.height * 78 / 100,
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 100 / 100,
+                  height: MediaQuery.of(context).size.height * 78 / 100,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(45),
+                              topRight: Radius.circular(45),
+                            ),
+                          ),
+                          width: size.width * 1.0,
+                          child: Column(
+                            children: [
+                              SizedBox(height: size.height * 0.02),
+                              Container(
+                                width: size.width * 0.88,
+                                child: Column(
+                                  children: [
+                                    // First Image
+
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                        AppImage.dashIcon,
+                                        height: size.height * 0.5 / 100,
+                                        width: size.width * 22 / 100,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 4 / 100),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.84,
+                                      child: Text(
+                                        AppLanguage.myspacetext[language],
+                                        style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 23,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.84,
+                                      child: Text(
+                                        AppLanguage
+                                            .eventStatementtext[language],
+                                        style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12.2,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.04),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: splashMembers(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: size.width * 0.86,
+                                        height: size.height * 0.17,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                AppImage.memberBanner),
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                        height: size.height *
+                                            0.02), // spacing between images
+                                    // Second Image
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: MyVenue(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: size.width * 0.86,
+                                        height: size.height * 0.17,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                AppImage.venuesBanner),
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.02),
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: MyEvents(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        width: size.width * 0.86,
+                                        height: size.height * 0.17,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(12),
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                                AppImage.eventsBanner),
+                                            fit: BoxFit.fill,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              // SizedBox(
+                              //     height: size.height * 0.06),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    ).then((_) {
+      // Reset selected index when bottom sheet is dismissed
+      // Optional: uncomment if you want to reset to previous page
+      // setState(() {
+      //   selectedIndex = pageController.page?.round() ?? 0;
+      // });
+    });
+  }
+
+
    void showPopupDropdown(BuildContext context) {
     showGeneralDialog(
       context: context,

@@ -70,14 +70,19 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
-    return Scaffold(
-      // backgroundColor: AppColor.secondryColor,
-      resizeToAvoidBottomInset: false,
-      body: SafeArea(
-        child: Container(
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        // backgroundColor: AppColor.secondryColor,
+        resizeToAvoidBottomInset: false,
+        body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Stack(
@@ -98,8 +103,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                   ),
                 ),
               ),
-
-              // Animated bottom sheet sliding up from bottom
+              
               SlideTransition(
                 position: _slideAnimation,
                 child: Align(
@@ -107,7 +111,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                   child: Container(
                     width: MediaQuery.of(context).size.width*100/100,
                                               height: MediaQuery.of(context).size.height * 56 / 100,
-
+              
                     decoration: BoxDecoration(
                       gradient: AppColor.backgroundGradientcolor,
                       borderRadius: BorderRadius.only(
@@ -166,7 +170,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                             height:
                                 MediaQuery.of(context).size.height * 8 / 100),
                   
-     
+               
                         AppButton(
                             text: AppLanguage.letsgetStartedtext[language],
                             onPress: () {
@@ -196,8 +200,8 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                             ],
                           ),
                         ),
-
-  SizedBox(
+              
+                SizedBox(
                           height: MediaQuery.of(context).size.height * 1 / 100,
                         ),
                          SizedBox(

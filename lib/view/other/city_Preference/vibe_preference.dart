@@ -166,40 +166,44 @@ class _VibePreferenceState extends State<VibePreference> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
 
-    // ignore: deprecated_member_use
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 40),
-        child: AppButton(
-          text: '${AppLanguage.continueText[language]}',
-          onPress: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeftWithFade,
-                child: AboutYouScreen(),
-                duration: const Duration(milliseconds: 500),
-              ),
-            );
-          },
-        ),
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      body: SafeArea(
-        child: Container(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 40),
+          child: AppButton(
+            text: '${AppLanguage.continueText[language]}',
+            onPress: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: AboutYouScreen(),
+                  duration: const Duration(milliseconds: 500),
+                ),
+              );
+            },
+          ),
+        ),
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                    SizedBox(
+                            height: MediaQuery.of(context).size.height * 3 / 100,),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -314,13 +318,13 @@ class _VibePreferenceState extends State<VibePreference> {
                       Orders.length,
                       (index) {
                         int baseId = Orders[index]['id'];
-
+              
                         int leftId = baseId * 2;
                         int rightId = baseId * 2 + 1;
-
+              
                         bool isLeftSelected = selectedList.contains(leftId);
                         bool isRightSelected = selectedList.contains(rightId);
-
+              
                         return Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
@@ -410,9 +414,9 @@ class _VibePreferenceState extends State<VibePreference> {
                                 ),
                               ),
                             ),
-
+              
                             SizedBox(width: 8),
-
+              
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -514,9 +518,9 @@ class _VibePreferenceState extends State<VibePreference> {
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 }

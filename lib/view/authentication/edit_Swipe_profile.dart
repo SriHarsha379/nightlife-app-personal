@@ -179,13 +179,13 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.primaryColor, // background color
+                        color: AppColor.primaryColor, 
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
+                                .withOpacity(0.4),
                             // spreadRadius: 1,
-                            blurRadius: 2, // blur effect
+                            blurRadius: 2, 
                             offset: Offset(1, 1),
                           ),
                         ],

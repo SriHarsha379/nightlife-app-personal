@@ -714,5 +714,10 @@ static const venueEventText=["Venue / Event Organiser ?"];
 static const clickhereText=["Click Here"];
 static const bookingfeeText=["Booking Fee"];
 
+
+//09
+static const referaFriText=["Refer a Friend"];
+static const privacypoliciesText=["Privacy Policies"];
+
 }
 

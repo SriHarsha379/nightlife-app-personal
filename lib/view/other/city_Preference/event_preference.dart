@@ -86,40 +86,44 @@ class _EventPreferenceState extends State<EventPreference> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
-
+    
     // ignore: deprecated_member_use
-    return Scaffold(
-      backgroundColor: Colors.white,
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: Padding(
-        padding: const EdgeInsets.only(bottom: 40),
-        child: AppButton(
-          text: '${AppLanguage.continueText[language]}',
-          onPress: () {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeftWithFade,
-                child: VibePreference(),
-                duration: const Duration(milliseconds: 500),
-              ),
-            );
-          },
-        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
       ),
-      body: SafeArea(
-        child: Container(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 40),
+          child: AppButton(
+            text: '${AppLanguage.continueText[language]}',
+            onPress: () {
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: VibePreference(),
+                  duration: const Duration(milliseconds: 500),
+                ),
+              );
+            },
+          ),
+        ),
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                    SizedBox(
+                            height: MediaQuery.of(context).size.height * 3 / 100,),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -166,7 +170,7 @@ class _EventPreferenceState extends State<EventPreference> {
                     ],
                   ),
                 ),
-
+              
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 75 / 100,
                   child: Center(
@@ -182,11 +186,11 @@ class _EventPreferenceState extends State<EventPreference> {
                     ),
                   ),
                 ),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 1 / 100,
                 ),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 1 / 100,
                 ),
@@ -225,7 +229,7 @@ class _EventPreferenceState extends State<EventPreference> {
                     ),
                   ),
                 ),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 3 / 100,
           ),
@@ -239,7 +243,7 @@ class _EventPreferenceState extends State<EventPreference> {
                       (index) {
                         int id = Events[index]['id'];
                         bool isSelected = selectedIds.contains(id);
-
+              
                         return GestureDetector(
                           onTap: () {
                             setState(() {
@@ -285,7 +289,7 @@ class _EventPreferenceState extends State<EventPreference> {
                     ),
                   ),
                 ),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
@@ -370,7 +374,7 @@ class _EventPreferenceState extends State<EventPreference> {
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height * 4 / 100,
                 // ),
-
+              
                 // AppButton(
                 //     text: AppLanguage.saveandContinue[language],
                 //     onPress: () {
@@ -379,7 +383,7 @@ class _EventPreferenceState extends State<EventPreference> {
                 //           MaterialPageRoute(
                 //               builder: (context) => VibePreference()));
                 //     }),
-
+              
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 18 / 100,
                 ),
@@ -387,9 +391,9 @@ class _EventPreferenceState extends State<EventPreference> {
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 }

@@ -343,9 +343,15 @@ static const eventImage1 = "./assets/icons/eventImage1.jpg";
         static const msgCardicon = "./assets/icons/msgCard.png";
 
 
-//08-12
+//08-12-2025
   static const upArrow = "./assets/icons/uparrow.png";
   static const inviteIcon = "./assets/icons/invitationIcon.png";
   static const giftnewIcon = "./assets/icons/giftnewtIcon.png";
+  //09-12-2025
+  static const referIcon = "./assets/icons/referIcon.png";
+  static const hii = "./assets/icons/Hii.png";
+  static const logo = "./assets/icons/hiilogo.png";
+    static const amblogo = "./assets/icons/ambproductlogo.png";
+    static const silentnightimg= "./assets/icons/silentnightimg.png";
 
 }

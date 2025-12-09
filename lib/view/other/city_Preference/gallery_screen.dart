@@ -264,7 +264,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 ),
 
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 12 / 100,
+                  height: MediaQuery.of(context).size.height * 15 / 100,
                 ),
        AppButton(
   text: AppLanguage.continueText[language],

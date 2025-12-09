@@ -602,7 +602,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    35 /
+                                    38 /
                                     100,
                               ),
                               AppButton(

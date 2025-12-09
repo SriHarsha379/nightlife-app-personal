@@ -134,6 +134,90 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+
+          padding: const EdgeInsets.only(bottom: 20,left: 40),
+          child: Row(
+            children: [
+              
+              Container(
+                width: size.width * 12 / 100,
+                child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      topLeft: Radius.circular(15),
+                      topRight: Radius.circular(15),
+                    ),
+                    child: Image.asset(
+                      AppImage.crossIcon,
+                      fit: BoxFit.cover,
+                    )),
+              ),
+              SizedBox(
+                width: size.width * 3 / 100,
+              ),
+
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColor.secondryColor,
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: AppColor.secondryColor,
+                  ),
+                ),
+                child: Text(
+                  AppLanguage.sendInviteText[language],
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: AppFont.fontFamily,
+                    color: AppColor.pinkColor,
+                  ),
+                ),
+              ),
+              
+                SizedBox(
+                width: size.width * 3 / 100,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColor.buttonColor,
+                  borderRadius: BorderRadius.circular(50),
+
+                  // border: Border.all(
+
+                  //      color : AppColor.primaryColor,
+                  // ),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppImage.heartImg,
+                      height: 20,
+                      width: 20,
+                      color: AppColor.secondryColor, // optional tint color
+                    ),
+                    Text(
+                      AppLanguage.likeText[language],
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFont.fontFamily,
+                        color: AppColor.secondryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+              
+            ],
+          ),
+        ),
         body: SafeArea(
           child: Container(
             width: size.width * 100 / 100,
@@ -1324,206 +1408,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 40, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.buttonColor,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-
-                                          // border: Border.all(
-
-                                          //      color : AppColor.primaryColor,
-                                          // ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              AppImage.heartImg,
-                                              height: 20,
-                                              width: 20,
-                                              color: AppColor
-                                                  .secondryColor, // optional tint color
-                                            ),
-                                            Text(
-                                              AppLanguage.likeText[language],
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: AppFont.fontFamily,
-                                                color: AppColor.secondryColor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 3 / 100,
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 24, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          border: Border.all(
-                                            color: AppColor.buttonColor,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          AppLanguage.sendInviteText[language],
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 3 / 100,
-                                      ),
-                                      Container(
-                                        width: size.width * 12 / 100,
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15),
-                                            ),
-                                            child: Image.asset(
-                                              AppImage.crossIcon,
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-
-                                  // Container(
-                                  //   width: size.width * 90 / 100,
-                                  //   height: size.height * 18 / 100,
-                                  //   margin: const EdgeInsets.only(right: 10),
-                                  //   decoration: BoxDecoration(
-                                  //     color: AppColor.backgroundColor,
-                                  //     borderRadius: BorderRadius.circular(20),
-                                  //   ),
-                                  //   child: Column(
-                                  //     children: [
-                                  //       Padding(
-                                  //         padding: EdgeInsets.symmetric(
-                                  //           horizontal: MediaQuery.of(context)
-                                  //                   .size
-                                  //                   .width *
-                                  //               4 /
-                                  //               100,
-                                  //           vertical: MediaQuery.of(context)
-                                  //                   .size
-                                  //                   .height *
-                                  //               2 /
-                                  //               100,
-                                  //         ),
-                                  //         // child: Row(
-                                  //         //   mainAxisAlignment:
-                                  //         //       MainAxisAlignment.spaceBetween,
-                                  //         //   children: [
-                                  //         //     Column(
-                                  //         //       children: [
-                                  //         //         Text(
-                                  //         //           AppLanguage
-                                  //         //               .fromText[language],
-                                  //         //           style: const TextStyle(
-                                  //         //               fontSize: 16,
-                                  //         //               fontFamily:
-                                  //         //                   AppFont.fontFamily,
-                                  //         //               fontWeight:
-                                  //         //                   FontWeight.w500,
-                                  //         //               color: AppColor
-                                  //         //                   .secondryColor),
-                                  //         //         ),
-                                  //         //         Text(
-                                  //         //           AppLanguage.ruppesruppeText[
-                                  //         //               language],
-                                  //         //           style: const TextStyle(
-                                  //         //               fontSize: 22,
-                                  //         //               fontFamily:
-                                  //         //                   AppFont.fontFamily,
-                                  //         //               fontWeight:
-                                  //         //                   FontWeight.w500,
-                                  //         //               color: AppColor
-                                  //         //                   .secondryColor),
-                                  //         //         ),
-                                  //         //       ],
-                                  //         //     ),
-                                  //         //     Container(
-                                  //         //       width: size.width * 35 / 100,
-                                  //         //       decoration: BoxDecoration(
-                                  //         //           color:
-                                  //         //               AppColor.secondryColor,
-                                  //         //           borderRadius:
-                                  //         //               BorderRadius.circular(
-                                  //         //                   40)),
-                                  //         //       child: Center(
-                                  //         //         child: Padding(
-                                  //         //           padding:
-                                  //         //               EdgeInsets.symmetric(
-                                  //         //             horizontal:
-                                  //         //                 MediaQuery.of(context)
-                                  //         //                         .size
-                                  //         //                         .width *
-                                  //         //                     3 /
-                                  //         //                     100,
-                                  //         //             vertical:
-                                  //         //                 MediaQuery.of(context)
-                                  //         //                         .size
-                                  //         //                         .height *
-                                  //         //                     2 /
-                                  //         //                     100,
-                                  //         //           ),
-                                  //         //           child: Text(
-                                  //         //             AppLanguage.BookNowText[
-                                  //         //                 language],
-                                  //         //             style: const TextStyle(
-                                  //         //                 fontSize: 20,
-                                  //         //                 fontFamily: AppFont
-                                  //         //                     .fontFamily,
-                                  //         //                 fontWeight:
-                                  //         //                     FontWeight.w600,
-                                  //         //                 color: AppColor
-                                  //         //                     .pinkColor),
-                                  //         //           ),
-                                  //         //         ),
-                                  //         //       ),
-                                  //         //     ),
-                                  //         //   ],
-                                  //         // ),
-                                  //       ),
-                                  //       Padding(
-                                  //         padding: EdgeInsets.symmetric(
-                                  //           horizontal: MediaQuery.of(context)
-                                  //                   .size
-                                  //                   .width *
-                                  //               6 /
-                                  //               100,
-                                  //         ),
-                                  //         child: Text(
-                                  //           AppLanguage
-                                  //                   .confirmBookeddetailsText[
-                                  //               language],
-                                  //           style: const TextStyle(
-                                  //               fontSize: 14,
-                                  //               fontFamily: AppFont.fontFamily,
-                                  //               fontWeight: FontWeight.w400,
-                                  //               color: AppColor.secondryColor),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
-                                ],
+                              ],
                               ),
                             ),
                             SizedBox(
@@ -1543,7 +1428,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     );
   }
 
- void showUserPopup(BuildContext context) {
+  void showUserPopup(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     showGeneralDialog(
@@ -1574,7 +1459,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                     )
                   ],
                 ),
-                const SizedBox(height: 8), // Added small spacing after close button
+                const SizedBox(
+                    height: 8), // Added small spacing after close button
                 Expanded(
                   child: ListView.builder(
                     padding: EdgeInsets.zero, // Remove default ListView padding
@@ -1583,7 +1469,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       final chat = chatUsers[index];
 
                       return Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 6), // Adjusted spacing between items
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 6), // Adjusted spacing between items
                         child: Row(
                           children: [
                             Container(

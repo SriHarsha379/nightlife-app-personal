@@ -95,6 +95,101 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+
+          padding: const EdgeInsets.only(bottom: 20,left: 40),
+          child: Row(
+            children: [
+              
+              GestureDetector(
+                onTap: (){
+                  Navigator.push(context,
+
+                    PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: MyAppFooter(initialIndex: 0),
+                    duration: const Duration(milliseconds: 500),
+                  ),);
+                },
+                child: Container(
+                  width: size.width * 12 / 100,
+                  child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                      child: Image.asset(
+                        AppImage.crossIcon,
+                        fit: BoxFit.cover,
+                      )),
+                ),
+              ),
+              SizedBox(
+                width: size.width * 3 / 100,
+              ),
+
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColor.secondryColor,
+                  borderRadius: BorderRadius.circular(50),
+                  border: Border.all(
+                    color: AppColor.secondryColor,
+                  ),
+                ),
+                child: Text(
+                  AppLanguage.sendInviteText[language],
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    fontFamily: AppFont.fontFamily,
+                    color: AppColor.pinkColor,
+                  ),
+                ),
+              ),
+              
+                SizedBox(
+                width: size.width * 3 / 100,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColor.buttonColor,
+                  borderRadius: BorderRadius.circular(50),
+
+                  // border: Border.all(
+
+                  //      color : AppColor.primaryColor,
+                  // ),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppImage.heartImg,
+                      height: 20,
+                      width: 20,
+                      color: AppColor.secondryColor, // optional tint color
+                    ),
+                    Text(
+                      AppLanguage.likeText[language],
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFont.fontFamily,
+                        color: AppColor.secondryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+              
+            ],
+          ),
+        ),
         body: SafeArea(
           child: Container(
             width: size.width * 100 / 100,
@@ -891,91 +986,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       color: AppColor.lightgreyColor,
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        2 /
-                                        100,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 40, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.buttonColor,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-
-                                          // border: Border.all(
-
-                                          //      color : AppColor.primaryColor,
-                                          // ),
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Image.asset(
-                                              AppImage.heartImg,
-                                              height: 20,
-                                              width: 20,
-                                              color: AppColor
-                                                  .secondryColor, // optional tint color
-                                            ),
-                                            Text(
-                                              AppLanguage.likeText[language],
-                                              style: TextStyle(
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: AppFont.fontFamily,
-                                                color: AppColor.secondryColor,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 3 / 100,
-                                      ),
-                                      Container(
-                                        padding: const EdgeInsets.symmetric(
-                                            horizontal: 24, vertical: 10),
-                                        decoration: BoxDecoration(
-                                          color: AppColor.primaryColor,
-                                          borderRadius:
-                                              BorderRadius.circular(50),
-                                          border: Border.all(
-                                            color: AppColor.buttonColor,
-                                          ),
-                                        ),
-                                        child: Text(
-                                          AppLanguage.sendInviteText[language],
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width: size.width * 3 / 100,
-                                      ),
-                                      Container(
-                                        width: size.width * 12 / 100,
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15),
-                                            ),
-                                            child: Image.asset(
-                                              AppImage.crossIcon,
-                                              fit: BoxFit.cover,
-                                            )),
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                  
+        ],
                               ),
                             ),
                             SizedBox(

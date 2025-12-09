@@ -47,41 +47,44 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
   int sexualitySelectedIndex = 1;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
+ 
     final size = MediaQuery.of(context).size;
-    return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          backgroundColor: AppColor.secondryColor,
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 40),
-            child: AppButton(
-              text: '${AppLanguage.continueText[language]}',
-              onPress: () {
-                 Navigator.push(context,
-                    PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: VibeCheckScreen(),
-                    duration: const Duration(milliseconds: 500),
-                  ),);
-              },
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+            backgroundColor: AppColor.secondryColor,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: AppButton(
+                text: '${AppLanguage.continueText[language]}',
+                onPress: () {
+                   Navigator.push(context,
+                      PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: VibeCheckScreen(),
+                      duration: const Duration(milliseconds: 500),
+                    ),);
+                },
+              ),
             ),
-          ),
-          body: SafeArea(
-            child: Container(
+            body: Container(
               height: size.height * 100 / 100,
               width: size.width * 100 / 100,
               decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
               child: Column(
                 children: [
                       SizedBox(
-                    height: size.height * 2 / 100,
+                    height: size.height * 5 / 100,
                   ),
                   Container(
                     width: size.width * 90 / 100,
@@ -96,7 +99,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                           child: Image.asset(
                               color: AppColor.secondryColor,
                               height: size.width * 5 / 100,
-                              width: size.width * 5 / 100,
+                              width: size.width * 4 / 100,
                               AppImage.backArrowIcon),
                         ),
                         Text(
@@ -142,7 +145,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                             ),
                             Text(
                                AppLanguage.knowYouBetterMsg[language],
-                              style: TextStyle(
+                              style: TextStyle( 
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
@@ -253,22 +256,22 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                 );
                               },
                             ),
-
-
+                  
+                  
                            
                  Container(
-        width: size.width * 0.9,
-        height: size.height * 0.07,
-        decoration: BoxDecoration(
-          color: AppColor.themeColor,
-          borderRadius: BorderRadius.circular(15),
-          border: Border.all(
+                      width: size.width * 0.9,
+                      height: size.height * 0.07,
+                      decoration: BoxDecoration(
+                        color: AppColor.themeColor,
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(
             width: 0.3,
             color: AppColor.pinkColor,
-          ),
-        ),
-        child: Row(
-          children: [
+                        ),
+                      ),
+                      child: Row(
+                        children: [
             Padding(
               padding: EdgeInsets.only(left: size.width * 0.05),
               child: Text(
@@ -281,10 +284,10 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 ),
               ),
             ),
-        
-          ],
-        ),
-      ),
+                      
+                        ],
+                      ),
+                    ),
                             SizedBox(
                               height: size.height * 20 / 100,
                             ),
@@ -296,8 +299,8 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                 ],
               ),
             ),
-          ),
-        ));
+          )),
+    );
   }
 }
 

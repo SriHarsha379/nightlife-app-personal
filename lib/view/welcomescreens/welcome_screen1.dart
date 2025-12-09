@@ -65,98 +65,103 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light));
 
-    return Scaffold(
-      body: Stack(
-        children: [
-          /// Background Gradient
-          Container(
-            decoration: const BoxDecoration(
-                         gradient: AppColor.backgroundGradientcolor,
-
+    return PopScope(
+        canPop: false,
+      onPopInvoked: (didPop) {
+  },
+      child: Scaffold(
+        body: Stack(
+          children: [
+            /// Background Gradient
+            Container(
+              decoration: const BoxDecoration(
+                           gradient: AppColor.backgroundGradientcolor,
+      
+              ),
             ),
-          ),
-
-          /// Main Carousel
-          CarouselSlider(
-            carouselController: _carouselController,
-            items: [
-              _buildScreen(
-                  title: "Connect with people who\nvibe like you\n.",
-                  desc:
-                      "Chat, connect, and meet\npeople at the clubs and \nevents you love.",
-                  image: AppImage.chatWelcomescreenIcon,
-                  bottom: 200,
-                  right: 120,
-                  left: 0),
-            ],
-            options: CarouselOptions(
-              height: MediaQuery.of(context).size.height,
-              viewportFraction: 1,
-              enableInfiniteScroll: false,
-              onPageChanged: (index, reason) {
-                setState(() {
-                  _activeIndex = index;
-
-                  _slideAnimation = Tween<Offset>(
-                    begin: const Offset(0, 1),
-                    end: Offset.zero,
-                  ).animate(
-                    CurvedAnimation(
-                      parent: _imageController,
-                      curve: Curves.easeOutCubic, 
-                    ),
-                  );
-
-                  if (index != 3) {
-                    _imageController.forward(from: 0); 
-                  } else {
-                    _imageController.reset();
-                  }
-                });
-              },
-            ),
-          ),
-
-          /// Next Button
-          if (_activeIndex != 3)
-            Positioned(
-              bottom: 85,
-              right: 0,
-              child: GestureDetector(
-                onTap: () {
-                  _carouselController.nextPage(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut);
-                },
-                child: GestureDetector(
-                  onTap: (){
-                    Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) =>  WelcomeScreen2()),
-          ); 
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
-                    decoration: const BoxDecoration(
-                      color: AppColor.nextButtoncolor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        bottomLeft: Radius.circular(25),
+      
+            /// Main Carousel
+            CarouselSlider(
+              carouselController: _carouselController,
+              items: [
+                _buildScreen(
+                    title: "Connect with people who\nvibe like you\n.",
+                    desc:
+                        "Chat, connect, and meet\npeople at the clubs and \nevents you love.",
+                    image: AppImage.chatWelcomescreenIcon,
+                    bottom: 200,
+                    right: 120,
+                    left: 0),
+              ],
+              options: CarouselOptions(
+                height: MediaQuery.of(context).size.height,
+                viewportFraction: 1,
+                enableInfiniteScroll: false,
+                onPageChanged: (index, reason) {
+                  setState(() {
+                    _activeIndex = index;
+      
+                    _slideAnimation = Tween<Offset>(
+                      begin: const Offset(0, 1),
+                      end: Offset.zero,
+                    ).animate(
+                      CurvedAnimation(
+                        parent: _imageController,
+                        curve: Curves.easeOutCubic, 
                       ),
-                    ),
-                    child: Text(
-                      AppLanguage.nextText[language],
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
+                    );
+      
+                    if (index != 3) {
+                      _imageController.forward(from: 0); 
+                    } else {
+                      _imageController.reset();
+                    }
+                  });
+                },
+              ),
+            ),
+      
+            /// Next Button
+            if (_activeIndex != 3)
+              Positioned(
+                bottom: 85,
+                right: 0,
+                child: GestureDetector(
+                  onTap: () {
+                    _carouselController.nextPage(
+                        duration: const Duration(milliseconds: 400),
+                        curve: Curves.easeInOut);
+                  },
+                  child: GestureDetector(
+                    onTap: (){
+                      Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) =>  WelcomeScreen2()),
+            ); 
+                    },
+                    child: Container(
+                      padding:
+                          const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
+                      decoration: const BoxDecoration(
+                        color: AppColor.nextButtoncolor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(25),
+                          bottomLeft: Radius.circular(25),
+                        ),
+                      ),
+                      child: Text(
+                        AppLanguage.nextText[language],
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600),
+                      ),
                     ),
                   ),
                 ),
-              ),
-            )
-        ],
+              )
+          ],
+        ),
       ),
     );
   }

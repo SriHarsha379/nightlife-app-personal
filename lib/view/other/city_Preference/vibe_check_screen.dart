@@ -117,17 +117,25 @@ void initState() {
         statusBarIconBrightness: Brightness.light));
 
     // ignore: deprecated_member_use
-    return Scaffold(
-      backgroundColor: AppColor.secondryColor,
-
-      body: SafeArea(
-        child: Container(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+      
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                    SizedBox(
+                            height: MediaQuery.of(context).size.height * 4 / 100,),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -143,7 +151,7 @@ void initState() {
                             },
                             child: SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 5 / 100,
+                                  MediaQuery.of(context).size.width * 4 / 100,
                               child: SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     5 /
@@ -194,7 +202,7 @@ void initState() {
                           ),
                         ],
                       ),
-
+        
                       // Row(
                       //   children: [
                       //     GestureDetector(
@@ -237,9 +245,9 @@ void initState() {
                     ],
                   ),
                 ),
-
+        
                 SizedBox(height: size.height * 2 / 100),
-
+        
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 88 / 100,
                   child: Align(
@@ -256,7 +264,7 @@ void initState() {
                     ),
                   ),
                 ),
-
+        
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   child: Image.asset(
@@ -266,29 +274,29 @@ void initState() {
                   ),
                 ),
                 SizedBox(height: size.height * 2 / 100),
-
+        
                 //
-GestureDetector(
-  onTap: () {
-    setState(() {
-      isDropdownOpen = !isDropdownOpen;
-    });
-  },
-  child: Container(
-    width: size.width * 0.9,
-    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-    decoration: BoxDecoration(
-      color: AppColor.primaryColor,
-      borderRadius: BorderRadius.only(
+        GestureDetector(
+          onTap: () {
+            setState(() {
+              isDropdownOpen = !isDropdownOpen;
+            });
+          },
+          child: Container(
+            width: size.width * 0.9,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+            decoration: BoxDecoration(
+              color: AppColor.primaryColor,
+              borderRadius: BorderRadius.only(
         topLeft: Radius.circular(50),
         topRight: Radius.circular(50),
         bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
         bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+              ),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -319,30 +327,30 @@ GestureDetector(
             color: Colors.white,
           ),
         ),
-      ],
-    ),
-  ),
-),
-
-
-// ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
-if (isDropdownOpen)
-  Container(
-    width: size.width * 0.9,
-    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-    margin: const EdgeInsets.only(top: 0),
-    decoration: BoxDecoration(
-      color: AppColor.primaryColor,
-      borderRadius: const BorderRadius.only(
+              ],
+            ),
+          ),
+        ),
+        
+        
+        // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
+        if (isDropdownOpen)
+          Container(
+            width: size.width * 0.9,
+            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+            margin: const EdgeInsets.only(top: 0),
+            decoration: BoxDecoration(
+              color: AppColor.primaryColor,
+              borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(50),
         bottomRight: Radius.circular(50),
-      ),
-    ),
-    child: ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: questionList.length,
-      itemBuilder: (context, index) {
+              ),
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: questionList.length,
+              itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             print("Selected: ${questionList[index]["title"]}");
@@ -377,16 +385,16 @@ if (isDropdownOpen)
             ),
           ),
         );
-      },
-    ),
-  ),
-
-
-
-
+              },
+            ),
+          ),
+        
+        
+        
+        
                 SizedBox(height: size.height * 4 / 100),
-
-
+        
+        
                 Container(
                   width: size.width * 90 / 100,
                   height: size.height * 6 / 100,
@@ -447,7 +455,7 @@ if (isDropdownOpen)
                     ),
                   ),
                 ),
-
+        
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 46 / 100,
                 ),
@@ -459,7 +467,7 @@ if (isDropdownOpen)
                           MaterialPageRoute(
                               builder: (context) => VibeCheckScreen2()));
                     }),
-
+        
                 //       Image.asset(
                 //         AppImage.undo,
                 //         width: MediaQuery.of(context).size.width * 64 / 100,
@@ -468,9 +476,9 @@ if (isDropdownOpen)
                 //     ],
                 //   ),
                 // ),
-
+        
                 // Container(
-
+        
                 //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
                 //   width: MediaQuery.of(context).size.width * 100 / 100,
                 //   height: MediaQuery.of(context).size.width *20 / 100,
@@ -479,7 +487,7 @@ if (isDropdownOpen)
                 //     fit: BoxFit.contain,
                 //   ),
                 // ),
-
+        
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height * 2 / 100,
                 // ),
@@ -487,9 +495,9 @@ if (isDropdownOpen)
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 

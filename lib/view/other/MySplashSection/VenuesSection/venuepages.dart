@@ -10,12 +10,12 @@ import 'package:table_calendar/table_calendar.dart';
 import '../../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
+import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../../../authentication/notification_screen.dart';
 import '../../../authentication/profile.dart';
 import '../../chats/chat_message_screen.dart';
-
 class VenuePages extends StatefulWidget {
   static String routeName = './VenuePages';
 
@@ -120,41 +120,7 @@ class _VenuePagesState extends State<VenuePages> {
       "image": AppImage.zigzagArrow,
     },
   ];
-  bool isDayDisabled(DateTime day) {
-    if (disabledDays.isEmpty) return false;
 
-    String dayName = _getDayName(day);
-    return disabledDays.any(
-        (disabledDay) => disabledDay.toLowerCase() == dayName.toLowerCase());
-  }
-
-  List<List<Map<String, dynamic>>> generateWeeklyCalendar(
-      DateTime startDate, int numberOfWeeks) {
-    List<List<Map<String, dynamic>>> calendarWeeks = [];
-
-    for (int week = 0; week < numberOfWeeks; week++) {
-      List<Map<String, dynamic>> weekDays = [];
-
-      for (int day = 0; day < 7; day++) {
-        DateTime currentDate = startDate.add(Duration(days: week * 7 + day));
-        weekDays.add({
-          'id': currentDate.millisecondsSinceEpoch, // unique id
-          'date': currentDate,
-          'day': _getWeekdayName(currentDate.weekday), // "Mon", "Tue", etc.
-          'title': currentDate.day.toString(), // just the date number
-        });
-      }
-
-      calendarWeeks.add(weekDays);
-    }
-
-    return calendarWeeks;
-  }
-
-  String _getWeekdayName(int weekday) {
-    const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return days[weekday % 7];
-  }
 
   List<String> disabledDays = [];
 
@@ -174,7 +140,7 @@ class _VenuePagesState extends State<VenuePages> {
     ];
     return days[date.weekday - 1];
   }
-
+  int selectedIndex = 0;
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -187,6 +153,111 @@ class _VenuePagesState extends State<VenuePages> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
+
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+
+          padding: const EdgeInsets.only(bottom: 20,),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              
+              GestureDetector(
+                  behavior: HitTestBehavior.translucent,
+
+                onTap: (){
+                  Navigator.push(context,
+
+                    PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: MyAppFooter(initialIndex: 0),
+                    duration: const Duration(milliseconds: 500),
+                  ),);
+                },
+                child: Container(
+                  width: size.width * 12 / 100,
+                  child: ClipRRect(
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(15),
+                        topRight: Radius.circular(15),
+                      ),
+                      child: Image.asset(
+                        AppImage.crossIcon,
+                        fit: BoxFit.cover,
+                      )),
+                ),
+              ),
+              SizedBox(
+                width: size.width * 3 / 100,
+              ),
+
+              GestureDetector(
+                
+                onTap: (){
+                  documenttypebottomsheet(context);
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColor.secondryColor,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(
+                      color: AppColor.secondryColor,
+                    ),
+                  ),
+                  child: Text(
+                    AppLanguage.sendInviteText[language],
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                      fontFamily: AppFont.fontFamily,
+                      color: AppColor.pinkColor,
+                    ),
+                  ),
+                ),
+              ),
+              
+                SizedBox(
+                width: size.width * 3 / 100,
+              ),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                decoration: BoxDecoration(
+                  color: AppColor.buttonColor,
+                  borderRadius: BorderRadius.circular(50),
+
+                  // border: Border.all(
+
+                  //      color : AppColor.primaryColor,
+                  // ),
+                ),
+                child: Row(
+                  children: [
+                    Image.asset(
+                      AppImage.heartImg,
+                      height: 20,
+                      width: 20,
+                      color: AppColor.secondryColor, // optional tint color
+                    ),
+                    Text(
+                      AppLanguage.likeText[language],
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFont.fontFamily,
+                        color: AppColor.secondryColor,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            
+              
+            ],
+          ),
+        ),
         backgroundColor: AppColor.primaryColor,
         body: SafeArea(
           child: Container(
@@ -786,82 +857,6 @@ Center(
                     height: MediaQuery.of(context).size.height * 2 / 100,
                   ),
 
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 40, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppColor.buttonColor,
-                          borderRadius: BorderRadius.circular(50),
-
-                          // border: Border.all(
-
-                          //      color : AppColor.primaryColor,
-                          // ),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              AppImage.heartImg,
-                              height: 20,
-                              width: 20,
-                              color:
-                                  AppColor.secondryColor, // optional tint color
-                            ),
-                            Text(
-                              AppLanguage.likeText[language],
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      SizedBox(
-                        width: size.width * 3 / 100,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 24, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppColor.primaryColor,
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: AppColor.buttonColor,
-                          ),
-                        ),
-                        child: Text(
-                          AppLanguage.sendInviteText[language],
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: size.width * 3 / 100,
-                      ),
-                      Container(
-                        width: size.width * 12 / 100,
-                        child: ClipRRect(
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(15),
-                              topRight: Radius.circular(15),
-                            ),
-                            child: Image.asset(
-                              AppImage.crossIcon,
-                              fit: BoxFit.cover,
-                            )),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -871,141 +866,346 @@ Center(
     );
   }
 
-  // void _openGuestBottomSheet(BuildContext context) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: AppColor.themeColor,
-  //     shape: const RoundedRectangleBorder(
-  //       borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-  //     ),
-  //     isScrollControlled: true,
-  //     builder: (context) {
-  //       final size = MediaQuery.of(context).size;
-  //       List<int> guestList = List.generate(20, (index) => index + 1);
-  //       int selectedGuest = -1;
+    void documenttypebottomsheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
-  //       return StatefulBuilder(
-  //         builder: (context, setState) {
-  //           return Padding(
-  //             padding: EdgeInsets.symmetric(
-  //               horizontal: size.width * 6 / 100,
-  //               vertical: size.height * 3 / 100,
-  //             ),
-  //             child: Column(
-  //               mainAxisSize: MainAxisSize.min,
-  //               crossAxisAlignment: CrossAxisAlignment.center,
-  //               children: [
-  //                 // --- Title ---
-  //                 Row(
-  //                   children: [
-  //                     SizedBox(width: size.width * 3 / 100),
-  //                     Align(
-  //                       alignment: Alignment.centerLeft,
-  //                       child: Text(
-  //                         "Select number of Guest",
-  //                         style: TextStyle(
-  //                           fontFamily: AppFont.fontFamily,
-  //                           fontWeight: FontWeight.w700,
-  //                           fontSize: 16,
-  //                           color: AppColor.secondryColor,
-  //                         ),
-  //                       ),
-  //                     ),
-  //                   ],
-  //                 ),
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      context: context,
+      builder: (BuildContext context) {
+        // String? tempSelected = selectedState;
 
-  //                 SizedBox(height: size.height * 3 / 100),
+        return StatefulBuilder(builder: (context, setStateBottomSheet) {
+          return Container(
+            width: MediaQuery.of(context).size.width * 100 / 100,
+            height: MediaQuery.of(context).size.height * 60 / 100,
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                Container(
+                    width: MediaQuery.of(context).size.width * 100 / 100,
+                    height: MediaQuery.of(context).size.height * 60 / 100,
+                    // decoration: BoxDecoration(
+                    //     borderRadius: BorderRadius.only(
+                    //         topLeft: Radius.circular(50),
+                    //         topRight: Radius.circular(50)),
+                    //     color: Colors.transparent),
 
-  //                 // --- Horizontal Scrollable Chips ---
-  //                 SizedBox(
-  //                   height: size.height * 7 / 100,
-  //                   child: ListView.builder(
-  //                     scrollDirection: Axis.horizontal,
-  //                     itemCount: guestList.length,
-  //                     itemBuilder: (context, index) {
-  //                       final isSelected = selectedGuest == index;
-  //                       return GestureDetector(
-  //                         onTap: () {
-  //                           setState(() {
-  //                             selectedGuest = index;
-  //                           });
-  //                         },
-  //                         child: Container(
-  //                           margin: const EdgeInsets.symmetric(horizontal: 18),
-  //                           padding: const EdgeInsets.symmetric(
-  //                               vertical: 10, horizontal: 22),
-  //                           decoration: BoxDecoration(
-  //                             borderRadius: BorderRadius.circular(10),
-  //                             border: Border.all(
-  //                               color: isSelected
-  //                                   ? AppColor.pinkColor
-  //                                   : AppColor.textTapColor,
-  //                               width: 1,
-  //                             ),
-  //                             color: isSelected
-  //                                 ? AppColor.pinkColor.withOpacity(0.2)
-  //                                 : Colors.transparent,
-  //                           ),
-  //                           child: Center(
-  //                             child: Text(
-  //                               '${guestList[index]}',
-  //                               style: TextStyle(
-  //                                 fontFamily: AppFont.fontFamily,
-  //                                 fontWeight: FontWeight.w500,
-  //                                 fontSize: 14,
-  //                                 color: isSelected
-  //                                     ? AppColor.pinkColor
-  //                                     : AppColor.secondryColor,
-  //                               ),
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       );
-  //                     },
-  //                   ),
-  //                 ),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient: AppColor.backgroundGradientcolor,
+                              // gradient: AppColor.chatContainerColor,
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(46),
+                                topRight: Radius.circular(46),
+                              ),
+                            ),
+                            width: size.width * 100 / 100,
+                            height: size.height * 80 / 100,
+                            child: Column(
+                              children: [
+                                SizedBox(height: size.height * 2 / 100),
+                                Image.asset(
+                                  AppImage.dashIcon,
+                                  height: size.height * 0.5 / 100,
+                                  width: size.width * 28 / 100,
+                                  fit: BoxFit.fill,
+                                ),
+                                SizedBox(height: size.height * 2 / 100),
+                                Container(
+                                  color: AppColor.transparentColor,
+                                  width: MediaQuery.of(context).size.width *
+                                      100 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      8 /
+                                      100,
+                                  child: Center(
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedIndex = 0;
+                                            });
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                50 /
+                                                100,
+                                            // height:
+                                            //     MediaQuery.of(context).size.height * 6 / 100,
+                                            child: Center(
+                                              child: Text(
+                                                AppLanguage
+                                                    .eventsText[language],
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: selectedIndex == 0
+                                                      ? AppColor.secondryColor
+                                                      : AppColor.secondryColor,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            setState(() {
+                                              selectedIndex = 1;
+                                            });
+                                          },
+                                          child: Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                50 /
+                                                100,
+                                            // height:
+                                            //     MediaQuery.of(context).size.height * 6 / 100,
+                                            child: Center(
+                                              child: Text(
+                                                AppLanguage
+                                                    .venuesText[language],
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w500,
+                                                  color: selectedIndex == 1
+                                                      ? AppColor.greyLightColor
+                                                      : AppColor.secondryColor,
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedIndex = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.44,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.003,
+                                          color: selectedIndex == 0
+                                              ? AppColor.secondryColor
+                                              : AppColor.secondryColor,
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedIndex =
+                                                1; // fixed selection
+                                          });
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.36,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.003,
+                                          color: selectedIndex == 1
+                                              ? AppColor.greyLightColor
+                                              : AppColor.secondryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 2 / 100),
+                                SizedBox(height: size.height * 1 / 100),
+                                Expanded(
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      children: [
+                                        ...List.generate(chats.length, (index) {
+                                          final chat = chats[index];
+                                          return Wrap(
+                                            children: [
+                                              Container(
+                                                width: size.width * 90 / 100,
+                                                height: size.height * 8.5 / 100,
+                                                child: ListTile(
+                                                  contentPadding:
+                                                      EdgeInsets.zero,
+                                                  leading: Container(
+                                                    height:
+                                                        size.height * 10 / 100,
+                                                    width:
+                                                        size.width * 13 / 100,
+                                                    decoration: BoxDecoration(
+                                                      shape: BoxShape.circle,
+                                                      image: DecorationImage(
+                                                        image: AssetImage(
+                                                            chat['image']),
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  title: Text(
+                                                    chat['name'],
+                                                    style: TextStyle(
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      fontSize: 16,
+                                                      color: AppColor
+                                                          .secondryColor,
+                                                    ),
+                                                  ),
+                                                  subtitle: Text(
+                                                    chat['lastMessage'],
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .secondryColor,
+                                                    ),
+                                                    maxLines: 1,
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
+                                                  ),
+                                                  trailing: GestureDetector(
+                                                    onTap: () {
+                                                      setState(() {
+                                                        chats[index]['isSend'] =
+                                                            true;
+                                                      });
 
-  //                 SizedBox(height: size.height * 4 / 100),
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                                  200), () {
+                                                      Navigator.push(
+  context,
+  PageTransition(
+    type: PageTransitionType.bottomToTop,
+    child: ChatMessageScreen(
+      name: chats[index]['name'],
+      image: chats[index]['image'],
+    ),
+  ),
+);
 
-  //                 // --- Continue Button ---
-  //                 GestureDetector(
-  //                   onTap: () {
-  //                     Navigator.push(
-  //                       context,
-  //                       PageTransition(
-  //                         type: PageTransitionType.rightToLeftWithFade,
-  //                         child: BookTable(),
-  //                         duration: const Duration(milliseconds: 500),
-  //                       ),
-  //                     );
-  //                   },
-  //                   child: Container(
-  //                     width: size.width * 75 / 100,
-  //                     height: size.height * 6 / 100,
-  //                     decoration: BoxDecoration(
-  //                       color: AppColor.secondryColor,
-  //                       borderRadius: BorderRadius.circular(30),
-  //                     ),
-  //                     alignment: Alignment.center,
-  //                     child: Text(
-  //                       "Continue",
-  //                       style: TextStyle(
-  //                         fontFamily: AppFont.fontFamily,
-  //                         fontWeight: FontWeight.w600,
-  //                         fontSize: 15,
-  //                         color: AppColor.pinkColor,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                 ),
+                                                      });
+                                                    },
+                                                    child: Container(
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                          horizontal: 20,
+                                                          vertical: 8),
+                                                      decoration: BoxDecoration(
+                                                        color: (chats[index]
+                                                                    ['isSend']
+                                                                as bool)
+                                                            ? AppColor
+                                                                .logoutContainerColor
+                                                            : AppColor
+                                                                .secondryColor,
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(10),
+                                                        border: (chats[index]
+                                                                    ['isSend']
+                                                                as bool)
+                                                            ? Border.all(
+                                                                color: AppColor
+                                                                    .buttonColor,
+                                                                width: 1)
+                                                            : null,
+                                                      ),
+                                                      child: Text(
+                                                        (chats[index]['isSend']
+                                                                as bool)
+                                                            ? chats[index]
+                                                                ['message1']
+                                                            : chats[index]
+                                                                ['message'],
+                                                        style: TextStyle(
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          color: (chats[index]
+                                                                      ['isSend']
+                                                                  as bool)
+                                                              ? AppColor
+                                                                  .secondryColor
+                                                              : AppColor
+                                                                  .primaryColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                              if (index < chats.length - 0)
+                                                // Divider(
+                                                //   height: 0.2,
+                                                //   // thickness: 0.5,
+                                                //   // color: Colors.grey[300],
+                                                //   indent: 30,
+                                                // ),
+                                                if (index < chats.length - 0)
+                                                  SizedBox(
+                                                      height: size.height *
+                                                          0.1 /
+                                                          100),
+                                            ],
+                                          );
+                                        }),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    )),
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
 
-  //                 SizedBox(height: size.height * 2 / 100),
-  //               ],
-  //             ),
-  //           );
-  //         },
-  //       );
-  //     },
-  //   );
-  // }
+
+
+  
+
 }

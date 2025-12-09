@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -7,6 +9,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../content_screen/content_screen.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({Key? key}) : super(key: key);
@@ -445,82 +448,50 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                   ),
                 ),
 
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.width * 8 / 100,
-                            width: size.width * 12 / 100,
-                            child: Image.asset(
-                              AppImage.termsConditionIcon,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          SizedBox(width: size.width * 2 / 100),
-                          Text(
-                            AppLanguage.termsConditionText[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                 
-                    ],
-                  ),
-                ),
-
-                      Container(
-
-                         padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                        child: Row(
+                GestureDetector(
+                  onTap: (){
+                     Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ContentScreen(
+              contenttype: "termscondition",
+              header: AppLanguage.termsConditionText[language],
+            ),
+          ),
+        );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor,
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             SizedBox(
                               height: size.width * 8 / 100,
                               width: size.width * 12 / 100,
                               child: Image.asset(
-                                AppImage.privacyPolicyIcon,
+                                AppImage.termsConditionIcon,
                                 fit: BoxFit.contain,
                               ),
                             ),
                             SizedBox(width: size.width * 2 / 100),
                             Text(
-                              AppLanguage.privacyPolicy[language],
+                              AppLanguage.termsConditionText[language],
                               style: const TextStyle(
                                 color: AppColor.secondryColor,
                                 fontSize: 14,
@@ -529,6 +500,65 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                               ),
                             ),
                           ],
+                        ),
+                   
+                      ],
+                    ),
+                  ),
+                ),
+
+                      GestureDetector(
+                        onTap: (){
+                          
+  Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (_) => ContentScreen(
+              contenttype: "privacypolicy",
+              header: AppLanguage.privacypoliciesText[language],
+            ),
+          ),
+        );
+                        },
+                        child: Container(
+                        
+                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                                          decoration: BoxDecoration(
+                                            color: AppColor.notificationContainerColor,
+                                            borderRadius: BorderRadius.circular(8),
+                                            boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor,
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 1),
+                        ),
+                                            ],
+                                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: size.width * 8 / 100,
+                                width: size.width * 12 / 100,
+                                child: Image.asset(
+                                  AppImage.privacyPolicyIcon,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                              SizedBox(width: size.width * 2 / 100),
+                              Text(
+                                AppLanguage.privacyPolicy[language],
+                                style: const TextStyle(
+                                  color: AppColor.secondryColor,
+                                  fontSize: 14,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                                       SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),

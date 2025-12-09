@@ -117,7 +117,6 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
 
     // ignore: deprecated_member_use
     return Scaffold(
-      backgroundColor: Colors.white,
 
       body: SafeArea(
         child: Container(
@@ -140,7 +139,7 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                               Navigator.pop(context);
                             },
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 5 / 100,
+                              width: MediaQuery.of(context).size.width * 4 / 100,
                               child: SizedBox(
                                 height:
                                     MediaQuery.of(context).size.height * 5 / 100,

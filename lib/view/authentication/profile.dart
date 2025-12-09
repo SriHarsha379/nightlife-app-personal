@@ -7,8 +7,11 @@ import 'package:night_life/view/authentication/app_preference_screen.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/authentication/notifications_setting_screen.dart';
 import 'package:night_life/view/authentication/privacy_and_security.dart';
+import 'package:night_life/view/authentication/refer_code_screen.dart';
 import 'package:night_life/view/bottom%20navigation/profile1.dart';
 import 'package:night_life/view/authentication/support_screen.dart';
+import 'package:night_life/view/other/about/aboutscreen.dart';
+import 'package:night_life/view/other/referafriend_screen.dart';
 import 'package:page_transition/page_transition.dart';
 // import 'package:night_life/utilities/app_comman_setting.dart' show SettingRow;
 import '../../utilities/app_color.dart';
@@ -36,10 +39,17 @@ class _ProfileState extends State<Profile> {
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light));
 
-    return Scaffold(
-      backgroundColor: AppColor.purpleColor,
-      body: SafeArea(
-        child: Container(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.black,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        // backgroundColor: AppColor.purpleColor,
+        body: Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
@@ -47,20 +57,12 @@ class _ProfileState extends State<Profile> {
           ),
           child: Column(
             children: [
+                   SizedBox(
+                          height: MediaQuery.of(context).size.height * 3.5 / 100),
               AppHeader(
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.accountText[language],
-                // actionButton: TextButton(
-                //   onPressed: () {},
-                //   child: Text(
-                //     AppLanguage.clearText[language],
-                //     style: const TextStyle(
-                //       color: Colors.grey,
-                //       fontSize: 13,
-                //       fontWeight: FontWeight.w500,
-                //     ),
-                //   ),
-                // ),
+             
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -92,9 +94,7 @@ class _ProfileState extends State<Profile> {
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                      // Colored curved border
-
-                                      // Inner white border/gap
+                                    
                                       Image.asset(
                                         AppImage.halfCircleicon,
                                         height:
@@ -106,7 +106,7 @@ class _ProfileState extends State<Profile> {
                                                 35 /
                                                 100,
                                       ),
-
+        
                                       // Profile image
                                       Container(
                                         width:
@@ -135,7 +135,7 @@ class _ProfileState extends State<Profile> {
                                 width: MediaQuery.of(context).size.width *
                                     8 /
                                     100),
-
+        
                             // Profile Text
                             Expanded(
                               child: Column(
@@ -180,7 +180,7 @@ class _ProfileState extends State<Profile> {
                           ],
                         ),
                       ),
-
+        
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.84,
                         child: Row(
@@ -212,7 +212,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 4 / 100),
-
+        
                       // Settings List
                       Column(
                         children: [
@@ -297,6 +297,24 @@ class _ProfileState extends State<Profile> {
                               );
                             },
                           ),
+                           SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100),
+
+                            SettingRow(
+                            leadingIcon: AppImage.referIcon,
+                            title: AppLanguage.referaFriText[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: ReferAFriend(),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                          ),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 2 / 100),
@@ -320,7 +338,16 @@ class _ProfileState extends State<Profile> {
                           SettingRow(
                             leadingIcon: AppImage.blacksettingAbout,
                             title: AppLanguage.aboutText[language],
-                            onPress: () {},
+                            onPress: () {
+                               Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: AboutScreen(),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
                           ),
                           SizedBox(
                               height:

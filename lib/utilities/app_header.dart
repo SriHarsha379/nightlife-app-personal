@@ -60,7 +60,7 @@ class AppHeader extends StatelessWidget {
                 style: TextStyle(
                   fontFamily: AppFont.fontFamily,
                   fontSize: 20,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                   color: AppColor.secondryColor,
                 ),
               ),

@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_html/flutter_html.dart';
 import 'package:night_life/utilities/app_font.dart';
+import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
+import '../../utilities/app_footer.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
@@ -26,6 +31,7 @@ class _NotificationsState extends State<Notifications> {
       "time": "at 7PM ⏰",
       "lastseen": "2h ago",
       "view": "View Event",
+      "type": "event" // <-- FIXED
     },
     {
       "image": AppImage.blackHearticon,
@@ -33,7 +39,8 @@ class _NotificationsState extends State<Notifications> {
       "message": "Someone right swiped your profile -",
       "time": "Check out who liked you! 👀",
       "view": "See Who",
-      "lastseen": "4h ago"
+      "lastseen": "4h ago",
+      "type": "chat"
     },
     {
       "image": AppImage.blackMicicon,
@@ -41,7 +48,8 @@ class _NotificationsState extends State<Notifications> {
       "message": "Venues you follow posted an event ",
       "time": "– Explore now ✨",
       "view": "Explore",
-      "lastseen": "1d ago"
+      "lastseen": "1d ago",
+      "type": "event" // <-- FIXED
     },
     {
       "image": AppImage.blackTicketconfirmedicon,
@@ -49,7 +57,8 @@ class _NotificationsState extends State<Notifications> {
       "message": "your Ticket for jazz Night has been confirmed.",
       "time": "Just Now",
       "view": "View details",
-      "lastseen": "1w ago"
+      "lastseen": "1w ago",
+      "type": "payment"
     },
   ];
 
@@ -74,7 +83,7 @@ class _NotificationsState extends State<Notifications> {
               AppHeader(
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.notificationText[language],
-              
+
                 // actionButton: TextButton(
                 //   onPressed: () {},
                 //   child: Text(
@@ -134,158 +143,215 @@ class _NotificationsState extends State<Notifications> {
                           itemCount: notifications.length,
                           itemBuilder: (BuildContext context, int index) {
                             // Create the notification container
-                            Widget notificationCard = Container(
-                              padding: const EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 8),
-                              margin: const EdgeInsets.symmetric(
-                                  horizontal: 10, vertical: 8),
-                              decoration: BoxDecoration(
-                                color: AppColor.profilesettignrowColor,
-                                borderRadius: BorderRadius.circular(16),
-                                boxShadow: [
-                                  BoxShadow(
-                                    color: Colors.transparent.withOpacity(0.2),
-                                    spreadRadius: 3,
-                                    blurRadius: 7,
-                                    offset: const Offset(0, 1),
-                                  ),
-                                ],
-                              ),
-                              child: Column(
-                                children: [
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                15 /
-                                                100,
-                                        height:
-                                            MediaQuery.of(context).size.width *
-                                                15 /
-                                                100,
-                                        child: Image.asset(
-                                          notifications[index]["image"],
-                                          fit: BoxFit.contain,
+                            Widget notificationCard = GestureDetector(
+                              onTap: () {
+                                final item = notifications[index]
+                                    as Map<String, dynamic>;
+                                final type = item["type"]
+                                        ?.toString()
+                                        .trim()
+                                        .toLowerCase() ??
+                                    "event";
+
+                                if (type == "none") {
+                                  print("No TYPE present in item: $item");
+                                  return;
+                                }
+
+                                switch (type) {
+                                  case "profile":
+                                    break;
+
+                                  case "chat":
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.bottomToTop,
+                                        child: MyAppFooter(initialIndex: 3),
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                      ),
+                                    );
+
+                                    break;
+
+                                  case "event":
+                                    Navigator.push(
+                                        context,
+                                      PageTransition(
+                                          type: PageTransitionType.bottomToTop,
+                                          child: LikedEventDetail(),
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                        ),);
+                                    break;
+
+                                  case "payment":
+                                    break;
+                                }
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 8),
+                                margin: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: AppColor.profilesettignrowColor,
+                                  borderRadius: BorderRadius.circular(16),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          Colors.transparent.withOpacity(0.2),
+                                      spreadRadius: 3,
+                                      blurRadius: 7,
+                                      offset: const Offset(0, 1),
+                                    ),
+                                  ],
+                                ),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceEvenly,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              15 /
+                                              100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              15 /
+                                              100,
+                                          child: Image.asset(
+                                            notifications[index]["image"],
+                                            fit: BoxFit.contain,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                100,
-                                      ),
-                                      Column(
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    60 /
-                                                    100,
-                                                alignment: Alignment.centerLeft,
-                                                child: Text(
-                                                  notifications[index]
-                                                      ['notification'],
-                                                  style: const TextStyle(
-                                                    color:
-                                                        AppColor.secondryColor,
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w600,
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              2 /
+                                              100,
+                                        ),
+                                        Column(
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      60 /
+                                                      100,
+                                                  alignment:
+                                                      Alignment.centerLeft,
+                                                  child: Text(
+                                                    notifications[index]
+                                                        ['notification'],
+                                                    style: const TextStyle(
+                                                      color: AppColor
+                                                          .secondryColor,
+                                                      fontSize: 14,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    12 /
-                                                    100,
-                                                alignment:
-                                                    Alignment.centerRight,
-                                                child: Text(
-                                                  notifications[index]
-                                                      ['lastseen'],
-                                                  style: const TextStyle(
-                                                    color: AppColor.textcolor,
-                                                    fontSize: 12,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w500,
+                                                Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      12 /
+                                                      100,
+                                                  alignment:
+                                                      Alignment.centerRight,
+                                                  child: Text(
+                                                    notifications[index]
+                                                        ['lastseen'],
+                                                    style: const TextStyle(
+                                                      color: AppColor.textcolor,
+                                                      fontSize: 12,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                72 /
-                                                100,
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              notifications[index]['message'],
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
-                                                fontSize: 14,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
+                                              ],
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  72 /
+                                                  100,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                notifications[index]['message'],
+                                                style: const TextStyle(
+                                                  color: AppColor.secondryColor,
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          // SizedBox(
-                                          //   height: MediaQuery.of(context)
-                                          //           .size
-                                          //           .width *
-                                          //       1 /
-                                          //       100,
-                                          // ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                72 /
-                                                100,
-                                            child: Text(
-                                              notifications[index]['time'],
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
+                                            // SizedBox(
+                                            //   height: MediaQuery.of(context)
+                                            //           .size
+                                            //           .width *
+                                            //       1 /
+                                            //       100,
+                                            // ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  72 /
+                                                  100,
+                                              child: Text(
+                                                notifications[index]['time'],
+                                                style: const TextStyle(
+                                                  color: AppColor.secondryColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                72 /
-                                                100,
-                                            alignment: Alignment.centerLeft,
-                                            child: Text(
-                                              notifications[index]['view'],
-                                              style: const TextStyle(
-                                                color: AppColor.buttonColor,
-                                                fontSize: 14,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  72 /
+                                                  100,
+                                              alignment: Alignment.centerLeft,
+                                              child: Text(
+                                                notifications[index]['view'],
+                                                style: const TextStyle(
+                                                  color: AppColor.buttonColor,
+                                                  fontSize: 14,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
 
