@@ -159,287 +159,259 @@ class _AppPreferencesState extends State<AppPreferences> {
 
                     return Column(
                       children: [
-                        Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 90 / 100,
-                            height:
-                                MediaQuery.of(context).size.height * 9 / 100,
-                            decoration: BoxDecoration(
-                              color: AppColor.notificationContainerColor,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColor.notificationtextColor,
-                                width: 2,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedRadioIndex = 0;
-                                });
-                                themeProvider.toggleTheme(true);
-                              },
-                              child: SizedBox(
-                                width: size.width * 90 / 100,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: size.width * 1 / 100),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          AppLanguage.darkText[language],
-                                          style: const TextStyle(
-                                            color: AppColor.secondryColor,
-                                            fontSize: 14,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        Text(
-                                          AppLanguage.darkMsgText[language],
-                                          style: const TextStyle(
-                                            color:
-                                                AppColor.notificationtextColor,
-                                            fontSize: 14,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: size.height * 0.02,
-                                      width: size.height * 0.02,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: selectedRadioIndex == 0
-                                              ? AppColor.secondryColor
-                                              : AppColor.notificationtextColor,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Container(
-                                          height: size.height * 0.010,
-                                          width: size.height * 0.010,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: selectedRadioIndex == 0
-                                                ? AppColor.secondryColor
-                                                : Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 2 / 100,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: size.height * 1 / 100),
+                    // Dark Mode Radio Button
+Center(
+  child: Container(
+    width: MediaQuery.of(context).size.width * 90 / 100,
+    height: MediaQuery.of(context).size.height * 9 / 100,
+    decoration: BoxDecoration(
+      color: AppColor.notificationContainerColor,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: AppColor.notificationtextColor,
+        width: 2,
+      ),
+    ),
+    child: InkWell(
+      onTap: () {
+        setState(() {
+          selectedRadioIndex = 0;
+        });
+        themeProvider.toggleTheme(true);
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLanguage.darkText[language],
+                    style: const TextStyle(
+                      color: AppColor.secondryColor,
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    AppLanguage.darkMsgText[language],
+                    style: const TextStyle(
+                      color: AppColor.notificationtextColor,
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: size.height * 0.02,
+              width: size.height * 0.02,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selectedRadioIndex == 0
+                      ? AppColor.secondryColor
+                      : AppColor.notificationtextColor,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Container(
+                  height: size.height * 0.010,
+                  width: size.height * 0.010,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: selectedRadioIndex == 0
+                        ? AppColor.secondryColor
+                        : Colors.transparent,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+),
+SizedBox(height: size.height * 1 / 100),
 
-                        // Light Mode Radio Button
-                        Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 90 / 100,
-                            height:
-                                MediaQuery.of(context).size.height * 9 / 100,
-                            decoration: BoxDecoration(
-                              color: AppColor.notificationContainerColor,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColor.notificationtextColor,
-                                width: 2,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedRadioIndex = 1;
-                                });
-                                themeProvider.toggleTheme(false);
-                              },
-                              child: SizedBox(
-                                width: size.width * 90 / 100,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: size.width * 0.1 / 100),
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        Text(
-                                          AppLanguage.lightText[language],
-                                          style: const TextStyle(
-                                            color: AppColor.secondryColor,
-                                            fontSize: 14,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                        SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                1 /
-                                                100),
-                                        Text(
-                                          AppLanguage.lightMsgText[language],
-                                          style: const TextStyle(
-                                            color:
-                                                AppColor.notificationtextColor,
-                                            fontSize: 14,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Container(
-                                      height: size.height * 0.02,
-                                      width: size.height * 0.02,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: selectedRadioIndex == 1
-                                              ? AppColor.secondryColor
-                                              : AppColor.notificationtextColor,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Container(
-                                          height: size.height * 0.010,
-                                          width: size.height * 0.010,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: selectedRadioIndex == 1
-                                                ? AppColor.secondryColor
-                                                : Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 0.5 / 100,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(height: size.height * 1 / 100),
+// Light Mode Radio Button
+Center(
+  child: Container(
+    width: MediaQuery.of(context).size.width * 90 / 100,
+    height: MediaQuery.of(context).size.height * 9 / 100,
+    decoration: BoxDecoration(
+      color: AppColor.notificationContainerColor,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: AppColor.notificationtextColor,
+        width: 2,
+      ),
+    ),
+    child: InkWell(
+      onTap: () {
+        setState(() {
+          selectedRadioIndex = 1;
+        });
+        themeProvider.toggleTheme(false);
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLanguage.lightText[language],
+                    style: const TextStyle(
+                      color: AppColor.secondryColor,
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    AppLanguage.lightMsgText[language],
+                    style: const TextStyle(
+                      color: AppColor.notificationtextColor,
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: size.height * 0.02,
+              width: size.height * 0.02,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selectedRadioIndex == 1
+                      ? AppColor.secondryColor
+                      : AppColor.notificationtextColor,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Container(
+                  height: size.height * 0.010,
+                  width: size.height * 0.010,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: selectedRadioIndex == 1
+                        ? AppColor.secondryColor
+                        : Colors.transparent,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+),
+SizedBox(height: size.height * 1 / 100),
 
-                        // System Default Radio Button
-                        Center(
-                          child: Container(
-                            width: MediaQuery.of(context).size.width * 90 / 100,
-                            height:
-                                MediaQuery.of(context).size.height * 9 / 100,
-                            decoration: BoxDecoration(
-                              color: AppColor.notificationContainerColor,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                color: AppColor.notificationtextColor,
-                                width: 1,
-                              ),
-                            ),
-                            child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedRadioIndex = 2;
-                                });
-                                themeProvider.setSystemDefault();
-                              },
-                              child: SizedBox(
-                                width: size.width * 90 / 100,
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  children: [
-                                    SizedBox(width: size.width * 4.9 / 100),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          SizedBox(
-                                              height: size.height * 1.5 / 100),
-                                          Text(
-                                            AppLanguage
-                                                .systemDefaultText[language],
-                                            style: TextStyle(
-                                              color: AppColor.secondryColor,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                          Text(
-                                            AppLanguage
-                                                .systemDefaultMsgText[language],
-                                            style: TextStyle(
-                                              color: AppColor
-                                                  .notificationtextColor,
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w400,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      height: size.height * 0.02,
-                                      width: size.height * 0.02,
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        border: Border.all(
-                                          color: selectedRadioIndex == 2
-                                              ? AppColor.secondryColor
-                                              : AppColor.notificationtextColor,
-                                          width: 1,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Container(
-                                          height: size.height * 0.010,
-                                          width: size.height * 0.010,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: selectedRadioIndex == 2
-                                                ? AppColor.secondryColor
-                                                : Colors.transparent,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: size.width * 6 / 100,
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
+// System Default Radio Button
+Center(
+  child: Container(
+    width: MediaQuery.of(context).size.width * 90 / 100,
+    height: MediaQuery.of(context).size.height * 9 / 100,
+    decoration: BoxDecoration(
+      color: AppColor.notificationContainerColor,
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(
+        color: AppColor.notificationtextColor,
+        width: 2,
+      ),
+    ),
+    child: InkWell(
+      onTap: () {
+        setState(() {
+          selectedRadioIndex = 2;
+        });
+        themeProvider.setSystemDefault();
+      },
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    AppLanguage.systemDefaultText[language],
+                    style: const TextStyle(
+                      color: AppColor.secondryColor,
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    AppLanguage.systemDefaultMsgText[language],
+                    style: const TextStyle(
+                      color: AppColor.notificationtextColor,
+                      fontSize: 13,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w400,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: size.height * 0.02,
+              width: size.height * 0.02,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: selectedRadioIndex == 2
+                      ? AppColor.secondryColor
+                      : AppColor.notificationtextColor,
+                  width: 1,
+                ),
+              ),
+              child: Center(
+                child: Container(
+                  height: size.height * 0.010,
+                  width: size.height * 0.010,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: selectedRadioIndex == 2
+                        ? AppColor.secondryColor
+                        : Colors.transparent,
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    ),
+  ),
+),
 
                         SizedBox(height: 15),
 

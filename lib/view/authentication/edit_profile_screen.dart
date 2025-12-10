@@ -34,19 +34,26 @@ class _EditProfileState extends State<EditProfile> {
     usernameController.text ="@Arjun5624";
     mobileNumberTextEditingController.text ="9174658235";
     genderController.text ="Male";
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      statusBarColor: AppColor.secondryColor,
-      statusBarIconBrightness: Brightness.dark,
-    ));
+  
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      // backgroundColor: AppColor.secondryColor,
-      body: SafeArea(
-        child: SingleChildScrollView(
+    return   AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        backgroundColor: AppColor.primaryColor,
+        body: SingleChildScrollView(
           child: Column(
             children: [
-              AppHeader1(
+            SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 4 / 100),    
+              AppHeader(
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.editDetailsText[language],
                 // actionButton: TextButton(
@@ -61,12 +68,15 @@ class _EditProfileState extends State<EditProfile> {
                 //   ),
                 // ),
               ),
-
+        
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                      SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 6 / 100),
                     // Profile Image
                     Container(
                       width: MediaQuery.of(context).size.width * 36 / 100,
@@ -90,7 +100,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     // SizedBox(
                     //     width: MediaQuery.of(context).size.width * 0.1 / 100),
-
+        
                     // Profile Text
                     Expanded(
                       child: Column(
@@ -135,7 +145,7 @@ class _EditProfileState extends State<EditProfile> {
                                   fontSize: 14,
                                   fontWeight: FontWeight.w400,
                                   fontFamily: AppFont.fontFamily,
-                                  color: AppColor.primaryColor,
+                                  color: AppColor.secondryColor,
                                 ),
                               ),
                               Image.asset(
@@ -145,7 +155,7 @@ class _EditProfileState extends State<EditProfile> {
                               ),
                             ],
                           ),
-
+        
                           SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.2 /
@@ -159,7 +169,7 @@ class _EditProfileState extends State<EditProfile> {
                               color: AppColor.buttonColor,
                             ),
                           ),
-
+        
                           // buildTaskRow(
                           //     AppLanguage.foodieExplorecreativeText[language],
                           //     Colors.purpleAccent),
@@ -169,7 +179,7 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-
+        
               // Profile Completion Text
               SizedBox(
                 width: MediaQuery.of(context).size.width * 89 / 100,
@@ -187,17 +197,17 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 6 / 100,
                   decoration: BoxDecoration(
-                    color: AppColor.secondryColor, // background color
+                    color: AppColor.textfieldcontainercolor, // background color
                     boxShadow: [
                       BoxShadow(
                         color:
-                            AppColor.grayColor.withOpacity(0.4), // shadow color
+                            AppColor.textfieldcontainercolor, // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
                         offset: Offset(1, 2),
@@ -217,7 +227,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               SizedBox(
                 width: MediaQuery.of(context).size.width * 87 / 100,
                 child: Align(
@@ -234,7 +244,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -259,7 +269,7 @@ class _EditProfileState extends State<EditProfile> {
                         borderRadius: BorderRadius.circular(24),
                       ),
                       child: TextFormField(
-                        style: const TextStyle(color: Colors.black),
+                        style: const TextStyle(color: Colors.white),
                         keyboardType: TextInputType.multiline,
                         controller: bioController,
                         maxLines: 2,
@@ -269,18 +279,18 @@ class _EditProfileState extends State<EditProfile> {
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
                             borderSide: BorderSide(
-                              color: AppColor.textfieldfillColor,
+                              color: AppColor.textfieldcontainercolor,
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
                             borderSide: BorderSide(
-                              color: AppColor.textfieldfillColor,
+                              color: AppColor.textfieldcontainercolor,
                               width: 1.5,
                             ),
                           ),
-                          fillColor: AppColor.textfieldfillColor,
+                          fillColor: AppColor.textfieldcontainercolor,
                           filled: true,
                           counterText: '',
                           hintText: 'Add about yourself..',
@@ -314,7 +324,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -332,7 +342,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                   ),
-
+        
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -359,7 +369,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-
+        
               SizedBox(
                 height: MediaQuery.of(context).size.height * 1 / 100,
               ),
@@ -368,7 +378,7 @@ class _EditProfileState extends State<EditProfile> {
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 6 / 100,
                   decoration: BoxDecoration(
-                    color: AppColor.textfieldfillColor, // background color
+                    color: AppColor.textfieldcontainercolor, // background color
                     boxShadow: [
                       BoxShadow(
                         color:
@@ -392,7 +402,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -410,7 +420,7 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                   ),
-
+        
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
@@ -437,9 +447,9 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-
+        
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
@@ -469,7 +479,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               SizedBox(
                 width: MediaQuery.of(context).size.width * 87 / 100,
                 child: Align(
@@ -486,7 +496,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-
+        
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,

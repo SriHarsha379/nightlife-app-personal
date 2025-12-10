@@ -191,8 +191,8 @@ class _OtpVerifyState extends State<OtpVerify> {
                                       fontFamily: AppFont.fontFamily,
                                        decoration: TextDecoration.underline,
                                        decorationColor: AppColor.secondryColor,
-                                        decorationThickness: 1.5,
-                                        height: 2.5,
+                                        decorationThickness: 0.8,
+                                        height: 2.8,
                                     ),
                                   ),
                                       SizedBox(
@@ -295,38 +295,10 @@ class _OtpVerifyState extends State<OtpVerify> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 44 / 100,
+                        height: MediaQuery.of(context).size.height * 42 / 100,
                       ),
-                      //  SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 80 / 100,
-                      //   height: MediaQuery.of(context).size.height * 4.5 / 100,
-                      //   child: Row(
-                      //     mainAxisAlignment: MainAxisAlignment.center,
-                      //     children: [
-                      //       Text(
-                      //         AppLanguage.cantaccessNo[language],
-                      //         style: const TextStyle(
-                      //             color: Colors.grey,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: 12),
-                      //       ),
-                      //         SizedBox(
-                      //   width: MediaQuery.of(context).size.width * 1 / 100,
-                      // ),
-                      //       Text(
-                      //         AppLanguage.loginText[language],
-                      //         style: const TextStyle(
-                      //             color: AppColor.buttonColor,
-                      //             fontWeight: FontWeight.w500,
-                      //             fontSize: 14),
-                      //       ),
-      
-                      //     ],
-                      //   ),
-                      // ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 2 / 100,
-                      ),
+        
+                    
                       AppButton(
                           text: AppLanguage.verifyButtonText[language],
                           onPress: () {

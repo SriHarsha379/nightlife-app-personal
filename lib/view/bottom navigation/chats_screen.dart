@@ -290,7 +290,7 @@ class _ChatScreenState extends State<ChatScreen> {
                   Column(
                     children: [
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.90,
@@ -305,63 +305,84 @@ class _ChatScreenState extends State<ChatScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.01,
+                        height: MediaQuery.of(context).size.height * 0.02,
                       ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 91 / 100,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children: List.generate(storyImages.length, (index) {
-                              return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Container(
-                                        width: size.width * 15 / 100,
-                                        height: size.width * 15 / 100,
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.circular(35),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppColor.primaryColor
-                                                  .withOpacity(0.25),
-                                              blurRadius: 4,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ],
-                                        ),
-                                        child: ClipRRect(
-                                          // borderRadius: BorderRadius.circular(35),
-                                          child: Image.asset(
-                                            storyImages[index]["image"] ??
-                                                "no image",
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height: MediaQuery.of(context).size.height *
-                                          1 /
-                                          100,
-                                    ),
-                                    Text(
-                                      storyImages[index]["name"] ?? "No Name",
-                                      style: const TextStyle(
-                                        color: AppColor.secondryColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ),
+                         child: Row(
+  children: List.generate(storyImages.length, (index) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: Stack(
+              clipBehavior: Clip.none,
+              children: [
+                Container(
+                  width: size.width * 15 / 100,
+                  height: size.width * 15 / 100,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(35),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.primaryColor.withOpacity(0.25),
+                        blurRadius: 4,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(35),
+                    child: Image.asset(
+                      storyImages[index]["image"] ?? "no image",
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+
+                // ===== SEND ICON ONLY ON FIRST ITEM =====
+                if (index == 0)
+                  Positioned(
+                    right: -12,
+                    top: -3.5,
+                    child: Container(
+                      width: size.width * 5.2 / 100,
+                      height: size.width * 5.2 / 100,
+                      decoration: BoxDecoration(
+                        color: AppColor.darkPurpleColor,
+                        shape: BoxShape.circle,
+                      ),
+                       child: Image.asset(
+          AppImage.storySendiconn,
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+        ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+
+          SizedBox(height: size.height * 0.8 / 100),
+
+          Text(
+            storyImages[index]["name"] ?? "No Name",
+            style: const TextStyle(
+              color: AppColor.secondryColor,
+              fontWeight: FontWeight.w500,
+              fontSize: 12,
+            ),
+          ),
+        ],
+      ),
+    );
+  }),
+),
+
                         ),
                       )
                     ],

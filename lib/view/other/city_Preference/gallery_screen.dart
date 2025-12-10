@@ -14,8 +14,7 @@ import 'package:night_life/view/other/MySplashSection/MembersSection/member_like
 import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/city_Preference/badge_screen.dart';
+
 import 'package:night_life/view/other/city_Preference/event_preference.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
 import 'package:night_life/view/other/upload_id_screen.dart';
@@ -84,23 +83,31 @@ class _GalleryScreenState extends State<GalleryScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
- SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+//  SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+//         systemNavigationBarColor: AppColor.primaryColor,
+//         systemNavigationBarIconBrightness: Brightness.light,
+//         statusBarColor: AppColor.themeColor,
+//         statusBarIconBrightness: Brightness.light));
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
-    // ignore: deprecated_member_use
-    return Scaffold(
-      backgroundColor: Colors.white,
-
-      body: SafeArea(
-        child: Container(
+      ),
+      child: Scaffold(
+      
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                  SizedBox(
+                  height: MediaQuery.of(context).size.height * 4 / 100,
+                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -144,7 +151,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           ),
                         ],
                       ),
-
+        
                       // Row(
                       //   children: [
                       //     GestureDetector(
@@ -205,11 +212,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     ),
                   ),
                 ),
-
+        
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
-
+        
                 SizedBox(
                   width: size.width,
                   child: ListView.builder(
@@ -218,7 +225,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     physics: NeverScrollableScrollPhysics(),
                     itemBuilder: (context, rowIndex) {
                       int startIndex = rowIndex * 3;
-
+        
                       return Padding(
                         padding:
                             EdgeInsets.only(bottom: size.height * 2.5 / 100),
@@ -232,7 +239,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                       30 /
                                       100); // Maintain alignment
                             }
-
+        
                             return GestureDetector(
                               onTap: () {},
                               child: Container(
@@ -251,7 +258,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                   child: Image.asset(
                                     galleryList[itemIndex]['image'],
                                     fit: BoxFit
-                                        .cover, // Now image visible clearly ✅
+                                        .cover, 
                                   ),
                                 ),
                               ),
@@ -262,32 +269,32 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     },
                   ),
                 ),
-
+        
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 15 / 100,
+                  height: MediaQuery.of(context).size.height * 12 / 100,
                 ),
-       AppButton(
-  text: AppLanguage.continueText[language],
-  onPress: () {
-    Navigator.push(
-      context,
-      PageTransition(
+               AppButton(
+          text: AppLanguage.continueText[language],
+          onPress: () {
+            Navigator.push(
+              context,
+              PageTransition(
         type: PageTransitionType.rightToLeftWithFade,
-        child: MyAppFooter(initialIndex: 0), // Always starts at index 0
+        child:VibeCheckScreen(), // Always starts at index 0
         duration: const Duration(milliseconds: 500),
-      ),
-    );  
-  }
-),
-
+              ),
+            );  
+          }
+        ),
+        
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 4 / 100,
                 ),
-
+        
                 // ),
-
+        
                 // Container(
-
+        
                 //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
                 //   width: MediaQuery.of(context).size.width * 100 / 100,
                 //   height: MediaQuery.of(context).size.width *20 / 100,
@@ -296,7 +303,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 //     fit: BoxFit.contain,
                 //   ),
                 // ),
-
+        
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height * 2 / 100,
                 // ),
@@ -304,9 +311,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 }

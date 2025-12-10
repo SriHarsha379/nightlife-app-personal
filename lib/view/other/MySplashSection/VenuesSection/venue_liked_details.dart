@@ -121,40 +121,10 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Center(
-                //   child:
-                //    SizedBox(
-                //     width: MediaQuery.of(context).size.width * 90 / 100,
-                //     height: MediaQuery.of(context).size.height * 7 / 100,
-                //     child: Row(
-                //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: [
-                //         GestureDetector(
-                //           onTap: () {
-                //             Navigator.pop(context);
-                //           },
-                //           child: Container(
-                //             height:
-                //                 MediaQuery.of(context).size.height * 7 / 100,
-                //             alignment: Alignment.center,
-                //             child: Image.asset(
-                //               AppImage.backarrow,
-                //               fit: BoxFit.cover,
-                //               color: AppColor.primaryColor,
-                //               height:
-                //                   MediaQuery.of(context).size.width * 5 / 100,
-                //               width:
-                //                   MediaQuery.of(context).size.width * 5 / 100,
-                //             ),
-                //           ),
-                //         ),
-
-                //       ],
-                //     ),
-                //   ),
-
+                
+     
                 // ),
-                // SizedBox(height: size.height * 2 / 100),
+                // SizedBox(height: size.height * 3 / 100),
 
                 Expanded(
                   child: SingleChildScrollView(

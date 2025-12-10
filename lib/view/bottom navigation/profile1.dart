@@ -48,7 +48,7 @@ class _Profile1State extends State<Profile1> {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -66,7 +66,7 @@ class _Profile1State extends State<Profile1> {
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
             decoration:
-                BoxDecoration(gradient: AppColor.backgroundGradientcolor1),
+                BoxDecoration(color: AppColor.primaryColor),
             child: SingleChildScrollView(
               child: Column(
                 children: [

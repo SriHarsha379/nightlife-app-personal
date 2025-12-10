@@ -5,6 +5,7 @@ import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:night_life/view/other/city_Preference/gallery_screen.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -71,7 +72,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                    Navigator.push(context,
                       PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: VibeCheckScreen(),
+                      child: GalleryScreen(),
                       duration: const Duration(milliseconds: 500),
                     ),);
                 },

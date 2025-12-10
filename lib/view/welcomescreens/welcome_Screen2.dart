@@ -70,7 +70,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
         children: [
           /// Background Gradient
           Container(
-            decoration: const BoxDecoration(
+            decoration:  BoxDecoration(
               gradient: AppColor.backgroundGradientcolor,
             ),
           ),

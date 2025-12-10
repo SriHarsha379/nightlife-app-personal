@@ -69,7 +69,7 @@ class _BookTableState extends State<BookTable> {
 
   int selectedIndex = 0; // by default, first selected
   int dateindex = 0; // by default, first selected
-  int select = 0; // by default, first selected
+  int select = 0; 
 
   final List<Map<String, String>> dates = [
     {'day': 'Today', 'date': '24 Oct'},

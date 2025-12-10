@@ -106,7 +106,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                           height: size.height * 0.9 / 100,
                         ),
                         SizedBox(
-                          width: size.width * 90 / 100,
+                          width: size.width * 92 / 100,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
@@ -546,7 +546,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                             SizedBox(height: size.height * 2 / 100),
                             Container(
                               width: size.width * 90 / 100,
-                              height: size.height * 52 / 100,
+                              height: size.height * 55 / 100,
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 18),
                               decoration: BoxDecoration(

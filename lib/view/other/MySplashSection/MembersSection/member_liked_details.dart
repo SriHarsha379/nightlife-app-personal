@@ -11,6 +11,7 @@ import 'package:night_life/utilities/widgets.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../../../utilities/app_footer.dart';
 import '../../chats/chat_message_screen.dart';
 
 class LikedMemberDetail extends StatefulWidget {
@@ -120,147 +121,171 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     },
   ];
 
+  
+ List chats = [
+    {
+      'id': 1,
+      'image': 'assets/icons/ProfilePhoto.png',
+      'name': 'Smith Mathew',
+      'lastMessage': 'Hi, David. Hope you\'re doing...',
+      'time': '09:18',
+      
+    },
+    {
+      'id': 2,
+      'image': 'assets/icons/arjunrampalIcon.png',
+      'name': 'Merry An.',
+      'lastMessage': 'Are you ready for today\'s part..',
+      'time': '12:44',
+    },
+    {
+      'id': 3,
+      'image': 'assets/icons/galleryIcon.png',
+      'name': 'John Walton',
+      'lastMessage': 'I\'am sending you a parcel rece..',
+      'time': '08:06',
+    },
+    {
+      'id': 4,
+      'image': 'assets/icons/girlImage.png',
+      'name': 'Monica Randawa',
+      'lastMessage': 'Hope you\'re doing well today..',
+      'time': '09:32',
+    },
+  ];
+
+
   int selectedId = 1;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
+
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
-
-          padding: const EdgeInsets.only(bottom: 20,left: 40),
-          child: Row(
-            children: [
-              
-              Container(
-                width: size.width * 12 / 100,
-                child: ClipRRect(
-                    borderRadius: const BorderRadius.only(
-                      topLeft: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                    ),
-                    child: Image.asset(
-                      AppImage.crossIcon,
-                      fit: BoxFit.cover,
-                    )),
-              ),
-              SizedBox(
-                width: size.width * 3 / 100,
-              ),
-
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColor.secondryColor,
-                  borderRadius: BorderRadius.circular(50),
-                  border: Border.all(
-                    color: AppColor.secondryColor,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Padding(
+      
+            padding: const EdgeInsets.only(bottom: 20,left: 40),
+            child: Row(
+              children: [
+                
+                GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: MyAppFooter(initialIndex: 0),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: size.width * 12 / 100,
+                    child: ClipRRect(
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        ),
+                        child: Image.asset(
+                          AppImage.crossIcon,
+                          fit: BoxFit.cover,
+                        )),
                   ),
                 ),
-                child: Text(
-                  AppLanguage.sendInviteText[language],
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppFont.fontFamily,
-                    color: AppColor.pinkColor,
-                  ),
-                ),
-              ),
-              
                 SizedBox(
-                width: size.width * 3 / 100,
-              ),
-              Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColor.buttonColor,
-                  borderRadius: BorderRadius.circular(50),
-
-                  // border: Border.all(
-
-                  //      color : AppColor.primaryColor,
-                  // ),
+                  width: size.width * 3 / 100,
                 ),
-                child: Row(
-                  children: [
-                    Image.asset(
-                      AppImage.heartImg,
-                      height: 20,
-                      width: 20,
-                      color: AppColor.secondryColor, // optional tint color
+      
+                GestureDetector(
+                  onTap: (){
+                    documenttypebottomsheet(context);
+                  },
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColor.secondryColor,
+                      borderRadius: BorderRadius.circular(50),
+                      border: Border.all(
+                        color: AppColor.secondryColor,
+                      ),
                     ),
-                    Text(
-                      AppLanguage.likeText[language],
+                    child: Text(
+                      AppLanguage.sendInviteText[language],
                       style: TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppFont.fontFamily,
-                        color: AppColor.secondryColor,
+                        color: AppColor.pinkColor,
                       ),
                     ),
-                  ],
+                  ),
                 ),
-              ),
-            
+                
+                  SizedBox(
+                  width: size.width * 3 / 100,
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColor.buttonColor,
+                    borderRadius: BorderRadius.circular(50),
+      
+                    // border: Border.all(
+      
+                    //      color : AppColor.primaryColor,
+                    // ),
+                  ),
+                  child: Row(
+                    children: [
+                      Image.asset(
+                        AppImage.heartImg,
+                        height: 20,
+                        width: 20,
+                        color: AppColor.secondryColor, // optional tint color
+                      ),
+                      Text(
+                        AppLanguage.likeText[language],
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppFont.fontFamily,
+                          color: AppColor.secondryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
               
-            ],
+                
+              ],
+            ),
           ),
-        ),
-        body: SafeArea(
-          child: Container(
+          body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
             color: AppColor.primaryColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Center(
-                //   child:
-                //    SizedBox(
-                //     width: MediaQuery.of(context).size.width * 90 / 100,
-                //     height: MediaQuery.of(context).size.height * 7 / 100,
-                //     child: Row(
-                //       // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //       children: [
-                //         GestureDetector(
-                //           onTap: () {
-                //             Navigator.pop(context);
-                //           },
-                //           child: Container(
-                //             height:
-                //                 MediaQuery.of(context).size.height * 7 / 100,
-                //             alignment: Alignment.center,
-                //             child: Image.asset(
-                //               AppImage.backarrow,
-                //               fit: BoxFit.cover,
-                //               color: AppColor.primaryColor,
-                //               height:
-                //                   MediaQuery.of(context).size.width * 5 / 100,
-                //               width:
-                //                   MediaQuery.of(context).size.width * 5 / 100,
-                //             ),
-                //           ),
-                //         ),
 
-                //       ],
-                //     ),
-                //   ),
-
-                // ),
-                // SizedBox(height: size.height * 2 / 100),
-
+        
+                 SizedBox(height: size.height * 4 / 100),
+                
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
@@ -664,7 +689,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                     ],
                                   ),
-
+                
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
@@ -704,7 +729,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           color: AppColor.secondryColor),
                                     ),
                                   ),
-
+                
                                   SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         1 /
@@ -719,7 +744,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       Interest.length,
                                       (index) {
                                         bool isAll = Interest[index]['id'] == 1;
-
+                
                                         return GestureDetector(
                                           onTap: isAll
                                               ? null
@@ -808,7 +833,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           fit: BoxFit.fill,
                                         )),
                                   ),
-
+                
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
@@ -890,7 +915,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ],
                                     ),
                                   ),
-
+                
                                   // SizedBox(
                                   //   width: MediaQuery.of(context).size.width,
                                   //   child: SingleChildScrollView(
@@ -973,7 +998,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   //     ),
                                   //   ),
                                   // ),
-
+                
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1004,7 +1029,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                     .width *
                                                 4 /
                                                 100),
-
+                
                                         // Icon
                                         // Image.asset(
                                         //   AppImage.instagramIcon,
@@ -1020,14 +1045,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         //       6 /
                                         //       100,
                                         // ),
-
+                
                                         SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 2 /
                                                 100),
-
+                
                                         // Text + spacing
                                         Expanded(
                                           child: Column(
@@ -1060,7 +1085,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             ],
                                           ),
                                         ),
-
+                
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 6, horizontal: 12),
@@ -1082,7 +1107,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             ),
                                           ),
                                         ),
-
+                
                                         SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -1092,11 +1117,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ],
                                     ),
                                   ),
-
+                
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-
+                
                                   // Container(
                                   //   width: size.width * 75 / 100,
                                   //   height: size.height * 7 / 100,
@@ -1207,7 +1232,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   //     ],
                                   //   ),
                                   // ),
-
+                
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1313,7 +1338,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                     ),
                                   ),
-
+                
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1427,6 +1452,268 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       ),
     );
   }
+void documenttypebottomsheet(BuildContext context) {
+  final size = MediaQuery.of(context).size;
+
+  showModalBottomSheet<void>(
+    backgroundColor: Colors.transparent,
+    isScrollControlled: true,
+    shape: const RoundedRectangleBorder(),
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(builder: (context, setStateBottomSheet) {
+        return Container(
+          width: MediaQuery.of(context).size.width * 100 / 100,
+          height: MediaQuery.of(context).size.height * 60 / 100,
+          color: Colors.transparent,
+          child: Column(
+            children: [
+              Container(
+                width: MediaQuery.of(context).size.width * 100 / 100,
+                height: MediaQuery.of(context).size.height * 60 / 100,
+                child: Column(
+                  children: [
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        decoration: BoxDecoration(
+                          gradient: AppColor.backgroundGradientcolor,
+                          borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(46),
+                            topRight: Radius.circular(46),
+                          ),
+                        ),
+                        width: size.width * 100 / 100,
+                        height: size.height * 80 / 100,
+                        child: Column(
+                          children: [
+                            SizedBox(height: size.height * 2 / 100),
+                            Image.asset(
+                              AppImage.dashIcon,
+                              height: size.height * 0.5 / 100,
+                              width: size.width * 28 / 100,
+                              fit: BoxFit.fill,
+                            ),
+                            SizedBox(height: size.height * 2 / 100),
+                            Container(
+                              color: AppColor.transparentColor,
+                              width: MediaQuery.of(context).size.width * 100 / 100,
+                              height: MediaQuery.of(context).size.height * 8 / 100,
+                              child: Center(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {
+                                        setStateBottomSheet(() {
+                                          selectedIndex = 0;
+                                        });
+                                      },
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width * 50 / 100,
+                                        child: Center(
+                                          child: Text(
+                                            AppLanguage.eventsText[language],
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: selectedIndex == 0
+                                                  ? AppColor.secondryColor
+                                                  : AppColor.secondryColor,
+                                              fontSize: 15,
+                                              fontFamily: AppFont.fontFamily,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        setStateBottomSheet(() {
+                                          selectedIndex = 1;
+                                        });
+                                      },
+                                      child: Container(
+                                        width: MediaQuery.of(context).size.width * 50 / 100,
+                                        child: Center(
+                                          child: Text(
+                                            AppLanguage.venuesText[language],
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.w500,
+                                              color: selectedIndex == 1
+                                                  ? AppColor.greyLightColor
+                                                  : AppColor.secondryColor,
+                                              fontSize: 15,
+                                              fontFamily: AppFont.fontFamily,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            Container(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setStateBottomSheet(() {
+                                        selectedIndex = 0;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.44,
+                                      height: MediaQuery.of(context).size.height * 0.003,
+                                      color: selectedIndex == 0
+                                          ? AppColor.secondryColor
+                                          : AppColor.secondryColor,
+                                    ),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      setStateBottomSheet(() {
+                                        selectedIndex = 1;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: MediaQuery.of(context).size.width * 0.36,
+                                      height: MediaQuery.of(context).size.height * 0.003,
+                                      color: selectedIndex == 1
+                                          ? AppColor.greyLightColor
+                                          : AppColor.secondryColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: size.height * 2 / 100),
+                            SizedBox(height: size.height * 1 / 100),
+                            Expanded(
+                              child: SingleChildScrollView(
+                                child: Column(
+                                  children: [
+                                    ...List.generate(chats.length, (index) {
+                                      final chat = chats[index];
+                                      final isSend = chats[index]['isSend'] == true;
+                                      
+                                      return Wrap(
+                                        children: [
+                                          Container(
+                                            width: size.width * 90 / 100,
+                                            height: size.height * 8.5 / 100,
+                                            child: ListTile(
+                                              contentPadding: EdgeInsets.zero,
+                                              leading: Container(
+                                                height: size.height * 10 / 100,
+                                                width: size.width * 13 / 100,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  image: DecorationImage(
+                                                    image: AssetImage(chat['image'] ?? ''),
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              title: Text(
+                                                chat['name'] ?? '',
+                                                style: TextStyle(
+                                                  fontWeight: FontWeight.w600,
+                                                  fontSize: 16,
+                                                  color: AppColor.secondryColor,
+                                                ),
+                                              ),
+                                              subtitle: Text(
+                                                chat['lastMessage'] ?? '',
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  color: AppColor.secondryColor,
+                                                ),
+                                                maxLines: 1,
+                                                overflow: TextOverflow.ellipsis,
+                                              ),
+                                              trailing: GestureDetector(
+                                                onTap: () {
+                                                  setStateBottomSheet(() {
+                                                    chats[index]['isSend'] = true;
+                                                  });
+
+                                                  Future.delayed(
+                                                    const Duration(milliseconds: 200), 
+                                                    () {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                          type: PageTransitionType.bottomToTop,
+                                                          child: ChatMessageScreen(
+                                                            name: chats[index]['name'] ?? '',
+                                                            image: chats[index]['image'] ?? '',
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }
+                                                  );
+                                                },
+                                                child: Container(
+                                                  padding: const EdgeInsets.symmetric(
+                                                    horizontal: 20,
+                                                    vertical: 8
+                                                  ),
+                                                  decoration: BoxDecoration(
+                                                    color: isSend
+                                                        ? AppColor.logoutContainerColor
+                                                        : AppColor.secondryColor,
+                                                    borderRadius: BorderRadius.circular(10),
+                                                    border: isSend
+                                                        ? Border.all(
+                                                            color: AppColor.buttonColor,
+                                                            width: 1
+                                                          )
+                                                        : null,
+                                                  ),
+                                                  child: Text(
+                                                    isSend
+                                                        ? (chats[index]['message1']?.toString() ?? 'Send')
+                                                        : (chats[index]['message']?.toString() ?? 'Send'),
+                                                    style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily: AppFont.fontFamily,
+                                                      color: isSend
+                                                          ? AppColor.secondryColor
+                                                          : AppColor.primaryColor,
+                                                    ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          if (index < chats.length - 0)
+                                            if (index < chats.length - 0)
+                                              SizedBox(height: size.height * 0.1 / 100),
+                                        ],
+                                      );
+                                    }),
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      });
+    },
+  );
+}
+
 
   void showUserPopup(BuildContext context) {
     final size = MediaQuery.of(context).size;

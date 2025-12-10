@@ -86,12 +86,12 @@ class _SearchScreenState extends State<SearchScreen> {
     {
       "title": "Pacific Mall",
       "location": "7.2 km | Kaushambi",
-      "image": "./assets/icons/silentnightimg.png"
+      "image": "assets/icons/ic_roofimg.png"
     },
     {
       "title": "Kingdom of Dreams",
       "location": "12.5 km | Gurgaon",
-      "image": "./assets/icons/silentnightimg.png"
+      "image": "./assets/icons/kingdom.jpg"
     },
     {
       "title": "Pacific Mall",
@@ -101,14 +101,21 @@ class _SearchScreenState extends State<SearchScreen> {
     {
       "title": "Pacific Mall",
       "location": "7.2 km | Kaushambi",
-      "image": "./assets/icons/silentnightimg.png"
+      "image": "assets/icons/ic_roofimg.png"
     },
     {
       "title": "Pacific Mall",
       "location": "7.2 km | Kaushambi",
-      "image": "./assets/icons/silentnightimg.png"
+      "image": "./assets/icons/kingdom.jpg"
     },
   ];
+
+  @override
+void initState() {
+  super.initState();
+  tapBarStatus = 2; 
+}
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -130,12 +137,12 @@ class _SearchScreenState extends State<SearchScreen> {
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
             backgroundColor:
-                isDark ? AppColor.primaryColor : AppColor.secondryColor,
+   AppColor.primaryColor,
             body: SafeArea(
               child: Container(
                 height: MediaQuery.of(context).size.height * 100 / 100,
                 width: MediaQuery.of(context).size.width * 100 / 100,
-                color: isDark ? AppColor.primaryColor : AppColor.secondryColor,
+                color:  AppColor.primaryColor ,
                 child: Column(children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 2 / 100,
@@ -373,6 +380,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ? AppColor.pinkColor
                                         : AppColor.textTapColor,
                                   ),
+                                  
                                 ),
                                 Text(
                                   AppLanguage.eventsText[language],
@@ -1930,101 +1938,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   MainAxisAlignment.spaceEvenly,
                                               children: [
                                                 // ---------- FIRST CARD ----------
-                                                Container(
-                                                  width: size.width * 0.42,
-                                                  decoration: BoxDecoration(
-                                                    color: Colors.black,
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            14),
-                                                  ),
-                                                  child: Column(
-                                                    children: [
-                                                      ClipRRect(
-                                                        borderRadius:
-                                                            BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(
-                                                                  14),
-                                                          topRight:
-                                                              Radius.circular(
-                                                                  14),
-                                                        ),
-                                                        child: Image.asset(
-                                                          items[i1]["image"],
-                                                          height: 100,
-                                                          width:
-                                                              size.width * 0.42,
-                                                          fit: BoxFit.cover,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 8),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          items[i1]["title"],
-                                                          style: TextStyle(
-                                                            color: Colors.white,
-                                                            fontSize: 14,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 2),
-                                                      Align(
-                                                        alignment: Alignment
-                                                            .centerLeft,
-                                                        child: Text(
-                                                          items[i1]["location"],
-                                                          style: TextStyle(
-                                                            fontSize: 12,
-                                                            color:
-                                                                Colors.white60,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 8),
-                                                      Container(
-                                                        width:
-                                                            size.width * 0.41,
-                                                        height: 32,
-                                                        decoration:
-                                                            BoxDecoration(
-                                                          color: Colors.white,
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(8),
-                                                        ),
-                                                        child: Center(
-                                                          child: Text(
-                                                            "Book Now",
-                                                            style: TextStyle(
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.black,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                      SizedBox(height: 8),
-                                                    ],
-                                                  ),
-                                                ),
-
-                                                // ---------- SECOND CARD (IF EXISTS) ----------
-                                                if (i2 < items.length)
-                                                  Container(
+                                                GestureDetector(
+                                                  onTap: (){
+                                                     Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: LikedEventDetail(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                                                  },
+                                                  child: Container(
                                                     width: size.width * 0.42,
                                                     decoration: BoxDecoration(
                                                       color: Colors.black,
@@ -2045,49 +1970,44 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     14),
                                                           ),
                                                           child: Image.asset(
-                                                            items[i2]["image"],
+                                                            items[i1]["image"],
                                                             height: 100,
-                                                            width: size.width *
-                                                                0.42,
+                                                            width:
+                                                                size.width * 0.42,
                                                             fit: BoxFit.cover,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
                                                         Align(
-                                                           alignment: Alignment
-                                                            .centerLeft,
+                                                          alignment: Alignment
+                                                              .centerLeft,
                                                           child: Text(
-                                                            items[i2]["title"],
+                                                            items[i1]["title"],
                                                             style: TextStyle(
-                                                              color:
-                                                                  Colors.white,
+                                                              color: Colors.white,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
+                                                                  FontWeight.w600,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 2),
                                                         Align(
-                                                           alignment: Alignment
-                                                            .centerLeft,
+                                                          alignment: Alignment
+                                                              .centerLeft,
                                                           child: Text(
-                                                            items[i2]
-                                                                ["location"],
+                                                            items[i1]["location"],
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              color: Colors
-                                                                  .white60,
+                                                              color:
+                                                                  Colors.white60,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            overflow: TextOverflow
+                                                                .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
@@ -2100,16 +2020,15 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             color: Colors.white,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(
-                                                                        8),
+                                                                    .circular(8),
                                                           ),
                                                           child: Center(
                                                             child: Text(
                                                               "Book Now",
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                color: Colors
-                                                                    .black,
+                                                                color:
+                                                                    Colors.black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -2119,6 +2038,119 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         ),
                                                         SizedBox(height: 8),
                                                       ],
+                                                    ),
+                                                  ),
+                                                ),
+
+                                                // ---------- SECOND CARD (IF EXISTS) ----------
+                                                if (i2 < items.length)
+                                                  GestureDetector(
+                                                    onTap: (){
+                                                       Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: LikedEventDetail(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                                                    },
+                                                    child: Container(
+                                                      width: size.width * 0.42,
+                                                      decoration: BoxDecoration(
+                                                        color: Colors.black,
+                                                        borderRadius:
+                                                            BorderRadius.circular(
+                                                                14),
+                                                      ),
+                                                      child: Column(
+                                                        children: [
+                                                          ClipRRect(
+                                                            borderRadius:
+                                                                BorderRadius.only(
+                                                              topLeft:
+                                                                  Radius.circular(
+                                                                      14),
+                                                              topRight:
+                                                                  Radius.circular(
+                                                                      14),
+                                                            ),
+                                                            child: Image.asset(
+                                                              items[i2]["image"],
+                                                              height: 100,
+                                                              width: size.width *
+                                                                  0.42,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 8),
+                                                          Align(
+                                                             alignment: Alignment
+                                                              .centerLeft,
+                                                            child: Text(
+                                                              items[i2]["title"],
+                                                              style: TextStyle(
+                                                                color:
+                                                                    Colors.white,
+                                                                fontSize: 14,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 2),
+                                                          Align(
+                                                             alignment: Alignment
+                                                              .centerLeft,
+                                                            child: Text(
+                                                              items[i2]
+                                                                  ["location"],
+                                                              style: TextStyle(
+                                                                fontSize: 12,
+                                                                color: Colors
+                                                                    .white60,
+                                                              ),
+                                                              maxLines: 1,
+                                                              overflow:
+                                                                  TextOverflow
+                                                                      .ellipsis,
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 8),
+                                                          Container(
+                                                            width:
+                                                                size.width * 0.41,
+                                                            height: 32,
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: Colors.white,
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          8),
+                                                            ),
+                                                            child: Center(
+                                                              child: Text(
+                                                                "Book Now",
+                                                                style: TextStyle(
+                                                                  fontSize: 14,
+                                                                  color: Colors
+                                                                      .black,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w600,
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(height: 8),
+                                                        ],
+                                                      ),
                                                     ),
                                                   ),
                                               ],

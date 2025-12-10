@@ -31,7 +31,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: const TextStyle(color: AppColor.primaryColor),
+      style: const TextStyle(color: AppColor.secondryColor),
       keyboardType: widget.keyboardType,
       controller: widget.controller,
       maxLength: widget.maxLength,
@@ -61,18 +61,18 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
           borderSide: const BorderSide(
-            color: AppColor.textfieldfillColor,
+            color: AppColor.transparentColor,
             width: 1,
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
           borderSide: const BorderSide(
-            color: AppColor.textfieldfillColor,
+            color: AppColor.textfieldcontainercolor,
             width: 1, // Changed from 0 to 1 for consistency
           ),
         ),
-        fillColor: AppColor.textfieldfillColor,
+        fillColor: AppColor.textfieldcontainercolor,
         filled: true,
         counterText: '',
         hintText: widget.hintText,

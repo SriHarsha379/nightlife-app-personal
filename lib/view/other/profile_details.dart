@@ -531,7 +531,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 color: AppColor.secondryColor,
                 fontFamily: AppFont.fontFamily,
               ),
-              icon: const SizedBox.shrink(), // ✅ Default dropdown arrow remove
+              icon: const SizedBox.shrink(), 
               decoration: InputDecoration(
                 suffixIcon: Padding(
                   padding: EdgeInsets.only(right: 22),

@@ -59,85 +59,78 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
         backgroundColor: AppColor.primaryColor,
- floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-floatingActionButton: Padding(
-  padding: const EdgeInsets.only(bottom: 20), // adjust as needed
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              setState(() {
-                select = select == 1 ? 0 : 1;
-              });
-            },
-            child: Container(
-              height: size.height * 3 / 100,
-              width: size.height * 3 / 100,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: select == 1
-                      ? AppColor.darkPurpleColor
-                      : AppColor.lightgreyColor,
-                  width: 2,
-                ),
-              ),
-              child: Center(
-                child: Container(
-                  height: size.height * 1.5 / 100,
-                  width: size.height * 1.5 / 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: select == 1
-                        ? AppColor.darkPurpleColor
-                        : Colors.transparent,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 20), // adjust as needed
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        select = select == 1 ? 0 : 1;
+                      });
+                    },
+                    child: Container(
+                      height: size.height * 3 / 100,
+                      width: size.height * 3 / 100,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(
+                          color: select == 1
+                              ? AppColor.darkPurpleColor
+                              : AppColor.lightgreyColor,
+                          width: 2,
+                        ),
+                      ),
+                      child: Center(
+                        child: Container(
+                          height: size.height * 1.5 / 100,
+                          width: size.height * 1.5 / 100,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: select == 1
+                                ? AppColor.darkPurpleColor
+                                : Colors.transparent,
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
-                ),
+                  SizedBox(width: size.width * 1 / 100),
+                  Text(
+                    'Accept the terms and conditions',
+                    style: TextStyle(
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w400,
+                      fontSize: 12,
+                      color: AppColor.lightGreyColor,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ),
-
-          SizedBox(width: size.width * 1 / 100),
-
-          Text(
-            'Accept the terms and conditions',
-            style: TextStyle(
-              fontFamily: AppFont.fontFamily,
-              fontWeight: FontWeight.w400,
-              fontSize: 12,
-              color: AppColor.lightGreyColor,
-            ),
-          ),
-        ],
-      ),
-
-      SizedBox(height: 10),
-
-      AppButton(
-        text: AppLanguage.continueText[language],
-        onPress: () {
-          if (select == 1) {
-            Navigator.push(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeftWithFade,
-                child: CompletePayment2(),
-                duration: Duration(milliseconds: 500),
+              SizedBox(height: 10),
+              AppButton(
+                text: AppLanguage.continueText[language],
+                onPress: () {
+                  if (select == 1) {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: CompletePayment2(),
+                        duration: Duration(milliseconds: 500),
+                      ),
+                    );
+                  } else {}
+                },
               ),
-            );
-          } else {
-           
-          }
-        },
-      ),
-    ],
-  ),
-),
-
+            ],
+          ),
+        ),
         body: SafeArea(
           child: Container(
             height: size.height * 100 / 100,
@@ -505,7 +498,7 @@ floatingActionButton: Padding(
                                   ),
                                 ),
                                 Transform.rotate(
-                                angle:   isOpen ?  0:3.14,
+                                  angle: isOpen ? 0 : 3.14,
                                   child: Image.asset(
                                     AppImage.downArrow,
                                     height: size.height * 2 / 100,
@@ -540,7 +533,6 @@ floatingActionButton: Padding(
                                 );
                               },
                             ),
-                    
                           SizedBox(
                             height: size.height * 15 / 100,
                           ),

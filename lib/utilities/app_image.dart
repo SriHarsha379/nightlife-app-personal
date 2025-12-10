@@ -206,7 +206,7 @@ class AppImage {
       "./assets/icons/frequencyincrementIcon.png";
   // static const splashGif= "./assets/icons/splashGif.gif";
   static const splashGif = "./assets/icons/gif.gif";
-  static const uploadDoc = "./assets/icons/uploadDoc.png";
+  // static const uploadDoc = "./assets/icons/uploadDoc.png";
   static const pencilIcon = "./assets/icons/pencilIcon.png";
 
   static const anticlockUshapedArrow =
@@ -353,5 +353,10 @@ static const eventImage1 = "./assets/icons/eventImage1.jpg";
   static const logo = "./assets/icons/hiilogo.png";
     static const amblogo = "./assets/icons/ambproductlogo.png";
     static const silentnightimg= "./assets/icons/silentnightimg.png";
+    static const storySendiconn= "./assets/icons/storySendicon.png";
+    static const blackUploadicon= "./assets/icons/blackUploadIcon.png";
+    static const blackConnecticon= "./assets/icons/blackConnecticon.png";
+    static const blackviewallicon= "./assets/icons/viewAllIcon.png";
+    static const kingdom= "./assets/icons/kingdom.jpg";
 
 }

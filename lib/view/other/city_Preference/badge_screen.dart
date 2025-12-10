@@ -15,7 +15,6 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dar
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/city_Preference/party_preference.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 

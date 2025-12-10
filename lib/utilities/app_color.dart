@@ -101,7 +101,7 @@ class AppColor {
   static const Color chatColor = Color(0xff734E84);
   static const Color chatcolor1 = Color(0xff341941);
 
-  static const Color statusbar = Color(0xff490073);
+  static const Color statusbar = Color(0xff331940);
   static const Color cotainerColor = Color(0xffE8E9EA);
   static const Color notificationContainerColor = Color(0xff171217);
   static const Color notificationtextColor = Color(0xffB09CBA);
@@ -131,14 +131,27 @@ class AppColor {
   static const Color capsuleColor = Color(0xff22161e);
   static const Color logoutContainerColor = Color(0xff41274c);
 
-  static const LinearGradient backgroundGradientcolor = LinearGradient(
-    begin: Alignment.topCenter,
-    end: Alignment.bottomCenter,
-    colors: [
-      Color(0xFF341941), // Purple at top (0%)
-      Color(0xFF000000), // Black at bottom (100%)
-    ],
-  );
+static const LinearGradient backgroundGradientcolor = LinearGradient(
+  begin: Alignment.topCenter,
+  end: Alignment.bottomCenter,
+  colors: [
+    const Color(0xFF341941), 
+    const Color(0xFF000000),
+  ],
+);
+
+// static const LinearGradient backgroundGradientcolor = LinearGradient(
+//   begin: Alignment.topCenter,
+//   end: Alignment.bottomCenter,
+//   colors: [
+//     Color(0xFF46215F), 
+//     Color(0xFF281333), 
+//     Color(0xFF070109), 
+//   ],
+//   stops: [0.0, 0.55, 1.0],
+// );
+
+
 
   static const LinearGradient backgroundGradientcolor1 = LinearGradient(
     begin: Alignment.topCenter,
@@ -190,6 +203,7 @@ static const Color hinttextcolor = Color(0xffb8b7bd);
 
 static const Color bookeventcontainercolor = Color(0xff191021);
 static const Color emojibackgroundColor = Color(0xff927dfe);
+static const Color textfieldcontainercolor = Color(0xff1a1919);
 
 static const Color refercontainercolor = Color(0xff171217);
 }

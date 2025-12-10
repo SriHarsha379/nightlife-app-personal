@@ -178,12 +178,12 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                                   textAlign: TextAlign.center,
                                   style: const TextStyle(
                                     color: AppColor.secondryColor,
-                                    fontSize: 13.6,
+                                    fontSize: 11,
                                     fontFamily: AppFont.fontFamily,
                                      decoration: TextDecoration.underline,
                                      decorationColor: AppColor.secondryColor,
-                                      decorationThickness: 1.5,
-                                      height: 2.5,
+                                      decorationThickness: 0.8,
+                                      height: 2.8,
                                   ),
                                 ),
                                 SizedBox(
@@ -193,8 +193,8 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                                 ),
                                 Image.asset(
                                   AppImage.pencilIcon,
-                                  height: size.height * 2.5 / 100,
-                                  width: size.width * 2.5 / 100,
+                                  height: size.height * 2 / 100,
+                                  width: size.width * 2 / 100,
                                   color: AppColor.secondryColor,
                                 ),
                               ],

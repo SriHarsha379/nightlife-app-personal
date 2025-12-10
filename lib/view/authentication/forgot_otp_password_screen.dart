@@ -82,7 +82,6 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,

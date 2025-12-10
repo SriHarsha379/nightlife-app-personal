@@ -17,7 +17,6 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:night_life/view/other/city_Preference/gallery_screen.dart';
-import 'package:night_life/view/other/city_Preference/party_preference.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -109,23 +108,69 @@ void initState() {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
+
 
     // ignore: deprecated_member_use
-    return Scaffold(
-
-      body: SafeArea(
-        child: Container(
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 30),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,   // <-- ADD THIS
+    children: [
+      AppButton(
+        text: '${AppLanguage.continueText[language]}',
+        onPress: () {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: MyAppFooter(initialIndex: 0,),
+              duration: const Duration(milliseconds: 500),
+            ),
+          );
+        },
+      ),
+      SizedBox(height: 8), // better spacing
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => MyAppFooter(initialIndex: 0,)));
+        },
+        child: Text(
+          textAlign: TextAlign.center,
+          AppLanguage.skip[language],
+          style: TextStyle(
+            fontFamily: AppFont.fontFamily,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColor.greyLightColor,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+        body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
+                 SizedBox(
+                  height: MediaQuery.of(context).size.height * 4 / 100,
+                ), 
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -152,7 +197,7 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                           ),
                         SizedBox(
                             width: MediaQuery.of(context).size.width * 2 / 100,),
-
+              
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 73 / 100,
                             child: Center(
@@ -168,74 +213,16 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                               ),
                             ),
                           ),
-
-                          GestureDetector(
-                            onTap: (){
-                                  Navigator.push(context,
-                    PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: GalleryScreen(),
-                    duration: const Duration(milliseconds: 600),
-                  ),);
-                            },
-                             child: Text(
-                               textAlign: TextAlign.center,
-                               AppLanguage.skip[language],
-                               style: TextStyle(
-                                 fontFamily: AppFont.fontFamily,
-                                 fontSize: 14,
-                                 fontWeight: FontWeight.w700,
-                                 color: AppColor.greyLightColor,
-                               ),
-                             ),
-                           ),
+              
+                
                         ],
                       ),
-            
-                      // Row(
-                      //   children: [
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Notifications()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 3 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.bellicon,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: size.width * 2 / 100,
-                      //     ),
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Profile()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 5 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.userimage,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // )
+         
                     ],
                   ),
                 ),
                                               SizedBox(height: size.height * 2 / 100),
-
+              
                   SizedBox(
                   width: MediaQuery.of(context).size.width * 88 / 100,
                   child: Align(
@@ -262,27 +249,27 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                   ),
                 ),
                               SizedBox(height: size.height * 2 / 100),
-       GestureDetector(
-  onTap: () {
-    setState(() {
-      isDropdownOpen = !isDropdownOpen;
-    });
-  },
-  child: Container(
-    width: size.width * 0.9,
-    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-    decoration: BoxDecoration(
-      color: AppColor.primaryColor,
-      borderRadius: BorderRadius.only(
+                 GestureDetector(
+                onTap: () {
+              setState(() {
+                isDropdownOpen = !isDropdownOpen;
+              });
+                },
+                child: Container(
+              width: size.width * 0.9,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
+              decoration: BoxDecoration(
+                color: AppColor.primaryColor,
+                borderRadius: BorderRadius.only(
         topLeft: Radius.circular(50),
         topRight: Radius.circular(50),
         bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
         bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
-      ),
-    ),
-    child: Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
         Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: const [
@@ -313,30 +300,30 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
             color: Colors.white,
           ),
         ),
-      ],
-    ),
-  ),
-),
-
-
-// ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
-if (isDropdownOpen)
-  Container(
-    width: size.width * 0.9,
-    padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-    margin: const EdgeInsets.only(top: 0),
-    decoration: BoxDecoration(
-      color: AppColor.primaryColor,
-      borderRadius: const BorderRadius.only(
+                ],
+              ),
+                ),
+              ),
+              
+              
+              // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
+              if (isDropdownOpen)
+                Container(
+              width: size.width * 0.9,
+              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+              margin: const EdgeInsets.only(top: 0),
+              decoration: BoxDecoration(
+                color: AppColor.primaryColor,
+                borderRadius: const BorderRadius.only(
         bottomLeft: Radius.circular(50),
         bottomRight: Radius.circular(50),
-      ),
-    ),
-    child: ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: questionList.length,
-      itemBuilder: (context, index) {
+                ),
+              ),
+              child: ListView.builder(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: questionList.length,
+                itemBuilder: (context, index) {
         return GestureDetector(
           onTap: () {
             print("Selected: ${questionList[index]["title"]}");
@@ -371,9 +358,9 @@ if (isDropdownOpen)
             ),
           ),
         );
-      },
-    ),
-  ),
+                },
+              ),
+                ),
            
                 SizedBox(height: size.height * 4 / 100),
                 Container(
@@ -439,204 +426,18 @@ if (isDropdownOpen)
                 ),
             
                
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 47 / 100,
-                ),
-                AppButton(
-                    text: AppLanguage.continueText[language],
-                    onPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => GalleryScreen()));
-                    }),
-            
-                //       Image.asset(
-                //         AppImage.undo,
-                //         width: MediaQuery.of(context).size.width * 64 / 100,
-                //         height: MediaQuery.of(context).size.height * 8 / 100,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-            
-                // Container(
-            
-                //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
-                //   width: MediaQuery.of(context).size.width * 100 / 100,
-                //   height: MediaQuery.of(context).size.width *20 / 100,
-                //   child: Image.asset(
-                //     AppImage.undo,
-                //     fit: BoxFit.contain,
-                //   ),
-                // ),
-            
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 2 / 100,
-                // ),
+              
+           
               ],
             ),
           ),
         ),
+        // bottomNavigationBar: const AppFooter(
+        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
     );
   }
 
-  // void documenttypebottomsheet(BuildContext context) {
-  //   final size = MediaQuery.of(context).size;
-
-  //   showModalBottomSheet<void>(
-  //     backgroundColor: Colors.transparent,
-  //     isScrollControlled: true,
-  //     shape: const RoundedRectangleBorder(),
-  //     context: context,
-  //     builder: (BuildContext context) {
-  //       // String? tempSelected = selectedState;
-
-  //       return StatefulBuilder(builder: (context, setStateBottomSheet) {
-  //         return Container(
-  //           width: MediaQuery.of(context).size.width * 100 / 100,
-  //           height: MediaQuery.of(context).size.height * 60 / 100,
-  //           color: Colors.transparent,
-  //           child: Column(
-  //             children: [
-  //               Container(
-  //                   width: MediaQuery.of(context).size.width * 100 / 100,
-  //                   height: MediaQuery.of(context).size.height * 60 / 100,
-  //                   // decoration: BoxDecoration(
-  //                   //     borderRadius: BorderRadius.only(
-  //                   //         topLeft: Radius.circular(50),
-  //                   //         topRight: Radius.circular(50)),
-  //                   //     color: Colors.transparent),
-  //                   child: Column(
-  //                     children: [
-  //                       Expanded(
-  //                         flex: 1,
-  //                         child: SingleChildScrollView(
-  //                           child: Container(
-  //                             decoration: BoxDecoration(
-  //                               gradient: AppColor.backgroundGradient,
-  //                               // gradient: AppColor.chatContainerColor,
-  //                               borderRadius: BorderRadius.only(
-  //                                 topLeft: Radius.circular(46),
-  //                                 topRight: Radius.circular(46),
-  //                               ),
-  //                             ),
-  //                             width: size.width * 100 / 100,
-  //                             height: size.height * 80 / 100,
-  //                             child: Column(
-  //                               children: [
-  //                                 SizedBox(height: size.height * 2 / 100),
-  //                                 ...List.generate(chats.length, (index) {
-  //                                   final chat = chats[index];
-  //                                   return Wrap(
-  //                                     children: [
-  //                                       Container(
-  //                                         width: size.width * 90 / 100,
-  //                                         height: size.height * 8.5 / 100,
-  //                                         child: ListTile(
-  //                                           contentPadding: EdgeInsets.zero,
-  //                                           leading: Container(
-  //                                             height: size.height * 10 / 100,
-  //                                             width: size.width * 13 / 100,
-  //                                             decoration: BoxDecoration(
-  //                                               shape: BoxShape
-  //                                                   .circle, // makes it circular
-  //                                               image: DecorationImage(
-  //                                                 image:
-  //                                                     AssetImage(chat['image']),
-  //                                                 fit: BoxFit.cover,
-  //                                               ),
-  //                                             ),
-  //                                           ),
-  //                                           title: Text(
-  //                                             chat['name'],
-  //                                             style: TextStyle(
-  //                                               fontWeight: FontWeight.w600,
-  //                                               fontSize: 16,
-  //                                               color: AppColor.secondryColor,
-  //                                             ),
-  //                                           ),
-  //                                           subtitle: Text(
-  //                                             chat['lastMessage'],
-  //                                             style: TextStyle(
-  //                                               fontSize: 14,
-  //                                               color: AppColor.secondryColor,
-  //                                             ),
-  //                                             maxLines: 1,
-  //                                             overflow: TextOverflow.ellipsis,
-  //                                           ),
-  //                                           trailing: Container(
-  //                                             padding:
-  //                                                 const EdgeInsets.symmetric(
-  //                                                     horizontal: 20,
-  //                                                     vertical: 8),
-  //                                             decoration: BoxDecoration(
-  //                                               color: AppColor.secondryColor,
-  //                                               borderRadius:
-  //                                                   BorderRadius.circular(10),
-  //                                               // border: Border.all(
-
-  //                                               //      color : AppColor.primaryColor,
-  //                                               // ),
-  //                                             ),
-  //                                             child: Text(
-  //                                               chat['message'],
-  //                                               style: TextStyle(
-  //                                                 fontSize: 14,
-  //                                                 fontWeight: FontWeight.w500,
-  //                                                 fontFamily:
-  //                                                     AppFont.fontFamily,
-  //                                                 color: AppColor.primaryColor,
-  //                                               ),
-  //                                             ),
-  //                                           ),
-  //                                           onTap: () {
-  //                                             // Handle chat item tap
-  //                                             print(
-  //                                                 'Tapped on ${chat['name']}');
-  //                                             Navigator.push(
-  //                                               context,
-  //                                               MaterialPageRoute(
-  //                                                 builder: (context) =>
-  //                                                     ChatMessageScreen(
-  //                                                   name: chat['name'],
-  //                                                   image: chat['image'],
-  //                                                 ),
-  //                                               ),
-  //                                             );
-  //                                           },
-  //                                         ),
-  //                                       ),
-  //                                       if (index < chats.length - 0)
-  //                                         // Divider(
-  //                                         //   height: 0.2,
-  //                                         //   // thickness: 0.5,
-  //                                         //   // color: Colors.grey[300],
-  //                                         //   indent: 30,
-  //                                         // ),
-  //                                         if (index < chats.length - 0)
-  //                                           SizedBox(
-  //                                               height:
-  //                                                   size.height * 0.1 / 100),
-  //                                     ],
-  //                                   );
-  //                                 }),
-  //                               ],
-  //                             ),
-  //                           ),
-  //                         ),
-  //                       ),
-  //                     ],
-  //                   )),
-  //             ],
-  //           ),
-  //         );
-  //       });
-  //     },
-  //   );
-  // }
+ 
 //
 }

@@ -90,14 +90,13 @@ class _EventPreferenceState extends State<EventPreference> {
     // ignore: deprecated_member_use
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: Colors.white,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 40),
@@ -171,19 +170,25 @@ class _EventPreferenceState extends State<EventPreference> {
                   ),
                 ),
               
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 75 / 100,
-                  child: Center(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLanguage.selectEventstatementText[language],
-                      style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 15,
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.secondryColor,
+                SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 75 / 100,
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            AppLanguage.selectEventstatementText[language],
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 15,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.secondryColor,
+                            ),
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ),
               

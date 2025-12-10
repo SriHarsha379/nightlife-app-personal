@@ -777,8 +777,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
-                                  AppImage.uploadButton,
-                                  color: AppColor.primaryColor,
+                                  AppImage.blackUploadicon,
                                   height: MediaQuery.of(context).size.height *
                                       6 /
                                       100,
@@ -995,7 +994,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
-                                  AppImage.viewAllbutton,
+                                  AppImage.blackviewallicon,
                                   height: MediaQuery.of(context).size.height *
                                       6 /
                                       100,
@@ -1070,7 +1069,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           Center(
                             child: SizedBox(
                               child: Image.asset(
-                                AppImage.viewAllbutton,
+                                AppImage.blackviewallicon,
                                 height: MediaQuery.of(context).size.height *
                                     6 /
                                     100,
@@ -1163,7 +1162,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
-                                  AppImage.connectButton,
+                                  AppImage.blackConnecticon,
                                   height: MediaQuery.of(context).size.height *
                                       6 /
                                       100,
@@ -1267,7 +1266,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
-                                  AppImage.connectButton,
+                                  AppImage.blackConnecticon,
                                   height: MediaQuery.of(context).size.height *
                                       6 /
                                       100,

@@ -1,4 +1,5 @@
 // import 'dart:html';
+// import 'dart:html';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,9 +16,9 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dar
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/city_Preference/party_preference.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen2.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -40,10 +41,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   // ignore: prefer_typing_uninitialized_variables
   var fileName;
 
-
   int reportId = 0;
-bool isDropdownOpen = false;
-int selectedIndex = -1;
+  bool isDropdownOpen = false;
+  int selectedIndex = -1;
 
   int selectedId = 2;
   List Orders = [
@@ -65,41 +65,40 @@ int selectedIndex = -1;
   ];
   TextEditingController searchController = TextEditingController();
 
-List<Map<String, String>> questionList = [
-  {
-    "title": "What's your perfect night out?",
-    "subtitle": "Describe your ideal evening in a few words.",
-  },
-  {
-    "title": "Go–to drink?",
-    "subtitle": "What do you usually order at the bar?",
-  },
-
+  List<Map<String, String>> questionList = [
     {
-    "title": "Something interesting about you?",
-    "subtitle": "Tell something interesting about yourself",
-  },
-   {
-    "title": "What's your perfect night out?",
-    "subtitle": "Describe your ideal evening in a few words.",
-  },
+      "title": "What's your perfect night out?",
+      "subtitle": "Describe your ideal evening in a few words.",
+    },
     {
-    "title": "Go–to drink?",
-    "subtitle": "What do you usually order at the bar?",
-  },
-   {
-    "title": "Something interesting about you?",
-    "subtitle": "Tell something interesting about yourself",
-  },
-];
+      "title": "Go–to drink?",
+      "subtitle": "What do you usually order at the bar?",
+    },
+    {
+      "title": "Something interesting about you?",
+      "subtitle": "Tell something interesting about yourself",
+    },
+    {
+      "title": "What's your perfect night out?",
+      "subtitle": "Describe your ideal evening in a few words.",
+    },
+    {
+      "title": "Go–to drink?",
+      "subtitle": "What do you usually order at the bar?",
+    },
+    {
+      "title": "Something interesting about you?",
+      "subtitle": "Tell something interesting about yourself",
+    },
+  ];
 
-List<bool> isOpen = [];
+  List<bool> isOpen = [];
 
-@override
-void initState() {
-  super.initState();
-  isOpen = List.filled(questionList.length, false);
-}
+  @override
+  void initState() {
+    super.initState();
+    isOpen = List.filled(questionList.length, false);
+  }
 
   @override
   void dispose() {
@@ -109,12 +108,6 @@ void initState() {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.themeColor,
-        statusBarIconBrightness: Brightness.light));
 
     // ignore: deprecated_member_use
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -126,7 +119,48 @@ void initState() {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-      
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+floatingActionButton: Padding(
+  padding: const EdgeInsets.only(bottom: 30),
+  child: Column(
+    mainAxisSize: MainAxisSize.min,
+    children: [
+      AppButton(
+        text: '${AppLanguage.continueText[language]}',
+        onPress: () {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: VibeCheckScreen2(),
+              duration: const Duration(milliseconds: 500),
+            ),
+          );
+        },
+      ),
+      SizedBox(height: 8), // better spacing
+      GestureDetector(
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => VibeCheckScreen2()));
+        },
+        child: Text(
+          textAlign: TextAlign.center,
+          AppLanguage.skip[language],
+          style: TextStyle(
+            fontFamily: AppFont.fontFamily,
+            fontSize: 14,
+            fontWeight: FontWeight.w700,
+            color: AppColor.greyLightColor,
+          ),
+        ),
+      ),
+    ],
+  ),
+),
+
         body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
@@ -134,8 +168,9 @@ void initState() {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                    SizedBox(
-                            height: MediaQuery.of(context).size.height * 4 / 100,),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 4 / 100,
+                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -181,73 +216,16 @@ void initState() {
                               ),
                             ),
                           ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          VibeCheckScreen2()));
-                            },
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              AppLanguage.skip[language],
-                              style: TextStyle(
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 14,
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.greyLightColor,
-                              ),
-                            ),
-                          ),
                         ],
                       ),
-        
-                      // Row(
-                      //   children: [
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Notifications()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 3 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.bellicon,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: size.width * 2 / 100,
-                      //     ),
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Profile()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 5 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.userimage,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // )
+
+                  
                     ],
                   ),
                 ),
-        
+
                 SizedBox(height: size.height * 2 / 100),
-        
+
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 88 / 100,
                   child: Align(
@@ -264,7 +242,7 @@ void initState() {
                     ),
                   ),
                 ),
-        
+
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   child: Image.asset(
@@ -274,127 +252,138 @@ void initState() {
                   ),
                 ),
                 SizedBox(height: size.height * 2 / 100),
-        
+
                 //
-        GestureDetector(
-          onTap: () {
-            setState(() {
-              isDropdownOpen = !isDropdownOpen;
-            });
-          },
-          child: Container(
-            width: size.width * 0.9,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 18),
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor,
-              borderRadius: BorderRadius.only(
-        topLeft: Radius.circular(50),
-        topRight: Radius.circular(50),
-        bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
-        bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
-              ),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: const [
-            Text(
-              "What's your perfect night out?",
-              style: TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-                color: Colors.white,
-              ),
-            ),
-            SizedBox(height: 4),
-            Text(
-              "Describe your ideal evening in a few words.",
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w400,
-                color: Color(0xffB7AFC9),
-              ),
-            ),
-          ],
-        ),
-        AnimatedRotation(
-          turns: isDropdownOpen ? 0.5 : 0,
-          duration: Duration(milliseconds: 200),
-          child: const Icon(
-            Icons.keyboard_arrow_down_rounded,
-            color: Colors.white,
-          ),
-        ),
-              ],
-            ),
-          ),
-        ),
-        
-        
-        // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
-        if (isDropdownOpen)
-          Container(
-            width: size.width * 0.9,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
-            margin: const EdgeInsets.only(top: 0),
-            decoration: BoxDecoration(
-              color: AppColor.primaryColor,
-              borderRadius: const BorderRadius.only(
-        bottomLeft: Radius.circular(50),
-        bottomRight: Radius.circular(50),
-              ),
-            ),
-            child: ListView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: questionList.length,
-              itemBuilder: (context, index) {
-        return GestureDetector(
-          onTap: () {
-            print("Selected: ${questionList[index]["title"]}");
-            setState(() {
-              isDropdownOpen = false;
-            });
-          },
-          child: Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  questionList[index]["title"]!,
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.white,
+                GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      isDropdownOpen = !isDropdownOpen;
+                    });
+                  },
+                  child: Container(
+                    width: size.width * 90/100,
+                    // height: size.heiht *9/100,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 18, vertical: 15),
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryColor,
+                      borderRadius: BorderRadius.only(
+                        topLeft: Radius.circular(50),
+                        topRight: Radius.circular(50),
+                        bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
+                        bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
+                      ),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Text(
+                              "What's your perfect night out?",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              "Describe your ideal evening in a few words.",
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w400,
+                                color: Color(0xffB7AFC9),
+                              ),
+                            ),
+                          ],
+                        ),
+                        AnimatedRotation(
+                          turns: isDropdownOpen ? 0.5 : 0,
+                          duration: Duration(milliseconds: 200),
+                          child: const Icon(
+                            Icons.keyboard_arrow_down_rounded,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  questionList[index]["subtitle"]!,
-                  style: const TextStyle(
-                    fontSize: 13,
-                    fontWeight: FontWeight.w400,
-                    color: Color(0xffB7AFC9),
+                
+
+                // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
+                if (isDropdownOpen)
+                 Divider(
+                                        height: 0.2,
+                                        thickness: 0.5,
+                                        color: AppColor.greyLightColor,
+                                        indent: 30,
+                                        endIndent: 30,
+                                      ),
+                                                      if (isDropdownOpen)
+
+                  Container(
+                    width: size.width * 0.9,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 19,),
+                                        decoration: BoxDecoration(
+                      color: AppColor.primaryColor,
+                      borderRadius: const BorderRadius.only(
+                        bottomLeft: Radius.circular(50),
+                        bottomRight: Radius.circular(50),
+                      ),
+                    ),
+
+
+
+                    
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: questionList.length,
+                      itemBuilder: (context, index) {
+                         
+                        return GestureDetector(
+                          onTap: () {
+                            print("Selected: ${questionList[index]["title"]}");
+                            setState(() {
+                              isDropdownOpen = false;
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(vertical:8),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  questionList[index]["title"]!,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.white,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  questionList[index]["subtitle"]!,
+                                  style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w400,
+                                    color: Color(0xffB7AFC9),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                   ),
-                ),
-                const SizedBox(height: 6),
-              ],
-            ),
-          ),
-        );
-              },
-            ),
-          ),
-        
-        
-        
-        
+
                 SizedBox(height: size.height * 4 / 100),
-        
-        
+
                 Container(
                   width: size.width * 90 / 100,
                   height: size.height * 6 / 100,
@@ -455,42 +444,6 @@ void initState() {
                     ),
                   ),
                 ),
-        
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 46 / 100,
-                ),
-                AppButton(
-                    text: AppLanguage.continueText[language],
-                    onPress: () {
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => VibeCheckScreen2()));
-                    }),
-        
-                //       Image.asset(
-                //         AppImage.undo,
-                //         width: MediaQuery.of(context).size.width * 64 / 100,
-                //         height: MediaQuery.of(context).size.height * 8 / 100,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-        
-                // Container(
-        
-                //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
-                //   width: MediaQuery.of(context).size.width * 100 / 100,
-                //   height: MediaQuery.of(context).size.width *20 / 100,
-                //   child: Image.asset(
-                //     AppImage.undo,
-                //     fit: BoxFit.contain,
-                //   ),
-                // ),
-        
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 2 / 100,
-                // ),
               ],
             ),
           ),
@@ -500,6 +453,4 @@ void initState() {
       ),
     );
   }
-
- 
 }

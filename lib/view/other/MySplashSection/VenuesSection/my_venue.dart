@@ -95,22 +95,33 @@ class _MyVenueState extends State<MyVenue> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+    //     systemNavigationBarColor: AppColor.primaryColor,
+    //     systemNavigationBarIconBrightness: Brightness.light,
+    //     statusBarColor: AppColor.primaryColor,
+    //     statusBarIconBrightness: Brightness.light));
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        body: SafeArea(
-          child: Container(
+      ),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
             color: AppColor.primaryColor,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+
+                  SizedBox(
+                  height: MediaQuery.of(context).size.height * 2 / 100,
+                ),
                 Center(
                   child: SizedBox(
                     width: MediaQuery.of(context).size.width * 90 / 100,
@@ -159,15 +170,12 @@ class _MyVenueState extends State<MyVenue> {
                             
                            documenttypebottomsheet(context);
                           },
-                          child: Transform.rotate(
-                            angle: isDropdownOpen ? 0 : 3.14,
-                            child: Image.asset(
-                              AppImage.downArrow,
-                              fit: BoxFit.cover,
-                              color: AppColor.secondryColor,
-                              height:
-                                  MediaQuery.of(context).size.width * 5 / 100,
-                            ),
+                          child: Image.asset(
+                            AppImage.downArrow,
+                            fit: BoxFit.cover,
+                            color: AppColor.secondryColor,
+                            height:
+                                MediaQuery.of(context).size.width * 5 / 100,
                           ),
                         ),
                       ],
@@ -750,7 +758,7 @@ class _MyVenueState extends State<MyVenue> {
                                     100,
                               ),
                               // if(selectedIndex != 0)
-
+                
                               SizedBox(
                                 width: MediaQuery.of(context).size.width *
                                     100 /
@@ -779,7 +787,7 @@ class _MyVenueState extends State<MyVenue> {
                                               color:
                                                   AppColor.startingscreenColor),
                                         ),
-
+                
                                         child: Column(
                                           children: [
                                             // Image section
@@ -917,11 +925,11 @@ class _MyVenueState extends State<MyVenue> {
                                                   2 /
                                                   100,
                                             ),
-
+                
                                             // View Details button
                                             GestureDetector(
                                               onTap: (){
- Navigator.push(
+                 Navigator.push(
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeftWithFade,
@@ -956,7 +964,7 @@ class _MyVenueState extends State<MyVenue> {
                                                 ),
                                               ),
                                             ),
-
+                
                                             // Content section
                                           ],
                                         ),

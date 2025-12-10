@@ -57,17 +57,7 @@ class _HomeState extends State<Home> {
     {'id': 3, 'title': 'Venues'},
     {'id': 4, 'title': 'All'},
   ];
-  // List<Map<String, dynamic>> imageList = [
-  //   {
-  //     "image": AppImage.div3,
-  //   },
-  //   {
-  //     "image": AppImage.div,
-  //   },
-  //   {
-  //     "image": AppImage.div2,
-  //   },
-  // ];
+
 
   List chats = [
     {
@@ -223,13 +213,12 @@ class _HomeState extends State<Home> {
           SnackBarToastMessage.showSnackBar(
               context, AppLanguage.pressAgainExitText[language]);
         } else {
-          // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
           SystemNavigator.pop();
         }
       },
       child: Scaffold(
         backgroundColor:
-            isDark ? AppColor.primaryColor : AppColor.secondryColor,
+         AppColor.primaryColor ,
 
         body: SafeArea(
           child: SizedBox(
@@ -470,7 +459,7 @@ class _HomeState extends State<Home> {
                                     bottom: MediaQuery.of(context).size.height *
                                         0.32,
                                     right: MediaQuery.of(context).size.width *
-                                        0.005, // Changed from 0.01 to 0.005
+                                        0.004, 
 
                                     child: GestureDetector(
                                       onTap: () {
@@ -607,7 +596,7 @@ class _HomeState extends State<Home> {
                             Positioned(
                               bottom: MediaQuery.of(context).size.height * 0.32,
                               right: MediaQuery.of(context).size.width *
-                                  0.005, // Changed from 0.01 to 0.005
+                                  0.004, // Changed from 0.01 to 0.005
                               child: GestureDetector(
                                 onTap: () {
                                   documenttypebottomsheet(context);
