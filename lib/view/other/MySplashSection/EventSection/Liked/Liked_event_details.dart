@@ -1003,7 +1003,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               ),
                             ),
                             SizedBox(
-                              height: size.height * 5 / 100,
+                              height: size.height * 12 / 100,
                             ),
                           ],
                         ),

@@ -36,36 +36,39 @@ class _PastEventScreenState extends State<PastEventScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.dark,
+
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.dark));
-    return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-            backgroundColor: AppColor.primaryColor,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: AppButton(
-                  text: '${AppLanguage.submitButtonText[language]}',
-                  onPress: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: ReviewBookingDetails(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  }),
-            ),
-            body: Container(
-                height: size.height * 100 / 100,
-                width: size.width * 100 / 100,
-                child: Expanded(
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+              backgroundColor: AppColor.primaryColor,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: AppButton(
+                    text: '${AppLanguage.submitButtonText[language]}',
+                    onPress: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: ReviewBookingDetails(),
+                          duration: const Duration(milliseconds: 500),
+                        ),
+                      );
+                    }),
+              ),
+              body: Container(
+                  height: size.height * 100 / 100,
+                  width: size.width * 100 / 100,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
@@ -236,9 +239,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 ),
                               ],
                             ),
-
+                        
                             SizedBox(height: size.height * 1 / 100),
-
+                        
                             // Select Items
                             Wrap(
                               spacing: 10,
@@ -246,7 +249,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               alignment: WrapAlignment.center,
                               children: List.generate(dates.length, (index) {
                                 final isSelect = dateindex == index;
-
+                        
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -300,9 +303,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 );
                               }),
                             ),
-
+                        
                             SizedBox(height: size.height * 4 / 100),
-
+                        
                             // ----------------- Your Details -----------------
                             SizedBox(
                               width:
@@ -331,7 +334,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-
+                        
                                         SizedBox(height: size.height * 3 / 100),
                                         Column(
                                           crossAxisAlignment:
@@ -348,13 +351,13 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             infoItem("City", "Delhi"),
                                           ],
                                         ),
-
+                        
                                         SizedBox(height: 16),
                                         Divider(
                                             color: Colors.white24,
                                             thickness: 0.6),
                                         SizedBox(height: 16),
-
+                        
                                         // -------- Price breakdown title ----------
                                         Text(
                                           "Price breakdown",
@@ -364,14 +367,14 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-
+                        
                                         SizedBox(height: 16),
-
+                        
                                         detailsRow("Ticket Charges", "₹14,999"),
                                         detailsRow("Cover charge", "₹50"),
-
+                        
                                         SizedBox(height: 6),
-
+                        
                                         // -------- Expandable Booking Fee ----------
                                         GestureDetector(
                                           onTap: () {
@@ -409,23 +412,23 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             ],
                                           ),
                                         ),
-
+                        
                                         if (showDetails) ...[
                                           SizedBox(height: 6),
                                           detailsRow("Base Price", "₹999"),
                                           detailsRow(
                                               "Transaction Charges", "₹299"),
                                         ],
-
+                        
                                         SizedBox(height: 8),
                                         detailsRow("Discount", "-10%"),
-
+                        
                                         SizedBox(height: 6),
                                         Divider(
                                             color: Colors.white24,
                                             thickness: 0.6),
                                         SizedBox(height: 10),
-
+                        
                                         // -------- Total Row ----------
                                         detailsRow(
                                           "Total",
@@ -435,9 +438,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.w600,
                                         ),
-
+                        
                                         SizedBox(height: 6),
-
+                        
                                         detailsRow(
                                           "Payment Mode",
                                           "UPI",
@@ -450,9 +453,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 ],
                               ),
                             ),
-
+                        
                             SizedBox(height: size.height * 2 / 100),
-
+                        
                             // ------------------- Emoji Rating -----------------------
                             Container(
                               width: size.width * 90 / 100,
@@ -477,9 +480,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-
+                        
                                   SizedBox(height: 6),
-
+                        
                                   // Subtitle
                                   Text(
                                     "We’d love to know!",
@@ -492,18 +495,18 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-
+                        
                                   SizedBox(height: 18),
-
+                        
                                   // Divider Line
                                   Container(
                                     height: 1,
                                     width: size.width * 80 / 100,
                                     color: Colors.white24,
                                   ),
-
+                        
                                   SizedBox(height: 25),
-
+                        
                                   // Emoji Row
                                   Row(
                                     mainAxisAlignment:
@@ -511,7 +514,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     children:
                                         List.generate(emojis.length, (index) {
                                       final isSelected = selectedEmoji == index;
-
+                        
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -540,9 +543,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               ),
                             ),
                             SizedBox(height: size.height * 2 / 100),
-
+                        
                             // ----------------- Feedback Text Field -----------------------
-
+                        
                             SizedBox(height: size.height * 2 / 100),
                             Container(
                               width: size.width * 90 / 100,
@@ -566,9 +569,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       color: AppColor.secondryColor,
                                     ),
                                   ),
-
+                        
                                   SizedBox(height: 6),
-
+                        
                                   Text(
                                     "Your opinion matters. Tell us what worked and what didn’t.",
                                     textAlign: TextAlign.center,
@@ -579,17 +582,17 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       color: AppColor.lightGreyColor,
                                     ),
                                   ),
-
+                        
                                   SizedBox(height: 10),
-
+                        
                                   Container(
                                     width: size.width,
                                     height: size.height * 0.0025,
                                     color: Colors.white12,
                                   ),
-
+                        
                                   SizedBox(height: size.height * 2 / 100),
-
+                        
                                   // Feedback Text Input
                                   Container(
                                     width: size.width * 80 / 100,
@@ -624,8 +627,8 @@ class _PastEventScreenState extends State<PastEventScreen> {
                         ),
                       ],
                     ),
-                  ),
-                ))));
+                  )))),
+    );
   }
 
   Widget sectionTitle(String text) {

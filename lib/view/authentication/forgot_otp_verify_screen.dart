@@ -333,24 +333,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                           //     mobilenumberTextEditingController.text);
                         }),
 
-                    // Container(
-                    //   decoration: const BoxDecoration(
-                    //     border: Border(
-                    //       bottom: BorderSide(
-                    //           color: AppColor.thirdColor,
-                    //           style: BorderStyle.solid),
-                    //     ),
-                    //   ),
-                    //   child: Text(
-                    //     AppLanguage.resendOtp[language],
-                    //     style: const TextStyle(
-                    //       color: AppColor.themeColor,
-                    //       fontSize: 15,
-                    //       fontWeight: FontWeight.w500,
-                    //       fontFamily: AppFont.fontFamily,
-                    //     ),
-                    //   ),
-                    // ),
+                    
                   ],
                 ),
               ),

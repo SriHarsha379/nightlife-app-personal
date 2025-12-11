@@ -291,12 +291,14 @@ class _MyEventsState extends State<MyEvents> {
                               Likedlist.length,
                               (index) => GestureDetector(
                                 onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) =>
-                                            const LikedEventDetail()),
-                                  );
+                                   Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.bottomToTop,
+                        child: LikedEventDetail(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
                                 },
                                 child: Container(
                                   width: size.width * 90 / 100,
@@ -877,8 +879,14 @@ class _MyEventsState extends State<MyEvents> {
                                         // View Details button
                                         GestureDetector(
                                           onTap: (){
-                                            Navigator.push(context,MaterialPageRoute(builder: ((context) =>PastEventScreen() )));
-                                          },
+  Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: PastEventScreen(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );                                          },
                                           child: Container(
                                             height: size.height * 4.5 / 100,
                                             width: MediaQuery.of(context)

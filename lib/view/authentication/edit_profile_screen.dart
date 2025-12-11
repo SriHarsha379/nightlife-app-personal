@@ -223,6 +223,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxLength: AppConstant.mobileMaxLenth,
                     keyboardType: TextInputType.name,
                     controller: usernameController,
+                    fillColor: AppColor.textfieldcontainercolor,
                   ),
                 ),
               ),
@@ -361,7 +362,7 @@ class _EditProfileState extends State<EditProfile> {
                         Image.asset(
                           AppImage.verifiedIcon,
                           height:
-                              size.height * 3 / 100, // smaller, looks balanced
+                              size.height * 3 / 100, 
                           width: size.width * 5 / 100,
                         ),
                       ],
@@ -394,10 +395,12 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                   ),
                   child: CustomTextFieldInput(
+
                     hintText: AppLanguage.enteremailidText[language],
                     maxLength: AppConstant.mobileMaxLenth,
                     keyboardType: TextInputType.name,
                     controller: emailController,
+                    fillColor: AppColor.textfieldcontainercolor,
                   ),
                 ),
               ),

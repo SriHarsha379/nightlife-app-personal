@@ -24,7 +24,7 @@ class _AboutScreenState extends State<AboutScreen> {
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light));
-            final size = MediaQuery.of(context).size;
+    final size = MediaQuery.of(context).size;
 
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -48,135 +48,124 @@ class _AboutScreenState extends State<AboutScreen> {
                   children: [
                     Image.asset(
                       AppImage.hii,
-                          width: MediaQuery.of(context).size.width * 22 / 100,
+                      width: MediaQuery.of(context).size.width * 22 / 100,
                       // height: MediaQuery.of(context).size.width * 20 / 100,
                       color: AppColor.secondryColor,
                     ),
-                  
                     SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height * 14 / 100,
+                      height: MediaQuery.of(context).size.height * 14 / 100,
                     ),
-
- Container(
-                  height: size.height * 8 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
+                    Container(
+                      height: size.height * 8 / 100,
+                      width: size.width * 94 / 100,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColor.notificationContainerColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.primaryColor,
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                        SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height * 0.5 / 100,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 0.5 / 100,
+                          ),
+                          Text(
+                            "Hii App",
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          Text(
+                            "Version 1.021",
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-
-                      Text(
-                       "Hii App",
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                       Text(
-                       "Version 1.021",
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 14,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-  SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height * 1.5 / 100,
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 1.5 / 100,
                     ),
-
-
-                     Container(
-                  height: size.height * 6 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
+                    Container(
+                      height: size.height * 6 / 100,
+                      width: size.width * 94 / 100,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 8, horizontal: 8),
+                      margin: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 5),
+                      decoration: BoxDecoration(
+                        color: AppColor.notificationContainerColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.primaryColor,
+                            spreadRadius: 3,
+                            blurRadius: 7,
+                            offset: const Offset(0, 1),
+                          ),
+                        ],
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Text(
-                       "Check for Updates",
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Check for Updates",
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.width * 8 / 100,
+                            width: size.width * 9 / 100,
+                            child: Image.asset(
+                              AppImage.frontArrowIcon,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 9 / 100,
-                        child: Image.asset(
-                          AppImage.frontArrowIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-  SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height * 27/ 100,
                     ),
-                    
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 27 / 100,
+                    ),
                     Text(
-                       "A product of",
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      "A product of",
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w500,
                       ),
-
-                Image.asset(
-                  AppImage.amblogo,
-                  fit: BoxFit.fill,
-                  width:MediaQuery.of(context).size.height* 20/100,
-                ),
+                    ),
+                    Image.asset(
+                      AppImage.amblogo,
+                      fit: BoxFit.fill,
+                      width: MediaQuery.of(context).size.height * 20 / 100,
+                    ),
                     SizedBox(
-                      height:
-                          MediaQuery.of(context).size.height * 1 / 100,
+                      height: MediaQuery.of(context).size.height * 1 / 100,
                     ),
                   ],
                 )

@@ -854,7 +854,7 @@ class _VenuePagesState extends State<VenuePages> {
                     ),
                   ),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 2 / 100,
+                    height: MediaQuery.of(context).size.height * 12 / 100,
                   ),
                 ],
               ),

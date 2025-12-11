@@ -5,7 +5,6 @@ import 'package:night_life/view/authentication/profile.dart';
 import 'package:night_life/view/bottom%20navigation/profile1.dart';
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/MySplashSection/myspace_splashcardscreen.dart';
 import 'package:night_life/view/bottom%20navigation/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import '../view/other/MySplashSection/EventSection/my_events.dart';

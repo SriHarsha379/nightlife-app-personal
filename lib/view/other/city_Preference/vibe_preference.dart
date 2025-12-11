@@ -19,7 +19,6 @@ import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
 import 'package:night_life/view/other/city_Preference/badge_screen.dart';
 import 'package:night_life/view/other/city_Preference/event_preference.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
-import 'package:night_life/view/other/upload_id_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
 

@@ -13,6 +13,7 @@ class CustomTextFieldInput extends StatefulWidget {
   final int maxLength;
   final TextInputType keyboardType;
   final String? prefixIcon;
+ final Color? fillColor;
 
   const CustomTextFieldInput({
     Key? key,
@@ -20,6 +21,7 @@ class CustomTextFieldInput extends StatefulWidget {
     required this.hintText,
     required this.maxLength,
     required this.keyboardType,
+     this.fillColor,
     this.prefixIcon,
   }) : super(key: key);
 
@@ -72,7 +74,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
             width: 1, // Changed from 0 to 1 for consistency
           ),
         ),
-        fillColor: AppColor.textfieldcontainercolor,
+        fillColor: widget.fillColor ?? AppColor.textfieldcontainercolor,
         filled: true,
         counterText: '',
         hintText: widget.hintText,
@@ -82,7 +84,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
   }
 }
 
-// kalash
+
 
 class CustomDescriptionBox extends StatelessWidget {
   final TextEditingController controller;

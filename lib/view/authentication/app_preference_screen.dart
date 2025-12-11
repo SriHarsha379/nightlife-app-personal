@@ -151,11 +151,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                     // Auto-sync selectedRadioIndex with current theme
                     if (themeProvider.themeMode == ThemeMode.dark) {
                       selectedRadioIndex = 0;
-                    } else if (themeProvider.themeMode == ThemeMode.light) {
-                      selectedRadioIndex = 2;
-                    } else {
-                      selectedRadioIndex = 1;
-                    }
+                     } 
+                    //  else if (themeProvider.themeMode == ThemeMode.light) {
+                    //   selectedRadioIndex = 1;
+                    // } else {
+                    //   selectedRadioIndex = 1;
+                    // }
 
                     return Column(
                       children: [

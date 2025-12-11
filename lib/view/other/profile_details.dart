@@ -12,7 +12,6 @@ import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/authentication/otp_verify_screen.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
 import 'package:night_life/view/other/city_Preference/citypreference_screen.dart';
-import 'package:night_life/view/other/upload_id_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:intl/intl.dart';
 
