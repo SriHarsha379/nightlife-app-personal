@@ -135,7 +135,7 @@ static const LinearGradient backgroundGradientcolor = LinearGradient(
   begin: Alignment.topCenter,
   end: Alignment.bottomCenter,
   colors: [
-    const Color(0xFF341941), 
+    Color.fromARGB(255, 71, 38, 87), 
     const Color(0xFF000000),
   ],
 );

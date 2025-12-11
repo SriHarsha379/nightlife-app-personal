@@ -66,20 +66,18 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
         statusBarIconBrightness: Brightness.light));
 
     return PopScope(
-        canPop: false,
-      onPopInvoked: (didPop) {
-  },
+      canPop: false,
+      onPopInvoked: (didPop) {},
       child: Scaffold(
         body: Stack(
           children: [
             /// Background Gradient
             Container(
-              decoration:  BoxDecoration(
-                           gradient: AppColor.backgroundGradientcolor,
-      
+              decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor,
               ),
             ),
-      
+
             /// Main Carousel
             CarouselSlider(
               carouselController: _carouselController,
@@ -100,19 +98,19 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
                 onPageChanged: (index, reason) {
                   setState(() {
                     _activeIndex = index;
-      
+
                     _slideAnimation = Tween<Offset>(
                       begin: const Offset(0, 1),
                       end: Offset.zero,
                     ).animate(
                       CurvedAnimation(
                         parent: _imageController,
-                        curve: Curves.easeOutCubic, 
+                        curve: Curves.easeOutCubic,
                       ),
                     );
-      
+
                     if (index != 3) {
-                      _imageController.forward(from: 0); 
+                      _imageController.forward(from: 0);
                     } else {
                       _imageController.reset();
                     }
@@ -120,7 +118,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
                 },
               ),
             ),
-      
+
             /// Next Button
             if (_activeIndex != 3)
               Positioned(
@@ -133,15 +131,16 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
                         curve: Curves.easeInOut);
                   },
                   child: GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) =>  WelcomeScreen2()),
-            ); 
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => WelcomeScreen2()),
+                      );
                     },
                     child: Container(
-                      padding:
-                          const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 48, vertical: 12),
                       decoration: const BoxDecoration(
                         color: AppColor.nextButtoncolor,
                         borderRadius: BorderRadius.only(
@@ -180,17 +179,13 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
       children: [
         /// Card
         Positioned(
-          top: 90,
+          top: MediaQuery.of(context).size.height * 0.10,
           child: Container(
             width: MediaQuery.of(context).size.width * 0.82,
             padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 35),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
-gradient:  AppColor.welcomefrontCardcolor,
-
-
-
-
+              gradient: AppColor.welcomefrontCardcolor,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -203,7 +198,7 @@ gradient:  AppColor.welcomefrontCardcolor,
                         fontWeight: FontWeight.w700)),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.30),
                 Text("", style: TextStyle(color: Colors.white, fontSize: 22)),
-                const SizedBox(height: 25),
+                SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Text(desc,
                     style: TextStyle(
                         color: Colors.white,
@@ -249,13 +244,15 @@ gradient:  AppColor.welcomefrontCardcolor,
 
   /// Last Screen with button
 
- Widget _dot(bool active) {
+  Widget _dot(bool active) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: active ? 12 : 5,
       height: active ? 10 : 5,
       decoration: BoxDecoration(
-        color: active ? const Color(0xFFFF2CDF) :  Color.fromARGB(255, 251, 249, 253),
+        color: active
+            ? const Color(0xFFFF2CDF)
+            : Color.fromARGB(255, 251, 249, 253),
         shape: BoxShape.circle,
       ),
     );

@@ -93,13 +93,12 @@ class _ChatScreenState extends State<ChatScreen> {
 
     bool isDark = themeProvider.isDarkMode;
     return PopScope(
-        canPop: false,
-  onPopInvoked: (didPop) {
-    setState(() {
-      AppConstant.selectFooterIndex = 0; // Footer first index par jao
-    });
-  },
-
+      canPop: false,
+      onPopInvoked: (didPop) {
+        setState(() {
+          AppConstant.selectFooterIndex = 0; // Footer first index par jao
+        });
+      },
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
@@ -129,8 +128,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 color: isDark
                                     ? AppColor.darkTextColor
                                     : AppColor.richBlackColor,
-                                width:
-                                    MediaQuery.of(context).size.width * 10 / 100,
+                                width: MediaQuery.of(context).size.width *
+                                    10 /
+                                    100,
                               ),
                             ),
                             Column(
@@ -181,8 +181,9 @@ class _ChatScreenState extends State<ChatScreen> {
                                 );
                               },
                               child: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 3 / 100,
+                                height: MediaQuery.of(context).size.height *
+                                    3 /
+                                    100,
                                 child: Image.asset(
                                   AppImage.bellicon,
                                 ),
@@ -196,15 +197,17 @@ class _ChatScreenState extends State<ChatScreen> {
                                 Navigator.push(
                                   context,
                                   PageTransition(
-                                    type: PageTransitionType.rightToLeftWithFade,
+                                    type:
+                                        PageTransitionType.rightToLeftWithFade,
                                     child: Profile(),
                                     duration: const Duration(milliseconds: 500),
                                   ),
                                 );
                               },
                               child: SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 5 / 100,
+                                height: MediaQuery.of(context).size.height *
+                                    5 /
+                                    100,
                                 child: Image.asset(
                                   AppImage.userimage,
                                 ),
@@ -216,7 +219,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ],
                     ),
                   ),
-      
+
                   SizedBox(height: size.height * 2 / 100),
                   Container(
                     width: size.width * 90 / 100,
@@ -224,8 +227,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(40), // pill shape
                       border: Border.all(color: AppColor.textfieldfillColor),
-                      color:
-                          isDark ? AppColor.primaryColor : AppColor.secondryColor,
+                      color: isDark
+                          ? AppColor.primaryColor
+                          : AppColor.secondryColor,
                       boxShadow: [
                         BoxShadow(
                           offset: const Offset(0, 4),
@@ -237,8 +241,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     ),
                     child: TextFormField(
                       controller: searchController,
-                      cursorColor:
-                          isDark ? AppColor.secondryColor : AppColor.primaryColor,
+                      cursorColor: isDark
+                          ? AppColor.secondryColor
+                          : AppColor.primaryColor,
                       style: TextStyle(
                           color: isDark
                               ? AppColor.secondryColor
@@ -286,7 +291,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-      
+
                   Column(
                     children: [
                       SizedBox(
@@ -311,84 +316,93 @@ class _ChatScreenState extends State<ChatScreen> {
                         width: MediaQuery.of(context).size.width * 91 / 100,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
-                         child: Row(
-  children: List.generate(storyImages.length, (index) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: () {},
-            child: Stack(
-              clipBehavior: Clip.none,
-              children: [
-                Container(
-                  width: size.width * 15 / 100,
-                  height: size.width * 15 / 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(35),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor.withOpacity(0.25),
-                        blurRadius: 4,
-                        offset: const Offset(0, 4),
-                      ),
-                    ],
-                  ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(35),
-                    child: Image.asset(
-                      storyImages[index]["image"] ?? "no image",
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
+                          child: Row(
+                            children:
+                                List.generate(storyImages.length, (index) {
+                              return Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                child: Column(
+                                  children: [
+                                    GestureDetector(
+                                      onTap: () {},
+                                      child: Stack(
+                                        clipBehavior: Clip.none,
+                                        children: [
+                                          Container(
+                                            width: size.width * 15 / 100,
+                                            height: size.width * 15 / 100,
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(35),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: AppColor.primaryColor
+                                                      .withOpacity(0.25),
+                                                  blurRadius: 4,
+                                                  offset: const Offset(0, 4),
+                                                ),
+                                              ],
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(35),
+                                              child: Image.asset(
+                                                storyImages[index]["image"] ??
+                                                    "no image",
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
 
-                // ===== SEND ICON ONLY ON FIRST ITEM =====
-                if (index == 0)
-                  Positioned(
-                    right: -12,
-                    top: -3.5,
-                    child: Container(
-                      width: size.width * 5.2 / 100,
-                      height: size.width * 5.2 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.darkPurpleColor,
-                        shape: BoxShape.circle,
-                      ),
-                       child: Image.asset(
-          AppImage.storySendiconn,
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
-        ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-
-          SizedBox(height: size.height * 0.8 / 100),
-
-          Text(
-            storyImages[index]["name"] ?? "No Name",
-            style: const TextStyle(
-              color: AppColor.secondryColor,
-              fontWeight: FontWeight.w500,
-              fontSize: 12,
-            ),
-          ),
-        ],
-      ),
-    );
-  }),
-),
-
+                                          // ===== SEND ICON ONLY ON FIRST ITEM =====
+                                          if (index == 0)
+                                            Positioned(
+                                              right: -8,
+                                              top: -2,
+                                              child: Container(
+                                                width: size.width * 5.2 / 100,
+                                                height: size.width * 5.2 / 100,
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      AppColor.darkPurpleColor,
+                                                  shape: BoxShape.circle,
+                                                ),
+                                                child: Image.asset(
+                                                  AppImage.storySendiconn,
+                                                  width: MediaQuery.of(context)
+                                                      .size
+                                                      .width,
+                                                  height: MediaQuery.of(context)
+                                                      .size
+                                                      .height,
+                                                ),
+                                              ),
+                                            ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.8 / 100),
+                                    Text(
+                                      storyImages[index]["name"] ?? "No Name",
+                                      style: const TextStyle(
+                                        color: AppColor.secondryColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 12,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }),
+                          ),
                         ),
                       )
                     ],
                   ),
-      
-                  SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
+
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height * 2 / 100),
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 0.90,
                     child: Text(
@@ -401,8 +415,9 @@ class _ChatScreenState extends State<ChatScreen> {
                       ),
                     ),
                   ),
-                  SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-      
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height * 1 / 100),
+
                   Expanded(
                     flex: 1,
                     child: Container(
@@ -422,7 +437,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             SizedBox(height: size.height * 3 / 100),
                             ...List.generate(chats.length, (index) {
                               final chat = chats[index];
-      
+
                               return Column(
                                 children: [
                                   Wrap(
@@ -441,7 +456,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                             decoration: BoxDecoration(
                                               shape: BoxShape.circle,
                                               image: DecorationImage(
-                                                image: AssetImage(chat['image']),
+                                                image:
+                                                    AssetImage(chat['image']),
                                                 fit: BoxFit.cover,
                                               ),
                                             ),
@@ -484,7 +500,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                 chat['time'],
                                                 style: TextStyle(
                                                   fontSize: 14,
-                                                  color: AppColor.greyLightColor,
+                                                  color:
+                                                      AppColor.greyLightColor,
                                                 ),
                                               ),
                                             ],
@@ -506,7 +523,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                           },
                                         ),
                                       ),
-                                      Divider(
+                                      const Divider(
                                         height: 0.2,
                                         thickness: 0.5,
                                         color: AppColor.greyLightColor,
@@ -534,5 +551,4 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
     );
   }
-
 }

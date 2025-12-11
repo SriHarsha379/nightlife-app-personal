@@ -55,13 +55,9 @@ class _SignUpState extends State<SignUp> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {
-          if (!didPop) {
-            // Navigate back to previous screen
-            Navigator.of(context).pop();
-          }
-        },
+         canPop: false,
+          onPopInvoked: (didPop) {
+  },
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(

@@ -36,6 +36,16 @@ class _AppPreferencesState extends State<AppPreferences> {
         statusBarIconBrightness: Brightness.light));
 
     final size = MediaQuery.of(context).size;
+@override
+void initState() {
+  super.initState();
+
+  selectedRadioIndex = 0;
+
+  Future.microtask(() {
+    Provider.of<ThemeProvider>(context, listen: false).toggleTheme(true);
+  });
+}
 
     return Scaffold(
       backgroundColor: AppColor.primaryColor,

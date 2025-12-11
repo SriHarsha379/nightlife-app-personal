@@ -233,8 +233,11 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                 ),
               ),
                Positioned(
-          bottom: 65,
-            left: 165,
+                
+          bottom: MediaQuery.of(context).size.height * 7 /100,
+          // 65,
+            left: MediaQuery.of(context).size.width * 42 /100,
+            //  165,
           child: Row(
             children: [
               _dot(_activeIndex == 1),

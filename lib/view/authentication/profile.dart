@@ -52,7 +52,7 @@ class _ProfileState extends State<Profile> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             gradient: AppColor.backgroundGradientcolor,
           ),
           child: Column(
@@ -66,7 +66,7 @@ class _ProfileState extends State<Profile> {
               ),
               Expanded(
                 child: SingleChildScrollView(
-                  physics: BouncingScrollPhysics(),
+                  physics: const BouncingScrollPhysics(),
                   child: Column(
                     children: [
                       SizedBox(
@@ -84,7 +84,7 @@ class _ProfileState extends State<Profile> {
                                   PageTransition(
                                     type:
                                         PageTransitionType.rightToLeftWithFade,
-                                    child: EditProfile(),
+                                    child: const EditProfile(),
                                     duration: const Duration(milliseconds: 500),
                                   ),
                                 );
@@ -117,7 +117,7 @@ class _ProfileState extends State<Profile> {
                                             MediaQuery.of(context).size.height *
                                                 15 /
                                                 100,
-                                        decoration: BoxDecoration(
+                                        decoration: const BoxDecoration(
                                           shape: BoxShape.circle,
                                           image: DecorationImage(
                                             image: AssetImage(
@@ -149,7 +149,7 @@ class _ProfileState extends State<Profile> {
                                               100),
                                   Text(
                                     AppLanguage.sanjanaText[language],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
@@ -187,7 +187,7 @@ class _ProfileState extends State<Profile> {
                           children: [
                             Text(
                               AppLanguage.profileCompleteText[language],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: AppFont.fontFamily,
@@ -200,7 +200,7 @@ class _ProfileState extends State<Profile> {
                                     100),
                             Text(
                               AppLanguage.seventySevencompleteText[language],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
@@ -220,7 +220,7 @@ class _ProfileState extends State<Profile> {
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: Text(
                               AppLanguage.settingsText[language],
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppFont.fontFamily,
@@ -240,7 +240,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: MyAppFooter(),
+                                  child: const MyAppFooter(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -257,7 +257,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: PrivacySecurityScreen(),
+                                  child: const PrivacySecurityScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -274,7 +274,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: NotificationSettingScreen(),
+                                  child: const NotificationSettingScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -291,7 +291,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: AppPreferences(),
+                                  child: const AppPreferences(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -309,7 +309,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: ReferAFriend(),
+                                  child: const ReferAFriend(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -326,7 +326,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: SupportScreen(),
+                                  child: const SupportScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -343,7 +343,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: AboutScreen(),
+                                  child: const AboutScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -360,7 +360,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: LoginScreen(),
+                                  child: const LoginScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -375,7 +375,7 @@ class _ProfileState extends State<Profile> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: LoginScreen(),
+                                  child: const LoginScreen(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -443,7 +443,7 @@ class _ProfileState extends State<Profile> {
         Flexible(
           child: Text(
             text,
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 14,
               fontFamily: AppFont.fontFamily,
               color: AppColor.secondryColor,
