@@ -312,7 +312,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 0.02,
                       ),
-                      SizedBox(
+                      Container(
                         width: MediaQuery.of(context).size.width * 91 / 100,
                         child: SingleChildScrollView(
                           scrollDirection: Axis.horizontal,
@@ -320,8 +320,8 @@ class _ChatScreenState extends State<ChatScreen> {
                             children:
                                 List.generate(storyImages.length, (index) {
                               return Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8.0, vertical: 5.0),
                                 child: Column(
                                   children: [
                                     GestureDetector(
@@ -354,8 +354,6 @@ class _ChatScreenState extends State<ChatScreen> {
                                               ),
                                             ),
                                           ),
-
-                                          // ===== SEND ICON ONLY ON FIRST ITEM =====
                                           if (index == 0)
                                             Positioned(
                                               right: -8,
@@ -417,129 +415,124 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 1 / 100),
-
                   Expanded(
                     flex: 1,
                     child: Container(
-                      height: size.height * 76 / 100,
-                      width: size.width * 100 / 100,
+                      width: size.width,
                       decoration: BoxDecoration(
                         gradient: AppColor.backgroundGradientcolor,
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(32),
                           topRight: Radius.circular(32),
                         ),
                       ),
-                      child: SingleChildScrollView(
-                        scrollDirection: Axis.vertical,
-                        child: Column(
-                          children: [
-                            SizedBox(height: size.height * 3 / 100),
-                            ...List.generate(chats.length, (index) {
-                              final chat = chats[index];
 
-                              return Column(
-                                children: [
-                                  Wrap(
+                      // <-- REPLACED: SingleChildScrollView -> ListView.builder
+                      child: ListView.builder(
+                        padding: EdgeInsets.only(
+                            top: size.height * 0.03,
+                            bottom: size.height * 0.05),
+                        physics: const AlwaysScrollableScrollPhysics(),
+                        keyboardDismissBehavior:
+                            ScrollViewKeyboardDismissBehavior.onDrag,
+                        itemCount: chats.length,
+                        itemBuilder: (context, index) {
+                          final chat = chats[index];
+
+                          return Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                width: size.width * 0.92,
+                                height: size.height * 0.095,
+                                child: ListTile(
+                                  contentPadding: EdgeInsets.zero,
+                                  horizontalTitleGap: 9,
+                                  leading: Container(
+                                    margin: EdgeInsets.only(
+                                        left: size.width * 0.036),
+                                    height: size.width * 0.18,
+                                    width: size.width * 0.18,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      image: DecorationImage(
+                                        image: AssetImage(chat['image']),
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                  ),
+                                  title: Text(
+                                    chat['name'],
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 16,
+                                      color: AppColor.secondryColor,
+                                    ),
+                                  ),
+                                  subtitle: Text(
+                                    chat['lastMessage'],
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: AppColor.secondryColor,
+                                    ),
+                                  ),
+                                  trailing: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.end,
                                     children: [
-                                      SizedBox(
-                                        width: size.width * 92 / 100,
-                                        height: size.height * 9.5 / 100,
-                                        child: ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          horizontalTitleGap: 8,
-                                          leading: Container(
-                                            margin: EdgeInsets.only(
-                                                left: size.width * 2.8 / 100),
-                                            height: size.width * 18 / 100,
-                                            width: size.width * 18 / 100,
-                                            decoration: BoxDecoration(
-                                              shape: BoxShape.circle,
-                                              image: DecorationImage(
-                                                image:
-                                                    AssetImage(chat['image']),
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          title: Text(
-                                            chat['name'],
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                              color: AppColor.secondryColor,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            chat['lastMessage'],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.secondryColor,
-                                            ),
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
-                                          trailing: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.end,
-                                            children: [
-                                              Container(
-                                                width: size.width * 2.5 / 100,
-                                                height: size.height * 2 / 100,
-                                                decoration: BoxDecoration(
-                                                  color: AppColor.pinkColor,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: size.height * 1 / 100,
-                                              ),
-                                              Text(
-                                                chat['time'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color:
-                                                      AppColor.greyLightColor,
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: ChatMessageScreen(
-                                                  name: chat['name'],
-                                                  image: chat['image'],
-                                                ),
-                                                duration: const Duration(
-                                                    milliseconds: 500),
-                                              ),
-                                            );
-                                          },
+                                      Container(
+                                        width: size.width * 0.025,
+                                        height: size.height * 0.02,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.pinkColor,
+                                          shape: BoxShape.circle,
                                         ),
                                       ),
-                                      const Divider(
-                                        height: 0.2,
-                                        thickness: 0.5,
-                                        color: AppColor.greyLightColor,
-                                        indent: 30,
-                                        endIndent: 30,
+                                      SizedBox(height: size.height * 0.01),
+                                      Text(
+                                        chat['time'],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: AppColor.greyLightColor,
+                                        ),
                                       ),
-                                      SizedBox(height: size.height * 2.5 / 100),
                                     ],
                                   ),
-                                  if (index == chats.length - 1)
-                                    SizedBox(height: size.height * 4.5 / 100),
-                                ],
-                              );
-                            }),
-                          ],
-                        ),
+                              
+                                    onTap:
+                                    () {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          child: ChatMessageScreen(
+                                            name: chat['name'],
+                                            image: chat['image'],
+                                          ),
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                        ),
+                                      );
+                                    },
+                                
+                                ),
+                              ),
+                              const Divider(
+                                height: 0.2,
+                                thickness: 0.5,
+                                color: AppColor.greyLightColor,
+                                indent: 30,
+                                endIndent: 30,
+                              ),
+                              SizedBox(height: size.height * 0.025),
+                              if (index == chats.length - 1)
+                                SizedBox(height: size.height * 0.046),
+                            ],
+                          );
+                        },
                       ),
                     ),
                   ),

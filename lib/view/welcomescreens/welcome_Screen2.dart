@@ -60,6 +60,9 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
 
   @override
   Widget build(BuildContext context) {
+    final h = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
+
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: Colors.transparent,
         statusBarColor: Colors.transparent,
@@ -70,7 +73,9 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
         children: [
           /// Background Gradient
           Container(
-            decoration:  BoxDecoration(
+            height: h,
+            width: w,
+            decoration: BoxDecoration(
               gradient: AppColor.backgroundGradientcolor,
             ),
           ),
@@ -80,36 +85,35 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
             carouselController: _carouselController,
             items: [
               _buildScreen(
-                  title: "Find the hottest events near\nyou!\n.\n.\n.",
-                  desc:
-                      "Discover the hottest\nparties, gigs, and open\nmics near you.",
-                  image: AppImage.micWelcomscreenIcon,
-                  bottom: 200,
-                  right: 110,
-                  left: 0),
-              // _buildLastScreen()
+                title: "Find the hottest events near\nyou!\n.\n.\n.",
+                desc:
+                    "Discover the hottest\nparties, gigs, and open\nmics near you.",
+                image: AppImage.micWelcomscreenIcon,
+                bottom: h * 0.22,
+                right: w * 0.28,
+                left: 0,
+              ),
             ],
             options: CarouselOptions(
-              height: MediaQuery.of(context).size.height,
+              height: h,
               viewportFraction: 1,
               enableInfiniteScroll: false,
               onPageChanged: (index, reason) {
                 setState(() {
                   _activeIndex = index;
 
-                  // SAME ANIMATION BEGIN & END FOR ALL PAGES
                   _slideAnimation = Tween<Offset>(
-                    begin: const Offset(0, 1), // always bottom to top
+                    begin: const Offset(0, 1),
                     end: Offset.zero,
                   ).animate(
                     CurvedAnimation(
                       parent: _imageController,
-                      curve: Curves.easeOutCubic, // bounce feel effect
+                      curve: Curves.easeOutCubic,
                     ),
                   );
 
                   if (index != 3) {
-                    _imageController.forward(from: 0); // restart animation
+                    _imageController.forward(from: 0);
                   } else {
                     _imageController.reset();
                   }
@@ -118,44 +122,40 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
             ),
           ),
 
-          /// Next
+          /// Next Button
           if (_activeIndex != 3)
             Positioned(
-              bottom: 95,
+              bottom: h * 0.12,
               right: 0,
               child: GestureDetector(
                 onTap: () {
-                  _carouselController.nextPage(
-                      duration: const Duration(milliseconds: 400),
-                      curve: Curves.easeInOut);
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: WelcomeScreen3(),
+                      duration: const Duration(milliseconds: 500),
+                    ),
+                  );
                 },
-                child: GestureDetector(
-                  onTap: (){
- Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: WelcomeScreen3(),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 48, vertical: 12),
-                    decoration: const BoxDecoration(
-                      color: AppColor.nextButtoncolor,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(25),
-                        bottomLeft: Radius.circular(25),
-                      ),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: w * 0.12,
+                    vertical: h * 0.015,
+                  ),
+                  decoration: const BoxDecoration(
+                    color: AppColor.nextButtoncolor,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(25),
+                      bottomLeft: Radius.circular(25),
                     ),
-                    child: Text(
-                      AppLanguage.nextText[language],
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600),
-                    ),
+                  ),
+                  child: Text(
+                    AppLanguage.nextText[language],
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: w * 0.045,
+                        fontWeight: FontWeight.w600),
                   ),
                 ),
               ),
@@ -165,7 +165,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
     );
   }
 
-  /// Common Animated UI Card
+  /// Screen Builder
   Widget _buildScreen({
     required String title,
     required String desc,
@@ -174,16 +174,20 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
     required double right,
     required double left,
   }) {
+    final h = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
+
     return Stack(
       alignment: Alignment.topCenter,
       children: [
         /// Card
         Positioned(
-          top: 90,
+          top: h * 0.10,
           child: Container(
-            width: MediaQuery.of(context).size.width * 0.82,
-            height: MediaQuery.of(context).size.height * 0.67,
-            padding: EdgeInsets.symmetric(horizontal: 18, vertical: 35),
+            width: w * 0.82,
+            height: MediaQuery.of(context).size.height *70/100,
+            padding: EdgeInsets.symmetric(
+                horizontal: w * 0.045, vertical: h * 0.045),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
               gradient: AppColor.welcomefrontCardcolor2,
@@ -192,18 +196,22 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(title,
-                    style: const TextStyle(
+                    style: TextStyle(
                         color: Colors.white,
-                        fontSize: 28,
+                        fontSize: w * 0.075,
                         height: 1.2,
                         fontWeight: FontWeight.w700)),
-                SizedBox(height: MediaQuery.of(context).size.height * 0.19),
-                Text("", style: TextStyle(color: Colors.white, fontSize: 22)),
-                const SizedBox(height: 25),
+
+                SizedBox(height: h * 0.19),
+
+                Text("", style: TextStyle(color: Colors.white, fontSize: w * 0.06)),
+
+                SizedBox(height: h * 0.03),
+
                 Text(desc,
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 14,
+                        fontSize: w * 0.037,
                         height: 1.4,
                         fontWeight: FontWeight.w500)),
               ],
@@ -213,23 +221,23 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
 
         /// Animated Image
         Positioned(
-          bottom: 45,
-          left: 80,
+          bottom: h * 0.070,
+          left: w * 0.22,
           child: FadeTransition(
             opacity: _fadeAnimation,
             child: SlideTransition(
               position: _slideAnimation,
               child: Image.asset(
                 image,
-                height: MediaQuery.of(context).size.height * 0.75,
+                height: h * 0.75,
               ),
             ),
           ),
         ),
 
-        /// Dots indicator
+        /// Dot Indicator
         Positioned(
-          bottom: 65,
+          bottom: MediaQuery.of(context).size.height *4/100,
           child: Row(
             children: [
               _dot(_activeIndex == 1),
@@ -243,15 +251,15 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
     );
   }
 
- 
-
   Widget _dot(bool active) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: active ? 12 : 5,
       height: active ? 10 : 5,
       decoration: BoxDecoration(
-        color: active ? const Color(0xFFFF2CDF) :  Color.fromARGB(255, 251, 249, 253),
+        color: active
+            ? const Color(0xFFFF2CDF)
+            : const Color.fromARGB(255, 251, 249, 253),
         shape: BoxShape.circle,
       ),
     );

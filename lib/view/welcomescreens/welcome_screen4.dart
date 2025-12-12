@@ -39,22 +39,21 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
   void initState() {
     super.initState();
 
-    // Initialize animation controller
     _animationController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 1000),
     );
 
-    // Create slide animation from bottom to top
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 1), // Start from bottom (off-screen)
-      end: Offset.zero, // End at normal position
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+      begin: const Offset(0, 1),
+      end: Offset.zero,
+    ).animate(
+      CurvedAnimation(
+        parent: _animationController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
 
-    // Start animation after build
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _animationController.forward();
     });
@@ -68,34 +67,29 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
+    final h = MediaQuery.of(context).size.height;
+    final w = MediaQuery.of(context).size.width;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        // backgroundColor: AppColor.secondryColor,
         resizeToAvoidBottomInset: false,
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
+        body: SizedBox(
+          width: w,
+          height: h,
           child: Stack(
             children: [
-              // Background image (static, no animation)
               GestureDetector(
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                },
+                onTap: () => FocusScope.of(context).unfocus(),
                 child: Container(
-                  width: MediaQuery.of(context).size.width * 100 / 100,
-                  height: MediaQuery.of(context).size.height,
-                  decoration:  BoxDecoration(
+                  width: w,
+                  height: h,
+                  decoration: BoxDecoration(
                     image: DecorationImage(
                       image: AssetImage(AppImage.signupScreen),
                       fit: BoxFit.cover,
@@ -103,18 +97,18 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                   ),
                 ),
               ),
-              
+
+              /// SLIDING BOTTOM CARD
               SlideTransition(
                 position: _slideAnimation,
                 child: Align(
                   alignment: Alignment.bottomCenter,
                   child: Container(
-                    width: MediaQuery.of(context).size.width*100/100,
-                                              height: MediaQuery.of(context).size.height * 56 / 100,
-              
+                    width: w,
+                    height: h * 0.56,
                     decoration: BoxDecoration(
                       gradient: AppColor.backgroundGradientcolor,
-                      borderRadius: BorderRadius.only(
+                      borderRadius: const BorderRadius.only(
                         topLeft: Radius.circular(50),
                         topRight: Radius.circular(50),
                       ),
@@ -125,143 +119,93 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                     
-                  
+                        SizedBox(height: h * 0.09),
+
+                        /// TITLE
                         SizedBox(
-                          height: MediaQuery.of(context).size.height * 9 / 100,
-                        ),
-                       
-                     
-                         Container(
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 70 / 100,
-                            child: Text(
-                             "All in One Place",
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontSize: 32,
-                                fontWeight: FontWeight.w600,
-                                fontFamily: AppFont.fontFamily,
-                              ),
+                          width: w * 0.70,
+                          child: Text(
+                            "All in One Place",
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: w * 0.085,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFont.fontFamily,
                             ),
                           ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 2 / 100,
                         ),
-                          Container(
-                            alignment: Alignment.center,
-                            width: MediaQuery.of(context).size.width * 80 / 100,
-                            child: Text(
+
+                        SizedBox(height: h * 0.02),
+
+                        /// SUBTITLE
+                        SizedBox(
+                          width: w * 0.80,
+                          child: Text(
                             "Discover the best venues, book your seats with ease, and connect with people who share your vibe—all from one app.",
-                              textAlign: TextAlign.center,
-                              style:  TextStyle(
-                                color: AppColor.secondryColor,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                              ),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: w * 0.043,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: AppFont.fontFamily,
                             ),
                           ),
-                        
-                      
-                  
-                        SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 8 / 100),
-                  
-               
+                        ),
+
+                        SizedBox(height: h * 0.08),
+
+                        /// BUTTON
                         AppButton(
-                            text: AppLanguage.letsgetStartedtext[language],
-                            onPress: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: SignUp(),
-                                  duration: const Duration(milliseconds: 400),
-                                ),
-                              );
-                            }),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 4 / 100,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 80 / 100,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                             
-                              SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.width * 1 / 100,
+                          text: AppLanguage.letsgetStartedtext[language],
+                          onPress: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: SignUp(),
+                                duration: const Duration(milliseconds: 400),
                               ),
-                            
-                            ],
-                          ),
+                            );
+                          },
                         ),
-              
-                SizedBox(
-                          height: MediaQuery.of(context).size.height * 1 / 100,
-                        ),
-                         SizedBox(
-                          width: MediaQuery.of(context).size.width * 80 / 100,
-                          // height: MediaQuery.of(context).size.height * 3.5 / 100,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              
-                              SizedBox(
-                                width:
-                                    MediaQuery.of(context).size.width * 1 / 100,
-                              ),
-                             
-                            ],
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 3 / 100,
-                        ),
-                       
-                        // ),
-                        SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 1 / 100),
+
+                        SizedBox(height: h * 0.04),
                       ],
                     ),
                   ),
                 ),
               ),
-               Positioned(
-                
-          bottom: MediaQuery.of(context).size.height * 7 /100,
-          // 65,
-            left: MediaQuery.of(context).size.width * 42 /100,
-            //  165,
-          child: Row(
-            children: [
-              _dot(_activeIndex == 1),
-              _dot(_activeIndex == 0),
-              _dot(_activeIndex == 0),
-              _dot(_activeIndex == 2),
+
+              /// DOT INDICATOR
+              Positioned(
+                bottom: h * 0.07,
+                left: w * 0.42,
+                child: Row(
+                  children: [
+                    _dot(_activeIndex == 1),
+                    _dot(_activeIndex == 0),
+                    _dot(_activeIndex == 0),
+                    _dot(_activeIndex == 2),
+                  ],
+                ),
+              ),
             ],
-          ),
-        ),
-            ],
-            
           ),
         ),
       ),
     );
   }
-  
+
   Widget _dot(bool active) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: active ? 12 : 5,
       height: active ? 10 : 5,
       decoration: BoxDecoration(
-        color: active ? const Color(0xFFFF2CDF) :  Color.fromARGB(255, 251, 249, 253),
+        color: active
+            ? const Color(0xFFFF2CDF)
+            : const Color.fromARGB(255, 251, 249, 253),
         shape: BoxShape.circle,
       ),
     );

@@ -37,7 +37,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light,
@@ -56,14 +56,14 @@ class _PastEventScreenState extends State<PastEventScreen> {
                 child: AppButton(
                     text: '${AppLanguage.submitButtonText[language]}',
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: ReviewBookingDetails(),
-                          duration: const Duration(milliseconds: 500),
-                        ),
-                      );
+                      // Navigator.push(
+                      //   context,
+                      //   PageTransition(
+                      //     type: PageTransitionType.rightToLeftWithFade,
+                      //     child: ReviewBookingDetails(),
+                      //     duration: const Duration(milliseconds: 500),
+                      //   ),
+                      // );
                     }),
               ),
               body: Container(
@@ -72,6 +72,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                        SizedBox(height: size.height * 0.03),
                         Stack(
                           children: [
                             Image.asset(
@@ -86,17 +87,14 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.3),
-                                  shape: BoxShape.circle,
-                                ),
+                               
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
                                   child: Center(
                                     child: Image.asset(
                                       AppImage.backarrow,
-                                      width: size.width * 4 / 100,
-                                      height: size.width * 4 / 100,
+                                      width: size.width * 5 / 100,
+                                      height: size.width * 5 / 100,
                                       color: AppColor.secondryColor,
                                     ),
                                   ),
@@ -120,7 +118,8 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        AppLanguage.bookEventText[language],
+                                        AppLanguage
+                                            .BassDropFridaytext[language],
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
@@ -130,21 +129,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 75 / 100,
-                                    child: Text(
-                                      AppLanguage.Brewbloomcafetext[language],
-                                      style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                        color: AppColor.secondryColor,
-                                      ),
-                                    ),
-                                  ),
+                                  SizedBox(height: size.height * 0.5 / 100),
                                   SizedBox(
                                     width: size.width * 75 / 100,
                                     child: Text(
@@ -152,7 +137,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 15,
+                                        fontSize: 14.5,
                                         color: AppColor.buttonColor,
                                       ),
                                     ),
@@ -160,8 +145,8 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 ],
                               ),
                               Container(
-                                width: 55,
-                                height: 72,
+                                width: size.width * 15 / 100,
+                                height: size.height * 8 / 100,
                                 decoration: BoxDecoration(
                                   color: Colors
                                       .black, // background same as screenshot
@@ -183,7 +168,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                         color: Colors.white.withOpacity(0.8),
                                       ),
                                     ),
-                                    SizedBox(height: 8),
+                                    SizedBox(height: size.height * 0.5 / 100),
                                     Text(
                                       "2",
                                       style: TextStyle(
@@ -239,9 +224,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 ),
                               ],
                             ),
-                        
+
                             SizedBox(height: size.height * 1 / 100),
-                        
+
                             // Select Items
                             Wrap(
                               spacing: 10,
@@ -249,7 +234,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               alignment: WrapAlignment.center,
                               children: List.generate(dates.length, (index) {
                                 final isSelect = dateindex == index;
-                        
+
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -263,9 +248,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       color: AppColor.primaryColor,
                                       borderRadius: BorderRadius.circular(40),
                                       border: Border.all(
-                                        color: isSelect
-                                            ? AppColor.pinkColor
-                                            : AppColor.secondryColor,
+                                        color: AppColor.pasttimecolor,
                                         width: 0.8,
                                       ),
                                     ),
@@ -279,9 +262,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: isSelect
-                                                ? AppColor.pinkColor
-                                                : AppColor.secondryColor,
+                                            color: AppColor.pasttimecolor,
                                           ),
                                         ),
                                         SizedBox(
@@ -292,9 +273,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
-                                            color: isSelect
-                                                ? AppColor.pinkColor
-                                                : AppColor.secondryColor,
+                                            color: AppColor.pasttimecolor,
                                           ),
                                         ),
                                       ],
@@ -303,9 +282,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                 );
                               }),
                             ),
-                        
+
                             SizedBox(height: size.height * 4 / 100),
-                        
+
                             // ----------------- Your Details -----------------
                             SizedBox(
                               width:
@@ -334,7 +313,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-                        
+
                                         SizedBox(height: size.height * 3 / 100),
                                         Column(
                                           crossAxisAlignment:
@@ -351,13 +330,13 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             infoItem("City", "Delhi"),
                                           ],
                                         ),
-                        
+
                                         SizedBox(height: 16),
                                         Divider(
                                             color: Colors.white24,
                                             thickness: 0.6),
                                         SizedBox(height: 16),
-                        
+
                                         // -------- Price breakdown title ----------
                                         Text(
                                           "Price breakdown",
@@ -367,14 +346,32 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             color: Colors.white,
                                           ),
                                         ),
-                        
+
                                         SizedBox(height: 16),
-                        
+
                                         detailsRow("Ticket Charges", "₹14,999"),
+                                        Divider(
+                                            thickness: 0.2,
+                                            color: AppColor.secondryColor),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.2 /
+                                                100),
+
                                         detailsRow("Cover charge", "₹50"),
-                        
-                                        SizedBox(height: 6),
-                        
+                                        Divider(
+                                            thickness: 0.2,
+                                            color: AppColor.secondryColor),
+
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.2 /
+                                                100),
+
                                         // -------- Expandable Booking Fee ----------
                                         GestureDetector(
                                           onTap: () {
@@ -401,65 +398,194 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                                             .keyboard_arrow_down
                                                         : Icons
                                                             .keyboard_arrow_up,
-                                                    color: Colors.white,
+                                                    color:
+                                                        AppColor.lightGreyColor,
                                                   ),
                                                 ],
                                               ),
                                               Text("₹1,416",
                                                   style: TextStyle(
                                                       fontSize: 14,
-                                                      color: Colors.white70)),
+                                                      color: AppColor
+                                                          .secondryColor)),
                                             ],
                                           ),
                                         ),
-                        
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.2 /
+                                                100),
                                         if (showDetails) ...[
-                                          SizedBox(height: 6),
-                                          detailsRow("Base Price", "₹999"),
-                                          detailsRow(
-                                              "Transaction Charges", "₹299"),
+                                          SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.2 /
+                                                  100),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Base Price",
+                                                    style: TextStyle(
+                                                        fontSize: 7.30,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: Colors.white70),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text("₹1200",
+                                                  style: TextStyle(
+                                                      fontSize: 7.30,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: Colors.white70)),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.6 /
+                                                  100),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Row(
+                                                children: [
+                                                  Text(
+                                                    "Integrated GST (IGST) @18%",
+                                                    style: TextStyle(
+                                                        fontSize: 7.30,
+                                                        color: Colors.white70),
+                                                  ),
+                                                ],
+                                              ),
+                                              Text("₹1,200",
+                                                  style: TextStyle(
+                                                      fontSize: 7.30,
+                                                      color: Colors.white70)),
+                                            ],
+                                          ),
                                         ],
-                        
-                                        SizedBox(height: 8),
+
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                2 /
+                                                100),
                                         detailsRow("Discount", "-10%"),
-                        
-                                        SizedBox(height: 6),
+
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.3 /
+                                                100),
                                         Divider(
-                                            color: Colors.white24,
-                                            thickness: 0.6),
-                                        SizedBox(height: 10),
-                        
+                                            thickness: 0.2,
+                                            color: AppColor.secondryColor),
+
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                0.8 /
+                                                100),
+
                                         // -------- Total Row ----------
-                                        detailsRow(
-                                          "Total",
-                                          "₹14,818.5",
-                                          isBold: true,
-                                          highlight: true,
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.w600,
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "Total",
+                                                  style: TextStyle(
+                                                      fontSize: 17,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: Colors.white70),
+                                                ),
+                                              ],
+                                            ),
+                                            Text("₹14,818.5",
+                                                style: TextStyle(
+                                                    fontSize: 18,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColor
+                                                        .secondryColor)),
+                                          ],
                                         ),
-                        
-                                        SizedBox(height: 6),
-                        
-                                        detailsRow(
-                                          "Payment Mode",
-                                          "UPI",
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w700,
-                                        )
+
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1.6 /
+                                                100),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  "Payment Mode",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: Colors.white70),
+                                                ),
+                                              ],
+                                            ),
+                                            SizedBox(
+                                              width: size.width * 15 / 100,
+                                              child: Text("UPI",
+                                                  style: TextStyle(
+                                                      fontSize: 14,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w600,
+                                                      color: AppColor
+                                                          .secondryColor)),
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
-                        
+
                             SizedBox(height: size.height * 2 / 100),
-                        
+
                             // ------------------- Emoji Rating -----------------------
                             Container(
                               width: size.width * 90 / 100,
-                              height: size.height * 25 / 100,
+                              height: size.height * 27.6 / 100,
                               padding: EdgeInsets.symmetric(
                                   vertical: 18, horizontal: 16),
                               decoration: BoxDecoration(
@@ -480,9 +606,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                        
-                                  SizedBox(height: 6),
-                        
+
+                                  SizedBox(height: size.height * 1 / 100),
+
                                   // Subtitle
                                   Text(
                                     "We’d love to know!",
@@ -495,18 +621,16 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-                        
-                                  SizedBox(height: 18),
-                        
+                                  SizedBox(height: size.height * 3 / 100),
+
                                   // Divider Line
                                   Container(
                                     height: 1,
                                     width: size.width * 80 / 100,
                                     color: Colors.white24,
                                   ),
-                        
-                                  SizedBox(height: 25),
-                        
+                                  SizedBox(height: size.height * 2.6 / 100),
+
                                   // Emoji Row
                                   Row(
                                     mainAxisAlignment:
@@ -514,7 +638,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     children:
                                         List.generate(emojis.length, (index) {
                                       final isSelected = selectedEmoji == index;
-                        
+
                                       return GestureDetector(
                                         onTap: () {
                                           setState(() {
@@ -543,9 +667,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               ),
                             ),
                             SizedBox(height: size.height * 2 / 100),
-                        
+
                             // ----------------- Feedback Text Field -----------------------
-                        
+
                             SizedBox(height: size.height * 2 / 100),
                             Container(
                               width: size.width * 90 / 100,
@@ -563,15 +687,15 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     "Thanks for your feedback!",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
-                                      fontSize: 24,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
                                       color: AppColor.secondryColor,
                                     ),
                                   ),
-                        
-                                  SizedBox(height: 6),
-                        
+
+                                  SizedBox(height:size.height * 1/100),
+
                                   Text(
                                     "Your opinion matters. Tell us what worked and what didn’t.",
                                     textAlign: TextAlign.center,
@@ -582,17 +706,17 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       color: AppColor.lightGreyColor,
                                     ),
                                   ),
-                        
-                                  SizedBox(height: 10),
-                        
+
+                                  SizedBox(height: size.height *1.2/100),
+
                                   Container(
                                     width: size.width,
                                     height: size.height * 0.0025,
                                     color: Colors.white12,
                                   ),
-                        
-                                  SizedBox(height: size.height * 2 / 100),
-                        
+
+                                  SizedBox(height: size.height * 2.2 / 100),
+
                                   // Feedback Text Input
                                   Container(
                                     width: size.width * 80 / 100,
@@ -600,7 +724,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 14, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: Color(0xFF36214a),
+                                      color: AppColor.myperfectcontainercolr,
                                       borderRadius: BorderRadius.circular(14),
                                     ),
                                     child: TextField(
@@ -657,17 +781,17 @@ class _PastEventScreenState extends State<PastEventScreen> {
             title,
             style: TextStyle(
               fontSize: fontSize ?? 13, // default 13
-              fontWeight: fontWeight ?? FontWeight.w400,
+              fontWeight: FontWeight.w400,
+
               color: AppColor.lightGreyColor,
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: fontSize ?? 14, // default 14
-              fontWeight:
-                  fontWeight ?? (isBold ? FontWeight.w700 : FontWeight.w500),
-              color: highlight ? Colors.white : Colors.white70,
+              fontSize: fontSize ?? 13, // default 14
+              fontWeight: FontWeight.w400,
+              color: highlight ? Colors.white : Colors.white,
             ),
           ),
         ],
@@ -684,7 +808,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: AppColor.lightGreyColor,
+            color: AppColor.secondryColor,
           ),
         ),
         SizedBox(height: 4),

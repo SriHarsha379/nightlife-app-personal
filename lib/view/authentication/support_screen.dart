@@ -16,8 +16,6 @@ class SupportScreen extends StatefulWidget {
 
   @override
   State<SupportScreen> createState() => _SupportScreenState();
-
-
 }
 
 List<Map<String, dynamic>> imageList = [
@@ -42,29 +40,28 @@ List<Map<String, dynamic>> listitem = [
   },
 ];
 
-
-
 class _SupportScreenState extends State<SupportScreen> {
-    List<bool> expanded = [];
+  List<bool> expanded = [];
   @override
   void initState() {
-    super.initState();  // NOW valid
+    super.initState(); // NOW valid
     expanded = List.generate(imageList.length, (index) => false);
   }
+
   @override
   Widget build(BuildContext context) {
-SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
-
     final size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      backgroundColor: AppColor.secondryColor,
-      body: SafeArea(
-        child: Container(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: Scaffold(
+        body: Container(
           width: size.width,
           height: size.height,
           color: AppColor.primaryColor,
@@ -72,7 +69,7 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: size.height * 2 / 100),
+                SizedBox(height: size.height * 5 / 100),
                 AppHeader(
                   onPress: () => Navigator.pop(context),
                   text: AppLanguage.supportText[language],
@@ -92,80 +89,81 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                     ),
                   ),
                 ),
-                         Container(
-                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor,
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.primaryColor,
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: imageList.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    var item = entry.value;
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: AppColor.notificationContainerColor,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.primaryColor,
+                        spreadRadius: 3,
+                        blurRadius: 7,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    children: imageList.asMap().entries.map((entry) {
+                      int index = entry.key;
+                      var item = entry.value;
 
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              expanded[index] = !expanded[index];
-                            });
-                          },
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  item["heading"],
-                                  style: const TextStyle(
-                                    color: AppColor.secondryColor,
-                                    fontSize: 14,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w500,
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                expanded[index] = !expanded[index];
+                              });
+                            },
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    item["heading"],
+                                    style: const TextStyle(
+                                      color: AppColor.secondryColor,
+                                      fontSize: 14,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontWeight: FontWeight.w500,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              Transform.rotate(
-                                angle: expanded[index] ? 0 : 3.14,
-                                child: Image.asset(
-                                  item["image"],
-                                  width: size.width * 5 / 100,
-                                  height: size.width * 5 / 100,
+                                Transform.rotate(
+                                  angle: expanded[index] ? 0 : 3.14,
+                                  child: Image.asset(
+                                    item["image"],
+                                    width: size.width * 5 / 100,
+                                    height: size.width * 5 / 100,
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        if (expanded[index]) ...[
-                          SizedBox(height: 10),
-                          Text(
-                            item["message"],
-                            textAlign: TextAlign.justify,
-                            style: const TextStyle(
-                              color: AppColor.notificationtextColor,
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w400,
+                              ],
                             ),
                           ),
-                          SizedBox(height: 10),
+                          if (expanded[index]) ...[
+                            SizedBox(height: 10),
+                            Text(
+                              item["message"],
+                              textAlign: TextAlign.justify,
+                              style: const TextStyle(
+                                color: AppColor.notificationtextColor,
+                                fontSize: 14,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
+                            ),
+                            SizedBox(height: 10),
+                          ],
                         ],
-                      ],
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
-              ),
 
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -325,13 +323,11 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                           ),
                         ],
                       ),
-                    
                     ],
                   ),
                 ),
-                      Container(
-
-                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                Container(
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
@@ -344,31 +340,32 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                         offset: Offset(0, 1),
                       ),
                     ],
-                  ),     
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: size.width * 8 / 100,
-                              width: size.width * 12 / 100,
-                              child: Image.asset(
-                                AppImage.headphoneIcon,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                            SizedBox(width: size.width * 2 / 100),
-                            Text(
-                              AppLanguage.liveSupport[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontSize: 14,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                              ),
-                            ),
-                          ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        height: size.width * 8 / 100,
+                        width: size.width * 12 / 100,
+                        child: Image.asset(
+                          AppImage.headphoneIcon,
+                          fit: BoxFit.contain,
                         ),
                       ),
+                      SizedBox(width: size.width * 2 / 100),
+                      Text(
+                        AppLanguage.liveSupport[language],
+                        style: const TextStyle(
+                          color: AppColor.secondryColor,
+                          fontSize: 14,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+
                 /// --- Privacy Policy Heading Added Below ---
 
                 Padding(
@@ -449,16 +446,16 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                 ),
 
                 GestureDetector(
-                  onTap: (){
-                     Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ContentScreen(
-              contenttype: "termscondition",
-              header: AppLanguage.termsConditionText[language],
-            ),
-          ),
-        );
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ContentScreen(
+                          contenttype: "termscondition",
+                          header: AppLanguage.termsConditionText[language],
+                        ),
+                      ),
+                    );
                   },
                   child: Container(
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
@@ -501,68 +498,64 @@ SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
                             ),
                           ],
                         ),
-                   
                       ],
                     ),
                   ),
                 ),
 
-                      GestureDetector(
-                        onTap: (){
-                          
-  Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (_) => ContentScreen(
-              contenttype: "privacypolicy",
-              header: AppLanguage.privacypoliciesText[language],
-            ),
-          ),
-        );
-                        },
-                        child: Container(
-                        
-                           padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                                          margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                                          decoration: BoxDecoration(
-                                            color: AppColor.notificationContainerColor,
-                                            borderRadius: BorderRadius.circular(8),
-                                            boxShadow: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ContentScreen(
+                          contenttype: "privacypolicy",
+                          header: AppLanguage.privacypoliciesText[language],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
                         BoxShadow(
                           color: AppColor.primaryColor,
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: Offset(0, 1),
                         ),
-                                            ],
-                                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: size.width * 8 / 100,
-                                width: size.width * 12 / 100,
-                                child: Image.asset(
-                                  AppImage.privacyPolicyIcon,
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                              SizedBox(width: size.width * 2 / 100),
-                              Text(
-                                AppLanguage.privacyPolicy[language],
-                                style: const TextStyle(
-                                  color: AppColor.secondryColor,
-                                  fontSize: 14,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: size.width * 8 / 100,
+                          width: size.width * 12 / 100,
+                          child: Image.asset(
+                            AppImage.privacyPolicyIcon,
+                            fit: BoxFit.contain,
                           ),
                         ),
-                      ),
-                                      SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
-
+                        SizedBox(width: size.width * 2 / 100),
+                        Text(
+                          AppLanguage.privacyPolicy[language],
+                          style: const TextStyle(
+                            color: AppColor.secondryColor,
+                            fontSize: 14,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               ],
             ),
           ),

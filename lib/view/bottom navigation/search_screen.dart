@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails5_screen.dart';
+import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -32,13 +34,13 @@ class _SearchScreenState extends State<SearchScreen> {
 
   final List<Map<String, String>> eventList = [
     {
-      "image": "assets/icons/ic_roofimg.png",
+      "image": "assets/icons/liveconcert.jpg",
       "title": "Live Concert",
       "distance": "5.0 km",
       "location": "Indirapuram"
     },
     {
-      "image": "assets/icons/ic_roofimg.png",
+      "image": "assets/icons/silentnightimg.png",
       "title": "DJ Night",
       "distance": "7.2 km",
       "location": "Kaushambi"
@@ -50,7 +52,7 @@ class _SearchScreenState extends State<SearchScreen> {
     //   "location": "Noida"
     // },
     {
-      "image": "assets/icons/ic_roofimg.png",
+      "image": "assets/icons/kingdomofDreamsicon.png",
       "title": "Kingdom of Dreams",
       "distance": "12.5 km",
       "location": "Gurugram"
@@ -59,19 +61,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
   final List<Map<String, String>> placeList = [
     {
-      'image': 'assets/icons/goa.jpg',
-      'title': 'Indirapuram Habitat',
+      'image': 'assets/icons/indirapuramHabibaticon.png',
+      'title': 'Indirapuram Habitat\nCentre',
       'distance': '5.0 km',
       'location': 'Indirapuram',
     },
     {
-      'image': 'assets/icons/goa.jpg',
+      'image': 'assets/icons/pacificMallicon.png',
       'title': 'Pacific Mall',
       'distance': '7.2 km',
       'location': 'Kaushambi',
     },
     {
-      'image': 'assets/icons/goa.jpg',
+      'image': 'assets/icons/kingdomofDreamsicon.png',
       'title': 'Kingdom of Dreams',
       'distance': '12.0 km',
       'location': 'Gurgaon',
@@ -81,7 +83,7 @@ class _SearchScreenState extends State<SearchScreen> {
     {
       "title": "The Silent Night Bar",
       "location": "5.0 km | Indirapuram",
-      "image": "./assets/icons/silentnightimg.png"
+      "image": "./assets/icons/silentnightbar.jpg"
     },
     {
       "title": "Pacific Mall",
@@ -106,15 +108,15 @@ class _SearchScreenState extends State<SearchScreen> {
     {
       "title": "Pacific Mall",
       "location": "7.2 km | Kaushambi",
-      "image": "./assets/icons/kingdom.jpg"
+      "image": "./assets/icons/kingdomofDreamsicon.png"
     },
   ];
 
   @override
-void initState() {
-  super.initState();
-  tapBarStatus = 2; 
-}
+  void initState() {
+    super.initState();
+    tapBarStatus = 2;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -136,13 +138,12 @@ void initState() {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-            backgroundColor:
-   AppColor.primaryColor,
+            backgroundColor: AppColor.primaryColor,
             body: SafeArea(
               child: Container(
                 height: MediaQuery.of(context).size.height * 100 / 100,
                 width: MediaQuery.of(context).size.width * 100 / 100,
-                color:  AppColor.primaryColor ,
+                color: AppColor.primaryColor,
                 child: Column(children: [
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 2 / 100,
@@ -380,7 +381,6 @@ void initState() {
                                         ? AppColor.pinkColor
                                         : AppColor.textTapColor,
                                   ),
-                                  
                                 ),
                                 Text(
                                   AppLanguage.eventsText[language],
@@ -1026,14 +1026,19 @@ void initState() {
                                                         margin: const EdgeInsets
                                                             .symmetric(
                                                             horizontal: 8),
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        25),
-                                                            border: Border.all(
-                                                                color: AppColor
-                                                                    .textTapColor)),
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(25),
+                                                          border: const Border(
+                                                            bottom: BorderSide(
+                                                              color: AppColor
+                                                                  .pinkColor,
+                                                              width: 0.5,
+                                                            ),
+                                                          ),
+                                                        ),
                                                         child: Column(
                                                           children: [
                                                             Container(
@@ -1106,7 +1111,7 @@ void initState() {
                                                                         horizontal:
                                                                             10),
                                                                 child: Text(
-                                                                  "Sarah,26",
+                                                                  "The Crew Club",
                                                                   style: TextStyle(
                                                                       fontFamily:
                                                                           AppFont
@@ -1115,7 +1120,7 @@ void initState() {
                                                                           16,
                                                                       fontWeight:
                                                                           FontWeight
-                                                                              .w900,
+                                                                              .w700,
                                                                       color: isDark
                                                                           ? AppColor
                                                                               .secondryColor
@@ -1135,7 +1140,7 @@ void initState() {
                                                                 padding: EdgeInsets
                                                                     .symmetric(
                                                                         horizontal:
-                                                                            10),
+                                                                            6),
                                                                 child: Row(
                                                                   children: [
                                                                     Container(
@@ -1163,18 +1168,18 @@ void initState() {
                                                                       width: MediaQuery.of(context)
                                                                               .size
                                                                               .width *
-                                                                          1 /
+                                                                          0.1 /
                                                                           100,
                                                                     ),
                                                                     const Text(
-                                                                      "2.3 km away",
+                                                                      "Club Neon, Downtown",
                                                                       style: TextStyle(
                                                                           fontFamily: AppFont
                                                                               .fontFamily,
                                                                           fontSize:
-                                                                              14,
+                                                                              12,
                                                                           fontWeight: FontWeight
-                                                                              .w900,
+                                                                              .w400,
                                                                           color:
                                                                               AppColor.pinkColor),
                                                                     ),
@@ -1241,7 +1246,7 @@ void initState() {
                                                     height:
                                                         size.height * 12 / 100,
                                                     width:
-                                                        size.width * 40 / 100,
+                                                        size.width * 42 / 100,
                                                     decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
@@ -1263,7 +1268,7 @@ void initState() {
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily,
-                                                      fontSize: 14,
+                                                      fontSize: 13.5,
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: isDark
@@ -1332,32 +1337,32 @@ void initState() {
                                             children: [
                                               // ---------- FIRST CARD ----------
                                               GestureDetector(
-                                                onTap: (){
-                                                     Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: VenuePages(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type: PageTransitionType
+                                                          .bottomToTop,
+                                                      child: BookTable(),
+                                                      duration: const Duration(
+                                                          milliseconds: 500),
+                                                    ),
+                                                  );
                                                 },
                                                 child: Container(
                                                   width: size.width * 0.42,
                                                   decoration: BoxDecoration(
                                                     color: Colors.black,
                                                     borderRadius:
-                                                        BorderRadius.circular(14),
+                                                        BorderRadius.circular(
+                                                            14),
                                                   ),
                                                   child: Column(
                                                     children: [
                                                       ClipRRect(
                                                         borderRadius:
-                                                            BorderRadius.only(
-                                                          topLeft:
-                                                              Radius.circular(14),
-                                                          topRight:
-                                                              Radius.circular(14),
+                                                            BorderRadius.circular(
+                                                         10
                                                         ),
                                                         child: Image.asset(
                                                           items[i1]["image"],
@@ -1369,8 +1374,8 @@ void initState() {
                                                       ),
                                                       SizedBox(height: 8),
                                                       Align(
-                                                         alignment: Alignment
-                                                              .centerLeft,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         child: Text(
                                                           items[i1]["title"],
                                                           style: TextStyle(
@@ -1386,13 +1391,14 @@ void initState() {
                                                       ),
                                                       SizedBox(height: 2),
                                                       Align(
-                                                         alignment: Alignment
-                                                              .centerLeft,
+                                                        alignment: Alignment
+                                                            .centerLeft,
                                                         child: Text(
                                                           items[i1]["location"],
                                                           style: TextStyle(
                                                             fontSize: 12,
-                                                            color: Colors.white60,
+                                                            color:
+                                                                Colors.white60,
                                                           ),
                                                           maxLines: 1,
                                                           overflow: TextOverflow
@@ -1401,9 +1407,11 @@ void initState() {
                                                       ),
                                                       SizedBox(height: 8),
                                                       Container(
-                                                        width: size.width * 0.41,
+                                                        width:
+                                                            size.width * 0.41,
                                                         height: 32,
-                                                        decoration: BoxDecoration(
+                                                        decoration:
+                                                            BoxDecoration(
                                                           color: Colors.white,
                                                           borderRadius:
                                                               BorderRadius
@@ -1414,9 +1422,11 @@ void initState() {
                                                             "Reserve",
                                                             style: TextStyle(
                                                               fontSize: 14,
-                                                              color: Colors.black,
+                                                              color:
+                                                                  Colors.black,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                           ),
                                                         ),
@@ -1430,15 +1440,19 @@ void initState() {
                                               // ---------- SECOND CARD (IF EXISTS) ----------
                                               if (i2 < items.length)
                                                 GestureDetector(
-                                                  onTap: (){
-                                                       Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: VenuePages(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                        type: PageTransitionType
+                                                            .bottomToTop,
+                                                        child: VenuePages(),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    500),
+                                                      ),
+                                                    );
                                                   },
                                                   child: Container(
                                                     width: size.width * 0.42,
@@ -1463,42 +1477,47 @@ void initState() {
                                                           child: Image.asset(
                                                             items[i2]["image"],
                                                             height: 100,
-                                                            width:
-                                                                size.width * 0.42,
+                                                            width: size.width *
+                                                                0.42,
                                                             fit: BoxFit.cover,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
                                                         Align(
-                                                           alignment: Alignment
+                                                          alignment: Alignment
                                                               .centerLeft,
                                                           child: Text(
                                                             items[i2]["title"],
                                                             style: TextStyle(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 2),
                                                         Align(
-                                                           alignment: Alignment
+                                                          alignment: Alignment
                                                               .centerLeft,
                                                           child: Text(
-                                                            items[i2]["location"],
+                                                            items[i2]
+                                                                ["location"],
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              color:
-                                                                  Colors.white60,
+                                                              color: Colors
+                                                                  .white60,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
@@ -1511,15 +1530,16 @@ void initState() {
                                                             color: Colors.white,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(8),
+                                                                    .circular(
+                                                                        8),
                                                           ),
                                                           child: Center(
                                                             child: Text(
                                                               "Reserve",
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -1552,7 +1572,7 @@ void initState() {
                                                 90 /
                                                 100,
                                         child: Text(
-                                          "Sponsored",
+                                          "Featured",
                                           style: const TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 14,
@@ -1598,14 +1618,22 @@ void initState() {
                                                                   .symmetric(
                                                                   horizontal:
                                                                       8),
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          25),
-                                                              border: Border.all(
-                                                                  color: AppColor
-                                                                      .textTapColor)),
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .circular(
+                                                                        15),
+                                                            border:
+                                                                const Border(
+                                                              bottom:
+                                                                  BorderSide(
+                                                                color: AppColor
+                                                                    .pinkColor,
+                                                                width: 1,
+                                                              ),
+                                                            ),
+                                                          ),
                                                           child: Column(
                                                             children: [
                                                               Container(
@@ -1622,22 +1650,19 @@ void initState() {
                                                                     25 /
                                                                     100,
                                                                 decoration: BoxDecoration(
-                                                                    boxShadow: [
-                                                                      BoxShadow(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        blurRadius:
-                                                                            10,
-                                                                        offset: const Offset(
-                                                                            0,
-                                                                            4),
-                                                                      )
-                                                                    ],
-                                                                    borderRadius:
-                                                                        BorderRadius.circular(
-                                                                            25),
-                                                                    border: Border
-                                                                        .all()),
+                                                                    // boxShadow: [
+                                                                    //   // BoxShadow(
+                                                                    //   //   color: Colors
+                                                                    //   //       .black,
+                                                                    //   //   blurRadius:
+                                                                    //   //       10,
+                                                                    //   //   offset: const Offset(
+                                                                    //   //       0,
+                                                                    //   //       4),
+                                                                    //   // )
+                                                                    // ],
+                                                                    borderRadius: BorderRadius.circular(25),
+                                                                    border: Border.all()),
                                                                 child:
                                                                     ClipRRect(
                                                                   borderRadius: const BorderRadius
@@ -1677,16 +1702,16 @@ void initState() {
                                                                           horizontal:
                                                                               10),
                                                                   child: Text(
-                                                                    "Sarah,26",
+                                                                    "Bass Drop,Fridays",
                                                                     style: TextStyle(
                                                                         fontFamily:
                                                                             AppFont
                                                                                 .fontFamily,
                                                                         fontSize:
-                                                                            16,
+                                                                            16.5,
                                                                         fontWeight:
                                                                             FontWeight
-                                                                                .w900,
+                                                                                .w700,
                                                                         color: isDark
                                                                             ? AppColor.secondryColor
                                                                             : AppColor.primaryColor),
@@ -1709,15 +1734,15 @@ void initState() {
                                                                     children: [
                                                                       Container(
                                                                         width: MediaQuery.of(context).size.width *
-                                                                            6 /
+                                                                            5 /
                                                                             100,
                                                                         height: MediaQuery.of(context).size.width *
-                                                                            6 /
+                                                                            5 /
                                                                             100,
                                                                         child: Image
                                                                             .asset(
                                                                           AppImage
-                                                                              .locationBlackicon,
+                                                                              .clock,
                                                                           color:
                                                                               AppColor.pinkColor,
                                                                           fit: BoxFit
@@ -1730,14 +1755,14 @@ void initState() {
                                                                             100,
                                                                       ),
                                                                       const Text(
-                                                                        "2.3 km away",
+                                                                        "Fri,10 PM - 4 AM",
                                                                         style: TextStyle(
                                                                             fontFamily: AppFont
                                                                                 .fontFamily,
                                                                             fontSize:
-                                                                                14,
+                                                                                13,
                                                                             fontWeight:
-                                                                                FontWeight.w900,
+                                                                                FontWeight.w500,
                                                                             color: AppColor.pinkColor),
                                                                       ),
                                                                     ],
@@ -1776,7 +1801,7 @@ void initState() {
                                             style: TextStyle(
                                                 fontFamily: AppFont.fontFamily,
                                                 fontSize: 14,
-                                                fontWeight: FontWeight.w900,
+                                                fontWeight: FontWeight.w600,
                                                 color: AppColor.pinkColor),
                                           ),
                                         ),
@@ -1809,7 +1834,7 @@ void initState() {
                                                   right: 12),
                                               decoration: BoxDecoration(
                                                   borderRadius:
-                                                      BorderRadius.circular(12),
+                                                      BorderRadius.circular(14),
                                                   color: isDark
                                                       ? AppColor.primaryColor
                                                       : AppColor.secondryColor),
@@ -1939,15 +1964,19 @@ void initState() {
                                               children: [
                                                 // ---------- FIRST CARD ----------
                                                 GestureDetector(
-                                                  onTap: (){
-                                                     Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: LikedEventDetail(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
+                                                  onTap: () {
+                                                    Navigator.push(
+                                                      context,
+                                                      PageTransition(
+                                                        type: PageTransitionType
+                                                            .bottomToTop,
+                                                        child: BookEvent(),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    500),
+                                                      ),
+                                                    );
                                                   },
                                                   child: Container(
                                                     width: size.width * 0.42,
@@ -1961,19 +1990,13 @@ void initState() {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.only(
-                                                            topLeft:
-                                                                Radius.circular(
-                                                                    14),
-                                                            topRight:
-                                                                Radius.circular(
-                                                                    14),
-                                                          ),
+                                                              BorderRadius
+                                                                  .circular(10),
                                                           child: Image.asset(
                                                             items[i1]["image"],
                                                             height: 100,
-                                                            width:
-                                                                size.width * 0.42,
+                                                            width: size.width *
+                                                                0.42,
                                                             fit: BoxFit.cover,
                                                           ),
                                                         ),
@@ -1984,14 +2007,17 @@ void initState() {
                                                           child: Text(
                                                             items[i1]["title"],
                                                             style: TextStyle(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 2),
@@ -1999,15 +2025,17 @@ void initState() {
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           child: Text(
-                                                            items[i1]["location"],
+                                                            items[i1]
+                                                                ["location"],
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              color:
-                                                                  Colors.white60,
+                                                              color: Colors
+                                                                  .white60,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
@@ -2020,15 +2048,16 @@ void initState() {
                                                             color: Colors.white,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(8),
+                                                                    .circular(
+                                                                        8),
                                                           ),
                                                           child: Center(
                                                             child: Text(
                                                               "Book Now",
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -2045,53 +2074,58 @@ void initState() {
                                                 // ---------- SECOND CARD (IF EXISTS) ----------
                                                 if (i2 < items.length)
                                                   GestureDetector(
-                                                    onTap: (){
-                                                       Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: LikedEventDetail(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                          type:
+                                                              PageTransitionType
+                                                                  .bottomToTop,
+                                                          child:
+                                                              LikedEventDetail(),
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                        ),
+                                                      );
                                                     },
                                                     child: Container(
                                                       width: size.width * 0.42,
                                                       decoration: BoxDecoration(
                                                         color: Colors.black,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                14),
+                                                            BorderRadius
+                                                                .circular(14),
                                                       ),
                                                       child: Column(
                                                         children: [
                                                           ClipRRect(
                                                             borderRadius:
-                                                                BorderRadius.only(
-                                                              topLeft:
-                                                                  Radius.circular(
-                                                                      14),
-                                                              topRight:
-                                                                  Radius.circular(
-                                                                      14),
+                                                                BorderRadius
+                                                                    .circular(
+                                                              10,
                                                             ),
                                                             child: Image.asset(
-                                                              items[i2]["image"],
+                                                              items[i2]
+                                                                  ["image"],
                                                               height: 100,
-                                                              width: size.width *
-                                                                  0.42,
+                                                              width:
+                                                                  size.width *
+                                                                      0.42,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
                                                           SizedBox(height: 8),
                                                           Align(
-                                                             alignment: Alignment
-                                                              .centerLeft,
+                                                            alignment: Alignment
+                                                                .centerLeft,
                                                             child: Text(
-                                                              items[i2]["title"],
+                                                              items[i2]
+                                                                  ["title"],
                                                               style: TextStyle(
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
@@ -2105,8 +2139,8 @@ void initState() {
                                                           ),
                                                           SizedBox(height: 2),
                                                           Align(
-                                                             alignment: Alignment
-                                                              .centerLeft,
+                                                            alignment: Alignment
+                                                                .centerLeft,
                                                             child: Text(
                                                               items[i2]
                                                                   ["location"],
@@ -2123,12 +2157,13 @@ void initState() {
                                                           ),
                                                           SizedBox(height: 8),
                                                           Container(
-                                                            width:
-                                                                size.width * 0.41,
+                                                            width: size.width *
+                                                                0.41,
                                                             height: 32,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -2137,7 +2172,8 @@ void initState() {
                                                             child: Center(
                                                               child: Text(
                                                                 "Book Now",
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 14,
                                                                   color: Colors
                                                                       .black,

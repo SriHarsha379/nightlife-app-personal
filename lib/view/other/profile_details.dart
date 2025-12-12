@@ -107,396 +107,391 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
-      child: PopScope(
-          canPop: false,
-          onPopInvoked: (didPop) {
-  },
-        child: GestureDetector(
-          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
-            body: Container(
-              width: MediaQuery.of(context).size.width * 100 / 100,
-              height: MediaQuery.of(context).size.height * 100 / 100,
-              decoration:
-                  BoxDecoration(gradient: AppColor.backgroundGradientcolor),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 4 / 100,
-                  ),
-                  // AppHeader(
-                  //   text: AppLanguage.profilesetupText[language],
-                  //   onPress: () => Navigator.pop(context),
-                  // ),
-                  
-                  Expanded(
-                    child: SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 90 / 100,
-                            child: Column(
-                              children: [
-                                Column(
-                                  children: [
-                                    Center(
-                                      child: Text(
-                                        AppLanguage.profileDetailstext[language],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w600,
-                                          fontSize: 36,
-                                          color: AppColor.secondryColor,
-                                        ),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          body: Container(
+            width: MediaQuery.of(context).size.width * 100 / 100,
+            height: MediaQuery.of(context).size.height * 100 / 100,
+            decoration:
+                BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+            child: Column(
+              children: [
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 4 / 100,
+                ),
+                // AppHeader(
+                //   text: AppLanguage.profilesetupText[language],
+                //   onPress: () => Navigator.pop(context),
+                // ),
+                
+                Expanded(
+                  child: SingleChildScrollView(
+                    child: Column(
+                      children: [
+                        Container(
+                          width: MediaQuery.of(context).size.width * 90 / 100,
+                          child: Column(
+                            children: [
+                              Column(
+                                children: [
+                                  Center(
+                                    child: Text(
+                                      AppLanguage.profileDetailstext[language],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 36,
+                                        color: AppColor.secondryColor,
                                       ),
                                     ),
-                                    Center(
-                                      child: Text(
-                                        AppLanguage.fillupDetailstext[language],
-                                        style: const TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 16,
-                                          color: AppColor.secondryColor,
-                                        ),
+                                  ),
+                                  Center(
+                                    child: Text(
+                                      AppLanguage.fillupDetailstext[language],
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16,
+                                        color: AppColor.secondryColor,
                                       ),
                                     ),
-                                    SizedBox(
-                                      height: MediaQuery.of(context).size.height *
-                                          3 /
-                                          100,
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                1.5 /
-                                                100),
-                                  ],
+                                  ),
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        3 /
+                                        100,
+                                  ),
+                                  SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              1.5 /
+                                              100),
+                                ],
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    4 /
+                                    100,
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    5 /
+                                    100,
+                                width: MediaQuery.of(context).size.width *
+                                    90 /
+                                    100,
+                                child: Padding(
+                                  padding: EdgeInsets.all(
+                                    MediaQuery.of(context).size.width * 0.02,
+                                  ),
+                                  child: Text(
+                                    AppLanguage.firstNameText[language],
+                                    style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.buttonColor),
+                                  ),
                                 ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      4 /
-                                      100,
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      5 /
-                                      100,
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.5 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
                                   width: MediaQuery.of(context).size.width *
                                       90 /
                                       100,
-                                  child: Padding(
-                                    padding: EdgeInsets.all(
-                                      MediaQuery.of(context).size.width * 0.02,
-                                    ),
-                                    child: Text(
-                                      AppLanguage.firstNameText[language],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
-                                          color: AppColor.buttonColor),
-                                    ),
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText: AppLanguage.nameText[language],
+                                    maxLength: AppConstant.fullNameText,
+                                    // keyboardType: TextInputType.name,
+                                    controller: NameTextEditingController,
                                   ),
                                 ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.5 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText: AppLanguage.nameText[language],
-                                      maxLength: AppConstant.fullNameText,
-                                      // keyboardType: TextInputType.name,
-                                      controller: NameTextEditingController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.5 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText:
-                                          AppLanguage.lastNameText[language],
-                                      maxLength: AppConstant.mobileMaxLenth,
-                                      // keyboardType: TextInputType.phone,
-                                      controller: lastnameTextEditingController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText: AppLanguage.username[language],
-                                      maxLength: AppConstant.mobileMaxLenth,
-                                      // keyboardType: TextInputType.phone,
-                                      controller: lastnameTextEditingController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText:
-                                          AppLanguage.emailAddressText[language],
-                                      maxLength: AppConstant.mobileMaxLenth,
-                                      // keyboardType: TextInputType.phone,
-                                      controller: emailController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText:
-                                          AppLanguage.phoneNumberText[language],
-                                      maxLength: AppConstant.mobileMaxLenth,
-                                      // keyboardType: TextInputType.phone,
-                                      controller:
-                                          mobileNumberTextEditingController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: TextFormField(
-                                      readOnly: true,
-                                      onTap: () {
-                                        _showDatePicker();
-                                      },
-                                      style: const TextStyle(
-                                          color: AppColor.secondryColor),
-                                      keyboardType: TextInputType.name,
-                                      controller: dobtexteditingController,
-                                      focusNode: _dobFocusNode, // Added FocusNode
-                                      maxLength: AppConstant.fullNameText,
-                                      decoration: InputDecoration(
-                                        suffixIcon: Padding(
-                                          padding: EdgeInsets.only(right: 20),
-                                          child: Image.asset(
-                                            AppImage.dobCalendericon,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                4 /
-                                                100,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                5 /
-                                                100,
-                                            color: AppColor.greyLightColor,
-                                          ),
-                                        ),
-                                        suffixIconConstraints:
-                                            const BoxConstraints(
-                                          minWidth: 35,
-                                          minHeight: 10,
-                                        ),
-                                        enabledBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(40),
-                                          borderSide: const BorderSide(
-                                            color: AppColor.buttonColor,
-                                            width: 0,
-                                          ),
-                                        ),
-                                        focusedBorder: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(40),
-                                          borderSide: const BorderSide(
-                                            color: AppColor.buttonColor,
-                                            width: 1.5,
-                                          ),
-                                        ),
-                                        fillColor: _isDobFocused
-                                            ? AppColor.primaryColor
-                                            : AppColor.themeColor,
-                                        filled: true,
-                                        counterText: '',
-                                        hintText: 'DOB',
-                                        hintStyle: AppConstant.textFilledStyle,
-                                        contentPadding:
-                                            const EdgeInsets.symmetric(
-                                          horizontal: 30,
-                                          vertical: 15,
-                                        ),
-                                      ),
-                                      // onTap: () {
-                                      //   // cancelRideBottomSheet(context);
-                                      // },
-                                    ),
-                                  ),
-                                ),
-                                _buildGenderDropdownField(
-                                  label: "",
-                                  value: selectedGender,
-                                  onChanged: (newValue) {
-                                    setState(() {
-                                      selectedGender = newValue;
-                                    });
-                                  },
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                Center(
-                                  child: SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        90 /
-                                        100,
-                                    height: MediaQuery.of(context).size.height *
-                                        7 /
-                                        100,
-                                    child: CustomTextField(
-                                      hintText: AppLanguage
-                                          .heightOptionalText[language],
-                                      maxLength: AppConstant.mobileMaxLenth,
-                                      // keyboardType: TextInputType.phone,
-                                      controller: heightTextEditingController,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                                SizedBox(
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    0.5 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
                                   width: MediaQuery.of(context).size.width *
-                                      80 /
+                                      90 /
                                       100,
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Align(
-                                        alignment: Alignment.center,
-                                        child: Text(
-                                          textAlign: TextAlign.justify,
-                                          AppLanguage
-                                              .bySigningupStatementText[language],
-                                          style: const TextStyle(
-                                              color: AppColor.secondryColor,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 12),
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText:
+                                        AppLanguage.lastNameText[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    // keyboardType: TextInputType.phone,
+                                    controller: lastnameTextEditingController,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText: AppLanguage.username[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    // keyboardType: TextInputType.phone,
+                                    controller: lastnameTextEditingController,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText:
+                                        AppLanguage.emailAddressText[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    // keyboardType: TextInputType.phone,
+                                    controller: emailController,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText:
+                                        AppLanguage.phoneNumberText[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    // keyboardType: TextInputType.phone,
+                                    controller:
+                                        mobileNumberTextEditingController,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: TextFormField(
+                                    readOnly: true,
+                                    onTap: () {
+                                      _showDatePicker();
+                                    },
+                                    style: const TextStyle(
+                                        color: AppColor.secondryColor),
+                                    keyboardType: TextInputType.name,
+                                    controller: dobtexteditingController,
+                                    focusNode: _dobFocusNode, // Added FocusNode
+                                    maxLength: AppConstant.fullNameText,
+                                    decoration: InputDecoration(
+                                      suffixIcon: Padding(
+                                        padding: EdgeInsets.only(right: 20),
+                                        child: Image.asset(
+                                          AppImage.dobCalendericon,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              4 /
+                                              100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              5 /
+                                              100,
+                                          color: AppColor.greyLightColor,
                                         ),
                                       ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width *
-                                            1 /
-                                            100,
+                                      suffixIconConstraints:
+                                          const BoxConstraints(
+                                        minWidth: 35,
+                                        minHeight: 10,
                                       ),
-                                      Text(
+                                      enabledBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(40),
+                                        borderSide: const BorderSide(
+                                          color: AppColor.buttonColor,
+                                          width: 0,
+                                        ),
+                                      ),
+                                      focusedBorder: OutlineInputBorder(
+                                        borderRadius: BorderRadius.circular(40),
+                                        borderSide: const BorderSide(
+                                          color: AppColor.buttonColor,
+                                          width: 1.5,
+                                        ),
+                                      ),
+                                      fillColor: _isDobFocused
+                                          ? AppColor.primaryColor
+                                          : AppColor.themeColor,
+                                      filled: true,
+                                      counterText: '',
+                                      hintText: 'DOB',
+                                      hintStyle: AppConstant.textFilledStyle,
+                                      contentPadding:
+                                          const EdgeInsets.symmetric(
+                                        horizontal: 30,
+                                        vertical: 15,
+                                      ),
+                                    ),
+                                    // onTap: () {
+                                    //   // cancelRideBottomSheet(context);
+                                    // },
+                                  ),
+                                ),
+                              ),
+                              _buildGenderDropdownField(
+                                label: "",
+                                value: selectedGender,
+                                onChanged: (newValue) {
+                                  setState(() {
+                                    selectedGender = newValue;
+                                  });
+                                },
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText: AppLanguage
+                                        .heightOptionalText[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    // keyboardType: TextInputType.phone,
+                                    controller: heightTextEditingController,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    1 /
+                                    100,
+                              ),
+                              SizedBox(
+                                width: MediaQuery.of(context).size.width *
+                                    80 /
+                                    100,
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        textAlign: TextAlign.justify,
                                         AppLanguage
-                                            .userAgreementStatementText[language],
+                                            .bySigningupStatementText[language],
                                         style: const TextStyle(
                                             color: AppColor.secondryColor,
                                             fontWeight: FontWeight.w400,
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 12),
                                       ),
-                                    ],
-                                  ),
+                                    ),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          1 /
+                                          100,
+                                    ),
+                                    Text(
+                                      AppLanguage
+                                          .userAgreementStatementText[language],
+                                      style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontWeight: FontWeight.w400,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 12),
+                                    ),
+                                  ],
                                 ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
-                                      100,
-                                ),
-                                AppButton(
-                                    text: AppLanguage.continueText[language],
-                                    onPress: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: OtpVerify(),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    }),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      6 /
-                                      100,
-                                ),
-                              ],
-                            ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+                              AppButton(
+                                  text: AppLanguage.continueText[language],
+                                  onPress: () {
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: OtpVerify(),
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                      ),
+                                    );
+                                  }),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    6 /
+                                    100,
+                              ),
+                            ],
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

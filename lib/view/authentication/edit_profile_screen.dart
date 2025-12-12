@@ -148,17 +148,22 @@ class _EditProfileState extends State<EditProfile> {
                                   color: AppColor.secondryColor,
                                 ),
                               ),
+                               SizedBox(
+                              width: MediaQuery.of(context).size.width *
+                                  0.6/
+                                  100),
                               Image.asset(
                                 AppImage.pencilIcon,
-                                height: size.height * 4 / 100,
-                                width: size.width * 4 / 100,
+                                height: size.height * 3 / 100,
+                                width: size.width * 3 / 100,
+                                color: AppColor.secondryColor,
                               ),
                             ],
                           ),
         
                           SizedBox(
                               height: MediaQuery.of(context).size.height *
-                                  0.2 /
+                                  0.4 /
                                   100),
                           Text(
                             AppLanguage.foodieExplorecreativeText[language],
@@ -354,7 +359,7 @@ class _EditProfileState extends State<EditProfile> {
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.primaryColor,
+                            color: AppColor.secondryColor,
                           ),
                         ),
                         SizedBox(
@@ -434,7 +439,7 @@ class _EditProfileState extends State<EditProfile> {
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.primaryColor,
+                            color: AppColor.secondryColor,
                           ),
                         ),
                         SizedBox(

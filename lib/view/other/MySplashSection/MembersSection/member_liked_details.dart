@@ -121,15 +121,13 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     },
   ];
 
-  
- List chats = [
+  List chats = [
     {
       'id': 1,
       'image': 'assets/icons/ProfilePhoto.png',
       'name': 'Smith Mathew',
       'lastMessage': 'Hi, David. Hope you\'re doing...',
       'time': '09:18',
-      
     },
     {
       'id': 2,
@@ -154,15 +152,17 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     },
   ];
 
-
   int selectedId = 1;
-
+  List pics = [
+    "assets/icons/gauravpic.png",
+    "assets/icons/gauravpic2.png",
+    "assets/icons/gauravpic3.png",
+  ];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light,
@@ -173,15 +173,22 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Padding(
-      
-            padding: const EdgeInsets.only(bottom: 20,left: 40),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Container(
+            decoration: BoxDecoration(
+              color: AppColor.sendinvitecontainercolor,
+              borderRadius: BorderRadius.circular(25),
+            ),
+            width: size.width * 85 / 100,
+            height: size.height * 7 / 100,
             child: Row(
               children: [
-                
+                   SizedBox(
+                  width: size.width * 3 / 100,
+                ),
                 GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+                  behavior: HitTestBehavior.translucent,
                   onTap: () {
                     Navigator.push(
                       context,
@@ -208,14 +215,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                 SizedBox(
                   width: size.width * 3 / 100,
                 ),
-      
                 GestureDetector(
-                  onTap: (){
+                  onTap: () {
                     documenttypebottomsheet(context);
                   },
                   child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
+                  width: size.width * 30 / 100,
+                                    height: size.height * 4.6 / 100,
+
                     decoration: BoxDecoration(
                       color: AppColor.secondryColor,
                       borderRadius: BorderRadius.circular(50),
@@ -223,55 +230,66 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                         color: AppColor.secondryColor,
                       ),
                     ),
-                    child: Text(
-                      AppLanguage.sendInviteText[language],
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: AppFont.fontFamily,
-                        color: AppColor.pinkColor,
-                      ),
-                    ),
-                  ),
-                ),
-                
-                  SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.buttonColor,
-                    borderRadius: BorderRadius.circular(50),
-      
-                    // border: Border.all(
-      
-                    //      color : AppColor.primaryColor,
-                    // ),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AppImage.heartImg,
-                        height: 20,
-                        width: 20,
-                        color: AppColor.secondryColor, // optional tint color
-                      ),
-                      Text(
-                        AppLanguage.likeText[language],
+                    child: Center(
+                      child: Text(
+                        AppLanguage.sendInviteText[language],
                         style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor,
+                          color: AppColor.pinkColor,
                         ),
                       ),
-                    ],
+                    ),
                   ),
                 ),
-              
-                
+                SizedBox(
+                  width: size.width * 3 / 100,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: MyAppFooter(initialIndex: 0),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColor.buttonColor,
+                      borderRadius: BorderRadius.circular(50),
+
+                      // border: Border.all(
+
+                      //      color : AppColor.primaryColor,
+                      // ),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          AppImage.heartImg,
+                          height: 20,
+                          width: 20,
+                          color: AppColor.secondryColor, // optional tint color
+                        ),
+                        Text(
+                          AppLanguage.likeText[language],
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -282,10 +300,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-        
-                 SizedBox(height: size.height * 4 / 100),
-                
+                SizedBox(height: size.height * 4 / 100),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
@@ -293,15 +308,81 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                         width: size.width * 100 / 100,
                         child: Column(
                           children: [
+                            SizedBox(
+                              height: size.height * 2 / 100,
+                            ),
                             Stack(children: [
                               Container(
-                                width: size.width * 100 / 100,
-                                height: size.height * 62 / 100,
-                                child: ClipRRect(
-                                  child: Image.asset(
-                                    AppImage.gauravkapoor,
-                                    fit: BoxFit.cover,
-                                  ),
+                                width: double.infinity,
+                                height: 450,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(20),
+                                ),
+                                clipBehavior: Clip.hardEdge,
+                                child: Stack(
+                                  children: [
+                                    SizedBox(
+                                      height: size.height,
+                                      width: size.width,
+                                      child: ListView.builder(
+                                        scrollDirection: Axis.horizontal,
+                                        itemCount: pics.length,
+                                        itemBuilder: (context, index) {
+                                          return Container(
+                                            width: size.width,
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(12),
+                                              child: Image.asset(
+                                                pics[index],
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                    /// BOTTOM IMAGE (overlay image)
+                                    Stack(
+                                      children: [
+                                        /// 🔹 Main description image (your bottom image)
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Image.asset(
+                                            "assets/icons/gauravkapoordesciption.png",
+                                            fit: BoxFit.cover,
+                                          ),
+                                        ),
+
+                                        Positioned(
+                                          left: 0,
+                                          right: 0,
+                                          bottom: 0,
+                                          child: Container(
+                                            height: 1, // shadow height
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.white,
+                                                  blurRadius: 2,
+
+                                                  spreadRadius:
+                                                      0.6, // how wide shadow spreads
+                                                  offset: Offset(1,
+                                                      1), // pushes shadow downward
+                                                ),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ],
                                 ),
                               ),
                               Positioned(
@@ -313,7 +394,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   },
                                   child: Image.asset(
                                     AppImage.backarrow,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.primaryColor,
                                     fit: BoxFit.cover,
                                     height: size.width * 5 / 100,
                                   ),
@@ -337,145 +418,39 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              AppLanguage.PeopleYoubothknowText[
-                                                  language],
-                                              style: const TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w600,
-                                                  color:
-                                                      AppColor.secondryColor),
-                                            ),
-                                            SizedBox(
-                                              height: size.height * 1 / 100,
-                                            ),
-                                            GestureDetector(
-                                              onTap: () {
-                                                showUserPopup(context);
-                                              },
-                                              child: Container(
-                                                width: size.width * 70 / 100,
-                                                child: ClipRRect(
-                                                    borderRadius:
-                                                        const BorderRadius.only(
-                                                      topLeft:
-                                                          Radius.circular(15),
-                                                      topRight:
-                                                          Radius.circular(15),
-                                                    ),
-                                                    child: Image.asset(
-                                                      AppImage.grouplikesIcon,
-                                                      fit: BoxFit.cover,
-                                                    )),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              height: size.height * 1 / 100,
-                                            ),
-                                            // Row(
-                                            //   children: [
-                                            //     Container(
-                                            //       decoration: BoxDecoration(
-                                            //           border: Border.all(
-                                            //             width: 1,
-                                            //             color:
-                                            //                 AppColor.pinkColor,
-                                            //           ),
-                                            //           borderRadius:
-                                            //               BorderRadius.circular(
-                                            //                   20)),
-                                            //       child: Padding(
-                                            //         padding:
-                                            //             EdgeInsets.symmetric(
-                                            //           horizontal:
-                                            //               size.width * 2 / 100,
-                                            //           vertical: 1,
+                                            // Text(
+                                            //   AppLanguage.PeopleYoubothknowText[
+                                            //       language],
+                                            //   style: const TextStyle(
+                                            //       fontSize: 16,
+                                            //       fontFamily:
+                                            //           AppFont.fontFamily,
+                                            //       fontWeight: FontWeight.w600,
+                                            //       color:
+                                            //           AppColor.secondryColor),
+                                            // ),
+                                            // SizedBox(
+                                            //   height: size.height * 1 / 100,
+                                            // ),
+                                            // GestureDetector(
+                                            //   onTap: () {
+                                            //     showUserPopup(context);
+                                            //   },
+                                            //   child: Container(
+                                            //     width: size.width * 70 / 100,
+                                            //     child: ClipRRect(
+                                            //         borderRadius:
+                                            //             const BorderRadius.only(
+                                            //           topLeft:
+                                            //               Radius.circular(15),
+                                            //           topRight:
+                                            //               Radius.circular(15),
                                             //         ),
-                                            //         child: Text(
-                                            //           AppLanguage
-                                            //               .technoText[language],
-                                            //           style: const TextStyle(
-                                            //               fontSize: 14,
-                                            //               fontFamily: AppFont
-                                            //                   .fontFamily,
-                                            //               fontWeight:
-                                            //                   FontWeight.normal,
-                                            //               color: AppColor
-                                            //                   .primaryColor),
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //     SizedBox(
-                                            //       width: size.width * 2 / 100,
-                                            //     ),
-                                            //     Container(
-                                            //       decoration: BoxDecoration(
-                                            //           border: Border.all(
-                                            //             width: 1,
-                                            //             color:
-                                            //                 AppColor.pinkColor,
-                                            //           ),
-                                            //           borderRadius:
-                                            //               BorderRadius.circular(
-                                            //                   20)),
-                                            //       child: Padding(
-                                            //         padding:
-                                            //             EdgeInsets.symmetric(
-                                            //           horizontal:
-                                            //               size.width * 2 / 100,
-                                            //           vertical: 1,
-                                            //         ),
-                                            //         child: Text(
-                                            //           AppLanguage.wishkeyText[
-                                            //               language],
-                                            //           style: const TextStyle(
-                                            //               fontSize: 14,
-                                            //               fontFamily: AppFont
-                                            //                   .fontFamily,
-                                            //               fontWeight:
-                                            //                   FontWeight.normal,
-                                            //               color: AppColor
-                                            //                   .primaryColor),
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //     SizedBox(
-                                            //       width: size.width * 2 / 100,
-                                            //     ),
-                                            //     Container(
-                                            //       decoration: BoxDecoration(
-                                            //           border: Border.all(
-                                            //             width: 1,
-                                            //             color:
-                                            //                 AppColor.pinkColor,
-                                            //           ),
-                                            //           borderRadius:
-                                            //               BorderRadius.circular(
-                                            //                   20)),
-                                            //       child: Padding(
-                                            //         padding:
-                                            //             EdgeInsets.symmetric(
-                                            //           horizontal:
-                                            //               size.width * 2 / 100,
-                                            //           vertical: 1,
-                                            //         ),
-                                            //         child: Text(
-                                            //           AppLanguage
-                                            //               .EDMText[language],
-                                            //           style: const TextStyle(
-                                            //               fontSize: 14,
-                                            //               fontFamily: AppFont
-                                            //                   .fontFamily,
-                                            //               fontWeight:
-                                            //                   FontWeight.normal,
-                                            //               color: AppColor
-                                            //                   .primaryColor),
-                                            //         ),
-                                            //       ),
-                                            //     ),
-                                            //   ],
+                                            //         child: Image.asset(
+                                            //           AppImage.grouplikesIcon,
+                                            //           fit: BoxFit.cover,
+                                            //         )),
+                                            //   ),
                                             // ),
                                           ],
                                         ),
@@ -689,7 +664,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                     ],
                                   ),
-                
+
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
@@ -719,121 +694,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-                                  Container(
-                                    child: Text(
-                                      AppLanguage.interestText[language],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w600,
-                                          color: AppColor.secondryColor),
-                                    ),
-                                  ),
-                
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        1 /
-                                        100,
-                                  ),
-                                  Wrap(
-                                    spacing:
-                                        6, // horizontal space between items
-                                    runSpacing:
-                                        8, // vertical space between rows
-                                    children: List.generate(
-                                      Interest.length,
-                                      (index) {
-                                        bool isAll = Interest[index]['id'] == 1;
-                
-                                        return GestureDetector(
-                                          onTap: isAll
-                                              ? null
-                                              : () {
-                                                  setState(() {
-                                                    selectedId =
-                                                        Interest[index]['id'];
-                                                  });
-                                                },
-                                          child: Container(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 16, vertical: 8),
-                                            decoration: BoxDecoration(
-                                              color: selectedId ==
-                                                      Interest[index]['id']
-                                                  ? AppColor.primaryColor
-                                                  : AppColor.primaryColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(50),
-                                              border: Border.all(
-                                                color: selectedId ==
-                                                        Interest[index]['id']
-                                                    ? AppColor.buttonColor
-                                                    : AppColor.buttonColor,
-                                              ),
-                                            ),
-                                            child: Text(
-                                              Interest[index]['title'],
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 14,
-                                                fontWeight: FontWeight.w500,
-                                                color: selectedId ==
-                                                        Interest[index]['id']
-                                                    ? AppColor.buttonColor
-                                                    : AppColor.buttonColor,
-                                              ),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          AppLanguage.vibeCheck[language],
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor),
-                                        ),
-                                      ),
-                                      // Container(
-                                      //   child: Text(
-                                      //     AppLanguage.viewAlltext[language],
-                                      //     style: const TextStyle(
-                                      //         fontSize: 16,
-                                      //         fontFamily: AppFont.fontFamily,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColor.pinkColor),
-                                      //   ),
-                                      // ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  Container(
-                                    width: size.width * 80 / 100,
-                                    child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(15),
-                                          topRight: Radius.circular(15),
-                                        ),
-                                        child: Image.asset(
-                                          AppImage.viewCheckicon,
-                                          fit: BoxFit.fill,
-                                        )),
-                                  ),
-                
+
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
@@ -845,22 +706,22 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         child: Text(
                                           AppLanguage.GalleryText[language],
                                           style: const TextStyle(
-                                              fontSize: 18,
+                                              fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
+                                              fontWeight: FontWeight.w600,
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      // Container(
-                                      //   child: Text(
-                                      //     AppLanguage.viewAlltext[language],
-                                      //     style: const TextStyle(
-                                      //         fontSize: 16,
-                                      //         fontFamily: AppFont.fontFamily,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColor.pinkColor),
-                                      //   ),
-                                      // ),
+                                      Container(
+                                        child: Text(
+                                          AppLanguage.viewAlltext[language],
+                                          style: const TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColor.pinkColor),
+                                        ),
+                                      ),
                                     ],
                                   ),
                                   SizedBox(
@@ -915,7 +776,123 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ],
                                     ),
                                   ),
-                
+
+                                  Container(
+                                    child: Text(
+                                      AppLanguage.interestText[language],
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColor.secondryColor),
+                                    ),
+                                  ),
+
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        1 /
+                                        100,
+                                  ),
+                                  Wrap(
+                                    spacing:
+                                        7, // horizontal space between items
+                                    runSpacing:
+                                        10, // vertical space between rows
+                                    children: List.generate(
+                                      Interest.length,
+                                      (index) {
+                                        bool isAll = Interest[index]['id'] == 1;
+
+                                        return GestureDetector(
+                                          onTap: isAll
+                                              ? null
+                                              : () {
+                                                  setState(() {
+                                                    selectedId =
+                                                        Interest[index]['id'];
+                                                  });
+                                                },
+                                          child: Container(
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 8, vertical: 2),
+                                            decoration: BoxDecoration(
+                                              color: selectedId ==
+                                                      Interest[index]['id']
+                                                  ? AppColor.primaryColor
+                                                  : AppColor.primaryColor,
+                                              borderRadius:
+                                                  BorderRadius.circular(50),
+                                              border: Border.all(
+                                                color: selectedId ==
+                                                        Interest[index]['id']
+                                                    ? AppColor.buttonColor
+                                                    : AppColor.buttonColor,
+                                              ),
+                                            ),
+                                            child: Text(
+                                              Interest[index]['title'],
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontSize: 13,
+                                                fontWeight: FontWeight.w500,
+                                                color: selectedId ==
+                                                        Interest[index]['id']
+                                                    ? AppColor.buttonColor
+                                                    : AppColor.buttonColor,
+                                              ),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 2 / 100,
+                                  ),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          AppLanguage.vibeCheck[language],
+                                          style:  TextStyle(
+                                              fontSize: 16,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w600,
+                                              color: AppColor.secondryColor),
+                                        ),
+                                      ),
+                                      // Container(
+                                      //   child: Text(
+                                      //     AppLanguage.viewAlltext[language],
+                                      //     style: const TextStyle(
+                                      //         fontSize: 16,
+                                      //         fontFamily: AppFont.fontFamily,
+                                      //         fontWeight: FontWeight.w500,
+                                      //         color: AppColor.pinkColor),
+                                      //   ),
+                                      // ),
+                                    ],
+                                  ),
+                                  SizedBox(
+                                    height: size.height * 2 / 100,
+                                  ),
+                                  Container(
+                                    width: size.width * 80 / 100,
+                                    child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(15),
+                                          topRight: Radius.circular(15),
+                                        ),
+                                        child: Image.asset(
+                                          
+                                          AppImage.viewCheckicon,
+                                          fit: BoxFit.fill,
+                                        )),
+                                  ),
+
                                   // SizedBox(
                                   //   width: MediaQuery.of(context).size.width,
                                   //   child: SingleChildScrollView(
@@ -998,7 +975,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   //     ),
                                   //   ),
                                   // ),
-                
+
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1029,30 +1006,30 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                     .width *
                                                 4 /
                                                 100),
-                
+
                                         // Icon
-                                        // Image.asset(
-                                        //   AppImage.instagramIcon,
-                                        //   color: AppColor.primaryColor,
-                                        //   width: MediaQuery.of(context)
-                                        //           .size
-                                        //           .width *
-                                        //       5 /
-                                        //       100,
-                                        //   height: MediaQuery.of(context)
-                                        //           .size
-                                        //           .height *
-                                        //       6 /
-                                        //       100,
-                                        // ),
-                
+                                        Image.asset(
+                                          AppImage.instagramIcon,
+                                          color: AppColor.secondryColor,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              5 /
+                                              100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              6 /
+                                              100,
+                                        ),
+
                                         SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
                                                 2 /
                                                 100),
-                
+
                                         // Text + spacing
                                         Expanded(
                                           child: Column(
@@ -1085,7 +1062,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             ],
                                           ),
                                         ),
-                
+
                                         Container(
                                           padding: const EdgeInsets.symmetric(
                                               vertical: 6, horizontal: 12),
@@ -1107,7 +1084,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             ),
                                           ),
                                         ),
-                
+
                                         SizedBox(
                                             width: MediaQuery.of(context)
                                                     .size
@@ -1117,11 +1094,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ],
                                     ),
                                   ),
-                
+
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-                
+
                                   // Container(
                                   //   width: size.width * 75 / 100,
                                   //   height: size.height * 7 / 100,
@@ -1232,7 +1209,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   //     ],
                                   //   ),
                                   // ),
-                
+
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1338,7 +1315,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                     ),
                                   ),
-                
+
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1433,11 +1410,18 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
-                              ],
+                                  Divider(
+                                    height: 0.2,
+                                    thickness: 0.5,
+                                    color: AppColor.greyLightColor,
+                                    indent: 70,
+                                    endIndent: 70,
+                                  ),
+                                ],
                               ),
                             ),
                             SizedBox(
-                              height: size.height * 5 / 100,
+                              height: size.height * 15 / 100,
                             ),
                           ],
                         ),
@@ -1452,56 +1436,124 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       ),
     );
   }
-void documenttypebottomsheet(BuildContext context) {
-  final size = MediaQuery.of(context).size;
 
-  showModalBottomSheet<void>(
-    backgroundColor: Colors.transparent,
-    isScrollControlled: true,
-    shape: const RoundedRectangleBorder(),
-    context: context,
-    builder: (BuildContext context) {
-      return StatefulBuilder(builder: (context, setStateBottomSheet) {
-        return Container(
-          width: MediaQuery.of(context).size.width * 100 / 100,
-          height: MediaQuery.of(context).size.height * 60 / 100,
-          color: Colors.transparent,
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width * 100 / 100,
-                height: MediaQuery.of(context).size.height * 60 / 100,
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColor.backgroundGradientcolor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(46),
-                            topRight: Radius.circular(46),
-                          ),
-                        ),
-                        width: size.width * 100 / 100,
-                        height: size.height * 80 / 100,
-                        child: Column(
-                          children: [
-                            SizedBox(height: size.height * 2 / 100),
-                            Image.asset(
-                              AppImage.dashIcon,
-                              height: size.height * 0.5 / 100,
-                              width: size.width * 28 / 100,
-                              fit: BoxFit.fill,
+  void documenttypebottomsheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setStateBottomSheet) {
+          return Container(
+            width: MediaQuery.of(context).size.width * 100 / 100,
+            height: MediaQuery.of(context).size.height * 60 / 100,
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 100 / 100,
+                  height: MediaQuery.of(context).size.height * 60 / 100,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(46),
+                              topRight: Radius.circular(46),
                             ),
-                            SizedBox(height: size.height * 2 / 100),
-                            Container(
-                              color: AppColor.transparentColor,
-                              width: MediaQuery.of(context).size.width * 100 / 100,
-                              height: MediaQuery.of(context).size.height * 8 / 100,
-                              child: Center(
+                          ),
+                          width: size.width * 100 / 100,
+                          height: size.height * 80 / 100,
+                          child: Column(
+                            children: [
+                              SizedBox(height: size.height * 2 / 100),
+                              Image.asset(
+                                AppImage.dashIcon,
+                                height: size.height * 0.5 / 100,
+                                width: size.width * 28 / 100,
+                                fit: BoxFit.fill,
+                              ),
+                              SizedBox(height: size.height * 2 / 100),
+                              Container(
+                                color: AppColor.transparentColor,
+                                width: MediaQuery.of(context).size.width *
+                                    100 /
+                                    100,
+                                height: MediaQuery.of(context).size.height *
+                                    8 /
+                                    100,
+                                child: Center(
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setStateBottomSheet(() {
+                                            selectedIndex = 0;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              50 /
+                                              100,
+                                          child: Center(
+                                            child: Text(
+                                              AppLanguage.eventsText[language],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: selectedIndex == 0
+                                                    ? AppColor.secondryColor
+                                                    : AppColor.secondryColor,
+                                                fontSize: 15,
+                                                fontFamily: AppFont.fontFamily,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          setStateBottomSheet(() {
+                                            selectedIndex = 1;
+                                          });
+                                        },
+                                        child: Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              50 /
+                                              100,
+                                          child: Center(
+                                            child: Text(
+                                              AppLanguage.venuesText[language],
+                                              style: TextStyle(
+                                                fontWeight: FontWeight.w500,
+                                                color: selectedIndex == 1
+                                                    ? AppColor.greyLightColor
+                                                    : AppColor.secondryColor,
+                                                fontSize: 15,
+                                                fontFamily: AppFont.fontFamily,
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Container(
                                 child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     GestureDetector(
                                       onTap: () {
@@ -1510,20 +1562,15 @@ void documenttypebottomsheet(BuildContext context) {
                                         });
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width * 50 / 100,
-                                        child: Center(
-                                          child: Text(
-                                            AppLanguage.eventsText[language],
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: selectedIndex == 0
-                                                  ? AppColor.secondryColor
-                                                  : AppColor.secondryColor,
-                                              fontSize: 15,
-                                              fontFamily: AppFont.fontFamily,
-                                            ),
-                                          ),
-                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.44,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.003,
+                                        color: selectedIndex == 0
+                                            ? AppColor.secondryColor
+                                            : AppColor.secondryColor,
                                       ),
                                     ),
                                     GestureDetector(
@@ -1533,187 +1580,176 @@ void documenttypebottomsheet(BuildContext context) {
                                         });
                                       },
                                       child: Container(
-                                        width: MediaQuery.of(context).size.width * 50 / 100,
-                                        child: Center(
-                                          child: Text(
-                                            AppLanguage.venuesText[language],
-                                            style: TextStyle(
-                                              fontWeight: FontWeight.w500,
-                                              color: selectedIndex == 1
-                                                  ? AppColor.greyLightColor
-                                                  : AppColor.secondryColor,
-                                              fontSize: 15,
-                                              fontFamily: AppFont.fontFamily,
-                                            ),
-                                          ),
-                                        ),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                0.36,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.003,
+                                        color: selectedIndex == 1
+                                            ? AppColor.greyLightColor
+                                            : AppColor.secondryColor,
                                       ),
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
-                            Container(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setStateBottomSheet(() {
-                                        selectedIndex = 0;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.44,
-                                      height: MediaQuery.of(context).size.height * 0.003,
-                                      color: selectedIndex == 0
-                                          ? AppColor.secondryColor
-                                          : AppColor.secondryColor,
-                                    ),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      setStateBottomSheet(() {
-                                        selectedIndex = 1;
-                                      });
-                                    },
-                                    child: Container(
-                                      width: MediaQuery.of(context).size.width * 0.36,
-                                      height: MediaQuery.of(context).size.height * 0.003,
-                                      color: selectedIndex == 1
-                                          ? AppColor.greyLightColor
-                                          : AppColor.secondryColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(height: size.height * 2 / 100),
-                            SizedBox(height: size.height * 1 / 100),
-                            Expanded(
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    ...List.generate(chats.length, (index) {
-                                      final chat = chats[index];
-                                      final isSend = chats[index]['isSend'] == true;
-                                      
-                                      return Wrap(
-                                        children: [
-                                          Container(
-                                            width: size.width * 90 / 100,
-                                            height: size.height * 8.5 / 100,
-                                            child: ListTile(
-                                              contentPadding: EdgeInsets.zero,
-                                              leading: Container(
-                                                height: size.height * 10 / 100,
-                                                width: size.width * 13 / 100,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  image: DecorationImage(
-                                                    image: AssetImage(chat['image'] ?? ''),
-                                                    fit: BoxFit.cover,
+                              SizedBox(height: size.height * 2 / 100),
+                              SizedBox(height: size.height * 1 / 100),
+                              Expanded(
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      ...List.generate(chats.length, (index) {
+                                        final chat = chats[index];
+                                        final isSend =
+                                            chats[index]['isSend'] == true;
+
+                                        return Wrap(
+                                          children: [
+                                            Container(
+                                              width: size.width * 90 / 100,
+                                              height: size.height * 8.5 / 100,
+                                              child: ListTile(
+                                                contentPadding: EdgeInsets.zero,
+                                                leading: Container(
+                                                  height:
+                                                      size.height * 10 / 100,
+                                                  width: size.width * 13 / 100,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    image: DecorationImage(
+                                                      image: AssetImage(
+                                                          chat['image'] ?? ''),
+                                                      fit: BoxFit.cover,
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
-                                              title: Text(
-                                                chat['name'] ?? '',
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w600,
-                                                  fontSize: 16,
-                                                  color: AppColor.secondryColor,
+                                                title: Text(
+                                                  chat['name'] ?? '',
+                                                  style: TextStyle(
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 16,
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                  ),
                                                 ),
-                                              ),
-                                              subtitle: Text(
-                                                chat['lastMessage'] ?? '',
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: AppColor.secondryColor,
+                                                subtitle: Text(
+                                                  chat['lastMessage'] ?? '',
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                  ),
+                                                  maxLines: 1,
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
                                                 ),
-                                                maxLines: 1,
-                                                overflow: TextOverflow.ellipsis,
-                                              ),
-                                              trailing: GestureDetector(
-                                                onTap: () {
-                                                  setStateBottomSheet(() {
-                                                    chats[index]['isSend'] = true;
-                                                  });
+                                                trailing: GestureDetector(
+                                                  onTap: () {
+                                                    setStateBottomSheet(() {
+                                                      chats[index]['isSend'] =
+                                                          true;
+                                                    });
 
-                                                  Future.delayed(
-                                                    const Duration(milliseconds: 200), 
-                                                    () {
+                                                    Future.delayed(
+                                                        const Duration(
+                                                            milliseconds: 200),
+                                                        () {
                                                       Navigator.push(
                                                         context,
                                                         PageTransition(
-                                                          type: PageTransitionType.bottomToTop,
-                                                          child: ChatMessageScreen(
-                                                            name: chats[index]['name'] ?? '',
-                                                            image: chats[index]['image'] ?? '',
+                                                          type:
+                                                              PageTransitionType
+                                                                  .bottomToTop,
+                                                          child:
+                                                              ChatMessageScreen(
+                                                            name: chats[index]
+                                                                    ['name'] ??
+                                                                '',
+                                                            image: chats[index]
+                                                                    ['image'] ??
+                                                                '',
                                                           ),
                                                         ),
                                                       );
-                                                    }
-                                                  );
-                                                },
-                                                child: Container(
-                                                  padding: const EdgeInsets.symmetric(
-                                                    horizontal: 20,
-                                                    vertical: 8
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: isSend
-                                                        ? AppColor.logoutContainerColor
-                                                        : AppColor.secondryColor,
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    border: isSend
-                                                        ? Border.all(
-                                                            color: AppColor.buttonColor,
-                                                            width: 1
-                                                          )
-                                                        : null,
-                                                  ),
-                                                  child: Text(
-                                                    isSend
-                                                        ? (chats[index]['message1']?.toString() ?? 'Send')
-                                                        : (chats[index]['message']?.toString() ?? 'Send'),
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      fontWeight: FontWeight.w500,
-                                                      fontFamily: AppFont.fontFamily,
+                                                    });
+                                                  },
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal: 20,
+                                                        vertical: 8),
+                                                    decoration: BoxDecoration(
                                                       color: isSend
-                                                          ? AppColor.secondryColor
-                                                          : AppColor.primaryColor,
+                                                          ? AppColor
+                                                              .logoutContainerColor
+                                                          : AppColor
+                                                              .secondryColor,
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              10),
+                                                      border: isSend
+                                                          ? Border.all(
+                                                              color: AppColor
+                                                                  .buttonColor,
+                                                              width: 1)
+                                                          : null,
+                                                    ),
+                                                    child: Text(
+                                                      isSend
+                                                          ? (chats[index][
+                                                                      'message1']
+                                                                  ?.toString() ??
+                                                              'Send')
+                                                          : (chats[index][
+                                                                      'message']
+                                                                  ?.toString() ??
+                                                              'Send'),
+                                                      style: TextStyle(
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        color: isSend
+                                                            ? AppColor
+                                                                .secondryColor
+                                                            : AppColor
+                                                                .primaryColor,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                          if (index < chats.length - 0)
                                             if (index < chats.length - 0)
-                                              SizedBox(height: size.height * 0.1 / 100),
-                                        ],
-                                      );
-                                    }),
-                                  ],
+                                              if (index < chats.length - 0)
+                                                SizedBox(
+                                                    height: size.height *
+                                                        0.1 /
+                                                        100),
+                                          ],
+                                        );
+                                      }),
+                                    ],
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
-          ),
-        );
-      });
-    },
-  );
-}
-
+              ],
+            ),
+          );
+        });
+      },
+    );
+  }
 
   void showUserPopup(BuildContext context) {
     final size = MediaQuery.of(context).size;

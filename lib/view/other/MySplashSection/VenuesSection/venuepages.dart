@@ -160,13 +160,18 @@ class _VenuePagesState extends State<VenuePages> {
         child: Scaffold(
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(
-              bottom: 20,
+          floatingActionButton:Container(
+            decoration: BoxDecoration(
+              color: AppColor.sendinvitecontainercolor,
+              borderRadius: BorderRadius.circular(25),
             ),
+            width: size.width * 85 / 100,
+            height: size.height * 7 / 100,
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
               children: [
+                   SizedBox(
+                  width: size.width * 3 / 100,
+                ),
                 GestureDetector(
                   behavior: HitTestBehavior.translucent,
                   onTap: () {
@@ -200,8 +205,9 @@ class _VenuePagesState extends State<VenuePages> {
                     documenttypebottomsheet(context);
                   },
                   child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 24, vertical: 10),
+                  width: size.width * 30 / 100,
+                                    height: size.height * 4.6 / 100,
+
                     decoration: BoxDecoration(
                       color: AppColor.secondryColor,
                       borderRadius: BorderRadius.circular(50),
@@ -209,13 +215,15 @@ class _VenuePagesState extends State<VenuePages> {
                         color: AppColor.secondryColor,
                       ),
                     ),
-                    child: Text(
-                      AppLanguage.sendInviteText[language],
-                      style: TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: AppFont.fontFamily,
-                        color: AppColor.pinkColor,
+                    child: Center(
+                      child: Text(
+                        AppLanguage.sendInviteText[language],
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          fontFamily: AppFont.fontFamily,
+                          color: AppColor.pinkColor,
+                        ),
                       ),
                     ),
                   ),
@@ -223,36 +231,48 @@ class _VenuePagesState extends State<VenuePages> {
                 SizedBox(
                   width: size.width * 3 / 100,
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.buttonColor,
-                    borderRadius: BorderRadius.circular(50),
-
-                    // border: Border.all(
-
-                    //      color : AppColor.primaryColor,
-                    // ),
-                  ),
-                  child: Row(
-                    children: [
-                      Image.asset(
-                        AppImage.heartImg,
-                        height: 20,
-                        width: 20,
-                        color: AppColor.secondryColor, // optional tint color
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: MyAppFooter(initialIndex: 0),
+                        duration: const Duration(milliseconds: 500),
                       ),
-                      Text(
-                        AppLanguage.likeText[language],
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor,
+                    );
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColor.buttonColor,
+                      borderRadius: BorderRadius.circular(50),
+
+                      // border: Border.all(
+
+                      //      color : AppColor.primaryColor,
+                      // ),
+                    ),
+                    child: Row(
+                      children: [
+                        Image.asset(
+                          AppImage.heartImg,
+                          height: 20,
+                          width: 20,
+                          color: AppColor.secondryColor, // optional tint color
                         ),
-                      ),
-                    ],
+                        Text(
+                          AppLanguage.likeText[language],
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ],

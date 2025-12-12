@@ -131,27 +131,25 @@ class AppColor {
   static const Color capsuleColor = Color(0xff22161e);
   static const Color logoutContainerColor = Color(0xff41274c);
 
-static const LinearGradient backgroundGradientcolor = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
-    Color.fromARGB(255, 71, 38, 87), 
-    const Color(0xFF000000),
-  ],
-);
+  static const LinearGradient backgroundGradientcolor = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color.fromARGB(255, 71, 38, 87),
+      const Color(0xFF000000),
+    ],
+  );
 
 // static const LinearGradient backgroundGradientcolor = LinearGradient(
 //   begin: Alignment.topCenter,
 //   end: Alignment.bottomCenter,
 //   colors: [
-//     Color(0xFF46215F), 
-//     Color(0xFF281333), 
-//     Color(0xFF070109), 
+//     Color(0xFF46215F),
+//     Color(0xFF281333),
+//     Color(0xFF070109),
 //   ],
 //   stops: [0.0, 0.55, 1.0],
 // );
-
-
 
   static const LinearGradient backgroundGradientcolor1 = LinearGradient(
     begin: Alignment.topCenter,
@@ -184,26 +182,31 @@ static const LinearGradient backgroundGradientcolor = LinearGradient(
     begin: Alignment.topCenter,
     end: Alignment.bottomCenter,
     colors: [
-      Color(0x66D768AE), 
-      Color(0x662D17C1), 
+      Color(0x66D768AE),
+      Color(0x662D17C1),
     ],
     // stops: [0.0, 0.40, 1.0],
   );
-  static  Gradient welcomefrontCardcolor2 = LinearGradient(
-  begin: Alignment.topCenter,
-  end: Alignment.bottomCenter,
-  colors: [
- Color(0x66D769AE), 
+  static Gradient welcomefrontCardcolor2 = LinearGradient(
+    begin: Alignment.topCenter,
+    end: Alignment.bottomCenter,
+    colors: [
+      Color(0x66D769AE),
       Color(0x662D17C1),
-  ],
-);
-static const Color greenColor1 = Color(0xff0aa161);
-static const Color textfieldfilledColor = Color(0xff0f0616);
-static const Color hinttextcolor = Color(0xffb8b7bd);
+    ],
+  );
+  static const Color greenColor1 = Color(0xff0aa161);
+  static const Color textfieldfilledColor = Color(0xff0f0616);
+  static const Color hinttextcolor = Color(0xffb8b7bd);
 
-static const Color bookeventcontainercolor = Color(0xff191021);
-static const Color emojibackgroundColor = Color(0xff927dfe);
-static const Color textfieldcontainercolor = Color(0xff1a1919);
+  static const Color bookeventcontainercolor = Color.fromARGB(255, 42, 26, 56);
+  static const Color emojibackgroundColor = Color(0xff927dfe);
+  static const Color textfieldcontainercolor = Color(0xff1a1919);
+  static const Color pasttimecolor = Color(0xffb8b8b8);
+  static const Color myperfectcontainercolr = Color.fromARGB(255, 71, 39, 100);
 
-static const Color refercontainercolor = Color(0xff171217);
+  static const Color refercontainercolor = Color(0xff171217);
+
+    static const Color sendinvitecontainercolor = Color(0xff1c1218);
+
 }

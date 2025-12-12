@@ -78,7 +78,7 @@ class _splashMembersState extends State<splashMembers> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 2 / 100,
+                  height: MediaQuery.of(context).size.height * 4 / 100,
                 ),
               Center(
                 child: SizedBox(

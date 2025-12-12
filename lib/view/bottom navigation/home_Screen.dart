@@ -58,60 +58,68 @@ class _HomeState extends State<Home> {
     {'id': 4, 'title': 'All'},
   ];
 
-
   List chats = [
     {
       'id': 1,
-      'image': 'assets/icons/ProfilePhoto.png',
-      'name': 'Gaurav Kapoor',
-      'lastMessage': '@gkapoor02',
+      'image': 'assets/icons/eventstory1.jpg',
+      'name': 'Brew&Bloom ',
+      'lastMessage': '@Brew&BloomCafé',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
       'id': 2,
-      'image': 'assets/icons/riya.png',
-      'name': 'Riya',
-      'lastMessage': '@riya00',
-      'message': 'send',
-      'message1': 'Done',
+      'image': 'assets/icons/eventstory2.png',
+      'name': 'Techno',
+      'lastMessage': '@Techno',
+      'message': 'Send',
+      'message1': 'Send',
       'isSend': false,
     },
     {
       'id': 3,
-      'image': 'assets/icons/galleryIcon.png',
+      'image': 'assets/icons/eventstory3.png',
       'name': 'Bloom Cafe',
       'lastMessage': '@cafebloom34',
-      'message': 'send',
-      'message1': 'Done',
+      'message': 'Send',
+      'message1': 'Send',
       'isSend': false,
     },
     {
       'id': 4,
-      'image': 'assets/icons/aadityaIcon.png',
-      'name': 'Aaditya',
-      'lastMessage': '@aadi54',
-      'message': 'send',
-      'message1': 'Done',
+      'image': 'assets/icons/eventstory1.jpg',
+      'name': 'SUNBURN',
+      'lastMessage': '@Sunburn',
+      'message': 'Send',
+      'message1': 'Send',
       'isSend': false,
     },
     {
       'id': 5,
-      'image': 'assets/icons/rushi.png',
-      'name': 'Rushi',
-      'lastMessage': '@rushi87',
-      'message': 'send',
-      'message1': 'Done',
+      'image': 'assets/icons/eventstory2.png',
+      'name': 'Mitro',
+      'lastMessage': '@Mitro',
+      'message': 'Send',
+      'message1': 'Send',
       'isSend': false,
     },
     {
       'id': 6,
-      'image': 'assets/icons/soham.png',
-      'name': 'Soham',
-      'lastMessage': '@soham23',
-      'message': 'send',
-      'message1': 'Done',
+      'image': 'assets/icons/eventstory2.png',
+      'name': 'Razberry',
+      'lastMessage': '@Razberry',
+      'message': 'Send',
+      'message1': 'Send',
+      'isSend': false,
+    },
+     {
+      'id': 7,
+      'image': 'assets/icons/eventstory3.png',
+      'name': 'CCD',
+      'lastMessage': '@CCD',
+      'message': 'Send',
+      'message1': 'Send',
       'isSend': false,
     },
   ];
@@ -217,8 +225,7 @@ class _HomeState extends State<Home> {
         }
       },
       child: Scaffold(
-        backgroundColor:
-         AppColor.primaryColor ,
+        backgroundColor: AppColor.primaryColor,
 
         body: SafeArea(
           child: SizedBox(
@@ -457,10 +464,9 @@ class _HomeState extends State<Home> {
                                   ),
                                   Positioned(
                                     bottom: MediaQuery.of(context).size.height *
-                                        0.32,
+                                        0.30,
                                     right: MediaQuery.of(context).size.width *
-                                        0.004, 
-
+                                        0.004,
                                     child: GestureDetector(
                                       onTap: () {
                                         documenttypebottomsheet(context);
@@ -483,7 +489,7 @@ class _HomeState extends State<Home> {
                                             height: MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                0.02,
+                                                0.03,
                                           ),
                                           Image.asset(
                                             AppImage.messageIcon,
@@ -594,7 +600,7 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             Positioned(
-                              bottom: MediaQuery.of(context).size.height * 0.32,
+                              bottom: MediaQuery.of(context).size.height * 0.29,
                               right: MediaQuery.of(context).size.width *
                                   0.004, // Changed from 0.01 to 0.005
                               child: GestureDetector(
@@ -615,7 +621,7 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              2 /
+                                              3.4 /
                                               100,
                                     ),
                                     Image.asset(
@@ -864,7 +870,7 @@ class _HomeState extends State<Home> {
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              2 /
+                                              2.5 /
                                               100,
                                     ),
                                     GestureDetector(
@@ -1064,7 +1070,7 @@ class _HomeState extends State<Home> {
                                                   fontWeight: FontWeight.w500,
                                                   color: selectedIndex == 0
                                                       ? AppColor.secondryColor
-                                                      : AppColor.secondryColor,
+                                                      : AppColor.greyLightColor,
                                                   fontSize: 15,
                                                   fontFamily:
                                                       AppFont.fontFamily,
@@ -1095,7 +1101,7 @@ class _HomeState extends State<Home> {
                                                   fontWeight: FontWeight.w500,
                                                   color: selectedIndex == 1
                                                       ? AppColor.greyLightColor
-                                                      : AppColor.secondryColor,
+                                                      : AppColor.greyLightColor,
                                                   fontSize: 15,
                                                   fontFamily:
                                                       AppFont.fontFamily,
@@ -1122,7 +1128,7 @@ class _HomeState extends State<Home> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.44,
+                                              0.40,
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
@@ -1143,14 +1149,14 @@ class _HomeState extends State<Home> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.36,
+                                              0.40,
                                           height: MediaQuery.of(context)
                                                   .size
                                                   .height *
                                               0.003,
                                           color: selectedIndex == 1
                                               ? AppColor.greyLightColor
-                                              : AppColor.secondryColor,
+                                              : AppColor.greyLightColor,
                                         ),
                                       ),
                                     ],
@@ -1218,17 +1224,23 @@ class _HomeState extends State<Home> {
                                                           const Duration(
                                                               milliseconds:
                                                                   200), () {
-                                                      Navigator.push(
-  context,
-  PageTransition(
-    type: PageTransitionType.bottomToTop,
-    child: ChatMessageScreen(
-      name: chats[index]['name'],
-      image: chats[index]['image'],
-    ),
-  ),
-);
-
+                                                        Navigator.push(
+                                                          context,
+                                                          PageTransition(
+                                                            type:
+                                                                PageTransitionType
+                                                                    .bottomToTop,
+                                                            child:
+                                                                ChatMessageScreen(
+                                                              name: chats[index]
+                                                                  ['name'],
+                                                              image:
+                                                                  chats[index]
+                                                                      ['image'],
+                                                            ),
+                                                            duration: const Duration(milliseconds: 500),
+                                                          ),
+                                                        );
                                                       });
                                                     },
                                                     child: Container(
@@ -1314,4 +1326,7 @@ class _HomeState extends State<Home> {
       },
     );
   }
+
+
+
 }

@@ -120,7 +120,7 @@ class _MyVenueState extends State<MyVenue> {
               children: [
 
                   SizedBox(
-                  height: MediaQuery.of(context).size.height * 2 / 100,
+                  height: MediaQuery.of(context).size.height * 4 / 100,
                 ),
                 Center(
                   child: SizedBox(

@@ -218,14 +218,14 @@ class _LoginScreenState extends State<LoginScreen>
                                     MediaQuery.of(context).size.height * 1 / 100),
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.rightToLeftWithFade,
-                                    child: ForgotPassword(),
-                                    duration: const Duration(milliseconds: 500),
-                                  ),
-                                );
+                                // Navigator.push(
+                                //   context,
+                                //   PageTransition(
+                                //     type: PageTransitionType.rightToLeftWithFade,
+                                //     child: ForgotPassword(),
+                                //     duration: const Duration(milliseconds: 500),
+                                //   ),
+                                // );
                               },
                               child: Container(
                                 alignment: Alignment.center,

@@ -228,7 +228,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
 
         /// Dots indicator
         Positioned(
-          bottom: 65,
+          bottom: MediaQuery.of(context).size.height *4/100,
           child: Row(
             children: [
               _dot(_activeIndex == 2),

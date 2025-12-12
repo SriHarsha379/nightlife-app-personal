@@ -189,9 +189,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               ],
                             ),
                           ),
-                          SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 1 / 100),
+                          // SizedBox(
+                          //     width:
+                          //         MediaQuery.of(context).size.width * 1 / 100),
                           Container(
                             height: size.height * 4.5 / 100,
                             width: size.width * 4.5 / 100,
@@ -213,7 +213,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                           ),
                           SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 2 / 100),
+                                  MediaQuery.of(context).size.width * 3 / 100),
                           GestureDetector(
                             onTap: () {
                               reportBottomSheet(context);
@@ -401,7 +401,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           child: Image.asset(
-                                            AppImage.msgCardicon, // main image
+                                            AppImage.msgCardicon, 
                                             fit: BoxFit.cover,
                                             width: MediaQuery.of(context)
                                                     .size
@@ -416,11 +416,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                       ),
                                     ),
 
-                                    // Positioned Text + Details at bottom
                                     Positioned(
-                                      left: 105,
-                                      right: 12,
-                                      bottom: 20,
+                                      left: size.width*24/100,
+                                      right: 0,
+                                      bottom: size.height*2/100,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,

@@ -46,39 +46,45 @@ class _BookEventState extends State<BookEvent> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
-        systemNavigationBarIconBrightness: Brightness.light,
+
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
-    return GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-            backgroundColor: AppColor.primaryColor,
-            floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: AppButton(
-                  text: '${AppLanguage.continueText[language]}',
-                  onPress: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: ReviewBookingDetails(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  }),
-            ),
-            body: Container(
-                height: size.height * 100 / 100,
-                width: size.width * 100 / 100,
-                child: Expanded(
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+              backgroundColor: AppColor.primaryColor,
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: AppButton(
+                    text: '${AppLanguage.continueText[language]}',
+                    onPress: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: ReviewBookingDetails(),
+                          duration: const Duration(milliseconds: 500),
+                        ),
+                      );
+                    }),
+              ),
+              body: Container(
+                  height: size.height * 100 / 100,
+                  width: size.width * 100 / 100,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
+                               SizedBox(
+                          height: size.height * 2 / 100,
+                        ),
                         Stack(
                           children: [
                             Image.asset(
@@ -93,17 +99,14 @@ class _BookEventState extends State<BookEvent> {
                               child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.white.withOpacity(0.3),
-                                  shape: BoxShape.circle,
-                                ),
+                              
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
                                   child: Center(
                                     child: Image.asset(
                                       AppImage.backarrow,
-                                      width: size.width * 4 / 100,
-                                      height: size.width * 4 / 100,
+                                      width: size.width * 5 / 100,
+                                      height: size.width * 5 / 100,
                                       color: AppColor.secondryColor,
                                     ),
                                   ),
@@ -349,7 +352,7 @@ class _BookEventState extends State<BookEvent> {
                                         //     ),
                                         //   ),
                                         // ),
-
+                        
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -452,8 +455,8 @@ class _BookEventState extends State<BookEvent> {
                         ),
                       ],
                     ),
-                  ),
-                ))));
+                  )))),
+    );
   }
 
   Widget customDropContainer({

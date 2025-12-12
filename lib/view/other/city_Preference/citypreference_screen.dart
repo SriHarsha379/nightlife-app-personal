@@ -24,9 +24,9 @@ class CityPreference extends StatefulWidget {
 class _CityPreferenceState extends State<CityPreference> {
   TextEditingController searchController = TextEditingController();
 
-List<int> selectedIds = [];
+  List<int> selectedIds = [];
 
-   List cityList = [
+  List cityList = [
     {
       'id': '1',
       'name': 'Mumbai',
@@ -78,7 +78,6 @@ List<int> selectedIds = [];
 
   @override
   Widget build(BuildContext context) {
-   
     final size = MediaQuery.of(context).size;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
@@ -278,66 +277,88 @@ List<int> selectedIds = [];
                                           SizedBox(
                                             height: size.height * 1.5 / 100,
                                           ),
-                                Wrap(
-              spacing: size.width * 5 / 100,
-              runSpacing: size.height * 2 / 100,
-              children: List.generate(cityList.length, (index) {
-                int id = int.parse(cityList[index]['id']);   // Keep int conversion
-            
-                bool isSelected = selectedIds.contains(id);  // matches type int
-            
-                return GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      if (isSelected) {
-            selectedIds.remove(id);              // remove int
-                      } else {
-            if (selectedIds.length < 5) {
-              selectedIds.add(id);               // add int
-            } else {}
-                      }
-                    });
-                  },
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-            height: size.width * 14 / 100,
-            width: size.width * 14 / 100,
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? AppColor.filledcolor
-                  : AppColor.filledcolor,
-              border: Border.all(
-                color: isSelected
-                    ? AppColor.buttonColor
-                    : AppColor.borderColor,
-                width: 1,
-              ),
-              shape: BoxShape.circle,
-              image: DecorationImage(
-                image: AssetImage(
-                  cityList[index]['image']!,
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
-                      ),
-                      SizedBox(height: size.height * 1 / 100),
-                      Text(
-            cityList[index]['name']!,
-            style: TextStyle(
-              fontFamily: AppFont.fontFamily,
-              fontSize: 12,
-              fontWeight: FontWeight.w400,
-              color: AppColor.secondryColor,
-            ),
-                      ),
-                    ],
-                  ),
-                );
-              }),
-            ),
+                                          Wrap(
+                                            spacing: size.width * 5 / 100,
+                                            runSpacing: size.height * 2 / 100,
+                                            children: List.generate(
+                                                cityList.length, (index) {
+                                              int id = int.parse(cityList[index]
+                                                  [
+                                                  'id']); // Keep int conversion
+
+                                              bool isSelected =
+                                                  selectedIds.contains(
+                                                      id); // matches type int
+
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    if (isSelected) {
+                                                      selectedIds.remove(
+                                                          id); // remove int
+                                                    } else {
+                                                      if (selectedIds.length <
+                                                          5) {
+                                                        selectedIds
+                                                            .add(id); // add int
+                                                      } else {}
+                                                    }
+                                                  });
+                                                },
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Container(
+                                                      height:
+                                                          size.width * 14 / 100,
+                                                      width:
+                                                          size.width * 14 / 100,
+                                                      decoration: BoxDecoration(
+                                                        color: isSelected
+                                                            ? AppColor
+                                                                .filledcolor
+                                                            : AppColor
+                                                                .filledcolor,
+                                                        border: Border.all(
+                                                          color: isSelected
+                                                              ? AppColor
+                                                                  .buttonColor
+                                                              : AppColor
+                                                                  .borderColor,
+                                                          width: 1,
+                                                        ),
+                                                        shape: BoxShape.circle,
+                                                        image: DecorationImage(
+                                                          image: AssetImage(
+                                                            cityList[index]
+                                                                ['image']!,
+                                                          ),
+                                                          fit: BoxFit.cover,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    SizedBox(
+                                                        height: size.height *
+                                                            1 /
+                                                            100),
+                                                    Text(
+                                                      cityList[index]['name']!,
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontSize: 12,
+                                                        fontWeight:
+                                                            FontWeight.w400,
+                                                        color: AppColor
+                                                            .secondryColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              );
+                                            }),
+                                          ),
                                         ],
                                       ),
                                     ),
@@ -349,6 +370,10 @@ List<int> selectedIds = [];
                               ],
                             ),
                           ),
+      SizedBox(
+                            height: size.height * 4 / 100,
+                          ),
+
                           Container(
                             width: size.width * 90 / 100,
                             alignment: Alignment.centerLeft,
@@ -441,15 +466,15 @@ List<int> selectedIds = [];
                           //   thickness: 4,
                           //   color: AppColor.darkPurpleColor,
                           // ),
-            
+
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 25.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: 16),
-            
+                                SizedBox(height: size.height *4/100),
+
                                 Text(
                                   AppLanguage.distanceText[language],
                                   style: TextStyle(
@@ -459,9 +484,9 @@ List<int> selectedIds = [];
                                     color: AppColor.secondryColor,
                                   ),
                                 ),
-            
+
                                 SizedBox(height: 14), // instead of size
-            
+
                                 Container(
                                   width: double.infinity,
                                   decoration: BoxDecoration(
@@ -513,7 +538,7 @@ List<int> selectedIds = [];
                                           onChanged: (value) {
                                             setState(() {
                                               _currentDistance = value;
-                                            });
+                                            }); 
                                           },
                                         ),
                                       ),
@@ -601,7 +626,7 @@ List<int> selectedIds = [];
                           ),
                           SizedBox(
                               height: MediaQuery.of(context).size.height *
-                                  15 /
+                                  20 /
                                   100),
                         ],
                       ),

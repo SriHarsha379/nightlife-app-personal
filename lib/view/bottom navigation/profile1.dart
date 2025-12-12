@@ -43,7 +43,6 @@ int selectedId = 1;
 class _Profile1State extends State<Profile1> {
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -65,14 +64,13 @@ class _Profile1State extends State<Profile1> {
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
-            decoration:
-                BoxDecoration(color: AppColor.primaryColor),
+            decoration: BoxDecoration(color: AppColor.primaryColor),
             child: SingleChildScrollView(
               child: Column(
                 children: [
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 4 / 100),
-          
+
                   SizedBox(
                     width: MediaQuery.of(context).size.width * 88 / 100,
                     child: Row(
@@ -139,7 +137,7 @@ class _Profile1State extends State<Profile1> {
                         ),
                         // SizedBox(
                         //     width: MediaQuery.of(context).size.width * 0.2 / 100),
-          
+
                         // Profile Text
                         Expanded(
                           child: Column(
@@ -228,7 +226,7 @@ class _Profile1State extends State<Profile1> {
                                   ),
                                 ],
                               ),
-          
+
                               // buildTaskRow(
                               //     AppLanguage.foodieExplorecreativeText[language],
                               //     Colors.purpleAccent),
@@ -238,7 +236,7 @@ class _Profile1State extends State<Profile1> {
                       ],
                     ),
                   ),
-          
+
                   GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -255,20 +253,25 @@ class _Profile1State extends State<Profile1> {
                       child: Row(
                         children: [
                           Container(
-                            padding: EdgeInsets.symmetric(
-                                horizontal: 33, vertical: 12),
-                            margin: const EdgeInsets.only(left: 11),
+                            height: size.height * 6 / 100,
+                            width: size.width * 40 / 100,
+                            margin: const EdgeInsets.only(left: 15),
                             decoration: BoxDecoration(
                               color: AppColor.statusbar,
                               borderRadius: BorderRadius.circular(50),
-          
+
                               // border: Border.all(
-          
+
                               //      color : AppColor.primaryColor,
                               // ),
                             ),
                             child: Row(
                               children: [
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      7 /
+                                      100,
+                                ),
                                 Image.asset(
                                   AppImage.editIcon,
                                   height: 20,
@@ -305,8 +308,9 @@ class _Profile1State extends State<Profile1> {
                               );
                             },
                             child: Container(
-                              padding: EdgeInsets.symmetric(
-                                  horizontal: 18, vertical: 12),
+                              width: size.width * 40 / 100,
+                              height: size.height * 5 / 100,
+                              alignment: Alignment.center,
                               decoration: BoxDecoration(
                                 color: AppColor.buttonColor,
                                 borderRadius: BorderRadius.circular(50),
@@ -329,7 +333,7 @@ class _Profile1State extends State<Profile1> {
                       ),
                     ),
                   ),
-          
+
                   // Profile Completion Text
                   Container(
                     width: size.width * 90 / 100,
@@ -378,7 +382,7 @@ class _Profile1State extends State<Profile1> {
                             color: AppColor.secondryColor,
                           ),
                         ),
-          
+
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
@@ -432,7 +436,7 @@ class _Profile1State extends State<Profile1> {
                                 color: AppColor.secondryColor),
                           ),
                         ),
-          
+
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
@@ -445,7 +449,7 @@ class _Profile1State extends State<Profile1> {
                               bool isAll = Interest[index]['id'] == 1;
                               bool isSelected =
                                   selectedId == Interest[index]['id'];
-          
+
                               return GestureDetector(
                                 onTap: isAll
                                     ? null
@@ -638,7 +642,7 @@ class _Profile1State extends State<Profile1> {
                             ],
                           ),
                         ),
-          
+
                         // SizedBox(
                         //   width: MediaQuery.of(context).size.width,
                         //   child: SingleChildScrollView(
@@ -744,7 +748,7 @@ class _Profile1State extends State<Profile1> {
                                   width: MediaQuery.of(context).size.width *
                                       4 /
                                       100),
-          
+
                               // Icon
                               Image.asset(
                                 AppImage.instagramIcon,
@@ -755,12 +759,12 @@ class _Profile1State extends State<Profile1> {
                                     6 /
                                     100,
                               ),
-          
+
                               SizedBox(
                                   width: MediaQuery.of(context).size.width *
                                       2 /
                                       100),
-          
+
                               // Text + spacing
                               Expanded(
                                 child: Column(
@@ -788,7 +792,7 @@ class _Profile1State extends State<Profile1> {
                                   ],
                                 ),
                               ),
-          
+
                               Container(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 6, horizontal: 12),
@@ -808,7 +812,7 @@ class _Profile1State extends State<Profile1> {
                                   ),
                                 ),
                               ),
-          
+
                               SizedBox(
                                   width: MediaQuery.of(context).size.width *
                                       6 /
@@ -816,7 +820,7 @@ class _Profile1State extends State<Profile1> {
                             ],
                           ),
                         ),
-          
+
                         // Container(
                         //   width: size.width * 75 / 100,
                         //   height: size.height * 7 / 100,
@@ -927,7 +931,7 @@ class _Profile1State extends State<Profile1> {
                         //     ],
                         //   ),
                         // ),
-          
+
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -1033,7 +1037,7 @@ class _Profile1State extends State<Profile1> {
                             ),
                           ),
                         ),
-          
+
                         SizedBox(
                           height: size.height * 3 / 100,
                         ),
@@ -1144,9 +1148,9 @@ class _Profile1State extends State<Profile1> {
                       ],
                     ),
                   ),
-          
+
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 10 / 100),
+                      height: MediaQuery.of(context).size.height * 15 / 100),
                 ],
               ),
             ),
