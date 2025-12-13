@@ -86,457 +86,464 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
-        statusBarIconBrightness: Brightness.light));
+
     final themeProvider = Provider.of<ThemeProvider>(context);
 
     bool isDark = themeProvider.isDarkMode;
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) {
-        setState(() {
-          AppConstant.selectFooterIndex = 0; // Footer first index par jao
-        });
-      },
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          backgroundColor:
-              isDark ? AppColor.primaryColor : AppColor.secondryColor,
-          body: SafeArea(
-            child: Container(
-              height: size.height * 100 / 100,
-              width: size.width * 100 / 100,
-              child: Column(
-                children: [
-                  // SizedBox(height: size.height * 0.2 / 100),
-                  // AppHeader(text: AppLanguage.chatsText[language]),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 95 / 100,
-                    height: MediaQuery.of(context).size.height * 9 / 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Row(
-                          children: [
-                            SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 14 / 100,
-                              child: Image.asset(
-                                AppImage.hiilogo,
-                                color: isDark
-                                    ? AppColor.darkTextColor
-                                    : AppColor.richBlackColor,
-                                width: MediaQuery.of(context).size.width *
-                                    10 /
-                                    100,
-                              ),
-                            ),
-                            Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      2 /
+     return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.black,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark, // required for iOS
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          setState(() {
+            AppConstant.selectFooterIndex = 0; // Footer first index par jao
+          });
+        },
+        child: GestureDetector(
+          onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+          child: Scaffold(
+            backgroundColor:
+                isDark ? AppColor.primaryColor : AppColor.secondryColor,
+            body: SafeArea(
+              child: Container(
+                height: size.height * 100 / 100,
+                width: size.width * 100 / 100,
+                child: Column(
+                  children: [
+                    // SizedBox(height: size.height * 0.2 / 100),
+                    // AppHeader(text: AppLanguage.chatsText[language]),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 95 / 100,
+                      height: MediaQuery.of(context).size.height * 9 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Row(
+                            children: [
+                              SizedBox(
+                                height:
+                                    MediaQuery.of(context).size.height * 14 / 100,
+                                child: Image.asset(
+                                  AppImage.hiilogo,
+                                  color: isDark
+                                      ? AppColor.darkTextColor
+                                      : AppColor.richBlackColor,
+                                  width: MediaQuery.of(context).size.width *
+                                      10 /
                                       100,
                                 ),
-                                Text(
-                                  AppLanguage.welcomeText[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w400,
-                                    color: isDark
-                                        ? AppColor.darkTextColor
-                                        : AppColor.richBlackColor,
-                                  ),
-                                ),
-                                Text(
-                                  AppLanguage.sanjanaText[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 21,
-                                    fontWeight: FontWeight.w500,
-                                    color: isDark
-                                        ? AppColor.secondryColor
-                                        : AppColor.richBlackColor,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                        Row(
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type: PageTransitionType.topToBottom,
-                                    child: Notifications(),
-                                    duration: const Duration(milliseconds: 500),
-                                  ),
-                                );
-                              },
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    3 /
-                                    100,
-                                child: Image.asset(
-                                  AppImage.bellicon,
-                                ),
                               ),
-                            ),
-                            SizedBox(
-                              width: size.width * 2 / 100,
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  PageTransition(
-                                    type:
-                                        PageTransitionType.rightToLeftWithFade,
-                                    child: Profile(),
-                                    duration: const Duration(milliseconds: 500),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        2 /
+                                        100,
                                   ),
-                                );
-                              },
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    5 /
-                                    100,
-                                child: Image.asset(
-                                  AppImage.userimage,
-                                ),
+                                  Text(
+                                    AppLanguage.welcomeText[language],
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w400,
+                                      color: isDark
+                                          ? AppColor.darkTextColor
+                                          : AppColor.richBlackColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    AppLanguage.sanjanaText[language],
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 21,
+                                      fontWeight: FontWeight.w500,
+                                      color: isDark
+                                          ? AppColor.secondryColor
+                                          : AppColor.richBlackColor,
+                                    ),
+                                  ),
+                                ],
                               ),
-                            ),
-                            SizedBox(width: size.width * 4 / 100),
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-
-                  SizedBox(height: size.height * 2 / 100),
-                  Container(
-                    width: size.width * 90 / 100,
-                    height: size.height * 5.5 / 100,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(40), // pill shape
-                      border: Border.all(color: AppColor.textfieldfillColor),
-                      color: isDark
-                          ? AppColor.primaryColor
-                          : AppColor.secondryColor,
-                      boxShadow: [
-                        BoxShadow(
-                          offset: const Offset(0, 4),
-                          spreadRadius: 0,
-                          blurRadius: 4,
-                          color: AppColor.primaryColor.withOpacity(0.1),
-                        ),
-                      ],
-                    ),
-                    child: TextFormField(
-                      controller: searchController,
-                      cursorColor: isDark
-                          ? AppColor.secondryColor
-                          : AppColor.primaryColor,
-                      style: TextStyle(
-                          color: isDark
-                              ? AppColor.secondryColor
-                              : AppColor.primaryColor,
-                          fontWeight: FontWeight.w400,
-                          fontFamily: AppFont.fontFamily,
-                          fontSize: 14),
-                      textAlignVertical: TextAlignVertical.center,
-                      decoration: InputDecoration(
-                        prefixIcon: Padding(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: size.width * 4 / 100,
-                            vertical: 10,
+                            ],
                           ),
-                          child: Image.asset(
-                            AppImage.searchIcon,
-                            height: size.width * 4 / 100,
-                            width: size.width * 4 / 100,
+                          Row(
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type: PageTransitionType.topToBottom,
+                                      child: Notifications(),
+                                      duration: const Duration(milliseconds: 500),
+                                    ),
+                                  );
+                                },
+                                child: SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      3 /
+                                      100,
+                                  child: Image.asset(
+                                    AppImage.bellicon,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                width: size.width * 2 / 100,
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    PageTransition(
+                                      type:
+                                          PageTransitionType.rightToLeftWithFade,
+                                      child: Profile(),
+                                      duration: const Duration(milliseconds: 500),
+                                    ),
+                                  );
+                                },
+                                child: SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      5 /
+                                      100,
+                                  child: Image.asset(
+                                    AppImage.userimage,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(width: size.width * 4 / 100),
+                            ],
+                          )
+                        ],
+                      ),
+                    ),
+      
+                    SizedBox(height: size.height * 2 / 100),
+                    Container(
+                      width: size.width * 90 / 100,
+                      height: size.height * 5.5 / 100,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40), // pill shape
+                        border: Border.all(color: AppColor.textfieldfillColor),
+                        color: isDark
+                            ? AppColor.primaryColor
+                            : AppColor.secondryColor,
+                        boxShadow: [
+                          BoxShadow(
+                            offset: const Offset(0, 4),
+                            spreadRadius: 0,
+                            blurRadius: 4,
+                            color: AppColor.primaryColor.withOpacity(0.1),
+                          ),
+                        ],
+                      ),
+                      child: TextFormField(
+                        controller: searchController,
+                        cursorColor: isDark
+                            ? AppColor.secondryColor
+                            : AppColor.primaryColor,
+                        style: TextStyle(
                             color: isDark
                                 ? AppColor.secondryColor
                                 : AppColor.primaryColor,
-                          ),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
-                          borderSide: const BorderSide(
-                            color: AppColor.primaryColor,
-                            width: 1,
-                          ),
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
-                          borderSide: const BorderSide(
-                            color: AppColor.primaryColor,
-                            width: 0,
-                          ),
-                        ),
-                        border: InputBorder.none,
-                        // hintText: AppLanguage.searchText[language],
-                        hintStyle: AppConstant.textFilledStyle,
-                        contentPadding: EdgeInsets.symmetric(
-                          vertical: 12,
-                          horizontal: size.width * 2 / 100,
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  Column(
-                    children: [
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 0.90,
-                        child: Text(
-                          AppLanguage.recentFriends[language],
-                          style: const TextStyle(
-                            color: AppColor.buttonColor,
+                            fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 13,
+                            fontSize: 14),
+                        textAlignVertical: TextAlignVertical.center,
+                        decoration: InputDecoration(
+                          prefixIcon: Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 4 / 100,
+                              vertical: 10,
+                            ),
+                            child: Image.asset(
+                              AppImage.searchIcon,
+                              height: size.width * 4 / 100,
+                              width: size.width * 4 / 100,
+                              color: isDark
+                                  ? AppColor.secondryColor
+                                  : AppColor.primaryColor,
+                            ),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(40),
+                            borderSide: const BorderSide(
+                              color: AppColor.primaryColor,
+                              width: 1,
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(40),
+                            borderSide: const BorderSide(
+                              color: AppColor.primaryColor,
+                              width: 0,
+                            ),
+                          ),
+                          border: InputBorder.none,
+                          // hintText: AppLanguage.searchText[language],
+                          hintStyle: AppConstant.textFilledStyle,
+                          contentPadding: EdgeInsets.symmetric(
+                            vertical: 12,
+                            horizontal: size.width * 2 / 100,
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.02,
-                      ),
-                      Container(
-                        width: MediaQuery.of(context).size.width * 91 / 100,
-                        child: SingleChildScrollView(
-                          scrollDirection: Axis.horizontal,
-                          child: Row(
-                            children:
-                                List.generate(storyImages.length, (index) {
-                              return Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 8.0, vertical: 5.0),
-                                child: Column(
-                                  children: [
-                                    GestureDetector(
-                                      onTap: () {},
-                                      child: Stack(
-                                        clipBehavior: Clip.none,
-                                        children: [
-                                          Container(
-                                            width: size.width * 15 / 100,
-                                            height: size.width * 15 / 100,
-                                            decoration: BoxDecoration(
-                                              borderRadius:
-                                                  BorderRadius.circular(35),
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: AppColor.primaryColor
-                                                      .withOpacity(0.25),
-                                                  blurRadius: 4,
-                                                  offset: const Offset(0, 4),
-                                                ),
-                                              ],
-                                            ),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(35),
-                                              child: Image.asset(
-                                                storyImages[index]["image"] ??
-                                                    "no image",
-                                                fit: BoxFit.cover,
-                                              ),
-                                            ),
-                                          ),
-                                          if (index == 0)
-                                            Positioned(
-                                              right: -8,
-                                              top: -2,
-                                              child: Container(
-                                                width: size.width * 5.2 / 100,
-                                                height: size.width * 5.2 / 100,
-                                                decoration: BoxDecoration(
-                                                  color:
-                                                      AppColor.darkPurpleColor,
-                                                  shape: BoxShape.circle,
-                                                ),
-                                                child: Image.asset(
-                                                  AppImage.storySendiconn,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  height: MediaQuery.of(context)
-                                                      .size
-                                                      .height,
-                                                ),
-                                              ),
-                                            ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: size.height * 0.8 / 100),
-                                    Text(
-                                      storyImages[index]["name"] ?? "No Name",
-                                      style: const TextStyle(
-                                        color: AppColor.secondryColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 12,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
-                            }),
-                          ),
-                        ),
-                      )
-                    ],
-                  ),
-
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height * 2 / 100),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.90,
-                    child: Text(
-                      AppLanguage.messageText[language],
-                      style: const TextStyle(
-                        color: AppColor.buttonColor,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 13,
                       ),
                     ),
-                  ),
-                  SizedBox(
-                      height: MediaQuery.of(context).size.height * 1 / 100),
-                  Expanded(
-                    flex: 1,
-                    child: Container(
-                      width: size.width,
-                      decoration: BoxDecoration(
-                        gradient: AppColor.backgroundGradientcolor,
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(32),
-                          topRight: Radius.circular(32),
+      
+                    Column(
+                      children: [
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
                         ),
-                      ),
-
-                      // <-- REPLACED: SingleChildScrollView -> ListView.builder
-                      child: ListView.builder(
-                        padding: EdgeInsets.only(
-                            top: size.height * 0.03,
-                            bottom: size.height * 0.05),
-                        physics: const AlwaysScrollableScrollPhysics(),
-                        keyboardDismissBehavior:
-                            ScrollViewKeyboardDismissBehavior.onDrag,
-                        itemCount: chats.length,
-                        itemBuilder: (context, index) {
-                          final chat = chats[index];
-
-                          return Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                width: size.width * 0.92,
-                                height: size.height * 0.095,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  horizontalTitleGap: 9,
-                                  leading: Container(
-                                    margin: EdgeInsets.only(
-                                        left: size.width * 0.036),
-                                    height: size.width * 0.18,
-                                    width: size.width * 0.18,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      image: DecorationImage(
-                                        image: AssetImage(chat['image']),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                  title: Text(
-                                    chat['name'],
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: AppColor.secondryColor,
-                                    ),
-                                  ),
-                                  subtitle: Text(
-                                    chat['lastMessage'],
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.secondryColor,
-                                    ),
-                                  ),
-                                  trailing: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment: CrossAxisAlignment.end,
+                        SizedBox(
+                          width: MediaQuery.of(context).size.width * 0.90,
+                          child: Text(
+                            AppLanguage.recentFriends[language],
+                            style: const TextStyle(
+                              color: AppColor.buttonColor,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w700,
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 0.02,
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 91 / 100,
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children:
+                                  List.generate(storyImages.length, (index) {
+                                return Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 5.0),
+                                  child: Column(
                                     children: [
-                                      Container(
-                                        width: size.width * 0.025,
-                                        height: size.height * 0.02,
-                                        decoration: BoxDecoration(
-                                          color: AppColor.pinkColor,
-                                          shape: BoxShape.circle,
+                                      GestureDetector(
+                                        onTap: () {},
+                                        child: Stack(
+                                          clipBehavior: Clip.none,
+                                          children: [
+                                            Container(
+                                              width: size.width * 15 / 100,
+                                              height: size.width * 15 / 100,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                    BorderRadius.circular(35),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: AppColor.primaryColor
+                                                        .withOpacity(0.25),
+                                                    blurRadius: 4,
+                                                    offset: const Offset(0, 4),
+                                                  ),
+                                                ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                    BorderRadius.circular(35),
+                                                child: Image.asset(
+                                                  storyImages[index]["image"] ??
+                                                      "no image",
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              ),
+                                            ),
+                                            if (index == 0)
+                                              Positioned(
+                                                right: -8,
+                                                top: -2,
+                                                child: Container(
+                                                  width: size.width * 5.2 / 100,
+                                                  height: size.width * 5.2 / 100,
+                                                  decoration: BoxDecoration(
+                                                    color:
+                                                        AppColor.darkPurpleColor,
+                                                    shape: BoxShape.circle,
+                                                  ),
+                                                  child: Image.asset(
+                                                    AppImage.storySendiconn,
+                                                    width: MediaQuery.of(context)
+                                                        .size
+                                                        .width,
+                                                    height: MediaQuery.of(context)
+                                                        .size
+                                                        .height,
+                                                  ),
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                       ),
-                                      SizedBox(height: size.height * 0.01),
+                                      SizedBox(height: size.height * 0.8 / 100),
                                       Text(
-                                        chat['time'],
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: AppColor.greyLightColor,
+                                        storyImages[index]["name"] ?? "No Name",
+                                        style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
                                         ),
                                       ),
                                     ],
                                   ),
-                              
-                                    onTap:
-                                    () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: ChatMessageScreen(
-                                            name: chat['name'],
-                                            image: chat['image'],
-                                          ),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    },
-                                
-                                ),
-                              ),
-                              const Divider(
-                                height: 0.2,
-                                thickness: 0.5,
-                                color: AppColor.greyLightColor,
-                                indent: 30,
-                                endIndent: 30,
-                              ),
-                              SizedBox(height: size.height * 0.025),
-                              if (index == chats.length - 1)
-                                SizedBox(height: size.height * 0.046),
-                            ],
-                          );
-                        },
+                                );
+                              }),
+                            ),
+                          ),
+                        )
+                      ],
+                    ),
+      
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 2 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.90,
+                      child: Text(
+                        AppLanguage.messageText[language],
+                        style: const TextStyle(
+                          color: AppColor.buttonColor,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w700,
+                          fontSize: 13,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    Expanded(
+                      flex: 1,
+                      child: Container(
+                        width: size.width,
+                        decoration: BoxDecoration(
+                          gradient: AppColor.backgroundGradientcolor,
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(32),
+                            topRight: Radius.circular(32),
+                          ),
+                        ),
+      
+                        // <-- REPLACED: SingleChildScrollView -> ListView.builder
+                        child: ListView.builder(
+                          padding: EdgeInsets.only(
+                              top: size.height * 0.03,
+                              bottom: size.height * 0.05),
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior.onDrag,
+                          itemCount: chats.length,
+                          itemBuilder: (context, index) {
+                            final chat = chats[index];
+      
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.92,
+                                  height: size.height * 0.095,
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    horizontalTitleGap: 9,
+                                    leading: Container(
+                                      margin: EdgeInsets.only(
+                                          left: size.width * 0.036),
+                                      height: size.width * 0.18,
+                                      width: size.width * 0.18,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        image: DecorationImage(
+                                          image: AssetImage(chat['image']),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      ),
+                                    ),
+                                    title: Text(
+                                      chat['name'],
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: AppColor.secondryColor,
+                                      ),
+                                    ),
+                                    subtitle: Text(
+                                      chat['lastMessage'],
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppColor.secondryColor,
+                                      ),
+                                    ),
+                                    trailing: Column(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      crossAxisAlignment: CrossAxisAlignment.end,
+                                      children: [
+                                        Container(
+                                          width: size.width * 0.025,
+                                          height: size.height * 0.02,
+                                          decoration: BoxDecoration(
+                                            color: AppColor.pinkColor,
+                                            shape: BoxShape.circle,
+                                          ),
+                                        ),
+                                        SizedBox(height: size.height * 0.01),
+                                        Text(
+                                          chat['time'],
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: AppColor.greyLightColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                
+                                      onTap:
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: ChatMessageScreen(
+                                              name: chat['name'],
+                                              image: chat['image'],
+                                            ),
+                                            duration:
+                                                const Duration(milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                  
+                                  ),
+                                ),
+                                const Divider(
+                                  height: 0.2,
+                                  thickness: 0.5,
+                                  color: AppColor.greyLightColor,
+                                  indent: 30,
+                                  endIndent: 30,
+                                ),
+                                SizedBox(height: size.height * 0.025),
+                                if (index == chats.length - 1)
+                                  SizedBox(height: size.height * 0.046),
+                              ],
+                            );
+                          },
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

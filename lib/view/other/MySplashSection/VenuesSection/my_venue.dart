@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
+import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../EventSection/my_events.dart';
@@ -118,9 +119,8 @@ class _MyVenueState extends State<MyVenue> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                  SizedBox(
-                  height: MediaQuery.of(context).size.height * 4 / 100,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 4.5 / 100,
                 ),
                 Center(
                   child: SizedBox(
@@ -131,7 +131,14 @@ class _MyVenueState extends State<MyVenue> {
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: MyAppFooter(initialIndex: 0),
+                                duration: const Duration(milliseconds: 500),
+                              ),
+                            );
                           },
                           child: Container(
                             height:
@@ -151,31 +158,34 @@ class _MyVenueState extends State<MyVenue> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 25 / 100,
                         ),
-                        Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            AppLanguage.myvenueText[language],
-                            textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: AppFont.fontFamily,
+                        GestureDetector(
+                          onTap: () {
+                            documenttypebottomsheet(context);
+                          },
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              AppLanguage.myvenueText[language],
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: AppFont.fontFamily,
+                              ),
                             ),
                           ),
                         ),
                         SizedBox(width: size.width * 2 / 100),
                         GestureDetector(
                           onTap: () {
-                            
-                           documenttypebottomsheet(context);
+                            documenttypebottomsheet(context);
                           },
                           child: Image.asset(
                             AppImage.downArrow,
                             fit: BoxFit.cover,
                             color: AppColor.secondryColor,
-                            height:
-                                MediaQuery.of(context).size.width * 5 / 100,
+                            height: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                         ),
                       ],
@@ -758,7 +768,7 @@ class _MyVenueState extends State<MyVenue> {
                                     100,
                               ),
                               // if(selectedIndex != 0)
-                
+
                               SizedBox(
                                 width: MediaQuery.of(context).size.width *
                                     100 /
@@ -787,7 +797,7 @@ class _MyVenueState extends State<MyVenue> {
                                               color:
                                                   AppColor.startingscreenColor),
                                         ),
-                
+
                                         child: Column(
                                           children: [
                                             // Image section
@@ -925,18 +935,20 @@ class _MyVenueState extends State<MyVenue> {
                                                   2 /
                                                   100,
                                             ),
-                
+
                                             // View Details button
                                             GestureDetector(
-                                              onTap: (){
-                 Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: PastVenueScreen(),
-                                duration: const Duration(milliseconds: 500),
-                              ),
-                            );
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                    type: PageTransitionType
+                                                        .rightToLeftWithFade,
+                                                    child: PastVenueScreen(),
+                                                    duration: const Duration(
+                                                        milliseconds: 500),
+                                                  ),
+                                                );
                                               },
                                               child: Container(
                                                 height: size.height * 4.5 / 100,
@@ -952,19 +964,20 @@ class _MyVenueState extends State<MyVenue> {
                                                 ),
                                                 child: Center(
                                                   child: Text(
-                                                   "Review",
+                                                    "Review",
                                                     style: const TextStyle(
                                                       fontSize: 14,
                                                       fontFamily:
                                                           AppFont.fontFamily,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       color: AppColor.pinkColor,
                                                     ),
                                                   ),
                                                 ),
                                               ),
                                             ),
-                
+
                                             // Content section
                                           ],
                                         ),
@@ -1184,7 +1197,6 @@ class _MyVenueState extends State<MyVenue> {
       // });
     });
   }
-
 
   Widget dropdownItem(String text, VoidCallback onTap, bool isActive) {
     return InkWell(

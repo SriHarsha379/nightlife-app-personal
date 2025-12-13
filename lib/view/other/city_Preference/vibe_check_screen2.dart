@@ -110,7 +110,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
     //     statusBarIconBrightness: Brightness.light));
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -433,7 +433,9 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     ),
                   ),
                 ),
-
+ SizedBox(
+                  height: MediaQuery.of(context).size.height * 22 / 100,
+                ),
                 //       Image.asset(
                 //         AppImage.undo,
                 //         width: MediaQuery.of(context).size.width * 64 / 100,

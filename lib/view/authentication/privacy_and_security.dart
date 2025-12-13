@@ -20,15 +20,14 @@ class PrivacySecurityScreen extends StatefulWidget {
 }
 
 class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
-  bool isSelected = true; // example variable (you can set dynamically)
- List<bool> switches = [
+  bool isSelected = true;
+  List<bool> switches = [
     false,
     false,
-   
   ];
   int selectedRadioIndex = -1;
-bool broadenedSwitch = false;
-bool mileageSwitch = false;
+  bool broadenedSwitch = false;
+  bool mileageSwitch = false;
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
@@ -40,7 +39,6 @@ bool mileageSwitch = false;
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColor.secondryColor,
       body: SafeArea(
         child: Container(
           width: size.width,
@@ -74,8 +72,8 @@ bool mileageSwitch = false;
 
                 /// --- Visibility Container ---
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     borderRadius: BorderRadius.circular(8),
@@ -89,10 +87,11 @@ bool mileageSwitch = false;
                     ],
                   ),
                   child: Column(
+                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(width: size.width * 2 / 100),
                       Row(
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
@@ -102,23 +101,23 @@ bool mileageSwitch = false;
                               fontSize: 15,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
+                              height: 1.0,
                             ),
                           ),
-                       Transform.scale(
-  scale: 0.80,
-  child: CupertinoSwitch(
-    value: mileageSwitch,
-    onChanged: (value) {
-      setState(() {
-        mileageSwitch = value;
-      });
-    },
-    activeColor: AppColor.pinkColor,
-    thumbColor: Colors.white,
-    trackColor: AppColor.toggleColor,
-  ),
-),
-
+                          Transform.scale(
+                            scale: 0.80,
+                            child: CupertinoSwitch(
+                              value: mileageSwitch,
+                              onChanged: (value) {
+                                setState(() {
+                                  mileageSwitch = value;
+                                });
+                              },
+                              activeColor: AppColor.pinkColor,
+                              thumbColor: Colors.white,
+                              trackColor: AppColor.toggleColor,
+                            ),
+                          ),
                         ],
                       ),
                       Text(
@@ -128,13 +127,13 @@ bool mileageSwitch = false;
                           fontSize: 14,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w400,
+                          height: 0,
                         ),
                       ),
                     ],
                   ),
                 ),
 
-             
                 // Container(
                 //   padding:
                 //       const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
@@ -409,7 +408,7 @@ bool mileageSwitch = false;
                 //     ),
                 //   ),
                 // ),
-               Padding(
+                Padding(
                   padding: const EdgeInsets.symmetric(
                       horizontal: 17.0, vertical: 10),
                   child: Text(
@@ -424,20 +423,21 @@ bool mileageSwitch = false;
                   ),
                 ),
                 GestureDetector(
-                  onTap: (){
-                      Navigator.push(context,
-
-                    PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: BlockUserScreen(),
-                    duration: const Duration(milliseconds: 500),
-                  ),);
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: BlockUserScreen(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
                   },
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
                       color: AppColor.notificationContainerColor,
                       borderRadius: BorderRadius.circular(8),
@@ -505,7 +505,6 @@ bool mileageSwitch = false;
                   ),
                 ),
 
-       
                 Container(
                   height: size.height * 6 / 100,
                   width: size.width * 94 / 100,
@@ -567,9 +566,10 @@ bool mileageSwitch = false;
                   height: size.height * 7 / 100,
                   width: size.width * 94 / 100,
                   padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     borderRadius: BorderRadius.circular(8),
@@ -582,30 +582,25 @@ bool mileageSwitch = false;
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLanguage.downloadDatatext[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 16,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.width * 8 / 100,
-                            width: size.width * 9 / 100,
-                            child: Image.asset(
-                              AppImage.frontArrowIcon,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ],
+                      Text(
+                        AppLanguage.downloadDatatext[language],
+                        style: const TextStyle(
+                          color: AppColor.secondryColor,
+                          fontSize: 16,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                      SizedBox(
+                        height: size.width * 8 / 100,
+                        width: size.width * 9 / 100,
+                        child: Image.asset(
+                          AppImage.frontArrowIcon,
+                          fit: BoxFit.contain,
+                        ),
                       ),
                     ],
                   ),
@@ -616,8 +611,9 @@ bool mileageSwitch = false;
                   width: size.width * 94 / 100,
                   padding:
                       const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, ),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     borderRadius: BorderRadius.circular(8),
@@ -653,6 +649,7 @@ bool mileageSwitch = false;
                     ],
                   ),
                 ),
+
                 SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               ],
             ),

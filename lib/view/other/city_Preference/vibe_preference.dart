@@ -159,11 +159,9 @@ class _VibePreferenceState extends State<VibePreference> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -194,8 +192,9 @@ class _VibePreferenceState extends State<VibePreference> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                    SizedBox(
-                            height: MediaQuery.of(context).size.height * 3 / 100,),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 3 / 100,
+                ),
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
@@ -288,7 +287,7 @@ class _VibePreferenceState extends State<VibePreference> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       textAlign: TextAlign.center,
-                      AppLanguage.select1to3Text[language],
+                      AppLanguage.select1to5Text[language],
                       style: TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,
@@ -310,17 +309,23 @@ class _VibePreferenceState extends State<VibePreference> {
                       Orders.length,
                       (index) {
                         int baseId = Orders[index]['id'];
-              
+
                         int leftId = baseId * 2;
                         int rightId = baseId * 2 + 1;
-              
+
                         bool isLeftSelected = selectedList.contains(leftId);
                         bool isRightSelected = selectedList.contains(rightId);
-              
+
                         return Row(
+                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            /// LEFT CONTAINER
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 2 / 100,
+                            ),
+
+                     
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -338,7 +343,7 @@ class _VibePreferenceState extends State<VibePreference> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal:
                                         MediaQuery.of(context).size.width *
-                                            0.025,
+                                            0.032,
                                     vertical:
                                         MediaQuery.of(context).size.height *
                                             0.012,
@@ -370,7 +375,7 @@ class _VibePreferenceState extends State<VibePreference> {
                                         '${Orders[index]['emoji']} ',
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
-                                          fontSize: 14,
+                                          fontSize: 13.2,
                                           fontWeight: FontWeight.w500,
                                           color: AppColor.secondryColor,
                                         ),
@@ -380,21 +385,24 @@ class _VibePreferenceState extends State<VibePreference> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
+                                          
                                           Text(
+                                            
                                             Orders[index]['title'],
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
-                                              fontSize: 13.5,
+                                              fontSize: 13.2,
                                               fontWeight: FontWeight.w500,
                                               color: AppColor.secondryColor,
                                             ),
                                           ),
-                                          SizedBox(height: 2),
+                                          SizedBox(
+                                              height: size.height * 0.1 / 100),
                                           Text(
                                             Orders[index]['title1'],
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
-                                              fontSize: 9.2,
+                                              fontSize: 9,
                                               fontWeight: FontWeight.w400,
                                               color: AppColor.lightGreyColor,
                                             ),
@@ -406,9 +414,9 @@ class _VibePreferenceState extends State<VibePreference> {
                                 ),
                               ),
                             ),
-              
-                            SizedBox(width: 8),
-              
+
+                            SizedBox(width: size.width * 4 / 100),
+
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -426,7 +434,7 @@ class _VibePreferenceState extends State<VibePreference> {
                                   padding: EdgeInsets.symmetric(
                                     horizontal:
                                         MediaQuery.of(context).size.width *
-                                            0.018,
+                                            0.011,
                                     vertical:
                                         MediaQuery.of(context).size.height *
                                             0.012,
@@ -458,7 +466,7 @@ class _VibePreferenceState extends State<VibePreference> {
                                         '${Orders[index]['emoji2']} ',
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
-                                          fontSize: 14,
+                                          fontSize: 13.2,
                                           fontWeight: FontWeight.w500,
                                           color: AppColor.secondryColor,
                                         ),
@@ -472,17 +480,18 @@ class _VibePreferenceState extends State<VibePreference> {
                                             Orders[index]['music'],
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
-                                              fontSize: 14,
+                                              fontSize: 13.2,
                                               fontWeight: FontWeight.w500,
                                               color: AppColor.secondryColor,
                                             ),
                                           ),
-                                          SizedBox(height: 2),
+                                          SizedBox(
+                                              height: size.height * 0.1 / 100),
                                           Text(
                                             Orders[index]['music1'],
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
-                                              fontSize: 9.4,
+                                              fontSize: 9,
                                               fontWeight: FontWeight.w400,
                                               color: AppColor.lightGreyColor,
                                             ),

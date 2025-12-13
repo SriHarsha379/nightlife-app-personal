@@ -10,7 +10,6 @@ import 'package:page_transition/page_transition.dart';
 import '../view/other/MySplashSection/EventSection/my_events.dart';
 import '../view/other/MySplashSection/MembersSection/Members.dart';
 import '../view/other/MySplashSection/VenuesSection/my_venue.dart';
-import '../view/other/MySplashSection/VenuesSection/reviewbooking_details_screen.dart';
 import 'app_color.dart';
 import 'app_constant.dart';
 import 'app_font.dart';
@@ -74,18 +73,20 @@ class MyAppFooterState extends State<MyAppFooter> {
             return child;
           }
 
-          // Right to Left with Fade transition for other pages
-          return FadeTransition(
-            opacity: animation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0.3, 0.0),
-                end: Offset.zero,
-              ).animate(CurvedAnimation(
-                parent: animation,
-                curve: Curves.easeInOut,
-              )),
-              child: child,
+          return Container(
+            color: AppColor.primaryColor, 
+            child: FadeTransition(
+              opacity: animation,
+              child: SlideTransition(
+                position: Tween<Offset>(
+                  begin: const Offset(0.3, 0.0),
+                  end: Offset.zero,
+                ).animate(CurvedAnimation(
+                  parent: animation,
+                  curve: Curves.easeInOut,
+                )),
+                child: child,
+              ),
             ),
           );
         },

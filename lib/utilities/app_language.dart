@@ -647,7 +647,7 @@ static const usernameAndemailIdPhonenumberText=["Enter Username or Email Id or P
   static const trendingSearchText = ["Trending Search"];
   static const premiumMembersText = ["Premium Members"];
 //01-11
-static const select1to3Text=["Select 1-5 options"];
+static const select1to5Text=["Select 1-5 options"];
 static const somethingInterestingaboutText=["Something interesting about you?"];
 static const tellSomethingaboutText=["Tell something interesting about yourself"];
 static const bySigningupStatementText=["By signing up, you agree to the"];

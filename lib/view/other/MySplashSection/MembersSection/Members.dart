@@ -89,8 +89,13 @@ class _splashMembersState extends State<splashMembers> {
                     children: [
                       GestureDetector(
                         onTap: () {
-                          Navigator.pop(context);
-                        },
+ Navigator.push(context,
+    
+                    PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: MyAppFooter(initialIndex: 0),
+                    duration: const Duration(milliseconds: 500),
+                  ),);                        },
                         child: Container(
                           height:
                               MediaQuery.of(context).size.height * 7 / 100,
@@ -109,16 +114,21 @@ class _splashMembersState extends State<splashMembers> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 26 / 100,
                       ),
-                      Align(
-                        alignment: Alignment.center,
-                        child: Text(
-                          AppLanguage.membersText[language],
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColor.secondryColor,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w600,
-                            fontFamily: AppFont.fontFamily,
+                      GestureDetector(
+                        onTap: (){
+                          documenttypebottomsheet(context);
+                        },
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            AppLanguage.membersText[language],
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFont.fontFamily,
+                            ),
                           ),
                         ),
                       ),
@@ -126,9 +136,9 @@ class _splashMembersState extends State<splashMembers> {
                       SizedBox(width: size.width * 2 / 100),
         
                       GestureDetector(
-                        onTap: () {
-                   documenttypebottomsheet(context);
-                        },
+                    onTap: (){
+                      documenttypebottomsheet(context);
+                    },
                         child: Image.asset(
                           AppImage.downArrow,
                           fit: BoxFit.cover,

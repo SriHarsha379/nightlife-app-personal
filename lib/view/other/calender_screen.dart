@@ -82,23 +82,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   color: AppColor.pinkColor),
                             ),
                           ),
-
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 2 / 100,
                           ),
-
-                          //!Calender
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 94 / 100,
                             child: TableCalendar(
-                              availableGestures: AvailableGestures
-                                  .none, // Disable horizontal scroll
+                              availableGestures: AvailableGestures.none,
                               firstDay: DateTime.now(),
                               lastDay: DateTime.utc(2030, 8, 14),
                               focusedDay: selectedDay,
                               enabledDayPredicate: (day) {
-                                // Disable past dates and off days
                                 if (day.isBefore(DateTime.now()
                                     .subtract(const Duration(days: 1)))) {
                                   return false;
@@ -119,20 +114,17 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       "sendDate date: ${selectedDay.toLocal().toString().split(' ')[0]}");
                                 } else {}
                               },
-                              calendarFormat: CalendarFormat
-                                  .month, // Added to reduce height
+                              calendarFormat: CalendarFormat.month,
                               calendarStyle: CalendarStyle(
                                 selectedDecoration: BoxDecoration(
-                                  gradient: AppColor.backgroundGradient,
-                                  shape: BoxShape
-                                      .circle, // Changed back to circle for rounded shape
+                                  color: AppColor.themeColor,
+                                  shape: BoxShape.circle,
                                   boxShadow: [
-                                    // Added shadow to selected date
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
-                                      blurRadius: 8,
-                                      spreadRadius: 1,
-                                      offset: const Offset(0, 2),
+                                      color:
+                                          AppColor.pinkColor,
+                                      blurRadius: 12,
+                                      spreadRadius: 3,
                                     ),
                                   ],
                                 ),
@@ -140,10 +132,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   color: AppColor.secondryColor,
                                   fontWeight: FontWeight.w600,
                                 ),
-                                todayDecoration: const BoxDecoration(
-                                  color: AppColor.statusbar,
+                                todayDecoration: BoxDecoration(
+                                  color: AppColor.themeColor,
                                   shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color:
+                                          AppColor.pinkColor.withOpacity(0.7),
+                                      blurRadius: 10,
+                                      spreadRadius: 2,
+                                      offset: const Offset(0, 2),
+                                    ),
+                                  ],
                                 ),
+
                                 disabledTextStyle: const TextStyle(
                                   color: AppColor.secondryColor,
                                 ),
@@ -153,11 +155,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     color: AppColor.secondryColor),
                                 outsideTextStyle: const TextStyle(
                                     color: AppColor.secondryColor),
-                                cellMargin: const EdgeInsets.all(
-                                    4), // Reduced margin to compact height
+                                cellMargin: const EdgeInsets.all(4),
                                 cellPadding:
                                     const EdgeInsets.all(0), // Reduced padding
                               ),
+
                               daysOfWeekStyle: const DaysOfWeekStyle(
                                 weekdayStyle: TextStyle(
                                   color: AppColor.buttonColor,
@@ -184,7 +186,6 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   40, // Added to reduce overall calendar height
                             ),
                           ),
-
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 2 / 100,
@@ -200,12 +201,10 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   color: AppColor.secondryColor),
                             ),
                           ),
-
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 1 / 100,
                           ),
-
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: ListView.builder(

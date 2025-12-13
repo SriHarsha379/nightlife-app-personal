@@ -40,11 +40,12 @@ class ThemeProvider extends ChangeNotifier {
     
     if (mode == 'dark') {
       _themeMode = ThemeMode.dark;
-    } else if (mode == 'light') {
-      _themeMode = ThemeMode.light;
-    } else {
-      _themeMode = ThemeMode.system;
-    }
+    } 
+    // else if (mode == 'light') {
+    //   _themeMode = ThemeMode.light;
+    // } else {
+    //   _themeMode = ThemeMode.system;
+    // }
     notifyListeners();
   }
 

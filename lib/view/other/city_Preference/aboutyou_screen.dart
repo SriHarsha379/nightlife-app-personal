@@ -153,7 +153,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                   color: AppColor.listTextColor),
                             ),
                             SizedBox(
-                              height: size.height * 4.5 / 100,
+                              height: size.height * 2 / 100,
                             ),
                             Text(
                               AppLanguage.sexualityText[language],
@@ -164,7 +164,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                   color: AppColor.secondryColor),
                             ),
                             SizedBox(
-                              height: size.height * 2.5 / 100,
+                              height: size.height *0.1 / 100,
                             ),
                             ListView.builder(
                               shrinkWrap: true,
@@ -188,7 +188,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                               },
                             ),
                             SizedBox(
-                              height: size.height * 4 / 100,
+                              height: size.height * 1 / 100,
                             ),
                             Text(
                              AppLanguage.interestedInText[language],
@@ -199,7 +199,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                   color: AppColor.secondryColor),
                             ),
                             SizedBox(
-                              height: size.height * 2.5 / 100,
+                              height: size.height * 0.1 / 100,
                             ),
                             ListView.builder(
                               shrinkWrap: true,
@@ -223,7 +223,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                               },
                             ),
                             SizedBox(
-                              height: size.height * 4 / 100,
+                              height: size.height * 1 / 100,
                             ),
                             Text(
                              AppLanguage.yourPronounsText[language],
@@ -234,7 +234,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                   color: AppColor.secondryColor),
                             ),
                             SizedBox(
-                              height: size.height * 2.5 / 100,
+                              height: size.height * 0.1 / 100,
                             ),
                             ListView.builder(
                               shrinkWrap: true,

@@ -27,27 +27,27 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     {
       "image": AppImage.eventRemaindericon,
       "notification": "Event Reminders",
-      "message": "Get notified about upcoming events you're interested in.",
+      "message": "Get notified about upcoming events\nyou're interested in.",
     },
     {
       "image": AppImage.friendsInviteIcon,
       "notification": "Friend Invites",
-      "message": "Receive notifications when friends invite you to events.",
+      "message": "Receive notifications when friends\ninvite you to events.",
     },
     {
       "image": AppImage.messageChatsicon,
       "notification": "Messages & Chats",
-      "message": "Get notified about new messages and chats. ",
+      "message": "Get notified about new messages\nand chats. ",
     },
     {
       "image": AppImage.updatesIcon,
       "notification": "Club/Organizer Updates",
-      "message": "Stay informed about updates from clubs and organizers.",
+      "message": "Stay informed about updates from\nclubs and organizers.",
     },
     {
       "image": AppImage.giftIcon,
       "notification": "Promotions & Offers",
-      "message": "Receive notifications about special offers and promotions.",
+      "message": "Receive notifications about special\noffers and promotions.",
   
     },
   ];
@@ -62,7 +62,6 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      backgroundColor: AppColor.secondryColor,
       body: SafeArea(
         child: Container(
           width: size.width,
@@ -74,7 +73,13 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.notificationText[language],
               ),
-              SizedBox(height: size.height * 2 / 100),
+           
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    children: [
+                      SizedBox(height: size.height * 1 / 100),
+                         SizedBox(height: size.height * 2 / 100),
               Align(
                 alignment: Alignment.centerLeft,
                 child: Padding(
@@ -84,18 +89,17 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                     textAlign: TextAlign.left,
                     style: TextStyle(
                       fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
+                      fontSize: 17,
                       fontWeight: FontWeight.w700,
                       color: AppColor.secondryColor,
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: size.height * 1 / 100),
+
+                 SizedBox(
+                  height: MediaQuery.of(context).size.height * 1/ 100,
+                ),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -112,7 +116,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                           } else if (index == 2) {
                             widgets.add(sectionHeading("Updates"));
                           } else if (index == 3) {
-                            widgets.add(sectionHeading("Promotion"));
+                            widgets.add(sectionHeading("Promotions"));
                           }
 
                           return Column(children: widgets);
@@ -151,8 +155,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     final size = MediaQuery.of(context).size;
 
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+  width: size.width*95/100,
+ height: size.height*10/100,
       decoration: BoxDecoration(
         color: AppColor.notificationContainerColor,
         borderRadius: BorderRadius.circular(8),
@@ -165,55 +169,73 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
           ),
         ],
       ),
-      child: Row(
+ child: Row(
+  crossAxisAlignment: CrossAxisAlignment.center, // 🔥 IMPORTANT
+  children: [
+    SizedBox(
+      width: size.width * 1.8 / 100,
+    ),
+
+    Image.asset(
+      notification["image"],
+      width: size.width * 11 / 100,
+      height: size.width * 11 / 100,
+      fit: BoxFit.contain,
+    ),
+
+    SizedBox(width: size.width * 2 / 100),
+
+    Expanded(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: size.width * 15 / 100,
-            height: size.width * 15 / 100,
-            child: Image.asset(notification["image"], fit: BoxFit.contain),
-          ),
-          SizedBox(width: size.width * 2 / 100),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(notification['notification'],
-                        style: const TextStyle(
-                            color: AppColor.secondryColor,
-                            fontSize: 14,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w600)),
-                     Transform.scale(
-                      scale: 0.80,
-                      child: CupertinoSwitch(
-                        value: switches[index],
-                        onChanged: (value) {
-                          setState(() {
-                            switches[index] = value;
-                          });
-                        },
-                        activeColor: AppColor.pinkColor,
-                        thumbColor: Colors.white,
-                        trackColor: AppColor.toggleColor,
-                      ),
-                    ),
-                  ],
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                notification['notification'],
+                style: const TextStyle(
+                  color: AppColor.secondryColor,
+                  fontSize: 14,
+                  fontFamily: AppFont.fontFamily,
+                  fontWeight: FontWeight.w600,
+                  height: 1,
                 ),
-                Text(notification['message'],
-                    style: const TextStyle(
-                        color: AppColor.notificationtextColor,
-                        fontSize: 14,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w400)),
-              ],
+              ),
+              Transform.scale(
+                scale: 0.80,
+                child: CupertinoSwitch(
+                  value: switches[index],
+                  onChanged: (value) {
+                    setState(() {
+                      switches[index] = value;
+                    });
+                  },
+                  activeColor: AppColor.pinkColor,
+                  thumbColor: Colors.white,
+                  trackColor: AppColor.toggleColor,
+                ),
+              ),
+            ],
+          ),
+          Text(
+            notification['message'],
+            style: const TextStyle(
+              color: AppColor.notificationtextColor,
+              fontSize: 13.6,
+              fontFamily: AppFont.fontFamily,
+              fontWeight: FontWeight.w400,
+              height: 1,
             ),
           ),
         ],
       ),
+    ),
+  ],
+),
+
     );
   }
 }

@@ -33,7 +33,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
 
     return  AnnotatedRegion<SystemUiOverlayStyle>(
       value:  SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.light, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -42,7 +42,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
       child: Scaffold(
         body: Container(
           decoration:
-              BoxDecoration(gradient: AppColor.backgroundGradientcolor1),
+              BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           width: size.width,
           height: size.height,
           child: SingleChildScrollView(
@@ -96,7 +96,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                 // Icon Card
                 Container(
                   width: size.width * 88 / 100,
-                  height: size.height *20/100,
+                  height: size.height *25/100,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: Colors.black,
@@ -139,7 +139,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                           )
                         ],
                       ),
-                      SizedBox(height: 18),
+                      SizedBox(height: size.height*3/100),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -158,12 +158,12 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 14),
+                          SizedBox(width: size.width*4/100),
                           Expanded(
                             child: Text(
                               "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
                               style: TextStyle(
-                                fontSize: 14,
+                                fontSize: 13.6,
                                 // height: 1.3,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
@@ -216,7 +216,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                   ),
                 ),
               
-                SizedBox(height: size.height * 34 / 100),
+                SizedBox(height: size.height * 26 / 100),
               
                 // Verify Button
                 GestureDetector(

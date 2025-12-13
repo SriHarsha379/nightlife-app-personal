@@ -99,6 +99,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                         ),
                       ),
                     ),
+                    
                   ),
                   SizedBox(width: size.width * 1 / 100),
                   Text(
@@ -112,11 +113,11 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                   ),
                 ],
               ),
-              SizedBox(height: 10),
+              SizedBox(height: size.height *1/100),
               AppButton(
                 text: AppLanguage.continueText[language],
                 onPress: () {
-                  if (select == 1) {
+            
                     Navigator.push(
                       context,
                       PageTransition(
@@ -125,7 +126,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                         duration: Duration(milliseconds: 500),
                       ),
                     );
-                  } else {}
+             
                 },
               ),
             ],

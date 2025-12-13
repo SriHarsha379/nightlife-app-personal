@@ -80,7 +80,6 @@ class _WelcomeScreen3State extends State<WelcomeScreen3>
             ),
           ),
 
-          /// Main Carousel
           CarouselSlider(
             carouselController: _carouselController,
             items: [
@@ -123,10 +122,10 @@ class _WelcomeScreen3State extends State<WelcomeScreen3>
             ),
           ),
 
-          /// Next Button
+         
           if (_activeIndex != 3)
             Positioned(
-              bottom: h * 0.13,
+              bottom: h * 0.11,
               right: 0,
               child: GestureDetector(
                 onTap: () {
@@ -166,7 +165,7 @@ class _WelcomeScreen3State extends State<WelcomeScreen3>
     );
   }
 
-  /// Common Animated UI Card
+
   Widget _buildScreen({
     required String title,
     required String desc,

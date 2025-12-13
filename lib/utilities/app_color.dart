@@ -101,7 +101,7 @@ class AppColor {
   static const Color chatColor = Color(0xff734E84);
   static const Color chatcolor1 = Color(0xff341941);
 
-  static const Color statusbar = Color(0xff331940);
+  static const Color statusbar = Color(0xFF472657);
   static const Color cotainerColor = Color(0xffE8E9EA);
   static const Color notificationContainerColor = Color(0xff171217);
   static const Color notificationtextColor = Color(0xffB09CBA);

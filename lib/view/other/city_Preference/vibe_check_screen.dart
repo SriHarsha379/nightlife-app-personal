@@ -7,15 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 
-import 'package:image_picker/image_picker.dart';
-import 'package:night_life/view/authentication/notification_screen.dart';
-import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
-import 'package:night_life/view/other/chats/chat_message_screen.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:night_life/view/other/city_Preference/vibe_check_screen2.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
@@ -112,7 +103,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     // ignore: deprecated_member_use
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.light, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -138,7 +129,7 @@ floatingActionButton: Padding(
           );
         },
       ),
-      SizedBox(height: 8), // better spacing
+      SizedBox(height:size.height* 1/100), // better spacing
       GestureDetector(
         onTap: () {
           Navigator.push(
@@ -443,6 +434,10 @@ floatingActionButton: Padding(
                       ),
                     ),
                   ),
+                ),
+
+                 SizedBox(
+                  height: MediaQuery.of(context).size.height * 22 / 100,
                 ),
               ],
             ),

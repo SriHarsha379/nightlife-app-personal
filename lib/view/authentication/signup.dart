@@ -40,20 +40,18 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-   
-    
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, 
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-         canPop: false,
-          onPopInvoked: (didPop) {
-  },
+        canPop: false,
+        onPopInvoked: (didPop) {},
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Container(
@@ -65,7 +63,7 @@ class _SignUpState extends State<SignUp> {
                   onTap: () {
                     transitionAnimationController:
                     AnimationController(
-                      duration: const Duration(milliseconds:1000),
+                      duration: const Duration(milliseconds: 1000),
                       vsync: Navigator.of(context),
                     );
                   },
@@ -104,9 +102,8 @@ class _SignUpState extends State<SignUp> {
       context: context,
       builder: (BuildContext context) {
         return PopScope(
-           canPop: false,
-          onPopInvoked: (didPop) {
-  },
+          canPop: false,
+          onPopInvoked: (didPop) {},
           child: GestureDetector(
             onTap: () {},
             child: Container(
@@ -209,7 +206,7 @@ class _SignUpState extends State<SignUp> {
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
                                   child: LoginScreen(),
-                                  duration:  Duration(milliseconds: 100),
+                                  duration: Duration(milliseconds: 100),
                                 ),
                               );
                             },
@@ -225,10 +222,10 @@ class _SignUpState extends State<SignUp> {
                         ],
                       ),
                     ),
-              SizedBox(
+                    SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 100,
                     ),
-                     SizedBox(
+                    SizedBox(
                       width: MediaQuery.of(context).size.width * 80 / 100,
                       // height: MediaQuery.of(context).size.height * 3.5 / 100,
                       child: Row(

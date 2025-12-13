@@ -92,7 +92,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                 // Icon Card
                 Container(
                   width: size.width * 88 / 100,
-                  height: size.height * 20 / 100,
+                  height: size.height * 23 / 100,
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
@@ -121,7 +121,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 14),
+                          SizedBox(width: size.width * 2.5 / 100),
                           Expanded(
                             child: Text(
                               "Enter the invite code shared to you\nby your friend.",
@@ -136,7 +136,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                           )
                         ],
                       ),
-                      SizedBox(height: 18),
+                      SizedBox(height: size.height * 3 / 100),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -158,17 +158,15 @@ class _ReferAFriendState extends State<ReferAFriend> {
                               ),
                             ),
                           ),
-                          SizedBox(width: 14),
-                          Expanded(
-                            child: Text(
-                              "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
-                              style: TextStyle(
-                                fontSize: 14,
-                                // height: 1.3,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
-                              ),
+                          SizedBox(width: size.width * 2.5 / 100),
+                          Text(
+                            "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
+                            style: TextStyle(
+                              fontSize: 13.5,
+                              // height: 1.3,
+                              fontWeight: FontWeight.w400,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.secondryColor,
                             ),
                           )
                         ],
@@ -183,74 +181,99 @@ class _ReferAFriendState extends State<ReferAFriend> {
 
                 if (isCodeGenerated)
                   Container(
-                    width: size.width * 80 / 100,
-                    padding: EdgeInsets.symmetric(vertical: 16, horizontal: 18),
+                    width: size.width * 0.82,
+                    padding: EdgeInsets.symmetric(
+                      horizontal: size.width * 0.04,
+                      vertical: size.height * 0.022,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColor.secondryColor,
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
+                        /// LEFT CONTENT
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                "Your referral code",
+                                style: TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontSize: size.width * 0.042,
+                                  fontWeight: FontWeight.w400,
+                                ),
+                              ),
+                              Text(
+                                referralCode,
+                                style: TextStyle(
+                                  color: AppColor.primaryColor,
+                                  fontSize: size.width * 0.055,
+                                  fontWeight: FontWeight.w700,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        
+                        Container(
+                          height: size.height * 0.055, // line height
+                          width: 1,
+                          color: Colors.grey.withOpacity(0.5),
+                        ),
+
+                        SizedBox(width: size.width * 0.03),
+
+                        /// COPY SECTION
                         Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            SizedBox(height: 6),
-                            Row(
-                              children: [
-                                Text(
-                                  "Your referral code",
-                                  style: TextStyle(
-                                      color: AppColor.buttonColor,
-                                      fontSize: 17.30,
-                                      fontWeight: FontWeight.w400),
+                            GestureDetector(
+                              onTap: () {
+                                Clipboard.setData(
+                                  ClipboardData(text: referralCode),
+                                );
+                              },
+                              child: Text(
+                                "Copy",
+                                style: TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontSize: size.width * 0.042,
+                                  fontWeight: FontWeight.w700,
                                 ),
-                                SizedBox(width: size.width * 15 / 100),
-                                Text("Copy",
-                                    style: TextStyle(
-                                        color: AppColor.buttonColor,
-                                        fontSize: 17.30,
-                                        fontWeight: FontWeight.w700)),
-                              ],
+                              ),
                             ),
-                            SizedBox(height: 2),
-                            Row(
-                              children: [
-                                Text(
-                                  referralCode,
-                                  style: TextStyle(
-                                    color: AppColor.primaryColor,
-                                    fontSize: 23,
-                                    fontWeight: FontWeight.w700,
-                                  ),
-                                ),
-                                SizedBox(width: size.width * 18 / 100),
-                                GestureDetector(
-                                  onTap: () {
-                                    Clipboard.setData(
-                                        ClipboardData(text: referralCode));
-                                  },
-                                  child: Text("Code",
-                                      style: TextStyle(
-                                          color: AppColor.buttonColor,
-                                          fontSize: 17.30,
-                                          fontWeight: FontWeight.w700)),
-                                ),
-                              ],
+                            Text(
+                              "Code",
+                              style: TextStyle(
+                                color: AppColor.buttonColor,
+                                fontSize: size.width * 0.042,
+                                fontWeight: FontWeight.w700,
+                              ),
                             ),
                           ],
                         ),
-                        Icon(Icons.copy,
-                            color: AppColor.primaryColor, size: 25),
+
+                        SizedBox(width: size.width * 0.025),
+
+                        /// ICON
+                        Icon(
+                          Icons.copy,
+                          color: AppColor.primaryColor,
+                          size: size.width * 0.06,
+                        ),
                       ],
                     ),
                   ),
+                SizedBox(
+                  height:
+                      isCodeGenerated ? size.height * 0.15 : size.height * 0.02,
+                ),
 
-                isCodeGenerated
-                    ? SizedBox(height: size.height * 25 / 100)
-                    : SizedBox(height: size.height * 1 / 100),
-
-                    isCodeGenerated?
                 GestureDetector(
                   onTap: () {
                     if (!isCodeGenerated) {
@@ -261,61 +284,28 @@ class _ReferAFriendState extends State<ReferAFriend> {
                       // invite action
                     }
                   },
-                  
                   child: Container(
-                    width: size.width * 88 / 100,
-                    height: size.height * 6 / 100,
+                    width:
+                        isCodeGenerated ? size.width * 0.88 : size.width * 0.50,
+                    height: size.height * 0.06,
                     decoration: BoxDecoration(
                       color: AppColor.buttonColor,
                       borderRadius: BorderRadius.circular(50),
                     ),
-                    child: Center(
-                      child: Text(
-                        isCodeGenerated ? "Invite a Friend" : "Generate Code",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.secondryColor,
-                        ),
-                      ),
-                    ),
-                  ),
-                )
-:
-             GestureDetector(
-                  onTap: () {
-                    if (!isCodeGenerated) {
-                      setState(() {
-                        isCodeGenerated = true;
-                      });
-                    } else {
-                      // invite action
-                    }
-                  },
-                  
-                  child: Container(
-                    width: size.width * 50 / 100,
-                    height: size.height * 6 / 100,
-                    decoration: BoxDecoration(
-                      color: AppColor.buttonColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Center(
-                      child: Text(
-                        isCodeGenerated ? "Invite a Friend" : "Generate Code",
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.secondryColor,
-                        ),
+                    alignment: Alignment.center,
+                    child: Text(
+                      isCodeGenerated ? "Invite a Friend" : "Generate Code",
+                      style: TextStyle(
+                        fontSize: size.width * 0.042,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.secondryColor,
                       ),
                     ),
                   ),
                 ),
 
-                SizedBox(height: size.height * 4 / 100),
+                SizedBox(height: size.height * 2 / 100),
               ],
             ),
           ),

@@ -23,7 +23,7 @@ class AppPreferences extends StatefulWidget {
 
 class _AppPreferencesState extends State<AppPreferences> {
   bool isSelected = true;
-  int selectedRadioIndex = -1;
+  int selectedRadioIndex = 0;
   bool broadenedSwitch = false;
   bool mileageSwitch = false;
   @override
@@ -64,7 +64,6 @@ class _AppPreferencesState extends State<AppPreferences> {
                 ),
                 SizedBox(height: size.height * 2 / 100),
 
-                /// --- Visibility Section Heading ---
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 17.0),
                   child: Text(
@@ -79,7 +78,6 @@ class _AppPreferencesState extends State<AppPreferences> {
                   ),
                 ),
 
-                /// --- Visibility Container ---
                 Container(
                   padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
                   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
@@ -277,12 +275,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                               ),
                             ),
                             child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedRadioIndex = 1;
-                                });
-                                themeProvider.toggleTheme(false);
-                              },
+                              // onTap: () {
+                              //   setState(() {
+                              //     selectedRadioIndex = 1;
+                              //   });
+                              //   themeProvider.toggleTheme(false);
+                              // },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 3.5 / 100),
@@ -367,12 +365,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                               ),
                             ),
                             child: InkWell(
-                              onTap: () {
-                                setState(() {
-                                  selectedRadioIndex = 2;
-                                });
-                                themeProvider.setSystemDefault();
-                              },
+                              // onTap: () {
+                              //   setState(() {
+                              //     selectedRadioIndex = 2;
+                              //   });
+                              //   themeProvider.setSystemDefault();
+                              // },
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 3.5 / 100),
@@ -454,6 +452,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                               fontFamily: AppFont.fontFamily,
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
+             
                               color: AppColor.secondryColor,
                             ),
                           ),

@@ -113,7 +113,7 @@ void initState() {
     // ignore: deprecated_member_use
     return  AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -425,7 +425,9 @@ floatingActionButton: Padding(
                   ),
                 ),
             
-               
+          SizedBox(
+                  height: MediaQuery.of(context).size.height * 22 / 100,
+                ),      
               
            
               ],

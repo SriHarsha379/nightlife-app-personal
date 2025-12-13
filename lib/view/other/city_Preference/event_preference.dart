@@ -79,7 +79,7 @@ class _EventPreferenceState extends State<EventPreference> {
     // ignore: deprecated_member_use
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
+        statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -213,7 +213,7 @@ class _EventPreferenceState extends State<EventPreference> {
                     alignment: Alignment.centerLeft,
                     child: Text(
                       textAlign: TextAlign.center,
-                      AppLanguage.select1to3Text[language],
+                      AppLanguage.select1to5Text[language],
                       style: TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,

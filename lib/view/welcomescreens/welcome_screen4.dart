@@ -77,120 +77,122 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
-      child: Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: SizedBox(
-          width: w,
-          height: h,
-          child: Stack(
-            children: [
-              GestureDetector(
-                onTap: () => FocusScope.of(context).unfocus(),
-                child: Container(
-                  width: w,
-                  height: h,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage(AppImage.signupScreen),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              ),
-
-              /// SLIDING BOTTOM CARD
-              SlideTransition(
-                position: _slideAnimation,
-                child: Align(
-                  alignment: Alignment.bottomCenter,
+      child: PopScope(
+            canPop: false,
+          onPopInvoked: (didPop) {
+  },
+        child: Scaffold(
+          backgroundColor: AppColor.primaryColor,
+          resizeToAvoidBottomInset: false,
+          body: SizedBox(
+            width: w,
+            height: h,
+            child: Stack(
+              children: [
+                GestureDetector(
+                  onTap: () => FocusScope.of(context).unfocus(),
                   child: Container(
                     width: w,
-                    height: h * 0.56,
+                    height: h,
                     decoration: BoxDecoration(
-                      gradient: AppColor.backgroundGradientcolor,
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
+                      image: DecorationImage(
+                        image: AssetImage(AppImage.signupScreen),
+                        fit: BoxFit.cover,
                       ),
-                    ),
-                    padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
-                    ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        SizedBox(height: h * 0.09),
-
-                        /// TITLE
-                        SizedBox(
-                          width: w * 0.70,
-                          child: Text(
-                            "All in One Place",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: w * 0.085,
-                              fontWeight: FontWeight.w600,
-                              fontFamily: AppFont.fontFamily,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: h * 0.02),
-
-                        /// SUBTITLE
-                        SizedBox(
-                          width: w * 0.80,
-                          child: Text(
-                            "Discover the best venues, book your seats with ease, and connect with people who share your vibe—all from one app.",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: w * 0.043,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: AppFont.fontFamily,
-                            ),
-                          ),
-                        ),
-
-                        SizedBox(height: h * 0.08),
-
-                        /// BUTTON
-                        AppButton(
-                          text: AppLanguage.letsgetStartedtext[language],
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: SignUp(),
-                                duration: const Duration(milliseconds: 400),
-                              ),
-                            );
-                          },
-                        ),
-
-                        SizedBox(height: h * 0.04),
-                      ],
                     ),
                   ),
                 ),
-              ),
-
-              /// DOT INDICATOR
-              Positioned(
-                bottom: h * 0.07,
-                left: w * 0.42,
-                child: Row(
-                  children: [
-                    _dot(_activeIndex == 1),
-                    _dot(_activeIndex == 0),
-                    _dot(_activeIndex == 0),
-                    _dot(_activeIndex == 2),
-                  ],
+        
+                SlideTransition(
+                  position: _slideAnimation,
+                  child: Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      width: w,
+                      height: h * 0.56,
+                      decoration: BoxDecoration(
+                        gradient: AppColor.backgroundGradientcolor,
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(50),
+                          topRight: Radius.circular(50),
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: h * 0.09),
+        
+                          /// TITLE
+                          SizedBox(
+                            width: w * 0.70,
+                            child: Text(
+                              "All in One Place",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: w * 0.085,
+                                fontWeight: FontWeight.w600,
+                                fontFamily: AppFont.fontFamily,
+                              ),
+                            ),
+                          ),
+        
+                          SizedBox(height: h * 0.02),
+        
+                          SizedBox(
+                            width: w * 0.80,
+                            child: Text(
+                              "Discover the best venues, book your seats with ease, and connect with people who share your vibe—all from one app.",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: w * 0.043,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: AppFont.fontFamily,
+                              ),
+                            ),
+                          ),
+        
+                          SizedBox(height: h * 0.08),
+        
+                          AppButton(
+                            text: AppLanguage.letsgetStartedtext[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: SignUp(),
+                                  duration: const Duration(milliseconds: 400),
+                                ),
+                              );
+                            },
+                          ),
+        
+                          SizedBox(height: h * 0.04),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-            ],
+        
+                Positioned(
+                  bottom: h * 0.07,
+                  left: w * 0.42,
+                  child: Row(
+                    children: [
+                      _dot(_activeIndex == 1),
+                      _dot(_activeIndex == 0),
+                      _dot(_activeIndex == 0),
+                      _dot(_activeIndex == 2),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
