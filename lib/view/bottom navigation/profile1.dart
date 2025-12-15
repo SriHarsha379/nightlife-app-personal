@@ -61,6 +61,7 @@ class _Profile1State extends State<Profile1> {
           });
         },
         child: Scaffold(
+          
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
@@ -253,7 +254,7 @@ class _Profile1State extends State<Profile1> {
                       child: Row(
                         children: [
                           Container(
-                            height: size.height * 6 / 100,
+                            height: size.height * 5 / 100,
                             width: size.width * 40 / 100,
                             margin: const EdgeInsets.only(left: 15),
                             decoration: BoxDecoration(
@@ -290,7 +291,7 @@ class _Profile1State extends State<Profile1> {
                                     color: AppColor.secondryColor,
                                   ),
                                 ),
-                              ],
+                              ],   
                             ),
                           ),
                           SizedBox(

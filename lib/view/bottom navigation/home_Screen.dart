@@ -1517,9 +1517,8 @@ class _HomeState extends State<Home> {
                                                     .venuesText[language],
                                                 style: TextStyle(
                                                   fontWeight: FontWeight.w500,
-                                                  color: selectedIndex == 1
-                                                      ? AppColor.greyLightColor
-                                                      : AppColor.secondryColor,
+                                                  color: 
+                                                       AppColor.greyLightColor,
                                                   fontSize: 15,
                                                   fontFamily:
                                                       AppFont.fontFamily,
@@ -1572,9 +1571,9 @@ class _HomeState extends State<Home> {
                                                   .size
                                                   .height *
                                               0.003,
-                                          color: selectedIndex == 1
-                                              ? AppColor.greyLightColor
-                                              : AppColor.secondryColor,
+                                          color: 
+                                               AppColor.greyLightColor
+                                              
                                         ),
                                       ),
                                     ],

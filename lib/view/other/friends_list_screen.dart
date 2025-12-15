@@ -80,7 +80,7 @@ class _FriendsListState extends State<FriendsList> {
     },
     {
       'id': 6,
-      'image': 'assets/icons/soham.png',
+      'image': AppImage.soham,
       'name': 'Soham',
       'lastMessage': '@soham23',
       'message': 'Message',
