@@ -88,7 +88,6 @@ class _LoginScreenState extends State<LoginScreen>
             height: MediaQuery.of(context).size.height * 100 / 100,
             child: Stack(
               children: [
-                // Background image (static, no animation)
                 GestureDetector(
                   onTap: () {
                     FocusScope.of(context).unfocus();
@@ -105,7 +104,6 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                 ),
         
-                // Animated bottom sheet sliding up from bottom
                 SlideTransition(
                   position: _slideAnimation,
                   child: Align(

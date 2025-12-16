@@ -77,13 +77,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                     ),
                   ),
                 ),
-
                 Container(
-                  padding: EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                  height: size.height * 0.09, // same card height
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
                         color: AppColor.primaryColor,
@@ -93,45 +92,58 @@ class _AppPreferencesState extends State<AppPreferences> {
                       ),
                     ],
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  child: Row(
+                    crossAxisAlignment:
+                        CrossAxisAlignment.center, // 👈 vertical center
                     children: [
-                      SizedBox(width: size.width * 2 / 100),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            AppLanguage.autoDownloadMediaText[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 16,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
+                      /// LEFT TEXT PART
+                      Expanded(
+                        child: Column(
+                          mainAxisAlignment:
+                              MainAxisAlignment.center, // 👈 center vertically
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              AppLanguage.autoDownloadMediaText[language],
+                              textHeightBehavior: const TextHeightBehavior(
+                                applyHeightToFirstAscent: false,
+                              ),
+                              style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: 16,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w600,
+                                height: 1.1,
+                              ),
                             ),
-                          ),
-                          Transform.scale(
-                            scale: 0.80,
-                            child: CupertinoSwitch(
-                              value: mileageSwitch,
-                              onChanged: (value) {
-                                setState(() {
-                                  mileageSwitch = value;
-                                });
-                              },
-                              activeColor: AppColor.pinkColor,
-                              thumbColor: Colors.white,
-                              trackColor: AppColor.toggleColor,
+                            const SizedBox(height: 6),
+                            Text(
+                              AppLanguage.mediVisiibilityMsgText[language],
+                              style: const TextStyle(
+                                color: AppColor.notificationtextColor,
+                                fontSize: 13, // 👈 image me chhota hai
+                                height: 1.2,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w400,
+                              ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                      Text(
-                        AppLanguage.mediVisiibilityMsgText[language],
-                        style: const TextStyle(
-                          color: AppColor.notificationtextColor,
-                          fontSize: 14,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
+
+                      /// RIGHT SWITCH
+                      Transform.scale(
+                        scale: 0.80,
+                        child: CupertinoSwitch(
+                          value: mileageSwitch,
+                          onChanged: (value) {
+                            setState(() {
+                              mileageSwitch = value;
+                            });
+                          },
+                          activeColor: AppColor.pinkColor,
+                          thumbColor: Colors.white,
+                          trackColor: AppColor.toggleColor,
                         ),
                       ),
                     ],
@@ -154,7 +166,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   ),
                 ),
 
-                                SizedBox(height: size.height * 2 / 100),
+                SizedBox(height: size.height * 2 / 100),
 
                 Consumer<ThemeProvider>(
                   builder: (context, themeProvider, child) {
@@ -219,7 +231,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                                             style: const TextStyle(
                                               color: AppColor
                                                   .notificationtextColor,
-                                              fontSize: 12.6,
+                                              fontSize: 14,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -310,7 +322,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                                             style: const TextStyle(
                                               color: AppColor
                                                   .notificationtextColor,
-                                              fontSize: 13,
+                                              fontSize: 14,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -402,7 +414,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                                             style: const TextStyle(
                                               color: AppColor
                                                   .notificationtextColor,
-                                              fontSize: 13,
+                                              fontSize: 14,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w400,
                                             ),
@@ -452,7 +464,6 @@ class _AppPreferencesState extends State<AppPreferences> {
                               fontFamily: AppFont.fontFamily,
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
-             
                               color: AppColor.secondryColor,
                             ),
                           ),
@@ -476,11 +487,11 @@ class _AppPreferencesState extends State<AppPreferences> {
                   child: Container(
                     padding:
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
+                    margin:
+                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
                     decoration: BoxDecoration(
                       color: AppColor.notificationContainerColor,
-                      borderRadius: BorderRadius.circular(8),
+                      // borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
                           color: AppColor.primaryColor,
@@ -493,17 +504,20 @@ class _AppPreferencesState extends State<AppPreferences> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        SizedBox(width: size.width * 2 / 100),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Text(
-                              AppLanguage.setupYourPrefText[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: size.width * 3 / 100), //
+                              child: Text(
+                                AppLanguage.setupYourPrefText[language],
+                                style: const TextStyle(
+                                  color: AppColor.secondryColor,
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                ),
                               ),
                             ),
                             SizedBox(
@@ -516,15 +530,6 @@ class _AppPreferencesState extends State<AppPreferences> {
                             ),
                           ],
                         ),
-                        // Text(
-                        //   AppLanguage.allowOthersText[language],
-                        //   style: const TextStyle(
-                        //     color: AppColor.notificationtextColor,
-                        //     fontSize: 14,
-                        //     fontFamily: AppFont.fontFamily,
-                        //     fontWeight: FontWeight.w400,
-                        //   ),
-                        // ),
                       ],
                     ),
                   ),

@@ -49,7 +49,7 @@ class _NotificationsState extends State<Notifications> {
       "time": "– Explore now ✨",
       "view": "Explore",
       "lastseen": "1d ago",
-      "type": "event" // <-- FIXED
+      "type": "event"
     },
     {
       "image": AppImage.blackTicketconfirmedicon,
@@ -99,13 +99,13 @@ class _NotificationsState extends State<Notifications> {
               SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               Align(
                 alignment:
-                    Alignment.centerLeft, // Correct alignment for the container
+                    Alignment.centerLeft,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 17.0),
                   child: Text(
-                    AppLanguage.newtext[language], // Your text content
+                    AppLanguage.newtext[language], 
                     textAlign: TextAlign
-                        .left, // Optional: text alignment inside Text widget
+                        .left, 
                     style: TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 20,
