@@ -2,7 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails5_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
@@ -1005,7 +1005,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       Container(
                                           width:
                                               MediaQuery.of(context).size.width *
-                                                  100 /
+                                                  96 /
                                                   100,
                                           child: GestureDetector(
                                             onTap: () {
@@ -1056,7 +1056,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             context)
                                                                         .size
                                                                         .height *
-                                                                    25 /
+                                                                    28 /
                                                                     100,
                                                                 decoration: BoxDecoration(
                                                                     boxShadow: [
@@ -1208,7 +1208,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                5 /
+                                                4 /
                                                 100,
                                       ),
                                       Container(
@@ -1225,7 +1225,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       SizedBox(
                                         height:
                                             MediaQuery.of(context).size.height *
-                                                2 /
+                                                2.5 /
                                                 100,
                                       ),
                                       SizedBox(
@@ -1594,7 +1594,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             width: MediaQuery.of(context)
                                                     .size
                                                     .width *
-                                                90 /
+                                                96 /
                                                 100,
                                             child: GestureDetector(
                                               onTap: () {
@@ -1651,7 +1651,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               context)
                                                                           .size
                                                                           .height *
-                                                                      25 /
+                                                                      28 /
                                                                       100,
                                                                   decoration: BoxDecoration(
                                                                       // boxShadow: [
@@ -1790,7 +1790,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         SizedBox(
                                           height:
                                               MediaQuery.of(context).size.height *
-                                                  7 /
+                                                  4 /
                                                   100,
                                         ),
                                         Container(
@@ -1813,7 +1813,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         SizedBox(
                                           height:
                                               MediaQuery.of(context).size.height *
-                                                  2 /
+                                                  3 /
                                                   100,
                                         ),
                                         SizedBox(
@@ -1946,7 +1946,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ),
                                         ),
       
-                                        SizedBox(height: 16),
+                                        SizedBox(height: size.height *2.5/100),
       
                                         // List builder 2 per row
                                         ListView.builder(

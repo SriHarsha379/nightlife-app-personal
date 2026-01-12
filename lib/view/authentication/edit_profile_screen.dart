@@ -1,16 +1,15 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/signup.dart';
+import 'package:flutter/widgets.dart';
+import 'package:page_transition/page_transition.dart';
 import '../../utilities/app_color.dart';
-import '../../utilities/app_comman_setting.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/widgets.dart';
-import 'profile.dart';
+import '../other/edit_hobbies.dart';
 
 class EditProfile extends StatefulWidget {
   static String routeName = './EditProfile';
@@ -23,21 +22,23 @@ class EditProfile extends StatefulWidget {
 TextEditingController mobileNumberTextEditingController =
     TextEditingController();
 TextEditingController bioController = TextEditingController();
-TextEditingController emailController = TextEditingController(text:" abcd@gmail.com");
+TextEditingController emailController =
+    TextEditingController(text: " abcd@gmail.com");
 TextEditingController genderController = TextEditingController();
-TextEditingController usernameController = TextEditingController(text: "@Arjun5624");
+TextEditingController usernameController =
+    TextEditingController(text: "@Arjun5624");
 
 class _EditProfileState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     emailController.text = "abcd@gmail.com";
-    usernameController.text ="@Arjun5624";
-    mobileNumberTextEditingController.text ="9174658235";
-    genderController.text ="Male";
-  
+    usernameController.text = "@Arjun5624";
+    mobileNumberTextEditingController.text = "9174658235";
+    genderController.text = "Male";
+
     final size = MediaQuery.of(context).size;
 
-    return   AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
@@ -50,33 +51,19 @@ class _EditProfileState extends State<EditProfile> {
         body: SingleChildScrollView(
           child: Column(
             children: [
-            SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 4 / 100),    
+              SizedBox(height: MediaQuery.of(context).size.height * 4 / 100),
               AppHeader(
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.editDetailsText[language],
-                // actionButton: TextButton(
-                //   onPressed: () {},
-                //   child: Text(
-                //     AppLanguage.clearText[language],
-                //     style: const TextStyle(
-                //       color: Colors.grey,
-                //       fontSize: 13,
-                //       fontWeight: FontWeight.w500,
-                //     ),
-                //   ),
-                // ),
               ),
-        
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                      SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 6 / 100),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 6 / 100),
                     // Profile Image
                     Container(
                       width: MediaQuery.of(context).size.width * 36 / 100,
@@ -100,7 +87,7 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     // SizedBox(
                     //     width: MediaQuery.of(context).size.width * 0.1 / 100),
-        
+
                     // Profile Text
                     Expanded(
                       child: Column(
@@ -112,7 +99,7 @@ class _EditProfileState extends State<EditProfile> {
                                   MediaQuery.of(context).size.height * 1 / 100),
                           Text(
                             AppLanguage.enterYournameText[language],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.w400,
                               fontFamily: AppFont.fontFamily,
@@ -127,7 +114,7 @@ class _EditProfileState extends State<EditProfile> {
                                   100),
                           Text(
                             AppLanguage.date[language],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w400,
                               fontFamily: AppFont.fontFamily,
@@ -137,44 +124,56 @@ class _EditProfileState extends State<EditProfile> {
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 1 / 100),
-                          Row(
-                            children: [
-                              Text(
-                                AppLanguage.edityourInterestsText[language],
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w400,
-                                  fontFamily: AppFont.fontFamily,
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: const EditHobbiesScreen(),
+                                  duration: const Duration(milliseconds: 400),
+                                ),
+                              );
+                            },
+                            child: Row(
+                              children: [
+                                Text(
+                                  AppLanguage.edityourHobbiesText[language],
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w400,
+                                    fontFamily: AppFont.fontFamily,
+                                    color: AppColor.secondryColor,
+                                  ),
+                                ),
+                                SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        0.6 /
+                                        100),
+                                Image.asset(
+                                  AppImage.pencilIcon,
+                                  height: size.height * 3 / 100,
+                                  width: size.width * 3 / 100,
                                   color: AppColor.secondryColor,
                                 ),
-                              ),
-                               SizedBox(
-                              width: MediaQuery.of(context).size.width *
-                                  0.6/
-                                  100),
-                              Image.asset(
-                                AppImage.pencilIcon,
-                                height: size.height * 3 / 100,
-                                width: size.width * 3 / 100,
-                                color: AppColor.secondryColor,
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
-        
+
                           SizedBox(
                               height: MediaQuery.of(context).size.height *
                                   0.4 /
                                   100),
                           Text(
                             AppLanguage.foodieExplorecreativeText[language],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
                               color: AppColor.buttonColor,
                             ),
                           ),
-        
+
                           // buildTaskRow(
                           //     AppLanguage.foodieExplorecreativeText[language],
                           //     Colors.purpleAccent),
@@ -184,7 +183,7 @@ class _EditProfileState extends State<EditProfile> {
                   ],
                 ),
               ),
-        
+
               // Profile Completion Text
               SizedBox(
                 width: MediaQuery.of(context).size.width * 89 / 100,
@@ -192,7 +191,7 @@ class _EditProfileState extends State<EditProfile> {
                   alignment: Alignment.centerLeft,
                   child: Text(
                     AppLanguage.username[language],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                       fontFamily: AppFont.fontFamily,
@@ -202,17 +201,16 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 6 / 100,
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColor.textfieldcontainercolor, // background color
                     boxShadow: [
                       BoxShadow(
-                        color:
-                            AppColor.textfieldcontainercolor, // shadow color
+                        color: AppColor.textfieldcontainercolor, // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
                         offset: Offset(1, 2),
@@ -233,14 +231,14 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               SizedBox(
                 width: MediaQuery.of(context).size.width * 87 / 100,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     AppLanguage.bioText[language],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                       fontFamily: AppFont.fontFamily,
@@ -250,7 +248,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Center(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -269,7 +267,7 @@ class _EditProfileState extends State<EditProfile> {
                           BoxShadow(
                             color: AppColor.grayColor.withOpacity(0.4),
                             blurRadius: 4,
-                            offset: Offset(0, 2),
+                            offset: const Offset(0, 2),
                           ),
                         ],
                         borderRadius: BorderRadius.circular(24),
@@ -284,14 +282,14 @@ class _EditProfileState extends State<EditProfile> {
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: AppColor.textfieldcontainercolor,
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
-                            borderSide: BorderSide(
+                            borderSide: const BorderSide(
                               color: AppColor.textfieldcontainercolor,
                               width: 1.5,
                             ),
@@ -330,7 +328,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -340,7 +338,7 @@ class _EditProfileState extends State<EditProfile> {
                     padding: const EdgeInsets.symmetric(horizontal: 26.0),
                     child: Text(
                       AppLanguage.emailText[language],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         fontFamily: AppFont.fontFamily,
@@ -348,14 +346,14 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                   ),
-        
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
                       children: [
                         Text(
                           AppLanguage.verifiedText[language],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
@@ -366,8 +364,7 @@ class _EditProfileState extends State<EditProfile> {
                             width: MediaQuery.of(context).size.width * 2 / 100),
                         Image.asset(
                           AppImage.verifiedIcon,
-                          height:
-                              size.height * 3 / 100, 
+                          height: size.height * 3 / 100,
                           width: size.width * 5 / 100,
                         ),
                       ],
@@ -375,7 +372,7 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-        
+
               SizedBox(
                 height: MediaQuery.of(context).size.height * 1 / 100,
               ),
@@ -391,16 +388,15 @@ class _EditProfileState extends State<EditProfile> {
                             AppColor.grayColor.withOpacity(0.4), // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
-                        offset: Offset(1, 2),
+                        offset: const Offset(1, 2),
                       ),
                     ],
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(26),
                       top: Radius.circular(26),
                     ),
                   ),
                   child: CustomTextFieldInput(
-
                     hintText: AppLanguage.enteremailidText[language],
                     maxLength: AppConstant.mobileMaxLenth,
                     keyboardType: TextInputType.name,
@@ -410,7 +406,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
@@ -420,7 +416,7 @@ class _EditProfileState extends State<EditProfile> {
                     padding: const EdgeInsets.symmetric(horizontal: 26.0),
                     child: Text(
                       AppLanguage.mobileNumberText[language],
-                      style: TextStyle(
+                      style: const TextStyle(
                         fontSize: 15,
                         fontWeight: FontWeight.w400,
                         fontFamily: AppFont.fontFamily,
@@ -428,14 +424,14 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                   ),
-        
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 20.0),
                     child: Row(
                       children: [
                         Text(
                           AppLanguage.verifiedText[language],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
@@ -455,9 +451,9 @@ class _EditProfileState extends State<EditProfile> {
                   ),
                 ],
               ),
-        
+
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
@@ -470,10 +466,10 @@ class _EditProfileState extends State<EditProfile> {
                             AppColor.grayColor.withOpacity(0.4), // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
-                        offset: Offset(1, 2),
+                        offset: const Offset(1, 2),
                       ),
                     ],
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(26),
                       top: Radius.circular(26),
                     ),
@@ -487,14 +483,14 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               SizedBox(
                 width: MediaQuery.of(context).size.width * 87 / 100,
                 child: Align(
                   alignment: Alignment.centerLeft,
                   child: Text(
                     AppLanguage.genderText[language],
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 15,
                       fontWeight: FontWeight.w400,
                       fontFamily: AppFont.fontFamily,
@@ -504,7 +500,7 @@ class _EditProfileState extends State<EditProfile> {
                 ),
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 1 / 100),
-        
+
               Center(
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
@@ -517,10 +513,10 @@ class _EditProfileState extends State<EditProfile> {
                             AppColor.grayColor.withOpacity(0.4), // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
-                        offset: Offset(1, 2),
+                        offset: const Offset(1, 2),
                       ),
                     ],
-                    borderRadius: BorderRadius.vertical(
+                    borderRadius: const BorderRadius.vertical(
                       bottom: Radius.circular(26),
                       top: Radius.circular(26),
                     ),

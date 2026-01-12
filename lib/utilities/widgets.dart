@@ -399,6 +399,7 @@ class CustomTextAreaField extends StatelessWidget {
       style: const TextStyle(color: AppColor.primaryColor),
       // keyboardType: widget.keyboardType,
       controller: controller,
+      cursorColor: AppColor.primaryColor,
       maxLength: maxLength,
       decoration: InputDecoration(
         prefixIcon: prefixText != null || prefixIcon != null

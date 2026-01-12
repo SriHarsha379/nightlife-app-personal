@@ -1,29 +1,21 @@
-// import 'dart:html';
-
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:image_picker/image_picker.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
-
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_snack_bar_toast_message.dart';
+import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
 
 class Home extends StatefulWidget {
@@ -36,7 +28,6 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  var fileName;
   CardSwiperController cardController = CardSwiperController();
   final CardSwiperController swipeControllerfollowGuardians =
       CardSwiperController();
@@ -49,7 +40,8 @@ class _HomeState extends State<Home> {
 
   DateTime? lastPressed;
   int selectedId = 1;
-  List Orders = [
+
+  List orders = [
     {'id': 1, 'title': 'Members'},
     {'id': 2, 'title': 'Events'},
     {'id': 3, 'title': 'Venues'},
@@ -113,8 +105,6 @@ class _HomeState extends State<Home> {
     },
   ];
 
-
-
   List chatsLists = [
     {
       'id': 1,
@@ -125,7 +115,6 @@ class _HomeState extends State<Home> {
       'message1': 'Done',
       'isSend': false,
     },
-   
     {
       'id': 2,
       'image': 'assets/icons/riya.png',
@@ -162,7 +151,7 @@ class _HomeState extends State<Home> {
       'message1': 'Done',
       'isSend': false,
     },
-       {
+    {
       'id': 6,
       'image': 'assets/icons/Soham.png',
       'name': 'soham',
@@ -178,34 +167,37 @@ class _HomeState extends State<Home> {
   final CardSwiperController eventsSwiperController = CardSwiperController();
   final CardSwiperController venuesSwiperController = CardSwiperController();
 
-// Add these for tracking
+  //! Add these for tracking
   int currentMemberIndex = 0;
   int currentEventIndex = 0;
   int currentVenueIndex = 0;
   int selectedIndex = 0;
-  List<Map<String, dynamic>> membersData = [
-    {'_id': '1', 'image': AppImage.card1},
-    {'_id': '2', 'image': AppImage.newcard2},
-    {'_id': '3', 'image': AppImage.member3},
-  ];
-  List<Map<String, dynamic>> venuesData = [
-    {'_id': '1', 'image': AppImage.newcard2},
-    {'_id': '2', 'image': AppImage.newcard2},
+
+  bool isYes = false;
+  bool isNope = false;
+  double swipeProgress = 0.0;
+
+  List<dynamic> membersData = [
+    {'_id': '1', 'image': AppImage.userImage1, 'name': "Gourav Kapoor"},
+    {'_id': '2', 'image': AppImage.userImage2, 'name': "Jack Danials"},
+    {'_id': '3', 'image': AppImage.userImage3, 'name': "Tony Stark"},
   ];
 
-  List<Map<String, dynamic>> eventsData = [
-    {'_id': '1', 'image': AppImage.lastcard},
-    {'_id': '2', 'image': AppImage.lastcard},
+  List<dynamic> venuesData = [
+    {'_id': '1', 'image': AppImage.venu1},
+    {'_id': '2', 'image': AppImage.venu2},
+  ];
+
+  List<dynamic> eventsData = [
+    {'_id': '1', 'image': AppImage.eventimg},
+    {'_id': '2', 'image': AppImage.eventImg2},
   ];
 
   bool _onSwipeMembers(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
       // Handle like
-      print('Liked member: ${membersData[previousIndex]['_id']}');
-    } else if (direction == CardSwiperDirection.left) {
-      print('Disliked member: ${membersData[previousIndex]['_id']}');
-    }
+    } else if (direction == CardSwiperDirection.left) {}
     setState(() {
       currentMemberIndex = currentIndex ?? 0;
     });
@@ -216,10 +208,40 @@ class _HomeState extends State<Home> {
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
       print('Liked event: ${eventsData[previousIndex]['_id']}');
+      setState(() {
+        isYes = true;
+        isNope = false;
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            isYes = false;
+          });
+        }
+      });
+    } else if (direction == CardSwiperDirection.left) {
+      setState(() {
+        isNope = true;
+        isYes = false;
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            isNope = false;
+          });
+        }
+      });
     }
+
     setState(() {
+      log("currentIndex$currentIndex");
       currentEventIndex = currentIndex ?? 0;
     });
+
     return true;
   }
 
@@ -227,15 +249,38 @@ class _HomeState extends State<Home> {
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
       print('Liked venue: ${venuesData[previousIndex]['_id']}');
+      setState(() {
+        isYes = true;
+        isNope = false;
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            isYes = false;
+          });
+        }
+      });
+    } else if (direction == CardSwiperDirection.left) {
+      setState(() {
+        isNope = true;
+        isYes = false;
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            isNope = false;
+          });
+        }
+      });
     }
     setState(() {
       currentVenueIndex = currentIndex ?? 0;
     });
     return true;
-  }
-
-  void _onSwipeDirectionChange(CardSwiperDirection direction) {
-    // Optional: handle swipe direction changes
   }
 
   @override
@@ -247,12 +292,17 @@ class _HomeState extends State<Home> {
   }
 
   int membersTabVersion = 0;
+  int eventTabVersion = 0;
+  int venusTabVersion = 0;
+
   final List<String> shareIcons = [
     AppImage.shareIcon,
     AppImage.whatsappIcon,
     AppImage.instaIcon,
     AppImage.snapIcon,
   ];
+
+  int selectedTab = 0; // 0=Members, 1=Events, 2=Venues
 
   @override
   Widget build(BuildContext context) {
@@ -281,13 +331,11 @@ class _HomeState extends State<Home> {
             SnackBarToastMessage.showSnackBar(
                 context, AppLanguage.pressAgainExitText[language]);
           } else {
-            // SystemChannels.platform.invokeMethod('SystemNavigator.pop');
             SystemNavigator.pop();
           }
         },
         child: Scaffold(
           backgroundColor: AppColor.primaryColor,
-
           body: SafeArea(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 100 / 100,
@@ -357,7 +405,7 @@ class _HomeState extends State<Home> {
                                   context,
                                   PageTransition(
                                     type: PageTransitionType.topToBottom,
-                                    child: Notifications(),
+                                    child: const Notifications(),
                                     duration: const Duration(milliseconds: 500),
                                   ),
                                 );
@@ -381,7 +429,7 @@ class _HomeState extends State<Home> {
                                   PageTransition(
                                     type:
                                         PageTransitionType.rightToLeftWithFade,
-                                    child: Profile(),
+                                    child: const Profile(),
                                     duration: const Duration(milliseconds: 500),
                                   ),
                                 );
@@ -401,7 +449,6 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 1 / 100,
                   ),
@@ -412,18 +459,19 @@ class _HomeState extends State<Home> {
                         Wrap(
                           direction: Axis.horizontal,
                           children: List.generate(
-                            Orders.length,
+                            orders.length,
                             (index) {
-                              bool isAll = Orders[index]['id'] == 4;
+                              bool isAll = orders[index]['id'] == 4;
                               return GestureDetector(
                                 onTap: isAll
                                     ? null
                                     : () {
                                         setState(() {
-                                          if (Orders[index]['id'] == 1) {
+                                          if (orders[index]['id'] == 1) {
                                             membersTabVersion++;
+                                            eventTabVersion++;
                                           }
-                                          selectedId = Orders[index]['id'];
+                                          selectedId = orders[index]['id'];
                                         });
                                       },
                                 child: Container(
@@ -438,9 +486,10 @@ class _HomeState extends State<Home> {
                                             100,
                                   ),
                                   alignment: Alignment.center,
-                                  margin: EdgeInsets.symmetric(horizontal: 6),
+                                  margin:
+                                      const EdgeInsets.symmetric(horizontal: 6),
                                   decoration: BoxDecoration(
-                                      color: selectedId == Orders[index]['id']
+                                      color: selectedId == orders[index]['id']
                                           ? isDark
                                               ? AppColor.primaryColor
                                               : AppColor.secondryColor
@@ -450,16 +499,16 @@ class _HomeState extends State<Home> {
                                       borderRadius: BorderRadius.circular(50),
                                       border: Border.all(
                                           color:
-                                              selectedId == Orders[index]['id']
+                                              selectedId == orders[index]['id']
                                                   ? AppColor.buttonColor
                                                   : AppColor.textfilledColor)),
                                   child: Text(
-                                    Orders[index]['title'],
+                                    orders[index]['title'],
                                     style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w600,
-                                        color: selectedId == Orders[index]['id']
+                                        color: selectedId == orders[index]['id']
                                             ? AppColor.buttonColor
                                             : AppColor.textcolor),
                                   ),
@@ -471,14 +520,15 @@ class _HomeState extends State<Home> {
                       ],
                     ),
                   ),
-
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 2 / 100,
                   ),
+
+                  //! Members Card
                   if (selectedId == 1)
                     Expanded(
                       child: AnimatedSwitcher(
-                        duration: Duration(milliseconds: 500),
+                        duration: const Duration(milliseconds: 500),
                         transitionBuilder: (child, animation) =>
                             FadeTransition(opacity: animation, child: child),
                         child: KeyedSubtree(
@@ -501,110 +551,37 @@ class _HomeState extends State<Home> {
                               return Center(
                                 child: Column(
                                   children: [
-                                    Stack(
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: LikedMemberDetail(),
-                                                duration:
-                                                    Duration(milliseconds: 500),
-                                              ),
-                                            );
-                                          },
-                                          child: AnimatedSwitcher(
-                                            duration:
-                                                Duration(milliseconds: 450),
-                                            transitionBuilder: (child,
-                                                    animation) =>
-                                                FadeTransition(
-                                                    opacity: animation,
-                                                    child: child),
-                                            child: Container(
-                                              key: ValueKey(
-                                                  "member_image_${membersTabVersion}_$index"),
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.88,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.62,
-                                              decoration: BoxDecoration(
-                                                borderRadius:
-                                                    BorderRadius.circular(22),
-                                                image: DecorationImage(
-                                                  image: AssetImage(
-                                                      membersData[index]
-                                                          ['image']),
-                                                  fit: BoxFit.cover,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        Positioned(
-                                          bottom: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.30,
-                                          right: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.001,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                              documenttypebottomsheet(context);
-                                            },
-                                            child: Column(
-                                              children: [
-                                                Image.asset(
-                                                  AppImage.heart,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.12,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.04,
-                                                ),
-                                                SizedBox(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.03),
-                                                Image.asset(
-                                                  AppImage.messageIcon,
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      0.09,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      0.04,
-                                                ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-
                                     SizedBox(
                                       height:
                                           MediaQuery.of(context).size.height *
-                                              0.015,
+                                              1 /
+                                              100,
                                     ),
+                                    membersCard(
+                                      context,
+                                      membersData[index]['image'],
+                                      membersData[index]['name'],
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: const LikedMemberDetail(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      key: ValueKey(
+                                          "member_image_${eventTabVersion}_$index"),
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
 
-                                    // Undo button
+                                    //! Undo Button
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal:
@@ -627,7 +604,7 @@ class _HomeState extends State<Home> {
                                           children: [
                                             Text(
                                               AppLanguage.undoText[language],
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                 color: AppColor.secondryColor,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
@@ -663,463 +640,241 @@ class _HomeState extends State<Home> {
                       ),
                     ),
 
-                  if (selectedId == 3)
-                    Center(
-                      child: Column(
-                        children: [
-                          Stack(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      child: VenuePages(),
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                },
-                                child: AnimatedSwitcher(
-                                  duration: const Duration(milliseconds: 500),
-                                  transitionBuilder: (child, animation) =>
-                                      FadeTransition(
-                                          opacity: animation, child: child),
-                                  child: Container(
-                                    key: ValueKey(selectedId),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.88,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.62,
-                                    decoration: BoxDecoration(
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.02),
-                                          blurRadius: 1,
-                                          spreadRadius: 2,
-                                          offset: Offset(2, 1),
-                                        ),
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.02),
-                                          blurRadius: 1,
-                                          spreadRadius: 2,
-                                          offset: Offset(2, 0),
-                                        ),
-                                      ],
-                                      borderRadius: BorderRadius.circular(22),
-                                      image: DecorationImage(
-                                        image: AssetImage(AppImage.newcard2),
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                bottom:
-                                    MediaQuery.of(context).size.height * 0.30,
-                                right:
-                                    MediaQuery.of(context).size.width * 0.001,
-                                child: GestureDetector(
-                                  onTap: () {
-                                    eventstypebottomsheet(context);
-                                  },
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        AppImage.heart,
-                                        fit: BoxFit.contain,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.12,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.04,
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                2.5 /
-                                                100,
-                                      ),
-                                      Image.asset(
-                                        AppImage.messageIcon,
-                                        fit: BoxFit.contain,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.09,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.04,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 1.5 / 100,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.04,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.008,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColor.themeColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  selectedId = 2;
-                                });
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    AppLanguage.undoText[language],
-                                    style: TextStyle(
-                                      color: AppColor.secondryColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFont.fontFamily,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.01),
-                                  Image.asset(
-                                    AppImage.arrow,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.04,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.02,
-                                    color: AppColor.secondryColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                  //! Events Card
                   if (selectedId == 2)
-                    Center(
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 0.01),
-                          Stack(
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType
-                                          .rightToLeftWithFade,
-                                      child: LikedEventDetail(),
-                                      duration:
-                                          const Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                },
-                                child: AnimatedSwitcher(
-                                  duration: Duration(milliseconds: 500),
-                                  transitionBuilder: (child, animation) =>
-                                      FadeTransition(
-                                          opacity: animation, child: child),
-                                  child: Container(
-                                    key: ValueKey(selectedId),
-                                    width: MediaQuery.of(context).size.width *
-                                        0.88,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.60,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(24),
-                                      image: DecorationImage(
-                                        image: AssetImage(AppImage.Eventcard3),
-                                        fit: BoxFit.cover,
-                                      ),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.10),
-                                          blurRadius: 2,
-                                          spreadRadius: 1,
-                                          offset: Offset(0, 0),
-                                        ),
-                                        BoxShadow(
-                                          color: Colors.white.withOpacity(0.20),
-                                          blurRadius: 2,
-                                          spreadRadius: 1,
-                                          offset: Offset(0, 0),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                top: MediaQuery.of(context).size.height * 0.02,
-                                left: MediaQuery.of(context).size.width * 0.04,
-                                child: Row(
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: KeyedSubtree(
+                          key: ValueKey(
+                              "events_tab_${eventTabVersion}_$selectedId"),
+                          child: CardSwiper(
+                            controller: eventsSwiperController,
+                            padding: EdgeInsets.zero,
+                            onSwipe: _onSwipeEvents,
+                            cardsCount: eventsData.length,
+                            allowedSwipeDirection:
+                                const AllowedSwipeDirection.only(
+                              left: true,
+                              right: true,
+                              down: false,
+                              up: false,
+                            ),
+                            numberOfCardsDisplayed: 1,
+                            cardBuilder: (context, index, _, __) {
+                              return Center(
+                                child: Column(
                                   children: [
-                                    Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal:
-                                            MediaQuery.of(context).size.width *
-                                                0.03,
-                                        vertical:
-                                            MediaQuery.of(context).size.height *
-                                                0.002,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color:
-                                            AppColor.themeColor, // solid purple
-
-                                        border: Border.all(
-                                          color: Color(0xFF9D4EDD),
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(25),
-                                      ),
-                                      child: Text(
-                                        'Techno',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
-                                        ),
-                                      ),
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              1 /
+                                              100,
+                                    ),
+                                    eventsCard(
+                                      context,
+                                      eventsData[index]['image'],
+                                      "Bass Drop Fridays",
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: const LikedEventDetail(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      key: ValueKey(
+                                          "events_tab_${eventTabVersion}_$index"),
                                     ),
                                     SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.01),
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
+
+                                    //! Undo Button
                                     Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal:
                                             MediaQuery.of(context).size.width *
-                                                0.03,
+                                                0.04,
                                         vertical:
                                             MediaQuery.of(context).size.height *
-                                                0.002,
+                                                0.008,
                                       ),
                                       decoration: BoxDecoration(
                                         color: AppColor.themeColor,
-                                        border: Border.all(
-                                          color: Color(0xFF9D4EDD),
-                                          width: 2,
-                                        ),
-                                        borderRadius: BorderRadius.circular(25),
+                                        borderRadius: BorderRadius.circular(20),
                                       ),
-                                      child: Text(
-                                        'Whiskey',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Positioned(
-                                top: MediaQuery.of(context).size.height * 0.018,
-                                right: MediaQuery.of(context).size.width * 0.02,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Stack(
-                                      clipBehavior: Clip.none,
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.only(left: 40.0),
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.20,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                0.11,
-                                            decoration: BoxDecoration(
-                                              image: DecorationImage(
-                                                image: AssetImage(
-                                                    AppImage.likeImg),
-                                                fit: BoxFit.contain,
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          membersSwiperController.undo();
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              AppLanguage.undoText[language],
+                                              style: const TextStyle(
+                                                color: AppColor.secondryColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
                                               ),
                                             ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.005),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          0.20,
-                                      child: Text(
-                                        textAlign: TextAlign.left,
-                                        '17.6K Likes',
-                                        style: TextStyle(
-                                          color: Colors.white70,
-                                          fontSize: 12,
-                                          fontWeight: FontWeight.w400,
-                                          fontFamily: AppFont.fontFamily,
+                                            SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.01),
+                                            Image.asset(
+                                              AppImage.arrow,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.02,
+                                              color: AppColor.secondryColor,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                     ),
                                   ],
                                 ),
-                              ),
-                              Positioned(
-                                bottom:
-                                    MediaQuery.of(context).size.height * 0.29,
-                                right: MediaQuery.of(context).size.width * 0.00,
-                                child: GestureDetector(
-                                  child: Column(
-                                    children: [
-                                      Image.asset(
-                                        AppImage.heart,
-                                        fit: BoxFit.contain,
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                0.12,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.04,
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                2.5 /
-                                                100,
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          eventstypebottomsheet(context);
-                                        },
-                                        child: Image.asset(
-                                          AppImage.messageIcon,
-                                          fit: BoxFit.contain,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.09,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.04,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
+                              );
+                            },
                           ),
-                          SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 1 / 100,
-                          ),
-                          Container(
-                            padding: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 0.04,
-                              vertical:
-                                  MediaQuery.of(context).size.height * 0.008,
-                            ),
-                            decoration: BoxDecoration(
-                              color: AppColor.themeColor,
-                              borderRadius: BorderRadius.circular(20),
-                            ),
-                            child: GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (selectedId == 3) {
-                                    selectedId = 2;
-                                  } else if (selectedId == 3) {
-                                    selectedId = 2;
-                                  }
-                                });
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    AppLanguage.undoText[language],
-                                    style: TextStyle(
-                                      color: AppColor.secondryColor,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFont.fontFamily,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        0.01,
-                                  ),
-                                  Image.asset(
-                                    AppImage.arrow,
-                                    width: MediaQuery.of(context).size.width *
-                                        0.04,
-                                    height: MediaQuery.of(context).size.height *
-                                        0.02,
-                                    color: AppColor.secondryColor,
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
+                        ),
                       ),
                     ),
 
-                  //       Image.asset(
-                  //         AppImage.undo,
-                  //         width: MediaQuery.of(context).size.width * 64 / 100,
-                  //         height: MediaQuery.of(context).size.height * 8 / 100,
-                  //       ),
-                  //     ],
-                  //   ),
-                  // ),
+                  //! Venues Card
+                  if (selectedId == 3)
+                    Expanded(
+                      child: AnimatedSwitcher(
+                        duration: const Duration(milliseconds: 500),
+                        transitionBuilder: (child, animation) =>
+                            FadeTransition(opacity: animation, child: child),
+                        child: KeyedSubtree(
+                          key: ValueKey(
+                              "venues_tab_${venusTabVersion}_$selectedId"),
+                          child: CardSwiper(
+                            controller: eventsSwiperController,
+                            padding: EdgeInsets.zero,
+                            onSwipe: _onSwipeVenues,
+                            cardsCount: venuesData.length,
+                            allowedSwipeDirection:
+                                const AllowedSwipeDirection.only(
+                              left: true,
+                              right: true,
+                              down: false,
+                              up: false,
+                            ),
+                            numberOfCardsDisplayed: 1,
+                            cardBuilder: (context, index, _, __) {
+                              return Center(
+                                child: Column(
+                                  children: [
+                                    SizedBox(
+                                      height:
+                                          MediaQuery.of(context).size.height *
+                                              1 /
+                                              100,
+                                    ),
+                                    venusCard(
+                                      context,
+                                      venuesData[index]['image'],
+                                      "Brew & Bloom Café",
+                                      () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: const VenuePages(),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      key: ValueKey(
+                                          "venues_tab_${venusTabVersion}_$index"),
+                                    ),
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
 
-                  // Container(
-
-                  //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
-                  //   width: MediaQuery.of(context).size.width * 100 / 100,
-                  //   height: MediaQuery.of(context).size.width *20 / 100,
-                  //   child: Image.asset(
-                  //     AppImage.undo,
-                  //     fit: BoxFit.contain,
-                  //   ),
-                  // ),
-
-                  // SizedBox(
-                  //   height: MediaQuery.of(context).size.height * 2 / 100,
-                  // ),
+                                    //! Undo Button
+                                    Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                0.04,
+                                        vertical:
+                                            MediaQuery.of(context).size.height *
+                                                0.008,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: AppColor.themeColor,
+                                        borderRadius: BorderRadius.circular(20),
+                                      ),
+                                      child: GestureDetector(
+                                        onTap: () {
+                                          membersSwiperController.undo();
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Text(
+                                              AppLanguage.undoText[language],
+                                              style: const TextStyle(
+                                                color: AppColor.secondryColor,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    0.01),
+                                            Image.asset(
+                                              AppImage.arrow,
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  0.04,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .height *
+                                                  0.02,
+                                              color: AppColor.secondryColor,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
                 ],
               ),
             ),
           ),
-          // bottomNavigationBar: const AppFooter(
-          //     selectedMenu: BottomMenus.home, notificationCount: 0),
         ),
       ),
     );
@@ -1141,7 +896,7 @@ class _HomeState extends State<Home> {
             color: Colors.transparent,
             child: Column(
               children: [
-                Container(
+                SizedBox(
                   width: MediaQuery.of(context).size.width * 100 / 100,
                   height: MediaQuery.of(context).size.height * 60 / 100,
                   child: Column(
@@ -1149,7 +904,7 @@ class _HomeState extends State<Home> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: AppColor.backgroundGradientcolor,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(46),
@@ -1168,7 +923,6 @@ class _HomeState extends State<Home> {
                                 fit: BoxFit.fill,
                               ),
                               SizedBox(height: size.height * 2 / 100),
-
                               Center(
                                 child: SizedBox(
                                   width: size.width * 90 / 100,
@@ -1193,59 +947,14 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                              Divider(
+                              const Divider(
                                 height: 0.2,
                                 thickness: 0.5,
                                 color: AppColor.secondryColor,
                                 indent: 28,
                                 endIndent: 28,
                               ),
-                              // Container(
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: [
-                              //       GestureDetector(
-                              //         onTap: () {
-                              //           setStateBottomSheet(() {
-                              //             selectedIndex = 0;
-                              //           });
-                              //         },
-                              //         child: Container(
-                              //           width:
-                              //               MediaQuery.of(context).size.width *
-                              //                   0.44,
-                              //           height:
-                              //               MediaQuery.of(context).size.height *
-                              //                   0.003,
-                              //           color: selectedIndex == 0
-                              //               ? AppColor.secondryColor
-                              //               : AppColor.secondryColor,
-                              //         ),
-                              //       ),
-                              //       GestureDetector(
-                              //         onTap: () {
-                              //           setStateBottomSheet(() {
-                              //             selectedIndex = 1;
-                              //           });
-                              //         },
-                              //         child: Container(
-                              //           width:
-                              //               MediaQuery.of(context).size.width *
-                              //                   0.36,
-                              //           height:
-                              //               MediaQuery.of(context).size.height *
-                              //                   0.003,
-                              //           color: selectedIndex == 1
-                              //               ? AppColor.greyLightColor
-                              //               : AppColor.secondryColor,
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
-
-                              SizedBox(height: size.height * 2 / 100),
-                              SizedBox(height: size.height * 1 / 100),
+                              SizedBox(height: size.height * 3 / 100),
                               Expanded(
                                 child: SingleChildScrollView(
                                   child: Column(
@@ -1257,7 +966,7 @@ class _HomeState extends State<Home> {
 
                                         return Wrap(
                                           children: [
-                                            Container(
+                                            SizedBox(
                                               width: size.width * 90 / 100,
                                               height: size.height * 8.5 / 100,
                                               child: ListTile(
@@ -1277,7 +986,7 @@ class _HomeState extends State<Home> {
                                                 ),
                                                 title: Text(
                                                   chat['name'] ?? '',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                     color:
@@ -1286,7 +995,7 @@ class _HomeState extends State<Home> {
                                                 ),
                                                 subtitle: Text(
                                                   chat['lastMessage'] ?? '',
-                                                  style: TextStyle(
+                                                  style: const TextStyle(
                                                     fontSize: 14,
                                                     color:
                                                         AppColor.secondryColor,
@@ -1407,339 +1116,1491 @@ class _HomeState extends State<Home> {
     showModalBottomSheet<void>(
       backgroundColor: Colors.transparent,
       isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
       context: context,
       builder: (BuildContext context) {
-        // String? tempSelected = selectedState;
+        return StatefulBuilder(
+          builder: (context, setStateBottomSheet) {
+            return Container(
+              width: size.width,
+              height: size.height * 0.6,
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Expanded(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: AppColor.backgroundGradientcolor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(46),
+                          topRight: Radius.circular(46),
+                        ),
+                      ),
+                      child: Column(
+                        children: [
+                          SizedBox(height: size.height * 0.02),
 
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return Container(
-            width: MediaQuery.of(context).size.width * 100 / 100,
-            height: MediaQuery.of(context).size.height * 60 / 100,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                Container(
-                    width: MediaQuery.of(context).size.width * 100 / 100,
-                    height: MediaQuery.of(context).size.height * 60 / 100,
-                    // decoration: BoxDecoration(
-                    //     borderRadius: BorderRadius.only(
-                    //         topLeft: Radius.circular(50),
-                    //         topRight: Radius.circular(50)),
-                    //     color: Colors.transparent),
+                          /// Drag Indicator
+                          Image.asset(
+                            AppImage.dashIcon,
+                            height: size.height * 0.005,
+                            width: size.width * 0.28,
+                            fit: BoxFit.fill,
+                          ),
 
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: AppColor.backgroundGradientcolor,
-                              // gradient: AppColor.chatContainerColor,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(46),
-                                topRight: Radius.circular(46),
-                              ),
-                            ),
-                            width: size.width * 100 / 100,
-                            height: size.height * 80 / 100,
-                            child: Column(
+                          SizedBox(height: size.height * 0.02),
+
+                          /// 🔁 TOGGLE HEADER
+                          SizedBox(
+                            height: size.height * 0.08,
+                            child: Row(
                               children: [
-                                SizedBox(height: size.height * 2 / 100),
-                                Image.asset(
-                                  AppImage.dashIcon,
-                                  height: size.height * 0.5 / 100,
-                                  width: size.width * 28 / 100,
-                                  fit: BoxFit.fill,
-                                ),
-                                SizedBox(height: size.height * 2 / 100),
-                                Container(
-                                  color: AppColor.transparentColor,
-                                  width: MediaQuery.of(context).size.width *
-                                      100 /
-                                      100,
-                                  height: MediaQuery.of(context).size.height *
-                                      8 /
-                                      100,
-                                  child: Center(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedIndex = 0;
-                                            });
-                                          },
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                50 /
-                                                100,
-                                            // height:
-                                            //     MediaQuery.of(context).size.height * 6 / 100,
-                                            child: Center(
-                                              child: Text(
-                                                AppLanguage
-                                                    .eventsText[language],
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: selectedIndex == 0
-                                                      ? AppColor.secondryColor
-                                                      : AppColor.secondryColor,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
+                                /// EVENTS
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setStateBottomSheet(() {
+                                        selectedIndex = 0;
+                                      });
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        AppLanguage.eventsText[language],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15,
+                                          fontFamily: AppFont.fontFamily,
+                                          color: selectedIndex == 0
+                                              ? AppColor.secondryColor
+                                              : AppColor.greyLightColor,
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            setState(() {
-                                              selectedIndex = 1;
-                                            });
-                                          },
-                                          child: Container(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                50 /
-                                                100,
-                                            // height:
-                                            //     MediaQuery.of(context).size.height * 6 / 100,
-                                            child: Center(
-                                              child: Text(
-                                                AppLanguage
-                                                    .venuesText[language],
-                                                style: TextStyle(
-                                                  fontWeight: FontWeight.w500,
-                                                  color: 
-                                                       AppColor.greyLightColor,
-                                                  fontSize: 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
+                                      ),
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedIndex = 0;
-                                          });
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.44,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.003,
-                                          color: selectedIndex == 0
-                                              ? AppColor.secondryColor
-                                              : AppColor.secondryColor,
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedIndex =
-                                                1; // fixed selection
-                                          });
-                                        },
-                                        child: Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.36,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              0.003,
-                                          color: 
-                                               AppColor.greyLightColor
-                                              
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: size.height * 2 / 100),
-                                SizedBox(height: size.height * 1 / 100),
-                                Expanded(
-                                  child: SingleChildScrollView(
-                                    child: Column(
-                                      children: [
-                                        ...List.generate(chats.length, (index) {
-                                          final chat = chats[index];
-                                          return Wrap(
-                                            children: [
-                                              Container(
-                                                width: size.width * 90 / 100,
-                                                height: size.height * 8.5 / 100,
-                                                child: ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  leading: Container(
-                                                    height:
-                                                        size.height * 10 / 100,
-                                                    width:
-                                                        size.width * 13 / 100,
-                                                    decoration: BoxDecoration(
-                                                      shape: BoxShape.circle,
-                                                      image: DecorationImage(
-                                                        image: AssetImage(
-                                                            chat['image']),
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                  title: Text(
-                                                    chat['name'],
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 16,
-                                                      color: AppColor
-                                                          .secondryColor,
-                                                    ),
-                                                  ),
-                                                  subtitle: Text(
-                                                    chat['lastMessage'],
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: AppColor
-                                                          .secondryColor,
-                                                    ),
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                  ),
-                                                  trailing: GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        chats[index]['isSend'] =
-                                                            true;
-                                                      });
 
-                                                      Future.delayed(
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  200), () {
-                                                        Navigator.push(
-                                                          context,
-                                                          PageTransition(
-                                                            type:
-                                                                PageTransitionType
-                                                                    .bottomToTop,
-                                                            child:
-                                                                ChatMessageScreen(
-                                                              name: chats[index]
-                                                                  ['name'],
-                                                              image:
-                                                                  chats[index]
-                                                                      ['image'],
-                                                            ),
-                                                          ),
-                                                        );
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 20,
-                                                          vertical: 8),
-                                                      decoration: BoxDecoration(
-                                                        color: (chats[index]
-                                                                    ['isSend']
-                                                                as bool)
-                                                            ? AppColor
-                                                                .logoutContainerColor
-                                                            : AppColor
-                                                                .secondryColor,
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10),
-                                                        border: (chats[index]
-                                                                    ['isSend']
-                                                                as bool)
-                                                            ? Border.all(
-                                                                color: AppColor
-                                                                    .buttonColor,
-                                                                width: 1)
-                                                            : null,
-                                                      ),
-                                                      child: Text(
-                                                        (chats[index]['isSend']
-                                                                as bool)
-                                                            ? chats[index]
-                                                                ['message1']
-                                                            : chats[index]
-                                                                ['message'],
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          color: (chats[index]
-                                                                      ['isSend']
-                                                                  as bool)
-                                                              ? AppColor
-                                                                  .secondryColor
-                                                              : AppColor
-                                                                  .primaryColor,
-                                                        ),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              if (index < chats.length - 0)
-                                                // Divider(
-                                                //   height: 0.2,
-                                                //   // thickness: 0.5,
-                                                //   // color: Colors.grey[300],
-                                                //   indent: 30,
-                                                // ),
-                                                if (index < chats.length - 0)
-                                                  SizedBox(
-                                                      height: size.height *
-                                                          0.1 /
-                                                          100),
-                                            ],
-                                          );
-                                        }),
-                                      ],
+                                /// VENUES
+                                Expanded(
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setStateBottomSheet(() {
+                                        selectedIndex = 1;
+                                      });
+                                    },
+                                    child: Center(
+                                      child: Text(
+                                        AppLanguage.venuesText[language],
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 15,
+                                          fontFamily: AppFont.fontFamily,
+                                          color: selectedIndex == 1
+                                              ? AppColor.secondryColor
+                                              : AppColor.greyLightColor,
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ),
                               ],
                             ),
                           ),
+
+                          /// 🔁 INDICATOR
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                width: size.width * 0.44,
+                                height: size.height * 0.003,
+                                color: selectedIndex == 0
+                                    ? AppColor.secondryColor
+                                    : AppColor.greyLightColor,
+                              ),
+                              Container(
+                                width: size.width * 0.36,
+                                height: size.height * 0.003,
+                                color: selectedIndex == 1
+                                    ? AppColor.secondryColor
+                                    : AppColor.greyLightColor,
+                              ),
+                            ],
+                          ),
+
+                          SizedBox(height: size.height * 0.02),
+
+                          /// 🔁 LIST CONTENT
+                          Expanded(
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: List.generate(chats.length, (index) {
+                                  final chat = chats[index];
+                                  return Column(
+                                    children: [
+                                      SizedBox(
+                                        width: size.width * 0.9,
+                                        height: size.height * 0.085,
+                                        child: ListTile(
+                                          contentPadding: EdgeInsets.zero,
+                                          leading: CircleAvatar(
+                                            radius: size.width * 0.065,
+                                            backgroundImage:
+                                                AssetImage(chat['image']),
+                                          ),
+                                          title: Text(
+                                            chat['name'],
+                                            style: const TextStyle(
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                              color: AppColor.secondryColor,
+                                            ),
+                                          ),
+                                          subtitle: Text(
+                                            chat['lastMessage'],
+                                            maxLines: 1,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              color: AppColor.secondryColor,
+                                            ),
+                                          ),
+                                          trailing: GestureDetector(
+                                            onTap: () {
+                                              setStateBottomSheet(() {
+                                                chats[index]['isSend'] = true;
+                                              });
+
+                                              Future.delayed(
+                                                const Duration(
+                                                    milliseconds: 200),
+                                                () {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type: PageTransitionType
+                                                          .bottomToTop,
+                                                      child: ChatMessageScreen(
+                                                        name: chat['name'],
+                                                        image: chat['image'],
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              );
+                                            },
+                                            child: Container(
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 20,
+                                                      vertical: 8),
+                                              decoration: BoxDecoration(
+                                                color: chat['isSend'] == true
+                                                    ? AppColor
+                                                        .logoutContainerColor
+                                                    : AppColor.secondryColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                                border: chat['isSend'] == true
+                                                    ? Border.all(
+                                                        color: AppColor
+                                                            .buttonColor,
+                                                      )
+                                                    : null,
+                                              ),
+                                              child: Text(
+                                                chat['isSend'] == true
+                                                    ? chat['message1']
+                                                    : chat['message'],
+                                                style: TextStyle(
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                  color: chat['isSend'] == true
+                                                      ? AppColor.secondryColor
+                                                      : AppColor.primaryColor,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 0.005),
+                                    ],
+                                  );
+                                }),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+ 
+  //! Members Card
+  Widget membersCard(
+      BuildContext context, String image, String name, VoidCallback onTap,
+      {Key? key}) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 450),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+      child: GestureDetector(
+        key: key,
+        onTap: onTap,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 90 / 100,
+          height: MediaQuery.of(context).size.height * 60.5 / 100,
+          child: Stack(
+            children: [
+              //! Main Card
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.8),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 0),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Column(
+                      children: [
+                        //! Image Section
+                        Expanded(
+                          flex: 7,
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.grey[300]!,
+                                      Colors.grey[200]!,
+                                    ],
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  image,
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                              // Shadow overlay that blends into the info section
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height:
+                                    150, // Adjust this value to control shadow spread
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black,
+                                      ],
+                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
+
+                        //! Info Section
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors
+                                  .black, // Solid black to match the gradient end
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Text(
+                                  'Weekend explorer who loves live gigs, latte art, and late-night jam sessions.',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                const Text(
+                                  'Foodie · Explorer · Creative',
+                                  style: TextStyle(
+                                    color: AppColor.pinkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Lane 7, Koregaon Park • 1.8 km',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
                       ],
                     )),
-              ],
-            ),
-          );
-        });
-      },
+              ),
+
+              //! Profile Avatars at Top Right (Overlapping)
+              Positioned(
+                top: 12,
+                right: 0,
+                child: SizedBox(
+                  width: 105,
+                  height: 41,
+                  child: Stack(
+                    children: [
+                      //! First Avatar
+                      Positioned(
+                        left: 0,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=1'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! Second Avatar
+                      Positioned(
+                        left: 27,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=5'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! +2 Badge
+                      Positioned(
+                        left: 56,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF7B1FA2),
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '+2',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              //! Heart Button on Right Side
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 100,
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff341941).withOpacity(.6),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                // documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.heart)),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 2 / 100,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.messageIcon)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  //! Events Card
+  Widget eventsCard(
+      BuildContext context, String image, String name, VoidCallback onTap,
+      {Key? key}) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 450),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+      child: GestureDetector(
+        key: key,
+        onTap: onTap,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 90 / 100,
+          height: MediaQuery.of(context).size.height * 60.5 / 100,
+          child: Stack(
+            children: [
+              //! Main Card
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.8),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 0),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Column(
+                      children: [
+                        //! Image Section
+                        Expanded(
+                          flex: 7,
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.grey[300]!,
+                                      Colors.grey[200]!,
+                                    ],
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  image,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                              // Shadow overlay that blends into the info section
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height:
+                                    150, // Adjust this value to control shadow spread
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black,
+                                      ],
+                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //! Info Section
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors
+                                  .black, // Solid black to match the gradient end
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Text(
+                                  'Bass-heavy techno night with DJ Armin, drink specials till midnight',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time_rounded,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      'Fri, 10 PM – 4 AM',
+                                      style: TextStyle(
+                                        color: AppColor.pinkColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Club Neon, Downtown • 2.3 km',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+              ),
+
+              //! Profile Avatars at Top Right (Overlapping)
+              Positioned(
+                top: 12,
+                right: 0,
+                child: SizedBox(
+                  width: 105,
+                  height: 100,
+                  child: Stack(
+                    children: [
+                      //! First Avatar
+                      Positioned(
+                        left: 0,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=1'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! Second Avatar
+                      Positioned(
+                        left: 27,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=5'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! +2 Badge
+                      Positioned(
+                        left: 56,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF7B1FA2),
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '+2',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! Likes Count
+                      const Positioned(
+                        top: 42,
+                        right: 19,
+                        child: SizedBox(
+                          child: Text(
+                            "17.6K Likes",
+                            style: TextStyle(
+                                fontFamily: AppFont.fontFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.textcolor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              //! Beverages on Left Side
+              Positioned(
+                top: 10,
+                left: 0,
+                child: SizedBox(
+                  // width: 105,
+                  height: 41,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 5 / 100,
+                      ),
+                      //! Cafe Text
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColor.themeColor.withOpacity(.7),
+                          border: Border.all(
+                              color: const Color(0xFF9C27B0), width: 3),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0, horizontal: 10),
+                          child: Text(
+                            "Techno",
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 2 / 100,
+                      ),
+
+                      //! Coffee Text
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColor.themeColor.withOpacity(.7),
+                          border: Border.all(
+                              color: const Color(0xFF9C27B0), width: 3),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0, horizontal: 10),
+                          child: Text(
+                            "Whiskey",
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              //! Heart Button on Right Side
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 100,
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff341941).withOpacity(.6),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                // documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.heart)),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 2 / 100,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.messageIcon)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              //! Yes - with fade animation
+              if (isYes)
+                Positioned(
+                  left: 30,
+                  top: 80,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.scale(
+                          scale: 0.8 + (0.2 * value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 20 / 100,
+                      height: MediaQuery.of(context).size.height * 6 / 100,
+                      decoration: BoxDecoration(
+                        color: AppColor.greenColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.greenColor.withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              //! Nope - with fade animation
+              if (isNope)
+                Positioned(
+                  right: 30,
+                  top: 80,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.scale(
+                          scale: 0.8 + (0.2 * value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 20 / 100,
+                      height: MediaQuery.of(context).size.height * 6 / 100,
+                      decoration: BoxDecoration(
+                        color: AppColor.redColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.redColor.withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Nope",
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  //! Venus Card
+  Widget venusCard(
+      BuildContext context, String image, String name, VoidCallback onTap,
+      {Key? key}) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 450),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: child,
+      ),
+      child: GestureDetector(
+        key: key,
+        onTap: onTap,
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width * 90 / 100,
+          height: MediaQuery.of(context).size.height * 60.5 / 100,
+          child: Stack(
+            children: [
+              //! Main Card
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.white.withOpacity(0.8),
+                      blurRadius: 10,
+                      spreadRadius: 2,
+                      offset: const Offset(0, 0),
+                    ),
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.2),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
+                child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Column(
+                      children: [
+                        //! Image Section
+                        Expanded(
+                          flex: 7,
+                          child: Stack(
+                            children: [
+                              Container(
+                                width: double.infinity,
+                                height: double.infinity,
+                                decoration: BoxDecoration(
+                                  gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [
+                                      Colors.grey[300]!,
+                                      Colors.grey[200]!,
+                                    ],
+                                  ),
+                                ),
+                                child: Image.asset(
+                                  image,
+                                  fit: BoxFit.fitHeight,
+                                ),
+                              ),
+                              // Shadow overlay that blends into the info section
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height:
+                                    150, // Adjust this value to control shadow spread
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black,
+                                      ],
+                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        //! Info Section
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors
+                                  .black, // Solid black to match the gradient end
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Text(
+                                  'Cozy café with coffee, desserts, events—perfect for work, conversations, meetups.',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                                const Row(
+                                  children: [
+                                    Icon(
+                                      Icons.access_time_rounded,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    SizedBox(width: 4),
+                                    Text(
+                                      '8 AM – 11 PM',
+                                      style: TextStyle(
+                                        color: AppColor.pinkColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Text(
+                                      'Lane 7, Koregaon Park • 1.8 km',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                              ],
+                            ),
+                          ),
+                        )
+                      ],
+                    )),
+              ),
+
+              //! Profile Avatars at Top Right (Overlapping)
+              Positioned(
+                top: 12,
+                right: 0,
+                child: SizedBox(
+                  width: 105,
+                  height: 100,
+                  child: Stack(
+                    children: [
+                      //! First Avatar
+                      Positioned(
+                        left: 0,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=1'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! Second Avatar
+                      Positioned(
+                        left: 27,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                            image: const DecorationImage(
+                              image: NetworkImage(
+                                  'https://i.pravatar.cc/150?img=5'),
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! +2 Badge
+                      Positioned(
+                        left: 56,
+                        child: Container(
+                          width: 38,
+                          height: 38,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: const Color(0xFF7B1FA2),
+                            border: Border.all(
+                                color: const Color(0xFF9C27B0), width: 3),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              '+2',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      //! Likes Count
+                      const Positioned(
+                        top: 42,
+                        right: 19,
+                        child: SizedBox(
+                          child: Text(
+                            "17.6K Likes",
+                            style: TextStyle(
+                                fontFamily: AppFont.fontFamily,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w600,
+                                color: AppColor.textcolor),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              //! Beverages on Left Side
+              Positioned(
+                top: 10,
+                left: 0,
+                child: SizedBox(
+                  // width: 105,
+                  height: 41,
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 5 / 100,
+                      ),
+                      //! Cafe Text
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColor.themeColor.withOpacity(.7),
+                          border: Border.all(
+                              color: const Color(0xFF9C27B0), width: 3),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0, horizontal: 10),
+                          child: Text(
+                            "Cafe",
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 2 / 100,
+                      ),
+                      //! Coffee Text
+                      Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: AppColor.themeColor.withOpacity(.7),
+                          border: Border.all(
+                              color: const Color(0xFF9C27B0), width: 3),
+                        ),
+                        child: const Padding(
+                          padding: EdgeInsets.symmetric(
+                              vertical: 2.0, horizontal: 10),
+                          child: Text(
+                            "Coffee",
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
+              //! Heart Button on Right Side
+              Positioned(
+                right: 0,
+                top: 0,
+                bottom: 100,
+                child: Center(
+                  child: Container(
+                    width: 40,
+                    height: 130,
+                    decoration: BoxDecoration(
+                      color: const Color(0xff341941).withOpacity(.6),
+                      borderRadius: const BorderRadius.only(
+                        topLeft: Radius.circular(20),
+                        bottomLeft: Radius.circular(20),
+                      ),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                // documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.heart)),
+                        ),
+                        SizedBox(
+                          height: MediaQuery.of(context).size.height * 2 / 100,
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(6.0),
+                          child: GestureDetector(
+                              onTap: () {
+                                documenttypebottomsheet(context);
+                              },
+                              child: Image.asset(AppImage.messageIcon)),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              //! Yes - with fade animation
+              if (isYes)
+                Positioned(
+                  left: 30,
+                  top: 80,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.scale(
+                          scale: 0.8 + (0.2 * value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 20 / 100,
+                      height: MediaQuery.of(context).size.height * 6 / 100,
+                      decoration: BoxDecoration(
+                        color: AppColor.greenColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.greenColor.withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Yes",
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+
+              //! Nope - with fade animation
+              if (isNope)
+                Positioned(
+                  right: 30,
+                  top: 80,
+                  child: TweenAnimationBuilder<double>(
+                    tween: Tween(begin: 0.0, end: 1.0),
+                    duration: const Duration(milliseconds: 300),
+                    curve: Curves.easeInOut,
+                    builder: (context, value, child) {
+                      return Opacity(
+                        opacity: value,
+                        child: Transform.scale(
+                          scale: 0.8 + (0.2 * value),
+                          child: child,
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width * 20 / 100,
+                      height: MediaQuery.of(context).size.height * 6 / 100,
+                      decoration: BoxDecoration(
+                        color: AppColor.redColor,
+                        borderRadius: BorderRadius.circular(8),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.redColor.withOpacity(0.5),
+                            blurRadius: 10,
+                            spreadRadius: 2,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Text(
+                          "Nope",
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.secondryColor,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

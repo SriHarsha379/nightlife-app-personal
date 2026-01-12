@@ -1,21 +1,17 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
-import 'package:night_life/view/authentication/signup.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../utilities/app_color.dart';
-import '../../utilities/app_comman_setting.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
-import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
-import '../../utilities/widgets.dart';
 import '../authentication/profile.dart';
+import '../other/city_Preference/edit_event_prefrence.dart';
 
 class Profile1 extends StatefulWidget {
   static String routeName = './Profile1';
@@ -31,7 +27,7 @@ TextEditingController bioController = TextEditingController();
 TextEditingController emailController = TextEditingController();
 TextEditingController genderController = TextEditingController();
 TextEditingController usernameController = TextEditingController();
-List Interest = [
+List interest = [
   {'id': 1, 'title': 'Add new'},
   {'id': 2, 'title': 'Photography'},
   {'id': 3, 'title': 'Social Mixers'},
@@ -61,11 +57,10 @@ class _Profile1State extends State<Profile1> {
           });
         },
         child: Scaffold(
-          
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
-            decoration: BoxDecoration(color: AppColor.primaryColor),
+            decoration: const BoxDecoration(color: AppColor.primaryColor),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -79,7 +74,7 @@ class _Profile1State extends State<Profile1> {
                       children: [
                         Text(
                           AppLanguage.yourProfileText[language],
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             fontFamily: AppFont.fontFamily,
@@ -92,7 +87,7 @@ class _Profile1State extends State<Profile1> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeftWithFade,
-                                child: Profile(),
+                                child: const Profile(),
                                 duration: const Duration(milliseconds: 500),
                               ),
                             );
@@ -151,7 +146,7 @@ class _Profile1State extends State<Profile1> {
                                       100),
                               Text(
                                 AppLanguage.sanjanaRoytext[language],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: AppFont.fontFamily,
@@ -164,7 +159,7 @@ class _Profile1State extends State<Profile1> {
                                       100),
                               Text(
                                 AppLanguage.foodieExplorecreativeText[language],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 13.5,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: AppFont.fontFamily,
@@ -179,7 +174,7 @@ class _Profile1State extends State<Profile1> {
                                 children: [
                                   Text(
                                     AppLanguage.onetwentyText[language],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
@@ -192,7 +187,7 @@ class _Profile1State extends State<Profile1> {
                                           100),
                                   Text(
                                     AppLanguage.friends[language],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: AppFont.fontFamily,
@@ -209,7 +204,7 @@ class _Profile1State extends State<Profile1> {
                                 children: [
                                   Text(
                                     AppLanguage.fiveSixtyText[language],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
@@ -218,7 +213,7 @@ class _Profile1State extends State<Profile1> {
                                   ),
                                   Text(
                                     AppLanguage.likes[language],
-                                    style: TextStyle(
+                                    style: const TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
@@ -244,7 +239,7 @@ class _Profile1State extends State<Profile1> {
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
-                          child: EditProfile(),
+                          child: const EditProfile(),
                           duration: const Duration(milliseconds: 500),
                         ),
                       );
@@ -284,14 +279,14 @@ class _Profile1State extends State<Profile1> {
                                 ),
                                 Text(
                                   AppLanguage.editDetailsText[language],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: AppFont.fontFamily,
                                     color: AppColor.secondryColor,
                                   ),
                                 ),
-                              ],   
+                              ],
                             ),
                           ),
                           SizedBox(
@@ -303,7 +298,7 @@ class _Profile1State extends State<Profile1> {
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: EditSwipeProfile(),
+                                  child: const EditSwipeProfile(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -321,7 +316,7 @@ class _Profile1State extends State<Profile1> {
                               ),
                               child: Text(
                                 AppLanguage.editSwipeprofileText[language],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: AppFont.fontFamily,
@@ -336,38 +331,34 @@ class _Profile1State extends State<Profile1> {
                   ),
 
                   // Profile Completion Text
-                  Container(
+                  SizedBox(
                     width: size.width * 90 / 100,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Container(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  SizedBox(
-                                    height: size.height * 1 / 100,
-                                  ),
-                                ],
-                              ),
-                            ],
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: size.height * 1 / 100,
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                         SizedBox(
                           height: size.height * 2 / 100,
                         ),
-                        Container(
-                          child: Text(
-                            AppLanguage.basicdetailstext[language],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.secondryColor),
-                          ),
+                        Text(
+                          AppLanguage.basicdetailstext[language],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.secondryColor),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
@@ -383,32 +374,27 @@ class _Profile1State extends State<Profile1> {
                             color: AppColor.secondryColor,
                           ),
                         ),
-
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
-                        Container(
-                          child: Text(
-                            AppLanguage.bioText[language],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.secondryColor),
-                          ),
+                        Text(
+                          AppLanguage.bioText[language],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.secondryColor),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
-                        Container(
-                          child: Text(
-                            AppLanguage.bioStatementtext[language],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.greyLightColor),
-                          ),
+                        Text(
+                          AppLanguage.bioStatementtext[language],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.greyLightColor),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
@@ -427,17 +413,14 @@ class _Profile1State extends State<Profile1> {
                         SizedBox(
                           height: size.height * 2 / 100,
                         ),
-                        Container(
-                          child: Text(
-                            AppLanguage.interestText[language],
-                            style: const TextStyle(
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.secondryColor),
-                          ),
+                        Text(
+                          AppLanguage.eventPreferencetext[language],
+                          style: const TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.secondryColor),
                         ),
-
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
@@ -445,18 +428,29 @@ class _Profile1State extends State<Profile1> {
                           spacing: 6, // horizontal space between items
                           runSpacing: 8, // vertical space between rows
                           children: List.generate(
-                            Interest.length,
+                            interest.length,
                             (index) {
-                              bool isAll = Interest[index]['id'] == 1;
+                              bool isAll = interest[index]['id'] == 1;
                               bool isSelected =
-                                  selectedId == Interest[index]['id'];
+                                  selectedId == interest[index]['id'];
 
                               return GestureDetector(
                                 onTap: isAll
-                                    ? null
+                                    ? () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: const EditEventPreference(),
+                                            duration: const Duration(
+                                                milliseconds: 400),
+                                          ),
+                                        );
+                                      }
                                     : () {
                                         setState(() {
-                                          selectedId = Interest[index]['id'];
+                                          selectedId = interest[index]['id'];
                                         });
                                       },
                                 child: Container(
@@ -480,7 +474,7 @@ class _Profile1State extends State<Profile1> {
                                     ),
                                   ),
                                   child: Text(
-                                    Interest[index]['title'],
+                                    interest[index]['title'],
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
@@ -518,42 +512,42 @@ class _Profile1State extends State<Profile1> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              child: Text(
-                                AppLanguage.vibe[language],
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor),
-                              ),
+                            Text(
+                              AppLanguage.vibe[language],
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.secondryColor),
                             ),
-                            // Container(
-                            //   child: Text(
-                            //     AppLanguage.viewAlltext[language],
-                            //     style: const TextStyle(
-                            //         fontSize: 16,
-                            //         fontFamily: AppFont.fontFamily,
-                            //         fontWeight: FontWeight.w500,
-                            //         color: AppColor.pinkColor),
-                            //   ),
-                            // ),
                           ],
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
                         ),
-                        Container(
-                          width: size.width * 85 / 100,
-                          child: ClipRRect(
-                              borderRadius: const BorderRadius.only(
-                                topLeft: Radius.circular(15),
-                                topRight: Radius.circular(15),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: const EditVibePreference(),
+                                duration: const Duration(milliseconds: 400),
                               ),
-                              child: Image.asset(
-                                AppImage.vibesIcon,
-                                fit: BoxFit.fill,
-                              )),
+                            );
+                          },
+                          child: SizedBox(
+                            width: size.width * 85 / 100,
+                            child: ClipRRect(
+                                borderRadius: const BorderRadius.only(
+                                  topLeft: Radius.circular(15),
+                                  topRight: Radius.circular(15),
+                                ),
+                                child: Image.asset(
+                                  AppImage.vibesIcon,
+                                  fit: BoxFit.fill,
+                                )),
+                          ),
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 1 / 100,
@@ -575,15 +569,13 @@ class _Profile1State extends State<Profile1> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              child: Text(
-                                AppLanguage.GalleryText[language],
-                                style: const TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w500,
-                                    color: AppColor.secondryColor),
-                              ),
+                            Text(
+                              AppLanguage.GalleryText[language],
+                              style: const TextStyle(
+                                  fontSize: 18,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                  color: AppColor.secondryColor),
                             ),
                             // Container(
                             //   child: Text(
@@ -643,89 +635,6 @@ class _Profile1State extends State<Profile1> {
                             ],
                           ),
                         ),
-
-                        // SizedBox(
-                        //   width: MediaQuery.of(context).size.width,
-                        //   child: SingleChildScrollView(
-                        //     scrollDirection: Axis.horizontal,
-                        //     child: Row(
-                        //       children: List.generate(
-                        //           storyImages.length, (index) {
-                        //         return Padding(
-                        //           padding: const EdgeInsets.symmetric(
-                        //               horizontal: 8.0),
-                        //           child: Column(
-                        //             children: [
-                        //               GestureDetector(
-                        //                 onTap: () {},
-                        //                 child: Container(
-                        //                   width: 70,
-                        //                   height: 70,
-                        //                   decoration: BoxDecoration(
-                        //                     borderRadius:
-                        //                         BorderRadius.circular(
-                        //                             35),
-                        //                     boxShadow: [
-                        //                       BoxShadow(
-                        //                         color: Colors.black
-                        //                             .withOpacity(
-                        //                                 0.25),
-                        //                         blurRadius: 4,
-                        //                         offset: const Offset(
-                        //                             0, 4),
-                        //                       ),
-                        //                     ],
-                        //                   ),
-                        //                   child: ClipRRect(
-                        //                     borderRadius:
-                        //                         BorderRadius.circular(
-                        //                             35),
-                        //                     child: Image.asset(
-                        //                       storyImages[index]
-                        //                               ["image"] ??
-                        //                           "no image",
-                        //                       fit: BoxFit.cover,
-                        //                     ),
-                        //                   ),
-                        //                 ),
-                        //               ),
-                        //               SizedBox(
-                        //                 height: MediaQuery.of(context)
-                        //                         .size
-                        //                         .height *
-                        //                     2 /
-                        //                     100,
-                        //               ),
-                        //               Text(
-                        //                 storyImages[index]["name"] ??
-                        //                     "No Name",
-                        //                 style: const TextStyle(
-                        //                   color: Colors.black,
-                        //                   fontWeight: FontWeight.w600,
-                        //                   fontSize: 12,
-                        //                 ),
-                        //               ),
-                        //               SizedBox(
-                        //                   // height: MediaQuery.of(context).size.height * 0.2/100,
-                        //                   ),
-                        //               Text(
-                        //                 storyImages[index]
-                        //                         ["subname"] ??
-                        //                     "No Name",
-                        //                 style: const TextStyle(
-                        //                   color:
-                        //                       AppColor.greyLightColor,
-                        //                   fontWeight: FontWeight.w600,
-                        //                   fontSize: 12,
-                        //                 ),
-                        //               ),
-                        //             ],
-                        //           ),
-                        //         );
-                        //       }),
-                        //     ),
-                        //   ),
-                        // ),
                         SizedBox(
                           height: size.height * 3 / 100,
                         ),
@@ -738,7 +647,7 @@ class _Profile1State extends State<Profile1> {
                               BoxShadow(
                                 color: AppColor.grayColor.withOpacity(0.4),
                                 blurRadius: 2,
-                                offset: Offset(1, 1),
+                                offset: const Offset(1, 1),
                               ),
                             ],
                             borderRadius: BorderRadius.circular(200),
@@ -805,7 +714,7 @@ class _Profile1State extends State<Profile1> {
                                 ),
                                 child: Text(
                                   AppLanguage.connectedText[language],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: AppFont.fontFamily,
@@ -821,130 +730,19 @@ class _Profile1State extends State<Profile1> {
                             ],
                           ),
                         ),
-
-                        // Container(
-                        //   width: size.width * 75 / 100,
-                        //   height: size.height * 7 / 100,
-                        //   decoration: BoxDecoration(
-                        //       color: AppColor.greygreyLightColor,
-                        //       borderRadius:
-                        //           BorderRadius.circular(40)),
-                        //   child: Row(
-                        //     children: [
-                        //       Container(
-                        //         width: size.width * 35 / 100,
-                        //         decoration: BoxDecoration(
-                        //             color: AppColor.pinkColor,
-                        //             borderRadius:
-                        //                 BorderRadius.circular(40)),
-                        //         child: Center(
-                        //           child: Padding(
-                        //             padding: EdgeInsets.symmetric(
-                        //               horizontal:
-                        //                   MediaQuery.of(context)
-                        //                           .size
-                        //                           .width *
-                        //                       3 /
-                        //                       100,
-                        //               vertical: MediaQuery.of(context)
-                        //                       .size
-                        //                       .height *
-                        //                   2 /
-                        //                   100,
-                        //             ),
-                        //             child: Text(
-                        //               AppLanguage
-                        //                   .singledayText[language],
-                        //               style: const TextStyle(
-                        //                   fontSize: 16,
-                        //                   fontFamily:
-                        //                       AppFont.fontFamily,
-                        //                   fontWeight: FontWeight.w500,
-                        //                   color:
-                        //                       AppColor.secondryColor),
-                        //             ),
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       SizedBox(
-                        //         width: MediaQuery.of(context)
-                        //                 .size
-                        //                 .width *
-                        //             3 /
-                        //             100,
-                        //       ),
-                        //       Container(
-                        //         child: Text(
-                        //           AppLanguage.mutidayText[language],
-                        //           style: const TextStyle(
-                        //               fontSize: 16,
-                        //               fontFamily: AppFont.fontFamily,
-                        //               fontWeight: FontWeight.w500,
-                        //               color: AppColor.primaryColor),
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
                         SizedBox(
                           height: size.height * 2 / 100,
                         ),
-                        // SingleChildScrollView(
-                        //   scrollDirection: Axis.horizontal,
-                        //   child: Row(
-                        //     children: [
-                        //       Container(
-                        //         width: size.width * 75 / 100,
-                        //         height: size.height * 33 / 100,
-                        //         margin:
-                        //             const EdgeInsets.only(right: 10),
-                        //         decoration: BoxDecoration(
-                        //           borderRadius:
-                        //               BorderRadius.circular(20),
-                        //         ),
-                        //         child: ClipRRect(
-                        //           borderRadius:
-                        //               BorderRadius.circular(20),
-                        //           child: Image.asset(
-                        //             AppImage.divoffer,
-                        //             fit: BoxFit.fill,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //       Container(
-                        //         width: size.width * 75 / 100,
-                        //         height: size.height * 33 / 100,
-                        //         margin:
-                        //             const EdgeInsets.only(right: 10),
-                        //         decoration: BoxDecoration(
-                        //           borderRadius:
-                        //               BorderRadius.circular(20),
-                        //         ),
-                        //         child: ClipRRect(
-                        //           borderRadius:
-                        //               BorderRadius.circular(20),
-                        //           child: Image.asset(
-                        //             AppImage.divoffer,
-                        //             fit: BoxFit.fill,
-                        //           ),
-                        //         ),
-                        //       ),
-                        //     ],
-                        //   ),
-                        // ),
-
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Container(
-                              child: Text(
-                                AppLanguage.likedEvents[language],
-                                style: const TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor),
-                              ),
+                            Text(
+                              AppLanguage.likedEvents[language],
+                              style: const TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.secondryColor),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -953,7 +751,7 @@ class _Profile1State extends State<Profile1> {
                                   PageTransition(
                                     type:
                                         PageTransitionType.rightToLeftWithFade,
-                                    child: LikedEventDetail(),
+                                    child: const LikedEventDetail(),
                                     duration: const Duration(milliseconds: 400),
                                   ),
                                 );
@@ -980,7 +778,7 @@ class _Profile1State extends State<Profile1> {
                               context,
                               PageTransition(
                                 type: PageTransitionType.rightToLeftWithFade,
-                                child: LikedEventDetail(),
+                                child: const LikedEventDetail(),
                                 duration: const Duration(milliseconds: 400),
                               ),
                             );
@@ -1038,7 +836,6 @@ class _Profile1State extends State<Profile1> {
                             ),
                           ),
                         ),
-
                         SizedBox(
                           height: size.height * 3 / 100,
                         ),
@@ -1070,7 +867,7 @@ class _Profile1State extends State<Profile1> {
                         SizedBox(
                           height: size.height * 0.2 / 100,
                         ),
-                        Container(
+                        SizedBox(
                           width: size.width * 98 / 100,
                           height: size.height * 17 / 100,
                           child: ClipRRect(
@@ -1099,7 +896,7 @@ class _Profile1State extends State<Profile1> {
                         ),
                         Row(
                           children: [
-                            Container(
+                            SizedBox(
                               width: size.width * 23 / 100,
                               child: ClipRRect(
                                   borderRadius: const BorderRadius.only(
@@ -1114,7 +911,7 @@ class _Profile1State extends State<Profile1> {
                             SizedBox(
                               width: size.width * 2 / 100,
                             ),
-                            Container(
+                            SizedBox(
                               width: size.width * 40 / 100,
                               child: ClipRRect(
                                   borderRadius: const BorderRadius.only(
@@ -1131,7 +928,7 @@ class _Profile1State extends State<Profile1> {
                         SizedBox(
                           height: size.height * 1.5 / 100,
                         ),
-                        Container(
+                        SizedBox(
                           width: size.width * 40 / 100,
                           child: ClipRRect(
                               borderRadius: const BorderRadius.only(
@@ -1171,7 +968,7 @@ class _Profile1State extends State<Profile1> {
           Flexible(
             child: Text(
               text,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14,
                 fontFamily: AppFont.fontFamily,
                 color: AppColor.primaryColor,

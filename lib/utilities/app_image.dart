@@ -1,11 +1,4 @@
-import 'package:flutter/material.dart';
-
-
 class AppImage {
-
-
-
-
   //parinay
   static const drivingLicense = "./assets/icons/drivingLicense.png";
   static const cash_icon = "./assets/icons/cash_icon.png";
@@ -52,6 +45,7 @@ class AppImage {
   static const eventimg = "./assets/icons/eventimg.png";
 //  assets\icons\liked_heart_icon.png
   static const liked_heart_icon = "./assets/icons/liked_heart_icon.png";
+  static const eventImg2 = "./assets/icons/eventstory1.jpg";
 
   static const mapPinicon = "./assets/icons/map-pin-dynamic-gradient.png";
   static const clock = "./assets/icons/clock.png";
@@ -225,27 +219,27 @@ class AppImage {
   static const likeIcon = "./assets/icons/likeIcon.png";
   static const likeImage = "./assets/icons/likeImage.png";
   static const halfCircleicon = "./assets/icons/halfCircleicon.png";
-    static const homeIcon2 = "./assets/icons/homeIcon2.png";
-    static const homeIcon1 = "./assets/icons/homeIcon1.png";
-    static const blackShareicon= "./assets/icons/blackShareicon.png";
-    //31/10/2025//////
-    static const dashIcon= "./assets/icons/dashIcon.png";
-    static const snapchatIcon= "./assets/icons/snapChaticon.png";
-    static const instagramIcon= "./assets/icons/instagramIcon.png";
-    static const spotifyIcon= "./assets/icons/spotifyIcon.png";
-    static const GenreCard1= "./assets/icons/GenreCard1.png";
-    static const GenreCard2= "./assets/icons/GenreCard2.png";
-    static const GenreCard3= "./assets/icons/GenreCard3.png";
-    static const GenreCard4= "./assets/icons/GenreCard4.png";
-    static const GenreCard5= "./assets/icons/GenreCard5.png";
-    static const GenreCard6= "./assets/icons/GenreCard6.png";
-    static const GenreCard7= "./assets/icons/GenreCard7.png";
-    static const GenreCard8= "./assets/icons/GenreCard8.png";
-    static const GenreCard9= "./assets/icons/GenreCard9.png";
-    static const GenreCard10= "./assets/icons/GenreCard10.png";
-    static const GenreCard11= "./assets/icons/GenreCard11.png";
-    static const GenreCard12= "./assets/icons/GenreCard12.png";
- //Pritam--31-10-2025
+  static const homeIcon2 = "./assets/icons/homeIcon2.png";
+  static const homeIcon1 = "./assets/icons/homeIcon1.png";
+  static const blackShareicon = "./assets/icons/blackShareicon.png";
+  //31/10/2025//////
+  static const dashIcon = "./assets/icons/dashIcon.png";
+  static const snapchatIcon = "./assets/icons/snapChaticon.png";
+  static const instagramIcon = "./assets/icons/instagramIcon.png";
+  static const spotifyIcon = "./assets/icons/spotifyIcon.png";
+  static const GenreCard1 = "./assets/icons/GenreCard1.png";
+  static const GenreCard2 = "./assets/icons/GenreCard2.png";
+  static const GenreCard3 = "./assets/icons/GenreCard3.png";
+  static const GenreCard4 = "./assets/icons/GenreCard4.png";
+  static const GenreCard5 = "./assets/icons/GenreCard5.png";
+  static const GenreCard6 = "./assets/icons/GenreCard6.png";
+  static const GenreCard7 = "./assets/icons/GenreCard7.png";
+  static const GenreCard8 = "./assets/icons/GenreCard8.png";
+  static const GenreCard9 = "./assets/icons/GenreCard9.png";
+  static const GenreCard10 = "./assets/icons/GenreCard10.png";
+  static const GenreCard11 = "./assets/icons/GenreCard11.png";
+  static const GenreCard12 = "./assets/icons/GenreCard12.png";
+  //Pritam--31-10-2025
   static const rupeesIcon = "./assets/icons/rupees_icon.png";
   static const debitCardIcon = "./assets/icons/debit_icon.png";
   static const infoIcon = "./assets/icons/info_icon.png";
@@ -255,49 +249,48 @@ class AppImage {
   static const calenderImage = "./assets/icons/calenderIcon.png";
   static const chairsImage = "./assets/icons/chairs_image.png";
 
-
   //Shreeraj--31-10-2025
   static const memberIcon = "./assets/icons/memberIcon.png";
   static const venuesIcon = "./assets/icons/venuesIcon.png";
   static const eventsIcon = "./assets/icons/music_icon.png";
   static const upgradeIcon = "./assets/icons/upgrade_ic.png";
 
-   // 01-11
-    static const splashScreengif= "./assets/icons/splashScreen.gif";
-static const mapImageIcon = "./assets/icons/mapImage.png";
+  // 01-11
+  static const splashScreengif = "./assets/icons/splashScreen.gif";
+  static const mapImageIcon = "./assets/icons/mapImage.png";
   // static const pinLocationIcon = "./assets/icons/pinlocation.png";
-static const eventImage1 = "./assets/icons/eventImage1.jpg";  
-    static const eventImage2 = "./assets/icons/eventImage2.jpg";  
-    static const eventImage3 = "./assets/icons/eventImage3.jpg";  
-    static const eventImage4 = "./assets/icons/eventImage4.jpg";  
-    static const eventImage5 = "./assets/icons/eventImage5.jpg";
+  static const eventImage1 = "./assets/icons/eventImage1.jpg";
+  static const eventImage2 = "./assets/icons/eventImage2.jpg";
+  static const eventImage3 = "./assets/icons/eventImage3.jpg";
+  static const eventImage4 = "./assets/icons/eventImage4.jpg";
+  static const eventImage5 = "./assets/icons/eventImage5.jpg";
   static const pinLocationicon = "./assets/icons/pinLocationicon.png";
 
-
-    static const googleIcon= "./assets/icons/googleIcon.png";
-    // static const appleIcon= "./assets/icons/appleIcon.png";
-    static const frequencyIncrementlast= "./assets/icons/frequencyIncrementlast.png";
-    static const google= "./assets/icons/google.png";
-    static const apple= "./assets/icons/appleLogo.png";
- static const ticketImage = "./assets/icons/ticketImage.png";
- static const frequencyTwoicon = "./assets/icons/frequencyTwo.png";
- static const frequencyOneicon = "./assets/icons/frequencyOne.png";
- static const dogImage = "./assets/icons/dogImage.png";
- static const plusImage = "./assets/icons/plusImage.png";
- static const blackGirlicon = "./assets/icons/blackGirlicon.png";
- static const settingIcon = "./assets/icons/settingIcon.png";
- static const rectanglePlusicon = "./assets/icons/rectanglePlusicon.png";
- static const rectangleIcon = "./assets/icons/RectangleIcon.png";
- static const instaIcon = "./assets/icons/instaIcon.png";
- static const whatsappIcon = "./assets/icons/whatsappIcon.png";
- static const shareIcon = "./assets/icons/shareIcon.png";
- static const snapIcon = "./assets/icons/snapIcon.png";
- static const img3 = "./assets/icons/img3.png";
+  static const googleIcon = "./assets/icons/googleIcon.png";
+  // static const appleIcon= "./assets/icons/appleIcon.png";
+  static const frequencyIncrementlast =
+      "./assets/icons/frequencyIncrementlast.png";
+  static const google = "./assets/icons/google.png";
+  static const apple = "./assets/icons/appleLogo.png";
+  static const ticketImage = "./assets/icons/ticketImage.png";
+  static const frequencyTwoicon = "./assets/icons/frequencyTwo.png";
+  static const frequencyOneicon = "./assets/icons/frequencyOne.png";
+  static const dogImage = "./assets/icons/dogImage.png";
+  static const plusImage = "./assets/icons/plusImage.png";
+  static const blackGirlicon = "./assets/icons/blackGirlicon.png";
+  static const settingIcon = "./assets/icons/settingIcon.png";
+  static const rectanglePlusicon = "./assets/icons/rectanglePlusicon.png";
+  static const rectangleIcon = "./assets/icons/RectangleIcon.png";
+  static const instaIcon = "./assets/icons/instaIcon.png";
+  static const whatsappIcon = "./assets/icons/whatsappIcon.png";
+  static const shareIcon = "./assets/icons/shareIcon.png";
+  static const snapIcon = "./assets/icons/snapIcon.png";
+  static const img3 = "./assets/icons/img3.png";
 
   static const homeIcon3 = "./assets/icons/homeIcon3.png";
 //10/11
   static const logoutIcon = "./assets/icons/logoutIcon.png";
-  static const  ticket1 = "./assets/icons/ticket1.png";
+  static const ticket1 = "./assets/icons/ticket1.png";
   static const ticket2 = "./assets/icons/ticket2.png";
   static const profileImg = "./assets/icons/profileImg.png";
 
@@ -315,33 +308,37 @@ static const eventImage1 = "./assets/icons/eventImage1.jpg";
   static const newcard3 = "./assets/icons/newcard3.png";
   static const heart = "./assets/icons/heart.png";
   static const newcard4 = "./assets/icons/newcard4.png";
-  static const letsStartedbottomsheetImg = "./assets/icons/letsStartedbottomsheet.png";
-    static const frame = "./assets/icons/abcd.png";
-    static const Eventcard3 = "./assets/icons/eventcard3.png";
-    static const blackHearticon = "./assets/icons/blackHearticon.png";
-    static const blackCalendericon = "./assets/icons/blackcalenderIcon.png";
-    static const blackMicicon = "./assets/icons/blackMicicon.png";
-    static const blackTicketconfirmedicon= "./assets/icons/blackTicketconfirmedicon.png";
+  static const letsStartedbottomsheetImg =
+      "./assets/icons/letsStartedbottomsheet.png";
+  static const frame = "./assets/icons/abcd.png";
+  static const Eventcard3 = "./assets/icons/eventcard3.png";
+  static const blackHearticon = "./assets/icons/blackHearticon.png";
+  static const blackCalendericon = "./assets/icons/blackcalenderIcon.png";
+  static const blackMicicon = "./assets/icons/blackMicicon.png";
+  static const blackTicketconfirmedicon =
+      "./assets/icons/blackTicketconfirmedicon.png";
 
   static const buttonletGetsstarted = "./assets/icons/buttonStartedicon.png";
-    static const likeImg = "./assets/icons/likeImg.png";
+  static const likeImg = "./assets/icons/likeImg.png";
 //17/11
-    static const lastcard = "./assets/icons/lastcard.png";
-    static const whiteProfileicon = "./assets/icons/whiteProfileicon.png";
-    static const ticket3 = "./assets/icons/ticket3.png";
-    static const homewithShadow = "./assets/icons/homeShadowicon.png";
+  static const lastcard = "./assets/icons/lastcard.png";
+  static const whiteProfileicon = "./assets/icons/whiteProfileicon.png";
+  static const ticket3 = "./assets/icons/ticket3.png";
+  static const homewithShadow = "./assets/icons/homeShadowicon.png";
 
-    //18-11
-    static const fireIcon = "./assets/icons/fireIcon.png";
-    static const vibesIcon = "./assets/icons/vibesIcon.png";
-    static const member3 = "./assets/icons/Member3.png";
+  //18-11
+  static const fireIcon = "./assets/icons/fireIcon.png";
+  static const vibesIcon = "./assets/icons/vibesIcon.png";
+  static const member3 = "./assets/icons/Member3.png";
 
-    static const newGif= "./assets/icons/newgif.gif";
-    static const locationwelcomeScreenIcon = "./assets/icons/locationwelcomeScreenIcon.png";  
-      static const chatWelcomescreenIcon = "./assets/icons/chatwelcomescreenIcon.png";  
-        static const micWelcomscreenIcon = "./assets/icons/micWelcomscreenIcon.png";
-        static const msgCardicon = "./assets/icons/msgCard.png";
-
+  static const newGif = "./assets/icons/newgif.gif";
+  static const locationwelcomeScreenIcon =
+      "./assets/icons/locationwelcomeScreenIcon.png";
+  static const chatWelcomescreenIcon =
+      "./assets/icons/chatwelcomescreenIcon.png";
+  static const micWelcomscreenIcon = "./assets/icons/micWelcomscreenIcon.png";
+  static const msgCardicon = "./assets/icons/msgCard.png";
+  static const Line = "./assets/icons/Line.png";
 
 //08-12-2025
   static const upArrow = "./assets/icons/uparrow.png";
@@ -351,12 +348,22 @@ static const eventImage1 = "./assets/icons/eventImage1.jpg";
   static const referIcon = "./assets/icons/referIcon.png";
   static const hii = "./assets/icons/Hii.png";
   static const logo = "./assets/icons/hiilogo.png";
-    static const amblogo = "./assets/icons/ambproductlogo.png";
-    static const silentnightimg= "./assets/icons/silentnightimg.png";
-    static const storySendiconn= "./assets/icons/storySendicon.png";
-    static const blackUploadicon= "./assets/icons/blackUploadIcon.png";
-    static const blackConnecticon= "./assets/icons/blackConnecticon.png";
-    static const blackviewallicon= "./assets/icons/viewAllIcon.png";
-    static const kingdom= "./assets/icons/kingdom.jpg";
-
+  static const amblogo = "./assets/icons/ambproductlogo.png";
+  static const silentnightimg = "./assets/icons/silentnightimg.png";
+  static const storySendiconn = "./assets/icons/storySendicon.png";
+  static const blackUploadicon = "./assets/icons/blackUploadIcon.png";
+  static const blackConnecticon = "./assets/icons/blackConnecticon.png";
+  static const blackviewallicon = "./assets/icons/viewAllIcon.png";
+  static const kingdom = "./assets/icons/kingdom.jpg";
+  static const hobbiesImage = "./assets/icons/ic_hobbies.png";
+  static const userImage1 = "./assets/icons/gauravpic.png";
+  static const userImage2 = "./assets/icons/gauravpic2.png";
+  static const userImage3 = "./assets/icons/gauravpic3.png";
+  static const venu1 = "./assets/icons/chairs_image.png";
+  static const venu2 = "./assets/icons/brewAndbloomIcon.png";
+  static const gallImg1 = "./assets/icons/galleryImg1.gif";
+  static const gallImg2 = "./assets/icons/galleryImg2.png";
+  static const gallImg3 = "./assets/icons/galleryImg3.jpg";
+  static const gallImg4 = "./assets/icons/galleryImg4.png";
+  static const stageImg = "./assets/icons/stageImg.png";
 }

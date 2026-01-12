@@ -1,7 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/view/other/city_Preference/music_genres.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -69,7 +68,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   child: Text(
                     AppLanguage.mediaVisibilityText[language],
                     textAlign: TextAlign.left,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -81,7 +80,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   height: size.height * 0.09, // same card height
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
+                  decoration: const BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     boxShadow: [
                       BoxShadow(
@@ -94,7 +93,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   ),
                   child: Row(
                     crossAxisAlignment:
-                        CrossAxisAlignment.center, // 👈 vertical center
+                        CrossAxisAlignment.center, // 
                     children: [
                       /// LEFT TEXT PART
                       Expanded(
@@ -157,7 +156,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   child: Text(
                     AppLanguage.themesText[language],
                     textAlign: TextAlign.left,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -170,16 +169,6 @@ class _AppPreferencesState extends State<AppPreferences> {
 
                 Consumer<ThemeProvider>(
                   builder: (context, themeProvider, child) {
-                    // Auto-sync selectedRadioIndex with current theme
-                    // if (themeProvider.themeMode == ThemeMode.dark) {
-                    //   selectedRadioIndex = 0;
-                    // }
-                    //  else if (themeProvider.themeMode == ThemeMode.light) {
-                    //   selectedRadioIndex = 1;
-                    // } else {
-                    //   selectedRadioIndex = 1;
-                    // }
-
                     return Column(
                       children: [
                         Center(
@@ -271,8 +260,6 @@ class _AppPreferencesState extends State<AppPreferences> {
                           ),
                         ),
                         SizedBox(height: size.height * 1.5 / 100),
-
-// Light Mode Radio Button
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 90 / 100,
@@ -362,12 +349,11 @@ class _AppPreferencesState extends State<AppPreferences> {
                           ),
                         ),
                         SizedBox(height: size.height * 1.5 / 100),
-
                         Center(
                           child: Container(
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             height:
-                                MediaQuery.of(context).size.height * 9 / 100,
+                                MediaQuery.of(context).size.height * 11 / 100,
                             decoration: BoxDecoration(
                               color: AppColor.notificationContainerColor,
                               borderRadius: BorderRadius.circular(12),
@@ -453,14 +439,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                             ),
                           ),
                         ),
-
-                        SizedBox(height: 15),
-
+                        const SizedBox(height: 15),
                         SizedBox(
                           width: size.width * 90 / 100,
                           child: Text(
                             AppLanguage.preferencesText[language],
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -479,7 +463,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                       context,
                       PageTransition(
                         type: PageTransitionType.bottomToTop,
-                        child: MusicGenresScreen(),
+                        child: const MusicGenresScreen(),
                         duration: const Duration(milliseconds: 500),
                       ),
                     );
@@ -489,7 +473,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColor.notificationContainerColor,
                       // borderRadius: BorderRadius.circular(8),
                       boxShadow: [
@@ -497,7 +481,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                           color: AppColor.primaryColor,
                           spreadRadius: 3,
                           blurRadius: 7,
-                          offset: const Offset(0, 1),
+                          offset: Offset(0, 1),
                         ),
                       ],
                     ),
@@ -520,12 +504,17 @@ class _AppPreferencesState extends State<AppPreferences> {
                                 ),
                               ),
                             ),
-                            SizedBox(
-                              height: size.width * 8 / 100,
-                              width: size.width * 9 / 100,
-                              child: Image.asset(
-                                AppImage.frontArrowIcon,
-                                fit: BoxFit.contain,
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  right: size.width * 3 / 100), 
+
+                              child: SizedBox(
+                                height: size.width * 8 / 100,
+                                width: size.width * 9 / 100,
+                                child: Image.asset(
+                                  AppImage.frontArrowIcon,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
                           ],

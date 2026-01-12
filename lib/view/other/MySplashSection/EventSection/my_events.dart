@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/past_events_screen.dart';
 import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'package:page_transition/page_transition.dart';
@@ -107,7 +107,6 @@ class _MyEventsState extends State<MyEvents> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-        
           body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
@@ -115,9 +114,8 @@ class _MyEventsState extends State<MyEvents> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                  SizedBox(
-                  height: MediaQuery.of(context).size.height * 4/ 100,
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 4 / 100,
                 ),
                 Center(
                   child: SizedBox(
@@ -128,13 +126,15 @@ class _MyEventsState extends State<MyEvents> {
                       children: [
                         GestureDetector(
                           onTap: () {
- Navigator.push(context,
-    
-                    PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: MyAppFooter(initialIndex: 0),
-                    duration: const Duration(milliseconds: 500),
-                  ),);                          },
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: MyAppFooter(initialIndex: 0),
+                                duration: const Duration(milliseconds: 500),
+                              ),
+                            );
+                          },
                           child: Container(
                             height:
                                 MediaQuery.of(context).size.height * 7 / 100,
@@ -153,11 +153,11 @@ class _MyEventsState extends State<MyEvents> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 25 / 100,
                         ),
-                          GestureDetector(
-onTap: (){
-  documenttypebottomsheet(context);
-},
-                            child: Align(
+                        GestureDetector(
+                          onTap: () {
+                            documenttypebottomsheet(context);
+                          },
+                          child: Align(
                             alignment: Alignment.center,
                             child: Text(
                               AppLanguage.myeventText[language],
@@ -169,11 +169,9 @@ onTap: (){
                                 fontFamily: AppFont.fontFamily,
                               ),
                             ),
-                                                    ),
                           ),
-                    
+                        ),
                         SizedBox(width: size.width * 2 / 100),
-          
                         GestureDetector(
                           onTap: () {
                             documenttypebottomsheet(context);
@@ -182,8 +180,7 @@ onTap: (){
                             AppImage.downArrow,
                             fit: BoxFit.cover,
                             color: AppColor.secondryColor,
-                            height:
-                                MediaQuery.of(context).size.width * 5 / 100,
+                            height: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                         ),
                       ],
@@ -306,14 +303,15 @@ onTap: (){
                                 Likedlist.length,
                                 (index) => GestureDetector(
                                   onTap: () {
-                                     Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.bottomToTop,
-                          child: LikedEventDetail(),
-                          duration: const Duration(milliseconds: 500),
-                        ),
-                      );
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType.bottomToTop,
+                                        child: LikedEventDetail(),
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                      ),
+                                    );
                                   },
                                   child: Container(
                                     width: size.width * 90 / 100,
@@ -890,18 +888,21 @@ onTap: (){
                                                 2 /
                                                 100,
                                           ),
-          
+
                                           // View Details button
                                           GestureDetector(
-                                            onTap: (){
-        Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeft,
-                          child: PastEventScreen(),
-                          duration: const Duration(milliseconds: 500),
-                        ),
-                      );                                          },
+                                            onTap: () {
+                                              Navigator.push(
+                                                context,
+                                                PageTransition(
+                                                  type: PageTransitionType
+                                                      .rightToLeft,
+                                                  child: PastEventScreen(),
+                                                  duration: const Duration(
+                                                      milliseconds: 500),
+                                                ),
+                                              );
+                                            },
                                             child: Container(
                                               height: size.height * 4.5 / 100,
                                               width: MediaQuery.of(context)
@@ -916,7 +917,7 @@ onTap: (){
                                               ),
                                               child: Center(
                                                 child: Text(
-                                                 "Review",
+                                                  "Review",
                                                   style: const TextStyle(
                                                     fontSize: 14,
                                                     fontFamily:
@@ -928,7 +929,7 @@ onTap: (){
                                               ),
                                             ),
                                           ),
-          
+
                                           // Content section
                                         ],
                                       ),
@@ -955,8 +956,6 @@ onTap: (){
     );
   }
 
-
-  
   void documenttypebottomsheet(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
@@ -1149,8 +1148,7 @@ onTap: (){
     });
   }
 
-
-   void showPopupDropdown(BuildContext context) {
+  void showPopupDropdown(BuildContext context) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -1198,7 +1196,8 @@ onTap: (){
                           false),
                       divider(),
                       dropdownItem(
-                          "Venues", () =>  Navigator.push(
+                          "Venues",
+                          () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => MyVenue(),
@@ -1207,7 +1206,8 @@ onTap: (){
                           false),
                       divider(),
                       dropdownItem(
-                          "Members", () =>   Navigator.push(
+                          "Members",
+                          () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => splashMembers(),

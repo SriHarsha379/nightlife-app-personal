@@ -100,31 +100,46 @@ class _ReferAFriendState extends State<ReferAFriend> {
                   ),
                   child: Column(
                     children: [
+                      SizedBox(height: size.height * 2 / 100),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 12 / 100,
-                            height:
-                                MediaQuery.of(context).size.width * 12 / 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.secondryColor,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                AppImage.inviteIcon,
-                                width:
-                                    MediaQuery.of(context).size.width * 7 / 100,
-                                height:
-                                    MediaQuery.of(context).size.width * 7 / 100,
-                              ),
+                          SizedBox(
+                            width: size.width * 12 / 100,
+                            child: Stack(
+                              alignment: Alignment.topCenter,
+                              children: [
+                                Positioned(
+                                  top: size.width * 5 / 100,
+                                  child: Image.asset(
+                                    AppImage.Line,
+                                    color: Colors.white,
+                                    width: size.width * 14 / 100,
+                                    height: size.width * 14 / 100,
+                                  ),
+                                ),
+                                Container(
+                                  width: size.width * 12 / 100,
+                                  height: size.width * 12 / 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColor.secondryColor,
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      AppImage.inviteIcon,
+                                      width: size.width * 7 / 100,
+                                      height: size.width * 7 / 100,
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                           SizedBox(width: size.width * 2.5 / 100),
                           Expanded(
                             child: Text(
-                              "Enter the invite code shared to you\nby your friend.",
+                              "Invite your friend to install the app via link or ask to add code during\nsignup",
                               style: TextStyle(
                                 fontSize: 14,
                                 height: 1.3,
@@ -133,9 +148,18 @@ class _ReferAFriendState extends State<ReferAFriend> {
                                 color: AppColor.secondryColor,
                               ),
                             ),
-                          )
+                          ),
                         ],
                       ),
+
+                      // Image.asset(
+                      //       "/assets/icons/Line.png",
+                      //       color: AppColor.secondryColor,
+                      //         width:
+                      //             MediaQuery.of(context).size.width * 2 / 100,
+                      //         height:
+                      //             MediaQuery.of(context).size.width * 2 / 100,
+                      //       ),
                       SizedBox(height: size.height * 3 / 100),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,16 +183,34 @@ class _ReferAFriendState extends State<ReferAFriend> {
                             ),
                           ),
                           SizedBox(width: size.width * 2.5 / 100),
-                          Text(
-                            "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
-                            style: TextStyle(
-                              fontSize: 13.5,
-                              // height: 1.3,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: size.height * 0.9 / 100),
+                            child: RichText(
+                              text: TextSpan(
+                                style: TextStyle(
+                                  fontSize: 13.5,
+                                  // height: 1,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w400,
+                                  color: AppColor.secondryColor,
+                                ),
+                                children: [
+                                  const TextSpan(
+                                    text:
+                                        "When your friend signup’s you will get\n",
+                                  ),
+                                  TextSpan(
+                                    text:
+                                        "Exclusive Discount Coupons for each!",
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.w700,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                          )
+                          ),
                         ],
                       ),
                     ],
@@ -219,7 +261,6 @@ class _ReferAFriendState extends State<ReferAFriend> {
                           ),
                         ),
 
-                        
                         Container(
                           height: size.height * 0.055, // line height
                           width: 1,

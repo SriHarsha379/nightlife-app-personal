@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:night_life/view/bottom%20navigation/home_Screen.dart';
+import 'package:night_life/view/bottom%20navigation/home_screen.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
 import 'package:night_life/view/bottom%20navigation/profile1.dart';

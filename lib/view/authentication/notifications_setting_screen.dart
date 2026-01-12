@@ -27,7 +27,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     {
       "image": AppImage.eventRemaindericon,
       "notification": "Event Reminders",
-      "message": "Get notified about upcoming events\nyou're interested in.",
+      "message": "Get notified about upcoming\nevents you're interested in.",
     },
     {
       "image": AppImage.friendsInviteIcon,
@@ -48,7 +48,6 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
       "image": AppImage.giftIcon,
       "notification": "Promotions & Offers",
       "message": "Receive notifications about special\noffers and promotions.",
-  
     },
   ];
   List<bool> switches = [false, false, false, false, false];
@@ -73,33 +72,31 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.notificationText[language],
               ),
-           
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
                       SizedBox(height: size.height * 1 / 100),
-                         SizedBox(height: size.height * 2 / 100),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: Text(
-                    AppLanguage.eventRemaindersText[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
-                    ),
-                  ),
-                ),
-              ),
-
-                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 1/ 100,
-                ),
+                      SizedBox(height: size.height * 2 / 100),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 17.0),
+                          child: Text(
+                            AppLanguage.eventRemaindersText[language],
+                            textAlign: TextAlign.left,
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 17,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.secondryColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100,
+                      ),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -107,8 +104,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                         itemBuilder: (BuildContext context, int index) {
                           List<Widget> widgets = [];
 
-                          widgets.add(
-                              notificationCard(context, notifications[index] ,index));
+                          widgets.add(notificationCard(
+                              context, notifications[index], index));
 
                           //  Add headings conditionally
                           if (index == 0) {
@@ -132,6 +129,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
       ),
     );
   }
+
   Widget sectionHeading(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
@@ -155,8 +153,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     final size = MediaQuery.of(context).size;
 
     return Container(
-  width: size.width*95/100,
- height: size.height*10/100,
+      width: size.width * 100 / 100,
+      height: size.height * 10 / 100,
       decoration: BoxDecoration(
         color: AppColor.notificationContainerColor,
         borderRadius: BorderRadius.circular(8),
@@ -169,73 +167,79 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
           ),
         ],
       ),
- child: Row(
-  crossAxisAlignment: CrossAxisAlignment.center, // 🔥 IMPORTANT
-  children: [
-    SizedBox(
-      width: size.width * 1.8 / 100,
-    ),
-
-    Image.asset(
-      notification["image"],
-      width: size.width * 11 / 100,
-      height: size.width * 11 / 100,
-      fit: BoxFit.contain,
-    ),
-
-    SizedBox(width: size.width * 2 / 100),
-
-    Expanded(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                notification['notification'],
-                style: const TextStyle(
-                  color: AppColor.secondryColor,
-                  fontSize: 14,
-                  fontFamily: AppFont.fontFamily,
-                  fontWeight: FontWeight.w600,
-                  height: 1,
-                ),
-              ),
-              Transform.scale(
-                scale: 0.80,
-                child: CupertinoSwitch(
-                  value: switches[index],
-                  onChanged: (value) {
-                    setState(() {
-                      switches[index] = value;
-                    });
-                  },
-                  activeColor: AppColor.pinkColor,
-                  thumbColor: Colors.white,
-                  trackColor: AppColor.toggleColor,
-                ),
-              ),
-            ],
+          SizedBox(
+            width: size.width * 3.8 / 100,
           ),
-          Text(
-            notification['message'],
-            style: const TextStyle(
-              color: AppColor.notificationtextColor,
-              fontSize: 13.6,
-              fontFamily: AppFont.fontFamily,
-              fontWeight: FontWeight.w400,
-              height: 1,
+          Image.asset(
+            notification["image"],
+            width: size.width * 11 / 100,
+            height: size.width * 11 / 100,
+            fit: BoxFit.contain,
+          ),
+          SizedBox(width: size.width * 4 / 100),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      notification['notification'],
+                      textHeightBehavior: const TextHeightBehavior(
+                        applyHeightToFirstAscent: false,
+                      ),
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w600,
+                        height: 1,
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.height * 0.8 / 100,
+                    ),
+                    Text(
+                      notification['message'],
+                      style: const TextStyle(
+                        color: AppColor.notificationtextColor,
+                        fontSize: 15.6,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w400,
+                        height: 1,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.only(right: 6),
+            child: Transform.scale(
+              scale: 0.90,
+              child: CupertinoSwitch(
+                value: switches[index],
+                onChanged: (value) {
+                  setState(() {
+                    switches[index] = value;
+                  });
+                },
+                activeColor: AppColor.pinkColor,
+                thumbColor: Colors.white,
+                trackColor: AppColor.toggleColor,
+              ),
             ),
           ),
         ],
       ),
-    ),
-  ],
-),
-
     );
   }
 }

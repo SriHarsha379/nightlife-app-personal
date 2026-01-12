@@ -1,26 +1,11 @@
-// import 'dart:html';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:image_picker/image_picker.dart';
-import 'package:night_life/view/authentication/notification_screen.dart';
-
 import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
-import 'package:night_life/view/other/city_Preference/badge_screen.dart';
-import 'package:night_life/view/other/city_Preference/event_preference.dart';
-import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
-import '../../../utilities/app_footer.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 

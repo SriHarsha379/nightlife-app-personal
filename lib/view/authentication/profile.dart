@@ -1,14 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/view/authentication/app_preference_screen.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/authentication/notifications_setting_screen.dart';
 import 'package:night_life/view/authentication/privacy_and_security.dart';
-import 'package:night_life/view/authentication/refer_code_screen.dart';
-import 'package:night_life/view/bottom%20navigation/profile1.dart';
 import 'package:night_life/view/authentication/support_screen.dart';
 import 'package:night_life/view/other/about/aboutscreen.dart';
 import 'package:night_life/view/other/referafriend_screen.dart';
@@ -22,7 +18,6 @@ import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import 'edit_profile_screen.dart';
-import 'profile.dart';
 
 class Profile extends StatefulWidget {
   static String routeName = './Profile';

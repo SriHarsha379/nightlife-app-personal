@@ -3,9 +3,6 @@
 // ignore_for_file: constant_identifier_names,
 
 
-import 'package:flutter/cupertino.dart';
-import 'package:night_life/view/other/city_Preference/vibe_preference.dart';
-
 class AppLanguage {
   static const language = 0;
     static const ReservedText = ["Reserved"];
@@ -459,6 +456,7 @@ static const editDetailsText=["Edit Details"];
 static const enterYournameText=["Enter your name"];
 static const date=["11/11/2003"];
 static const edityourInterestsText=["Edit your interests "];
+static const edityourHobbiesText=["Edit your hobbies "];
 static const foodieExplorecreativeText=["Foodie · Explorer · Creative"];
 static const username=[" Username"];
 static const bioText=["Bio"];
@@ -598,6 +596,7 @@ static const reservationsText =["Reservations"];
 //31/10
 static const heightOptionalText=["Height (Optional)"];
 static const additionalInfoText=["Additional Info"];
+static const editHobbiesText=["Edit Hobbies"];
 static const bioOptionalText=["Bio (optional)"];
 static const yourInstagramProfileText=["Your instagram profile link"];
 static const yourSpotifyaccountText=["Your Spotify account"];
@@ -689,7 +688,7 @@ static const whatKindofVibeText=["What kind of vibe are you looking for? Pick yo
    static const lightText = ["Light"];
    static const lightMsgText = ["Chase the sunrise. Keep it bright and clean."];
    static const systemDefaultText = ["System Default"];
-   static const systemDefaultMsgText = ["Flow with your vibe. Match your device’s rhythm."];
+   static const systemDefaultMsgText = ["Flow with your vibe. Match your device’s\nrhythm."];
    static const preferencesText = ["Preferences"];
    static const messageRequestText = ["Message Requests"];
    static const managePermissionText = ["Manage Permissions"];
@@ -705,6 +704,7 @@ static const whatKindofVibeText=["What kind of vibe are you looking for? Pick yo
     static const connectedText = ["Connected"];
       static const memberNearyouText = ["Member Near You"];
       static const accountText = ["Account"];
+      static const stageText = ["Stage"];
       static const otherGenretexts = ["Other Genre"];
 static const typeYourfavouritegenreText=["Type your favourite genre..."];
 static const enterYourpronounsText=["Enter your pronouns"];
@@ -718,6 +718,8 @@ static const bookingfeeText=["Booking Fee"];
 //09
 static const referaFriText=["Refer a Friend"];
 static const privacypoliciesText=["Privacy Policies"];
+static const pleaseEnterHobbyText=["Please enter a hobby"];
+static const yourHobbiesText=["Your hobbies"];
 
 }
 

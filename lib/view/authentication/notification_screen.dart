@@ -4,7 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../utilities/app_color.dart';

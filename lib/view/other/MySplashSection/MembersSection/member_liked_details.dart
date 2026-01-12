@@ -8,7 +8,7 @@ import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/utilities/widgets.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_footer.dart';
@@ -177,7 +177,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
-              color: AppColor.sendinvitecontainercolor,
+              color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
               borderRadius: BorderRadius.circular(25),
             ),
             width: size.width * 85 / 100,

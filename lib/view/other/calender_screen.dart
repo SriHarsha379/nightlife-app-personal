@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../utilities/app_color.dart';
@@ -116,13 +118,12 @@ class _CalendarScreenState extends State<CalendarScreen> {
                               },
                               calendarFormat: CalendarFormat.month,
                               calendarStyle: CalendarStyle(
-                                selectedDecoration: BoxDecoration(
+                                selectedDecoration: const BoxDecoration(
                                   color: AppColor.themeColor,
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          AppColor.pinkColor,
+                                      color: AppColor.pinkColor,
                                       blurRadius: 12,
                                       spreadRadius: 3,
                                     ),
@@ -208,118 +209,137 @@ class _CalendarScreenState extends State<CalendarScreen> {
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
+                              physics: const NeverScrollableScrollPhysics(),
                               shrinkWrap: true,
                               itemCount: 5,
                               itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 8),
-                                  // Added 'return' here
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: AppColor.themeColor,
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      vertical:
-                                          MediaQuery.of(context).size.height *
-                                              1.5 /
-                                              100,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
-                                              2.5 /
-                                              100,
+                                return GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: const LikedEventDetail(),
+                                        duration:
+                                            const Duration(milliseconds: 400),
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    margin:
+                                        const EdgeInsets.symmetric(vertical: 8),
+                                    // Added 'return' here
+                                    width: MediaQuery.of(context).size.width *
+                                        90 /
+                                        100,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: AppColor.themeColor,
                                     ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              15 /
-                                              100,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              15 /
-                                              100,
-                                          child: Image.asset(
-                                            AppImage.ticketImage,
-                                            fit: BoxFit.cover,
+                                    child: Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical:
+                                            MediaQuery.of(context).size.height *
+                                                1.5 /
+                                                100,
+                                        horizontal:
+                                            MediaQuery.of(context).size.width *
+                                                2.5 /
+                                                100,
+                                      ),
+                                      child: Row(
+                                        children: [
+                                          Container(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                15 /
+                                                100,
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                15 /
+                                                100,
+                                            child: Image.asset(
+                                              AppImage.ticketImage,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              2 /
-                                              100,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      45 /
-                                                      100,
-                                                  child: const Text(
-                                                    "Open Mic",
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColor
-                                                          .secondryColor,
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2 /
+                                                100,
+                                          ),
+                                          Column(
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.start,
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            45 /
+                                                            100,
+                                                    child: const Text(
+                                                      "Open Mic",
+                                                      style: TextStyle(
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w600,
+                                                        color: AppColor
+                                                            .secondryColor,
+                                                      ),
                                                     ),
                                                   ),
-                                                ),
-                                                Text(
-                                                  AppLanguage.viewdetailsText[
-                                                      language],
-                                                  style: const TextStyle(
+                                                  Text(
+                                                    AppLanguage.viewdetailsText[
+                                                        language],
+                                                    style: const TextStyle(
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontSize: 10,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: AppColor.pinkColor,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    60 /
+                                                    100,
+                                                child: const Text(
+                                                  "Open mic session at saket mall..",
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  style: TextStyle(
                                                     fontFamily:
                                                         AppFont.fontFamily,
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: AppColor.pinkColor,
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.w600,
+                                                    color:
+                                                        AppColor.secondryColor,
                                                   ),
                                                 ),
-                                              ],
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  60 /
-                                                  100,
-                                              child: const Text(
-                                                "Open mic session at saket mall..",
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColor.secondryColor,
-                                                ),
                                               ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
+                                            ],
+                                          ),
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 );

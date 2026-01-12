@@ -94,129 +94,153 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                 SizedBox(height: size.height * 4 / 100),
               
                 // Icon Card
+       Container(
+  width: size.width * 88 / 100,
+  padding: const EdgeInsets.all(18),
+  decoration: BoxDecoration(
+    color: AppColor.notificationContainerColor,
+    borderRadius: BorderRadius.circular(14),
+  ),
+  child: Row(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      /// 🔹 LEFT SIDE (ICONS + LINE)
+      SizedBox(
+        width: size.width * 12 / 100,
+        child: Stack(
+          alignment: Alignment.topCenter,
+          children: [
+            Positioned(
+              top: size.width * 5 / 100,
+                child: Image.asset(
+                      AppImage.Line,
+                      color: Colors.white,
+                      width: size.width * 12 / 100,
+                      height: size.width * 12 / 100,
+                    ),
+            ),
+
+            Column(
+              children: [
                 Container(
-                  width: size.width * 88 / 100,
-                  height: size.height *25/100,
-                  padding: const EdgeInsets.all(18),
+                  width: size.width * 12 / 100,
+                  height: size.width * 12 / 100,
                   decoration: BoxDecoration(
-                    color: Colors.black,
-                    borderRadius: BorderRadius.circular(14),
+                    shape: BoxShape.circle,
+                    color: AppColor.secondryColor,
                   ),
-                  child: Column(
-                    children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                                 width: MediaQuery.of(context).size.width *12/100,
-                            height: MediaQuery.of(context).size.width *12/100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.secondryColor,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                AppImage.inviteIcon,
-                  width: MediaQuery.of(context).size.width *7/100,
-                            height: MediaQuery.of(context).size.width *7/100,
-                              ),
-              
-                            ),
-                          ),
-              
-                          SizedBox(width: 14),
-                          Expanded(
-                            child: Text(
-                              "Enter the invite code shared to you\nby your friend.",
-                              style: TextStyle(
-                                fontSize: 14,
-                                height: 1.3,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.secondryColor,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                      SizedBox(height: size.height*3/100),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width *12/100,
-                            height: MediaQuery.of(context).size.width *12/100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.secondryColor,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                AppImage.giftnewIcon,
-                                 width: MediaQuery.of(context).size.width *7/100,
-                            height: MediaQuery.of(context).size.width *7/100,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: size.width*4/100),
-                          Expanded(
-                            child: Text(
-                              "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
-                              style: TextStyle(
-                                fontSize: 13.6,
-                                // height: 1.3,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-              
-                SizedBox(height: size.height * 5 / 100),
-              
-              
-                Container(
-                  
-                  color: AppColor.refercontainercolor,
-                  width: size.width * 88 / 100,
-                  child: TextFormField(
-                    
-                    controller: referCodeController,
-                    cursorColor: AppColor.secondryColor,
-                    style: TextStyle(
-                        color: AppColor.secondryColor,
-                        fontFamily: AppFont.fontFamily),
-                    decoration: InputDecoration(
-                      hintText: "Enter your code here",
-                      hintStyle: TextStyle(
-                        color: AppColor.hinttextcolor,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 12,
-                      ),
-                      contentPadding: const EdgeInsets.symmetric(
-                          vertical: 16, horizontal: 20),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(50),
-                          borderSide: BorderSide(color: AppColor.buttonColor)),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: BorderSide(color: AppColor.buttonColor),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(50),
-                        borderSide: BorderSide(color: AppColor.buttonColor),
-                      ),
+                  child: Center(
+                    child: Image.asset(
+                      AppImage.inviteIcon,
+                      width: size.width * 7 / 100,
+                      height: size.width * 7 / 100,
                     ),
                   ),
                 ),
+
+                SizedBox(height: size.height * 3 / 100),
+
+                Container(
+                  width: size.width * 12 / 100,
+                  height: size.width * 12 / 100,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: AppColor.secondryColor,
+                  ),
+                  child: Center(
+                    child: Image.asset(
+                      AppImage.giftnewIcon,
+                      width: size.width * 7 / 100,
+                      height: size.width * 7 / 100,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+
+      SizedBox(width: size.width * 4 / 100),
+
+      Expanded(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              "Enter the invite code shared to you\nby your friend.",
+              style: TextStyle(
+                fontSize: 14,
+                height: 1.3,
+                fontFamily: AppFont.fontFamily,
+                fontWeight: FontWeight.w400,
+                color: AppColor.secondryColor,
+              ),
+            ),
+
+            SizedBox(height: size.height * 4.5 / 100),
+
+            Text(
+              "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
+              style: TextStyle(
+                fontSize: 13.6,
+                height: 1.3,
+                fontFamily: AppFont.fontFamily,
+                fontWeight: FontWeight.w400,
+                color: AppColor.secondryColor,
+              ),
+            ),
+          ],
+        ),
+      ),
+    ],
+  ),
+),
+         SizedBox(height: size.height * 5 / 100),
               
-                SizedBox(height: size.height * 26 / 100),
+              
+Container(
+  width: size.width * 88 / 100,
+  decoration: BoxDecoration(
+    color: AppColor.refercontainercolor,
+    borderRadius: BorderRadius.circular(50), // 🔥 OUTER RADIUS
+  ),
+  child: TextFormField(
+    controller: referCodeController,
+    cursorColor: AppColor.secondryColor,
+    style: TextStyle(
+      color: AppColor.secondryColor,
+      fontFamily: AppFont.fontFamily,
+    ),
+    decoration: InputDecoration(
+      hintText: "Enter your code here",
+      hintStyle: TextStyle(
+        color: AppColor.hinttextcolor,
+        fontFamily: AppFont.fontFamily,
+        fontWeight: FontWeight.w500,
+        fontSize: 12,
+      ),
+      contentPadding:
+          const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
+
+      // ✅ DEFAULT BORDER KE SAATH RADIUS
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(50),
+        borderSide: BorderSide(color: AppColor.buttonColor),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(50),
+        borderSide: BorderSide(color: AppColor.buttonColor),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(50),
+        borderSide: BorderSide(color: AppColor.buttonColor),
+      ),
+    ),
+  ),
+),
+
+                SizedBox(height: size.height * 30 / 100),
               
                 // Verify Button
                 GestureDetector(

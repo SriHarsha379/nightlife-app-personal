@@ -10,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
