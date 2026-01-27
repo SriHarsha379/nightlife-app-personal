@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../utilities/app_color.dart';
@@ -84,17 +81,7 @@ class _NotificationsState extends State<Notifications> {
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.notificationText[language],
 
-                // actionButton: TextButton(
-                //   onPressed: () {},
-                //   child: Text(
-                //     AppLanguage.clearText[language],
-                //     style: const TextStyle(
-                //       color: Colors.grey,
-                //       fontSize: 13,
-                //       fontWeight: FontWeight.w500,
-                //     ),
-                //   ),
-                // ),
+             
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               Align(
@@ -122,19 +109,7 @@ class _NotificationsState extends State<Notifications> {
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 1 / 100),
 
-                      // Align(
-                      //   alignment: TextAlign.centerLeft,
-                      //   child: Text(
-                      //     Alignment :alinment.centerLeft,
-                      //     AppLanguage.newtext[language],
-                      //     style: TextStyle(
-                      //       fontFamily: AppFont.fontFamily,
-                      //       fontSize: 20,
-                      //       fontWeight: FontWeight.w600,
-                      //       color: AppColor.primaryColor,
-                      //     ),
-                      //   ),
-                      // ),
+                  
                       SizedBox(
                         width: double.infinity,
                         child: ListView.builder(
@@ -269,7 +244,7 @@ class _NotificationsState extends State<Notifications> {
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      12 /
+                                                      13 /
                                                       100,
                                                   alignment:
                                                       Alignment.centerRight,
@@ -306,13 +281,7 @@ class _NotificationsState extends State<Notifications> {
                                                 ),
                                               ),
                                             ),
-                                            // SizedBox(
-                                            //   height: MediaQuery.of(context)
-                                            //           .size
-                                            //           .width *
-                                            //       1 /
-                                            //       100,
-                                            // ),
+                                      
                                             SizedBox(
                                               width: MediaQuery.of(context)
                                                       .size
@@ -398,8 +367,6 @@ class _NotificationsState extends State<Notifications> {
           ),
         ),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.notification, notificationCount: 1),
     );
   }
 }

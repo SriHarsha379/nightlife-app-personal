@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:night_life/view/bottom%20navigation/home_screen.dart';
-import 'package:night_life/view/authentication/notification_screen.dart';
-import 'package:night_life/view/authentication/profile.dart';
+import 'package:night_life/view/bottom%20navigation/home_Screen.dart';
 import 'package:night_life/view/bottom%20navigation/profile1.dart';
-import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:night_life/view/bottom%20navigation/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -34,9 +31,7 @@ class MyAppFooterState extends State<MyAppFooter> {
     pageController = PageController(initialPage: AppConstant.selectFooterIndex);
     selectedIndex = widget.initialIndex;
     _previousIndex = widget.initialIndex;
-    // setState(() {
-    //   selectedIndex = AppConstant.selectFooterIndex;
-    // });
+
     super.initState();
   }
 
@@ -74,7 +69,7 @@ class MyAppFooterState extends State<MyAppFooter> {
           }
 
           return Container(
-            color: AppColor.primaryColor, 
+            color: AppColor.primaryColor,
             child: FadeTransition(
               opacity: animation,
               child: SlideTransition(
@@ -167,7 +162,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       color: selectedIndex == index
-                          ? Color.fromRGBO(255, 28, 192, 0.6)
+                          ? const Color.fromRGBO(255, 28, 192, 0.6)
                           : Colors.transparent,
                       boxShadow: selectedIndex == index
                           ? [
@@ -175,7 +170,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                 color: AppColor.buttonColor.withOpacity(1.0),
                                 blurRadius: 20,
                                 spreadRadius: 3,
-                                offset: Offset(0, 1),
+                                offset: const Offset(0, 1),
                               ),
                             ]
                           : [],
@@ -201,17 +196,17 @@ class MyAppFooterState extends State<MyAppFooter> {
   Widget _getCurrentPage() {
     switch (selectedIndex) {
       case 0:
-        return Home();
+        return const Home();
       case 1:
-        return SearchScreen();
+        return const SearchScreen();
       case 2:
         return _getPreviousPage();
       case 3:
-        return ChatScreen();
+        return const ChatScreen();
       case 4:
-        return Profile1();
+        return const Profile1();
       default:
-        return Home();
+        return const Home();
     }
   }
 
@@ -220,15 +215,15 @@ class MyAppFooterState extends State<MyAppFooter> {
   Widget _getPreviousPage() {
     switch (_previousIndex) {
       case 0:
-        return Home();
+        return const Home();
       case 1:
-        return SearchScreen();
+        return const SearchScreen();
       case 3:
-        return ChatScreen();
+        return const ChatScreen();
       case 4:
-        return Profile1();
+        return const Profile1();
       default:
-        return Home();
+        return const Home();
     }
   }
 
@@ -268,7 +263,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: BoxDecoration(
+                          decoration: const BoxDecoration(
                             gradient: AppColor.backgroundGradientcolor,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(45),
@@ -331,7 +326,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                           PageTransition(
                                             type: PageTransitionType
                                                 .rightToLeftWithFade,
-                                            child: splashMembers(),
+                                            child: const splashMembers(),
                                             duration: const Duration(
                                                 milliseconds: 500),
                                           ),
@@ -343,7 +338,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          image: DecorationImage(
+                                          image: const DecorationImage(
                                             image: AssetImage(
                                                 AppImage.memberBanner),
                                             fit: BoxFit.fill,
@@ -362,7 +357,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                           PageTransition(
                                             type: PageTransitionType
                                                 .rightToLeftWithFade,
-                                            child: MyVenue(),
+                                            child: const MyVenue(),
                                             duration: const Duration(
                                                 milliseconds: 500),
                                           ),
@@ -374,7 +369,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          image: DecorationImage(
+                                          image: const DecorationImage(
                                             image: AssetImage(
                                                 AppImage.venuesBanner),
                                             fit: BoxFit.fill,
@@ -390,7 +385,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                           PageTransition(
                                             type: PageTransitionType
                                                 .rightToLeftWithFade,
-                                            child: MyEvents(),
+                                            child: const MyEvents(),
                                             duration: const Duration(
                                                 milliseconds: 500),
                                           ),
@@ -402,7 +397,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                         decoration: BoxDecoration(
                                           borderRadius:
                                               BorderRadius.circular(12),
-                                          image: DecorationImage(
+                                          image: const DecorationImage(
                                             image: AssetImage(
                                                 AppImage.eventsBanner),
                                             fit: BoxFit.fill,
@@ -413,8 +408,6 @@ class MyAppFooterState extends State<MyAppFooter> {
                                   ],
                                 ),
                               ),
-                              // SizedBox(
-                              //     height: size.height * 0.06),
                             ],
                           ),
                         ),
@@ -427,14 +420,6 @@ class MyAppFooterState extends State<MyAppFooter> {
           );
         });
       },
-    ).then((_) {
-      // Reset selected index when bottom sheet is dismissed
-      // Optional: uncomment if you want to reset to previous page
-      // setState(() {
-      //   selectedIndex = pageController.page?.round() ?? 0;
-      // });
-    });
+    ).then((_) {});
   }
-
-
 }

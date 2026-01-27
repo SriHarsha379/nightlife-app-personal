@@ -1,13 +1,10 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/utilities/widgets.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class LikedvenueDetail extends StatefulWidget {
@@ -125,9 +122,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 
-     
-                // ),
-                // SizedBox(height: size.height * 3 / 100),
+
 
                 Expanded(
                   child: SingleChildScrollView(
@@ -309,22 +304,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                       height: size.width * 18 / 100,
                                     ),
                                   ),
-                                            // SizedBox(
-                                            //   height: MediaQuery.of(context)
-                                            //           .size
-                                            //           .height *
-                                            //       0.5 /
-                                            //       100,
-                                            // ),
-                                            // Container(
-                                            //   child: Text(
-                                            //     AppLanguage
-                                            //         .like17Text[language],
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //     ),
-                                            //   ),
-                                            // )
+                                          
                                           ],
                                         ),
                                       ],
@@ -473,23 +453,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                         }
                                         return !isDayDisabled(day);
                                       },
-                                      // selectedDayPredicate: (day) =>
-                                      //     isSameDay(selectedDay, day),
-                                      // onDaySelected: (selected, focused) {
-                                      //   if (!isDayDisabled(selected)) {
-                                      //     setState(() {
-                                      //       selectedDay = selected;
-                                      //       sendDate =
-                                      //           selected.toLocal().toString().split(' ')[0];
-                                      //     });
-                                      //     print("Selected date: $selectedDay");
-                                      //     print(
-                                      //         "sendDate date: ${selectedDay.toLocal().toString().split(' ')[0]}");
-                                      //   } else {
-                                      //     SnackBarToastMessage.showSnackBar(
-                                      //         context, "Restaurant is closed on this day");
-                                      //   }
-                                      // },
+                                     
                                       calendarStyle: CalendarStyle(
                                         selectedDecoration: const BoxDecoration(
                                           gradient: AppColor.backgroundGradient,
@@ -503,10 +467,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                           color: AppColor.statusbar,
                                           shape: BoxShape.circle,
                                         ),
-                                        // disabledDecoration: BoxDecoration(
-                                        //   color: AppColor.primaryColor.withOpacity(0.3),
-                                        //   // shape: BoxShape.circle,
-                                        // ),
+                                    
                                         disabledTextStyle: const TextStyle(
                                           color: AppColor.primaryColor,
                                         ),
@@ -690,9 +651,6 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                         height: size.width * 68 / 100,
                         width: size.width * 50 / 100,
                       ),
-                      // SizedBox(
-                      //     width: MediaQuery.of(context).size.width *
-                      //         0.01), // spacing between icon and text
                       Image.asset(
                         AppImage.aroundmeIcon1,
                         height: size.width * 68 / 100,

@@ -71,7 +71,7 @@ class AppColor {
     end: Alignment.bottomCenter,
   );
   //  FF1CC0
-  static const Color pinkColor = Color(0xffFF1CC0); // kalash
+  static const Color pinkColor = Color(0xffFF1CC0); // kalashs
 
   static const Color themeColor1 = Color(0xff000000);
   static const Gradient backgroundGradient1 = LinearGradient(
@@ -80,6 +80,7 @@ class AppColor {
       end: Alignment.bottomRight);
   static const Color themeColor = Color(0xff341941);
   static const Color filledcolor = Color(0xff36214A);
+  static const purpleScreenColor = Color(0xff4A007A);
 
   static const Color color = Color(0xffD768AE);
   static const Color color1 = Color(0xff2D17C1);
@@ -207,6 +208,15 @@ class AppColor {
 
   static const Color refercontainercolor = Color(0xff171217);
 
-    static const Color sendinvitecontainercolor = Color(0xff1c1218);
+  static const Color sendinvitecontainercolor = Color(0xff1c1218);
 
+  /// change by saket
+
+  static const Color appHeadTextColor = Color.fromRGBO(218, 72, 158, 1);
+  static const Color appButtonColor = Color.fromRGBO(255, 28, 192, 1);
+  static const Color hintPlaceHolderText = Color.fromRGBO(173, 143, 204, 1);
+
+  static const Color eventSmallCardBorder = Color.fromRGBO(177, 49, 250, 1);
+  static const Color cardFillColor = Color.fromRGBO(177, 49, 250, 0.5);
+  static const Color darkGreyColor = Color.fromRGBO(51, 51, 51, 1);
 }

@@ -1,12 +1,8 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/reviewbooking_details_screen.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails5_screen.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
@@ -56,14 +52,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                 child: AppButton(
                     text: '${AppLanguage.submitButtonText[language]}',
                     onPress: () {
-                      // Navigator.push(
-                      //   context,
-                      //   PageTransition(
-                      //     type: PageTransitionType.rightToLeftWithFade,
-                      //     child: ReviewBookingDetails(),
-                      //     duration: const Duration(milliseconds: 500),
-                      //   ),
-                      // );
+ 
                     }),
               ),
               body: Container(
@@ -237,7 +226,6 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                               runSpacing: 10,
                               alignment: WrapAlignment.center,
                               children: List.generate(dates.length, (index) {
-                                final isSelect = dateindex == index;
 
                                 return GestureDetector(
                                   onTap: () {

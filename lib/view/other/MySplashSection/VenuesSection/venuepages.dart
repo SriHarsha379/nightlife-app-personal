@@ -1,20 +1,15 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails5_screen.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails6_screen.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:table_calendar/table_calendar.dart';
 import '../../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
-import '../../../authentication/notification_screen.dart';
-import '../../../authentication/profile.dart';
 import '../../chats/chat_message_screen.dart';
 
 class VenuePages extends StatefulWidget {
@@ -249,10 +244,7 @@ class _VenuePagesState extends State<VenuePages> {
                       color: AppColor.buttonColor,
                       borderRadius: BorderRadius.circular(50),
 
-                      // border: Border.all(
-
-                      //      color : AppColor.primaryColor,
-                      // ),
+              
                     ),
                     child: Row(
                       children: [
@@ -433,15 +425,7 @@ class _VenuePagesState extends State<VenuePages> {
                                     ),
                                   ),
 
-                                  // Container(
-                                  //   child: Text(
-                                  //     AppLanguage.like17Text[language],
-                                  //     style: TextStyle(
-                                  //       fontSize: 14,
-                                  //       fontFamily: AppFont.fontFamily,
-                                  //     ),
-                                  //   ),
-                                  // )
+                               
                                 ],
                               ),
                             ],

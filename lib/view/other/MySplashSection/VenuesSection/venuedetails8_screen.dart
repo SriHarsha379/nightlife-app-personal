@@ -4,6 +4,7 @@ import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/reviewbooking_details_screen.dart';
 import 'package:page_transition/page_transition.dart';
+
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_font.dart';
@@ -37,8 +38,6 @@ class _BookEventState extends State<BookEvent> {
       "seat": 15,
     },
   ];
-  bool showStage = false;
-  bool? checkBox = false;
   Set<int> selectedIndexes = {};
 
   @override
@@ -62,7 +61,7 @@ class _BookEventState extends State<BookEvent> {
               floatingActionButton: Padding(
                 padding: const EdgeInsets.only(bottom: 40),
                 child: AppButton(
-                    text: AppLanguage.continueText[language],
+                    text: '${AppLanguage.continueText[language]}',
                     onPress: () {
                       Navigator.push(
                         context,
@@ -74,7 +73,7 @@ class _BookEventState extends State<BookEvent> {
                       );
                     }),
               ),
-              body: SizedBox(
+              body: Container(
                   height: size.height * 100 / 100,
                   width: size.width * 100 / 100,
                   child: SingleChildScrollView(
@@ -94,7 +93,7 @@ class _BookEventState extends State<BookEvent> {
                             Positioned(
                               top: size.height * 4 / 100,
                               left: size.width * 5 / 100,
-                              child: SizedBox(
+                              child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
                                 child: GestureDetector(
@@ -122,9 +121,9 @@ class _BookEventState extends State<BookEvent> {
                             children: [
                               Column(
                                 children: [
-                                  SizedBox(
+                                  Container(
                                     width: size.width * 76 / 100,
-                                    child: const Align(
+                                    child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
                                         "Book Event",
@@ -144,7 +143,7 @@ class _BookEventState extends State<BookEvent> {
                                     width: size.width * 75 / 100,
                                     child: Text(
                                       AppLanguage.BassDropFridaytext[language],
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
@@ -154,7 +153,7 @@ class _BookEventState extends State<BookEvent> {
                                   ),
                                   SizedBox(
                                     width: size.width * 75 / 100,
-                                    child: const Text(
+                                    child: Text(
                                       "Santacruz East,Mumbai",
                                       style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
@@ -166,7 +165,7 @@ class _BookEventState extends State<BookEvent> {
                                   ),
                                 ],
                               ),
-                              SizedBox(
+                              Container(
                                 width: size.width * 12 / 100,
                                 child: Image.asset(
                                   AppImage.likeImage,
@@ -206,7 +205,7 @@ class _BookEventState extends State<BookEvent> {
                                 ),
                                 Text(
                                   AppLanguage.selectNumberGiText[language],
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
@@ -227,7 +226,7 @@ class _BookEventState extends State<BookEvent> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        const Text(
+                                        Text(
                                           '2',
                                           style: TextStyle(
                                             fontFamily: AppFont.fontFamily,
@@ -257,7 +256,7 @@ class _BookEventState extends State<BookEvent> {
                         SizedBox(
                           height: size.height * 4 / 100,
                         ),
-                        SizedBox(
+                        Container(
                           width: size.width * 90 / 100,
                           child: Column(children: [
                             Container(
@@ -292,9 +291,9 @@ class _BookEventState extends State<BookEvent> {
                                               1 /
                                               100,
                                         ),
-                                        child: const Text(
+                                        child: Text(
                                           "One Day Pass",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
@@ -308,13 +307,15 @@ class _BookEventState extends State<BookEvent> {
                                         3 /
                                         100,
                                   ),
-                                  Text(
-                                    AppLanguage.mutidayText[language],
-                                    style: const TextStyle(
-                                        fontSize: 12,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.secondryColor),
+                                  Container(
+                                    child: Text(
+                                      AppLanguage.mutidayText[language],
+                                      style: const TextStyle(
+                                          fontSize: 12,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.secondryColor),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -322,7 +323,7 @@ class _BookEventState extends State<BookEvent> {
                             ListView.builder(
                               // scrollDirection: Axis.vertical,
                               shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
+                              physics: NeverScrollableScrollPhysics(),
                               itemCount: topMeals
                                   .length, // your list of BookEvent items
                               itemBuilder: (context, index) {
@@ -333,20 +334,7 @@ class _BookEventState extends State<BookEvent> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                        // Container(
-                                        //   height: size.height * 14 / 100,
-                                        //   width: size.width * 30 / 100,
-                                        //   decoration: BoxDecoration(
-                                        //     borderRadius:
-                                        //         BorderRadius.circular(
-                                        //             15), // slightly rounded corners
-                                        //     image: DecorationImage(
-                                        //       image: AssetImage(
-                                        //           item['image']),
-                                        //       fit: BoxFit.cover,
-                                        //     ),
-                                        //   ),
-                                        // ),
+                                      
 
                                         Column(
                                           crossAxisAlignment:
@@ -356,7 +344,7 @@ class _BookEventState extends State<BookEvent> {
                                           children: [
                                             Text(
                                               item['name'],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
@@ -370,7 +358,7 @@ class _BookEventState extends State<BookEvent> {
                                               children: [
                                                 Text(
                                                   '₹ ${item['price']}',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily:
                                                         AppFont.fontFamily1,
                                                     fontWeight: FontWeight.w700,
@@ -384,7 +372,7 @@ class _BookEventState extends State<BookEvent> {
                                                         size.width * 0.5 / 100),
                                                 Text(
                                                   ' • ${item['seat']} seats left',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontFamily:
                                                         AppFont.fontFamily1,
                                                     fontWeight: FontWeight.w600,
@@ -425,7 +413,8 @@ class _BookEventState extends State<BookEvent> {
                                                 color: selectedIndexes
                                                         .contains(index)
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor
+                                                        .secondryColor, 
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -458,186 +447,12 @@ class _BookEventState extends State<BookEvent> {
                               },
                             ),
                             SizedBox(height: size.height * 5.5 / 100),
-
-                            //! Stage Dropdown
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  showStage = !showStage;
-                                });
-                              },
-                              child: Container(
-                                width: double.infinity,
-                                // margin: const EdgeInsets.only(bottom: 12),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 22, vertical: 16),
-                                decoration: BoxDecoration(
-                                  color:
-                                      AppColor.themeColor, // background color
-                                  borderRadius: showStage
-                                      ? const BorderRadius.only(
-                                          topLeft: Radius.circular(30),
-                                          topRight: Radius.circular(30))
-                                      : BorderRadius.circular(30),
-                                ),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    const Text(
-                                      "View Event Layout",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 15,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                    Icon(
-                                      !showStage
-                                          ? Icons.keyboard_arrow_down_rounded
-                                          : Icons.keyboard_arrow_up_rounded,
-                                      color: Colors.white,
-                                      size: 26,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            if (showStage)
-                              Container(
-                                width: MediaQuery.of(context).size.width *
-                                    90 /
-                                    100,
-                                decoration: const BoxDecoration(
-                                    color: AppColor.themeColor,
-                                    borderRadius: BorderRadius.only(
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(20))),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.center,
-                                  mainAxisAlignment: MainAxisAlignment.start,
-                                  children: [
-                                    Center(
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                            borderRadius:
-                                                BorderRadius.circular(10),
-                                            color: AppColor.secondryColor),
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 4.0, horizontal: 80),
-                                          child: Text(
-                                            AppLanguage.stageText[language]
-                                                .toUpperCase(),
-                                            style: const TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColor.primaryColor),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              2 /
-                                              100,
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          80 /
-                                          100,
-                                      child: Image.asset(AppImage.stageImg),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              2 /
-                                              100,
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          80 /
-                                          100,
-                                      child: const Text(
-                                        "This layout is not drawn to the actual scale of the venue ",
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                            fontFamily: AppFont.fontFamily,
-                                            fontSize: 9,
-                                            fontWeight: FontWeight.w700,
-                                            color: AppColor.textcolor),
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              1 /
-                                              100,
-                                    ),
-                                    SizedBox(
-                                      width: MediaQuery.of(context).size.width *
-                                          80 /
-                                          100,
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                4 /
-                                                100,
-                                            height: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                4 /
-                                                100,
-                                            child: Checkbox(
-                                                value: checkBox,
-                                                onChanged: (checkBox) {
-                                                  setState(() {
-                                                    this.checkBox = checkBox;
-                                                  });
-                                                }),
-                                          ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                2 /
-                                                100,
-                                          ),
-                                          const Text(
-                                            "Sold Out/ Unavailable stands are marked in grey",
-                                            textAlign: TextAlign.center,
-                                            style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 9,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColor.textcolor),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              3 /
-                                              100,
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 2 / 100,
-                            ),
-
                             Column(
                               children: [
+                                customDropContainer(
+                                  title: "View Event Layout",
+                                  onTap: () {},
+                                ),
                                 customDropContainer(
                                   title: "Prohibited Items",
                                   onTap: () {},
@@ -670,7 +485,7 @@ class _BookEventState extends State<BookEvent> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
         decoration: BoxDecoration(
-          color: AppColor.themeColor, // background color
+          color: const Color(0xFF1A0F29), // background color
           borderRadius: BorderRadius.circular(30),
         ),
         child: Row(
@@ -684,7 +499,7 @@ class _BookEventState extends State<BookEvent> {
                 fontWeight: FontWeight.w600,
               ),
             ),
-            const Icon(
+            Icon(
               Icons.keyboard_arrow_down_rounded,
               color: Colors.white,
               size: 26,

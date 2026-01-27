@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:night_life/view/welcomescreens/welcome_screen1.dart';
-import 'package:night_life/view/authentication/signup.dart';
 import 'package:night_life/view/welcomescreens/welcome_screen4.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../utilities/app_color.dart';

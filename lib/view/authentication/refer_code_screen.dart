@@ -1,14 +1,11 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/profile_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_color.dart';
-import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
-import '../../../../utilities/app_language.dart';
 
 class UseReferCodeScreen extends StatefulWidget {
   static String routeName = "./UseReferCodeScreen";
@@ -24,11 +21,6 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     systemNavigationBarColor: AppColor.primaryColor,
-    //     systemNavigationBarIconBrightness: Brightness.light,
-    //     statusBarColor: AppColor.transparentColor,
-    //     statusBarIconBrightness: Brightness.light));
     final size = MediaQuery.of(context).size;
 
     return  AnnotatedRegion<SystemUiOverlayStyle>(

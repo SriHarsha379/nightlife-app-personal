@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:night_life/view/other/city_Preference/music_genres.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -40,9 +41,6 @@ class _AppPreferencesState extends State<AppPreferences> {
 
       selectedRadioIndex = 0;
 
-      // Future.microtask(() {
-      //   Provider.of<ThemeProvider>(context, listen: false).toggleTheme(true);
-      // });
     }
 
     return Scaffold(
@@ -68,7 +66,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   child: Text(
                     AppLanguage.mediaVisibilityText[language],
                     textAlign: TextAlign.left,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -80,7 +78,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   height: size.height * 0.09, // same card height
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: const BoxDecoration(
+                  decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     boxShadow: [
                       BoxShadow(
@@ -156,7 +154,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   child: Text(
                     AppLanguage.themesText[language],
                     textAlign: TextAlign.left,
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
@@ -169,6 +167,8 @@ class _AppPreferencesState extends State<AppPreferences> {
 
                 Consumer<ThemeProvider>(
                   builder: (context, themeProvider, child) {
+               
+
                     return Column(
                       children: [
                         Center(
@@ -274,12 +274,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                               ),
                             ),
                             child: InkWell(
-                              // onTap: () {
-                              //   setState(() {
-                              //     selectedRadioIndex = 1;
-                              //   });
-                              //   themeProvider.toggleTheme(false);
-                              // },
+                        
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 3.5 / 100),
@@ -363,12 +358,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                               ),
                             ),
                             child: InkWell(
-                              // onTap: () {
-                              //   setState(() {
-                              //     selectedRadioIndex = 2;
-                              //   });
-                              //   themeProvider.setSystemDefault();
-                              // },
+                      
                               child: Padding(
                                 padding: EdgeInsets.symmetric(
                                     horizontal: size.width * 3.5 / 100),
@@ -439,12 +429,12 @@ class _AppPreferencesState extends State<AppPreferences> {
                             ),
                           ),
                         ),
-                        const SizedBox(height: 15),
+                        SizedBox(height: 15),
                         SizedBox(
                           width: size.width * 90 / 100,
                           child: Text(
                             AppLanguage.preferencesText[language],
-                            style: const TextStyle(
+                            style: TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontSize: 18,
                               fontWeight: FontWeight.w700,
@@ -463,7 +453,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                       context,
                       PageTransition(
                         type: PageTransitionType.bottomToTop,
-                        child: const MusicGenresScreen(),
+                        child: MusicGenresScreen(),
                         duration: const Duration(milliseconds: 500),
                       ),
                     );
@@ -473,7 +463,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                         const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin:
                         const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       color: AppColor.notificationContainerColor,
                       // borderRadius: BorderRadius.circular(8),
                       boxShadow: [
@@ -481,7 +471,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                           color: AppColor.primaryColor,
                           spreadRadius: 3,
                           blurRadius: 7,
-                          offset: Offset(0, 1),
+                          offset: const Offset(0, 1),
                         ),
                       ],
                     ),
@@ -524,123 +514,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                   ),
                 ),
 
-                // Padding(
-                //   padding: const EdgeInsets.symmetric(
-                //       horizontal: 17.0, vertical: 10),
-                //   child: Text(
-                //     AppLanguage.messageRequestText[language],
-                //     textAlign: TextAlign.left,
-                //     style: TextStyle(
-                //       fontFamily: AppFont.fontFamily,
-                //       fontSize: 18,
-                //       fontWeight: FontWeight.w700,
-                //       color: AppColor.secondryColor,
-                //     ),
-                //   ),
-                // ),
-
-                // Container(
-                //   height: size.height * 12 / 100,
-                //   width: size.width * 94 / 100,
-                //   padding:
-                //       const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                //   margin:
-                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                //   decoration: BoxDecoration(
-                //     color: AppColor.notificationContainerColor,
-                //     borderRadius: BorderRadius.circular(8),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: AppColor.primaryColor,
-                //         spreadRadius: 3,
-                //         blurRadius: 7,
-                //         offset: const Offset(0, 1),
-                //       ),
-                //     ],
-                //   ),
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Row(
-                //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //         children: [
-                //           Text(
-                //             AppLanguage.allowMessageFromAllText[language],
-                //             style: const TextStyle(
-                //               color: AppColor.secondryColor,
-                //               fontSize: 17,
-                //               fontFamily: AppFont.fontFamily,
-                //               fontWeight: FontWeight.w500,
-                //             ),
-                //           ),
-                //           SizedBox(
-                //             height: size.width * 8 / 100,
-                //             width: size.width * 12 / 100,
-                //             child: Image.asset(
-                //               AppImage.toggleFrameIcon,
-                //               fit: BoxFit.contain,
-                //             ),
-                //           ),
-                //         ],
-                //       ),
-                //       SizedBox(
-                //         width: size.width * 70 / 100,
-                //         child: Text(
-                //           AppLanguage.allowMessageFromAllMsgText[language],
-                //           style: const TextStyle(
-                //             color: AppColor.notificationtextColor,
-                //             fontSize: 14,
-                //             fontFamily: AppFont.fontFamily,
-                //             fontWeight: FontWeight.w400,
-                //           ),
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
-                // Container(
-                //   height: size.height * 6 / 100,
-                //   width: size.width * 94 / 100,
-                //   padding:
-                //       const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                //   margin:
-                //       const EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                //   decoration: BoxDecoration(
-                //     color: AppColor.notificationContainerColor,
-                //     borderRadius: BorderRadius.circular(8),
-                //     boxShadow: [
-                //       BoxShadow(
-                //         color: AppColor.primaryColor,
-                //         spreadRadius: 3,
-                //         blurRadius: 7,
-                //         offset: const Offset(0, 1),
-                //       ),
-                //     ],
-                //   ),
-                //   child: Row(
-                //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //     children: [
-                //       Text(
-                //         AppLanguage.managePermissionsText[language],
-                //         style: const TextStyle(
-                //           color: AppColor.secondryColor,
-                //           fontSize: 16,
-                //           fontFamily: AppFont.fontFamily,
-                //           fontWeight: FontWeight.w400,
-                //         ),
-                //       ),
-                //       SizedBox(
-                //         height: size.width * 8 / 100,
-                //         width: size.width * 9 / 100,
-                //         child: Image.asset(
-                //           AppImage.frontArrowIcon,
-                //           fit: BoxFit.contain,
-                //         ),
-                //       ),
-                //     ],
-                //   ),
-                // ),
+               
                 SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               ],
             ),

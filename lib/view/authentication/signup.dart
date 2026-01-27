@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/authentication/otp_verify_screen.dart';
-import 'package:night_life/view/authentication/refer_code_screen.dart';
 import 'package:night_life/view/other/profile_details.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -13,8 +11,6 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/widgets.dart';
-import '../other/chats/chat_message_screen.dart';
-import 'edit_profile_screen.dart';
 
 class SignUp extends StatefulWidget {
   static String routeName = './SignUp';
@@ -28,19 +24,44 @@ class SignUp extends StatefulWidget {
 TextEditingController mobileNumberTextEditingController =
     TextEditingController();
 
-class _SignUpState extends State<SignUp> {
+class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
+  late AnimationController _overlayController;
+  late Animation<Offset> _overlaySlideAnimation;
+
   @override
   void initState() {
     super.initState();
+
+    /// 🔥 Purple opening overlay animation
+    _overlayController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 1200),
+    );
+
+    _overlaySlideAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0, 1), // slide DOWN
+    ).animate(
+      CurvedAnimation(
+        parent: _overlayController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
       signupBottomSheet(context);
+      _overlayController.forward();
     });
   }
 
   @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
+  void dispose() {
+    _overlayController.dispose();
+    super.dispose();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -54,38 +75,42 @@ class _SignUpState extends State<SignUp> {
         onPopInvoked: (didPop) {},
         child: Scaffold(
           resizeToAvoidBottomInset: false,
-          body: Container(
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    transitionAnimationController:
-                    AnimationController(
-                      duration: const Duration(milliseconds: 1000),
-                      vsync: Navigator.of(context),
-                    );
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 100 / 100,
-                    height: MediaQuery.of(context).size.height,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(AppImage.signupScreen),
-                        fit: BoxFit.cover,
-                      ),
+          body: Stack(
+            children: [
+              /// Background Image
+              GestureDetector(
+                onTap: () {},
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(AppImage.signupScreen),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              /// 🔥 Purple opening overlay (MUST BE LAST)
+              SlideTransition(
+                position: _overlaySlideAnimation,
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: AppColor.purpleScreenColor,
+                ),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
+  // =========================
+  // EXISTING BOTTOM SHEET CODE
+  // =========================
   void signupBottomSheet(BuildContext context) {
     final size = MediaQuery.of(context).size;
     showModalBottomSheet<void>(
@@ -107,12 +132,12 @@ class _SignUpState extends State<SignUp> {
           child: GestureDetector(
             onTap: () {},
             child: Container(
-              width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height,
+              width: double.infinity,
+              height: double.infinity,
               color: Colors.transparent,
               alignment: Alignment.bottomCenter,
               child: Container(
-                decoration: BoxDecoration(
+                decoration: const BoxDecoration(
                   gradient: AppColor.backgroundGradientcolor,
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(46),
@@ -125,191 +150,83 @@ class _SignUpState extends State<SignUp> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 3 / 100,
-                    ),
+                    SizedBox(height: size.height * 0.03),
                     Image.asset(
                       AppImage.dashIcon,
-                      height: size.height * 0.8 / 100,
-                      width: size.width * 15 / 100,
-                      fit: BoxFit.contain,
+                      height: size.height * 0.008,
+                      width: size.width * 0.15,
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 1 / 100,
-                    ),
-                    Align(
-                      alignment: Alignment.center,
-                      child: Text(
-                        AppLanguage.signupText[language],
-                        style: const TextStyle(
-                            color: AppColor.secondryColor,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16),
+                    SizedBox(height: size.height * 0.01),
+                    Text(
+                      AppLanguage.signupText[language],
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 16,
                       ),
                     ),
+                    SizedBox(height: size.height * 0.03),
                     SizedBox(
-                      height: MediaQuery.of(context).size.height * 3 / 100,
-                    ),
-                    Center(
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 85 / 100,
-                        height: MediaQuery.of(context).size.height * 6 / 100,
-                        child: CustomTextAreaField(
-                          hintText: AppLanguage.enterphonenumber[language],
-                          keyboardType: TextInputType.number,
-                          maxLength: AppConstant.mobileMaxLenth,
-                          controller: mobileNumberTextEditingController,
-                          prefixText: "+91",
-                          readOnly: false,
-                        ),
+                      width: size.width * 0.85,
+                      height: size.height * 0.06,
+                      child: CustomTextAreaField(
+                        hintText: AppLanguage.enterphonenumber[language],
+                        keyboardType: TextInputType.number,
+                        maxLength: AppConstant.mobileMaxLenth,
+                        controller: mobileNumberTextEditingController,
+                        prefixText: "+91",
+                        readOnly: false,
                       ),
                     ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 2 / 100),
+                    SizedBox(height: size.height * 0.02),
                     AppButton(
-                        text: AppLanguage.continueText[language],
-                        onPress: () {
-                          Navigator.push(
-                            context,
-                            PageTransition(
-                              type: PageTransitionType.rightToLeftWithFade,
-                              child: ProfileDetailsScreen(),
-                              duration: const Duration(milliseconds: 600),
-                            ),
-                          );
-                        }),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100,
+                      text: AppLanguage.continueText[language],
+                      onPress: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: const ProfileDetailsScreen(),
+                          ),
+                        );
+                      },
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 80 / 100,
-                      height: MediaQuery.of(context).size.height * 4.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppLanguage.alreadyhaveanacoount[language],
+                    SizedBox(height: size.height * 0.04),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          AppLanguage.alreadyhaveanacoount[language],
+                          style: const TextStyle(
+                            color: AppColor.secondryColor,
+                            fontSize: 12,
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: const LoginScreen(),
+                                duration: const Duration(milliseconds: 100),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            AppLanguage.loginText[language],
                             style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 1 / 100,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: LoginScreen(),
-                                  duration: Duration(milliseconds: 100),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              AppLanguage.loginText[language],
-                              style: const TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 14),
+                              color: AppColor.buttonColor,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 14,
                             ),
                           ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 2 / 100,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 80 / 100,
-                      // height: MediaQuery.of(context).size.height * 3.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "Have an Invite Code ?",
-                            style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 1 / 100,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: UseReferCodeScreen(),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );
-                            },
-                            child: Text(
-                              "Enter Here",
-                              style: const TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 1 / 100,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 80 / 100,
-                      // height: MediaQuery.of(context).size.height * 3.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppLanguage.venueEventText[language],
-                            style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontWeight: FontWeight.w400,
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 12),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 1 / 100,
-                          ),
-                          GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   PageTransition(
-                              //     type: PageTransitionType.rightToLeftWithFade,
-                              //     child: LoginScreen(),
-                              //     duration: const Duration(milliseconds: 500),
-                              //   ),
-                              // );
-                            },
-                            child: Text(
-                              AppLanguage.clickhereText[language],
-                              style: const TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 13),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    SizedBox(
-                        height: MediaQuery.of(context).size.height * 3 / 100),
+                    SizedBox(height: size.height * 0.03),
                   ],
                 ),
               ),

@@ -1,40 +1,30 @@
 // import 'dart:html';
-// import 'dart:html';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:night_life/view/other/city_Preference/vibe_check_screen2.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
+import 'package:night_life/utilities/app_footer.dart';
 import 'package:page_transition/page_transition.dart';
+import '../../../../utilities/app_button.dart';
+import '../../../../utilities/app_color.dart';
+import '../../../../utilities/app_constant.dart';
+import '../../../../utilities/app_font.dart';
+import '../../../../utilities/app_image.dart';
+import '../../../../utilities/app_language.dart';
 
-import '../../../utilities/app_button.dart';
-import '../../../utilities/app_color.dart';
-import '../../../utilities/app_constant.dart';
-import '../../../utilities/app_font.dart';
-import '../../../utilities/app_image.dart';
-import '../../../utilities/app_language.dart';
+class VibeCheckScreen3 extends StatefulWidget {
+  static String routeName = './VibeCheckScreen3';
 
-class VibeCheckScreen extends StatefulWidget {
-  static String routeName = './VibeCheckScreen';
-
-  const VibeCheckScreen({super.key});
+  const VibeCheckScreen3({super.key});
 
   @override
-  State<VibeCheckScreen> createState() => _VibeCheckScreenState();
+  State<VibeCheckScreen3> createState() => _VibeCheckScreen3State();
 }
 
-class _VibeCheckScreenState extends State<VibeCheckScreen> {
+class _VibeCheckScreen3State extends State<VibeCheckScreen3> {
   // File? _imageSelect;
   // ignore: prefer_typing_uninitialized_variables
   var fileName;
 
   int reportId = 0;
-  bool isDropdownOpen = false;
-  int selectedIndex = -1;
 
   int selectedId = 2;
   List Orders = [
@@ -82,6 +72,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
       "subtitle": "Tell something interesting about yourself",
     },
   ];
+  bool isDropdownOpen = false;
 
   List<bool> isOpen = [];
 
@@ -89,11 +80,6 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   void initState() {
     super.initState();
     isOpen = List.filled(questionList.length, false);
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -105,53 +91,56 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
+        statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-floatingActionButton: Padding(
-  padding: const EdgeInsets.only(bottom: 30),
-  child: Column(
-    mainAxisSize: MainAxisSize.min,
-    children: [
-      AppButton(
-        text: '${AppLanguage.continueText[language]}',
-        onPress: () {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: VibeCheckScreen2(),
-              duration: const Duration(milliseconds: 500),
-            ),
-          );
-        },
-      ),
-      SizedBox(height:size.height* 1/100), // better spacing
-      GestureDetector(
-        onTap: () {
-          Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => VibeCheckScreen2()));
-        },
-        child: Text(
-          textAlign: TextAlign.center,
-          AppLanguage.skip[language],
-          style: TextStyle(
-            fontFamily: AppFont.fontFamily,
-            fontSize: 14,
-            fontWeight: FontWeight.w700,
-            color: AppColor.greyLightColor,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+        floatingActionButton: Padding(
+          padding: const EdgeInsets.only(bottom: 30),
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // <-- ADD THIS
+            children: [
+              AppButton(
+                text: '${AppLanguage.continueText[language]}',
+                onPress: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: MyAppFooter(
+                        initialIndex: 0,
+                      ),
+                      duration: const Duration(milliseconds: 500),
+                    ),
+                  );
+                },
+              ),
+              SizedBox(height: 8), // better spacing
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => MyAppFooter(
+                                initialIndex: 0,
+                              )));
+                },
+                child: Text(
+                  textAlign: TextAlign.center,
+                  AppLanguage.skip[language],
+                  style: TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.greyLightColor,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
-      ),
-    ],
-  ),
-),
-
         body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
@@ -169,7 +158,6 @@ floatingActionButton: Padding(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -209,12 +197,9 @@ floatingActionButton: Padding(
                           ),
                         ],
                       ),
-
-                  
                     ],
                   ),
                 ),
-
                 SizedBox(height: size.height * 2 / 100),
 
                 SizedBox(
@@ -223,7 +208,7 @@ floatingActionButton: Padding(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       textAlign: TextAlign.center,
-                      '1/3',
+                      '3/3',
                       style: TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 16,
@@ -237,14 +222,12 @@ floatingActionButton: Padding(
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   child: Image.asset(
-                    AppImage.frequencyOneicon,
+                    AppImage.frequencyIncrementlast,
                     width: MediaQuery.of(context).size.width * 20 / 100,
                     height: MediaQuery.of(context).size.width * 10 / 100,
                   ),
                 ),
                 SizedBox(height: size.height * 2 / 100),
-
-                //
                 GestureDetector(
                   onTap: () {
                     setState(() {
@@ -252,10 +235,9 @@ floatingActionButton: Padding(
                     });
                   },
                   child: Container(
-                    width: size.width * 90/100,
-                    // height: size.heiht *9/100,
+                    width: size.width * 0.9,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 18, vertical: 15),
+                        horizontal: 18, vertical: 18),
                     decoration: BoxDecoration(
                       color: AppColor.primaryColor,
                       borderRadius: BorderRadius.only(
@@ -275,6 +257,7 @@ floatingActionButton: Padding(
                               "What's your perfect night out?",
                               style: TextStyle(
                                 fontSize: 16,
+                                fontFamily: AppFont.plusJakartaSansFamily,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
@@ -284,6 +267,7 @@ floatingActionButton: Padding(
                               "Describe your ideal evening in a few words.",
                               style: TextStyle(
                                 fontSize: 13,
+                                fontFamily: AppFont.plusJakartaSansFamily,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xffB7AFC9),
                               ),
@@ -302,40 +286,26 @@ floatingActionButton: Padding(
                     ),
                   ),
                 ),
-                
 
                 // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
                 if (isDropdownOpen)
-                 Divider(
-                                        height: 0.2,
-                                        thickness: 0.5,
-                                        color: AppColor.greyLightColor,
-                                        indent: 30,
-                                        endIndent: 30,
-                                      ),
-                                                      if (isDropdownOpen)
-
                   Container(
                     width: size.width * 0.9,
                     padding: const EdgeInsets.symmetric(
-                        horizontal: 19,),
-                                        decoration: BoxDecoration(
+                        horizontal: 18, vertical: 10),
+                    margin: const EdgeInsets.only(top: 0),
+                    decoration: BoxDecoration(
                       color: AppColor.primaryColor,
                       borderRadius: const BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
                     ),
-
-
-
-                    
                     child: ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemCount: questionList.length,
                       itemBuilder: (context, index) {
-                         
                         return GestureDetector(
                           onTap: () {
                             print("Selected: ${questionList[index]["title"]}");
@@ -344,7 +314,7 @@ floatingActionButton: Padding(
                             });
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical:8),
+                            padding: const EdgeInsets.symmetric(vertical: 10),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -365,6 +335,7 @@ floatingActionButton: Padding(
                                     color: Color(0xffB7AFC9),
                                   ),
                                 ),
+                                const SizedBox(height: 6),
                               ],
                             ),
                           ),
@@ -374,7 +345,6 @@ floatingActionButton: Padding(
                   ),
 
                 SizedBox(height: size.height * 4 / 100),
-
                 Container(
                   width: size.width * 90 / 100,
                   height: size.height * 6 / 100,
@@ -401,34 +371,16 @@ floatingActionButton: Padding(
                           left: size.width * 4 / 100,
                           right: size.width * 2 / 100,
                         ),
-                        // child: Image.asset(
-                        //   AppImage.searchIcon,
-                        //   height: size.width * 4 / 100,
-                        //   width: size.width * 4 / 100,
-                        //   color: AppColor.filledText,
-                        // ),
                       ),
                       prefixIconConstraints: BoxConstraints(
                         minWidth: size.width * 2 / 100,
                         minHeight: size.height * 6 / 100,
                       ),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(12),
-                      //   borderSide: const BorderSide(
-                      //     color: AppColor.borderColor,
-                      //     width: 2,
-                      //   ),
-                      // ),
-                      // focusedBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(12),
-                      //   borderSide: const BorderSide(
-                      //     color: AppColor.borderColor,
-                      //     width: 2,
-                      //   ),
-                      // ),
                       border: InputBorder.none,
-                      hintText: AppLanguage.myperfectNight[language],
-                      hintStyle: AppConstant.textFilledStyle1,
+                      hintText: AppLanguage.yourAnswer[language],
+                      hintStyle: AppConstant.textFilledStyle1.copyWith(
+                        color: AppColor.hintPlaceHolderText,
+                      ),
                       contentPadding: EdgeInsets.only(
                         right: size.width * 4 / 100,
                       ),
@@ -436,16 +388,16 @@ floatingActionButton: Padding(
                   ),
                 ),
 
-                 SizedBox(
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 22 / 100,
                 ),
               ],
             ),
           ),
         ),
-        // bottomNavigationBar: const AppFooter(
-        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
     );
   }
+
+//
 }

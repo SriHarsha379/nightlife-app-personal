@@ -1,11 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-// import 'package:night_life/utils/app_color.dart';
-// import 'package:night_life/utils/app_font.dart';
-// import 'package:night_life/utils/app_image.dart';
-// import 'package:night_life/utils/app_language.dart';
-// import 'package:night_life/widgets/app_header1.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';

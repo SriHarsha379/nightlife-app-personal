@@ -1,16 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/utilities/widgets.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../../../helper/ImagePreviewScreen.dart';
 import '../../../../utilities/app_footer.dart';
 import '../../chats/chat_message_screen.dart';
 
@@ -182,115 +180,117 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             ),
             width: size.width * 85 / 100,
             height: size.height * 7 / 100,
-            child: Row(
-              children: [
-                   SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: MyAppFooter(initialIndex: 0),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: size.width * 12 / 100,
-                    child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                        ),
-                        child: Image.asset(
-                          AppImage.crossIcon,
-                          fit: BoxFit.cover,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    documenttypebottomsheet(context);
-                  },
-                  child: Container(
-                  width: size.width * 30 / 100,
-                                    height: size.height * 4.6 / 100,
+            child: Padding(
+              padding:  EdgeInsets.symmetric(horizontal: 5),
+              child: Row(
+                children: [
 
-                    decoration: BoxDecoration(
-                      color: AppColor.secondryColor,
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
+                  GestureDetector(
+                    behavior: HitTestBehavior.translucent,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: MyAppFooter(initialIndex: 0),
+                          duration: const Duration(milliseconds: 500),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      width: size.width * 12 / 100,
+                      child: ClipRRect(
+                          borderRadius: const BorderRadius.only(
+                            topLeft: Radius.circular(15),
+                            topRight: Radius.circular(15),
+                          ),
+                          child: Image.asset(
+                            AppImage.crossIcon,
+                            fit: BoxFit.cover,
+                          )),
+                    ),
+                  ),
+                  SizedBox(
+                    width: size.width * 3 / 100,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      documenttypebottomsheet(context);
+                    },
+                    child: Container(
+                      width: size.width * 30 / 100,
+                      height: size.height * 4.6 / 100,
+                      decoration: BoxDecoration(
                         color: AppColor.secondryColor,
-                      ),
-                    ),
-                    child: Center(
-                      child: Text(
-                        AppLanguage.sendInviteText[language],
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: AppFont.fontFamily,
-                          color: AppColor.pinkColor,
+                        borderRadius: BorderRadius.circular(50),
+                        border: Border.all(
+                          color: AppColor.secondryColor,
                         ),
                       ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: MyAppFooter(initialIndex: 0),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColor.buttonColor,
-                      borderRadius: BorderRadius.circular(50),
-
-                      // border: Border.all(
-
-                      //      color : AppColor.primaryColor,
-                      // ),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          AppImage.heartImg,
-                          height: 20,
-                          width: 20,
-                          color: AppColor.secondryColor, // optional tint color
-                        ),
-                        Text(
-                          AppLanguage.likeText[language],
+                      child: Center(
+                        child: Text(
+                          AppLanguage.sendInviteText[language],
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.pinkColor,
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(
+                    width: size.width * 3 / 100,
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        PageTransition(
+                          type: PageTransitionType.rightToLeftWithFade,
+                          child: MyAppFooter(initialIndex: 0),
+                          duration: const Duration(milliseconds: 500),
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 35, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: AppColor.buttonColor,
+                        borderRadius: BorderRadius.circular(50),
+
+                        // border: Border.all(
+
+                        //      color : AppColor.primaryColor,
+                        // ),
+                      ),
+                      child: Row(
+                        children: [
+                          Image.asset(
+                            AppImage.heartImg,
+                            height: 20,
+                            width: 20,
+                            color: AppColor.secondryColor, // optional tint color
+                          ),
+                          Text(
+                            AppLanguage.likeText[language],
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.secondryColor,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+
+
+                ],
+              ),
             ),
           ),
           body: Container(
@@ -417,42 +417,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: [
-                                            // Text(
-                                            //   AppLanguage.PeopleYoubothknowText[
-                                            //       language],
-                                            //   style: const TextStyle(
-                                            //       fontSize: 16,
-                                            //       fontFamily:
-                                            //           AppFont.fontFamily,
-                                            //       fontWeight: FontWeight.w600,
-                                            //       color:
-                                            //           AppColor.secondryColor),
-                                            // ),
-                                            // SizedBox(
-                                            //   height: size.height * 1 / 100,
-                                            // ),
-                                            // GestureDetector(
-                                            //   onTap: () {
-                                            //     showUserPopup(context);
-                                            //   },
-                                            //   child: Container(
-                                            //     width: size.width * 70 / 100,
-                                            //     child: ClipRRect(
-                                            //         borderRadius:
-                                            //             const BorderRadius.only(
-                                            //           topLeft:
-                                            //               Radius.circular(15),
-                                            //           topRight:
-                                            //               Radius.circular(15),
-                                            //         ),
-                                            //         child: Image.asset(
-                                            //           AppImage.grouplikesIcon,
-                                            //           fit: BoxFit.cover,
-                                            //         )),
-                                            //   ),
-                                            // ),
-                                          ],
+                                          children: [],
                                         ),
                                         Column(
                                           children: [
@@ -463,15 +428,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                   0.5 /
                                                   100,
                                             ),
-                                            // Container(
-                                            //   child: Text(
-                                            //     AppLanguage
-                                            //         .like17Text[language],
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //     ),
-                                            //   ),
-                                            // )
                                           ],
                                         ),
                                       ],
@@ -645,26 +601,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
-                                          children: [
-                                            // Container(
-                                            //   child: Text(
-                                            //     AppLanguage.dummylocationText[
-                                            //         language],
-                                            //     style: const TextStyle(
-                                            //         fontSize: 15,
-                                            //         fontFamily:
-                                            //             AppFont.fontFamily,
-                                            //         fontWeight: FontWeight.w500,
-                                            //         color:
-                                            //             AppColor.primaryColor),
-                                            //   ),
-                                            // ),
-                                          ],
+                                          children: [],
                                         ),
                                       ),
                                     ],
                                   ),
-
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
@@ -694,7 +635,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
@@ -712,14 +652,32 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      Container(
+                                      InkWell(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageTransition(
+                                              type: PageTransitionType.fade,
+                                              child: ImagePreviewScreen(
+                                                images: [
+                                                  AppImage.gellery1,
+                                                  AppImage.gellery2,
+                                                  AppImage.gellery3,
+                                                  AppImage.gellery4,
+                                                ],
+                                                initialIndex: 0,
+                                              ),
+                                            ),
+                                          );
+                                        },
                                         child: Text(
                                           AppLanguage.viewAlltext[language],
                                           style: const TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.pinkColor),
+                                            fontSize: 16,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColor.pinkColor,
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -731,52 +689,108 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: [
-                                        Container(
-                                          width: size.width * 30 / 100,
-                                          height: size.height * 20 / 100,
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              AppImage.arjunGalleryIcon1,
-                                              fit: BoxFit.cover,
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType.fade,
+                                                child: const ImagePreviewScreen(
+                                                  images: [
+                                                    AppImage.gellery1,
+                                                    AppImage.gellery2,
+                                                    AppImage.gellery3,
+                                                    AppImage.gellery4,
+                                                  ],
+                                                  initialIndex: 0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            width: size.width * 30 / 100,
+                                            height: size.height * 20 / 100,
+                                            margin: const EdgeInsets.only(
+                                                right: 10),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Image.asset(
+                                                AppImage.arjunGalleryIcon1,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          width: size.width * 30 / 100,
-                                          height: size.height * 20 / 100,
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              AppImage.arjunGalleryIcon2,
-                                              fit: BoxFit.cover,
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType.fade,
+                                                child: ImagePreviewScreen(
+                                                  images: [
+                                                    AppImage.gellery1,
+                                                    AppImage.gellery2,
+                                                    AppImage.gellery3,
+                                                    AppImage.gellery4,
+                                                  ],
+                                                  initialIndex: 0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            width: size.width * 30 / 100,
+                                            height: size.height * 20 / 100,
+                                            margin: const EdgeInsets.only(
+                                                right: 10),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Image.asset(
+                                                AppImage.arjunGalleryIcon2,
+                                                fit: BoxFit.cover,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        Container(
-                                          width: size.width * 30 / 100,
-                                          height: size.height * 20 / 100,
-                                          margin:
-                                              const EdgeInsets.only(right: 8),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              AppImage.arjunGalleryIcon3,
-                                              fit: BoxFit.fill,
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType.fade,
+                                                child: ImagePreviewScreen(
+                                                  images: [
+                                                    AppImage.gellery1,
+                                                    AppImage.gellery2,
+                                                    AppImage.gellery3,
+                                                    AppImage.gellery4,
+                                                  ],
+                                                  initialIndex: 0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            width: size.width * 30 / 100,
+                                            height: size.height * 20 / 100,
+                                            margin:
+                                                const EdgeInsets.only(right: 8),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Image.asset(
+                                                AppImage.arjunGalleryIcon3,
+                                                fit: BoxFit.fill,
+                                              ),
                                             ),
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-
                                   Container(
                                     child: Text(
                                       AppLanguage.interestText[language],
@@ -787,7 +801,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           color: AppColor.secondryColor),
                                     ),
                                   ),
-
                                   SizedBox(
                                     height: MediaQuery.of(context).size.height *
                                         1 /
@@ -857,23 +870,13 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       Container(
                                         child: Text(
                                           AppLanguage.vibeCheck[language],
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                               fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      // Container(
-                                      //   child: Text(
-                                      //     AppLanguage.viewAlltext[language],
-                                      //     style: const TextStyle(
-                                      //         fontSize: 16,
-                                      //         fontFamily: AppFont.fontFamily,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColor.pinkColor),
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                   SizedBox(
@@ -887,95 +890,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           topRight: Radius.circular(15),
                                         ),
                                         child: Image.asset(
-                                          
                                           AppImage.viewCheckicon,
                                           fit: BoxFit.fill,
                                         )),
                                   ),
-
-                                  // SizedBox(
-                                  //   width: MediaQuery.of(context).size.width,
-                                  //   child: SingleChildScrollView(
-                                  //     scrollDirection: Axis.horizontal,
-                                  //     child: Row(
-                                  //       children: List.generate(
-                                  //           storyImages.length, (index) {
-                                  //         return Padding(
-                                  //           padding: const EdgeInsets.symmetric(
-                                  //               horizontal: 8.0),
-                                  //           child: Column(
-                                  //             children: [
-                                  //               GestureDetector(
-                                  //                 onTap: () {},
-                                  //                 child: Container(
-                                  //                   width: 70,
-                                  //                   height: 70,
-                                  //                   decoration: BoxDecoration(
-                                  //                     borderRadius:
-                                  //                         BorderRadius.circular(
-                                  //                             35),
-                                  //                     boxShadow: [
-                                  //                       BoxShadow(
-                                  //                         color: Colors.black
-                                  //                             .withOpacity(
-                                  //                                 0.25),
-                                  //                         blurRadius: 4,
-                                  //                         offset: const Offset(
-                                  //                             0, 4),
-                                  //                       ),
-                                  //                     ],
-                                  //                   ),
-                                  //                   child: ClipRRect(
-                                  //                     borderRadius:
-                                  //                         BorderRadius.circular(
-                                  //                             35),
-                                  //                     child: Image.asset(
-                                  //                       storyImages[index]
-                                  //                               ["image"] ??
-                                  //                           "no image",
-                                  //                       fit: BoxFit.cover,
-                                  //                     ),
-                                  //                   ),
-                                  //                 ),
-                                  //               ),
-                                  //               SizedBox(
-                                  //                 height: MediaQuery.of(context)
-                                  //                         .size
-                                  //                         .height *
-                                  //                     2 /
-                                  //                     100,
-                                  //               ),
-                                  //               Text(
-                                  //                 storyImages[index]["name"] ??
-                                  //                     "No Name",
-                                  //                 style: const TextStyle(
-                                  //                   color: Colors.black,
-                                  //                   fontWeight: FontWeight.w600,
-                                  //                   fontSize: 12,
-                                  //                 ),
-                                  //               ),
-                                  //               SizedBox(
-                                  //                   // height: MediaQuery.of(context).size.height * 0.2/100,
-                                  //                   ),
-                                  //               Text(
-                                  //                 storyImages[index]
-                                  //                         ["subname"] ??
-                                  //                     "No Name",
-                                  //                 style: const TextStyle(
-                                  //                   color:
-                                  //                       AppColor.greyLightColor,
-                                  //                   fontWeight: FontWeight.w600,
-                                  //                   fontSize: 12,
-                                  //                 ),
-                                  //               ),
-                                  //             ],
-                                  //           ),
-                                  //         );
-                                  //       }),
-                                  //     ),
-                                  //   ),
-                                  // ),
-
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1064,8 +982,17 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         ),
 
                                         Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 6, horizontal: 12),
+                                          padding: EdgeInsets.symmetric(
+                                              vertical: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  1 /
+                                                  100,
+                                              horizontal: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  5 /
+                                                  100),
                                           decoration: BoxDecoration(
                                             color: AppColor.buttonColor,
                                             borderRadius:
@@ -1094,122 +1021,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ],
                                     ),
                                   ),
-
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-
-                                  // Container(
-                                  //   width: size.width * 75 / 100,
-                                  //   height: size.height * 7 / 100,
-                                  //   decoration: BoxDecoration(
-                                  //       color: AppColor.greygreyLightColor,
-                                  //       borderRadius:
-                                  //           BorderRadius.circular(40)),
-                                  //   child: Row(
-                                  //     children: [
-                                  //       Container(
-                                  //         width: size.width * 35 / 100,
-                                  //         decoration: BoxDecoration(
-                                  //             color: AppColor.pinkColor,
-                                  //             borderRadius:
-                                  //                 BorderRadius.circular(40)),
-                                  //         child: Center(
-                                  //           child: Padding(
-                                  //             padding: EdgeInsets.symmetric(
-                                  //               horizontal:
-                                  //                   MediaQuery.of(context)
-                                  //                           .size
-                                  //                           .width *
-                                  //                       3 /
-                                  //                       100,
-                                  //               vertical: MediaQuery.of(context)
-                                  //                       .size
-                                  //                       .height *
-                                  //                   2 /
-                                  //                   100,
-                                  //             ),
-                                  //             child: Text(
-                                  //               AppLanguage
-                                  //                   .singledayText[language],
-                                  //               style: const TextStyle(
-                                  //                   fontSize: 16,
-                                  //                   fontFamily:
-                                  //                       AppFont.fontFamily,
-                                  //                   fontWeight: FontWeight.w500,
-                                  //                   color:
-                                  //                       AppColor.secondryColor),
-                                  //             ),
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  //       SizedBox(
-                                  //         width: MediaQuery.of(context)
-                                  //                 .size
-                                  //                 .width *
-                                  //             3 /
-                                  //             100,
-                                  //       ),
-                                  //       Container(
-                                  //         child: Text(
-                                  //           AppLanguage.mutidayText[language],
-                                  //           style: const TextStyle(
-                                  //               fontSize: 16,
-                                  //               fontFamily: AppFont.fontFamily,
-                                  //               fontWeight: FontWeight.w500,
-                                  //               color: AppColor.primaryColor),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
                                   SizedBox(
                                     height: size.height * 2 / 100,
                                   ),
-                                  // SingleChildScrollView(
-                                  //   scrollDirection: Axis.horizontal,
-                                  //   child: Row(
-                                  //     children: [
-                                  //       Container(
-                                  //         width: size.width * 75 / 100,
-                                  //         height: size.height * 33 / 100,
-                                  //         margin:
-                                  //             const EdgeInsets.only(right: 10),
-                                  //         decoration: BoxDecoration(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(20),
-                                  //         ),
-                                  //         child: ClipRRect(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(20),
-                                  //           child: Image.asset(
-                                  //             AppImage.divoffer,
-                                  //             fit: BoxFit.fill,
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  //       Container(
-                                  //         width: size.width * 75 / 100,
-                                  //         height: size.height * 33 / 100,
-                                  //         margin:
-                                  //             const EdgeInsets.only(right: 10),
-                                  //         decoration: BoxDecoration(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(20),
-                                  //         ),
-                                  //         child: ClipRRect(
-                                  //           borderRadius:
-                                  //               BorderRadius.circular(20),
-                                  //           child: Image.asset(
-                                  //             AppImage.divoffer,
-                                  //             fit: BoxFit.fill,
-                                  //           ),
-                                  //         ),
-                                  //       ),
-                                  //     ],
-                                  //   ),
-                                  // ),
-
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
@@ -1225,16 +1042,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      // Container(
-                                      //   child: Text(
-                                      //     AppLanguage.viewAlltext[language],
-                                      //     style: const TextStyle(
-                                      //         fontSize: 16,
-                                      //         fontFamily: AppFont.fontFamily,
-                                      //         fontWeight: FontWeight.w500,
-                                      //         color: AppColor.pinkColor),
-                                      //   ),
-                                      // ),
                                     ],
                                   ),
                                   SizedBox(
@@ -1269,9 +1076,109 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20),
-                                              child: Image.asset(
-                                                AppImage.aroundmeIcon,
-                                                fit: BoxFit.fill,
+                                              child: Stack(
+                                                children: [
+                                                  /// BACKGROUND IMAGE
+                                                  Positioned.fill(
+                                                    child: Image.asset(
+                                                      AppImage.eventCardImage,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+
+                                                  /// DARK GRADIENT OVERLAY
+                                                  Positioned.fill(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.25),
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.7),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  /// TOP CHIPS (Techno / Whiskey)
+                                                  Positioned(
+                                                    top: 12,
+                                                    left: 12,
+                                                    child: Row(
+                                                      children: [
+                                                        _eventChip("Techno"),
+                                                        SizedBox(
+                                                            width: size.width *
+                                                                2 /
+                                                                100),
+                                                        _eventChip("Whiskey"),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  /// BOTTOM TEXT
+                                                  Positioned(
+                                                    left: 14,
+                                                    right: 14,
+                                                    bottom: 16,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bass Drop Fridays",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 16,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 6),
+                                                        Row(
+                                                          children: const [
+                                                            Icon(
+                                                                Icons
+                                                                    .access_time,
+                                                                size: 14,
+                                                                color: Colors
+                                                                    .pinkAccent),
+                                                            SizedBox(width: 6),
+                                                            Text(
+                                                              "Fri, 10 PM – 4 AM",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .pinkAccent,
+                                                                fontSize: 12,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -1287,9 +1194,109 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20),
-                                              child: Image.asset(
-                                                AppImage.aroundmeIcon,
-                                                fit: BoxFit.fill,
+                                              child: Stack(
+                                                children: [
+                                                  /// BACKGROUND IMAGE
+                                                  Positioned.fill(
+                                                    child: Image.asset(
+                                                      AppImage.eventCardImage,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+
+                                                  /// DARK GRADIENT OVERLAY
+                                                  Positioned.fill(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.25),
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.7),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  /// TOP CHIPS (Techno / Whiskey)
+                                                  Positioned(
+                                                    top: 12,
+                                                    left: 12,
+                                                    child: Row(
+                                                      children: [
+                                                        _eventChip("Techno"),
+                                                        SizedBox(
+                                                            width: size.width *
+                                                                2 /
+                                                                100),
+                                                        _eventChip("Whiskey"),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  /// BOTTOM TEXT
+                                                  Positioned(
+                                                    left: 14,
+                                                    right: 14,
+                                                    bottom: 16,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bass Drop Fridays",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 16,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 6),
+                                                        Row(
+                                                          children: const [
+                                                            Icon(
+                                                                Icons
+                                                                    .access_time,
+                                                                size: 14,
+                                                                color: Colors
+                                                                    .pinkAccent),
+                                                            SizedBox(width: 6),
+                                                            Text(
+                                                              "Fri, 10 PM – 4 AM",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .pinkAccent,
+                                                                fontSize: 12,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -1305,9 +1312,227 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             child: ClipRRect(
                                               borderRadius:
                                                   BorderRadius.circular(20),
-                                              child: Image.asset(
-                                                AppImage.aroundmeIcon,
-                                                fit: BoxFit.fill,
+                                              child: Stack(
+                                                children: [
+                                                  /// BACKGROUND IMAGE
+                                                  Positioned.fill(
+                                                    child: Image.asset(
+                                                      AppImage.eventCardImage,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+
+                                                  /// DARK GRADIENT OVERLAY
+                                                  Positioned.fill(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.25),
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.7),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  /// TOP CHIPS (Techno / Whiskey)
+                                                  Positioned(
+                                                    top: 12,
+                                                    left: 12,
+                                                    child: Row(
+                                                      children: [
+                                                        _eventChip("Techno"),
+                                                        SizedBox(
+                                                            width: size.width *
+                                                                2 /
+                                                                100),
+                                                        _eventChip("Whiskey"),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  /// BOTTOM TEXT
+                                                  Positioned(
+                                                    left: 14,
+                                                    right: 14,
+                                                    bottom: 16,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bass Drop Fridays",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 16,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 6),
+                                                        Row(
+                                                          children: const [
+                                                            Icon(
+                                                                Icons
+                                                                    .access_time,
+                                                                size: 14,
+                                                                color: Colors
+                                                                    .pinkAccent),
+                                                            SizedBox(width: 6),
+                                                            Text(
+                                                              "Fri, 10 PM – 4 AM",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .pinkAccent,
+                                                                fontSize: 12,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: size.width * 50 / 100,
+                                            height: size.height * 33 / 100,
+                                            margin: const EdgeInsets.only(
+                                                right: 10),
+                                            decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                            ),
+                                            child: ClipRRect(
+                                              borderRadius:
+                                                  BorderRadius.circular(20),
+                                              child: Stack(
+                                                children: [
+                                                  /// BACKGROUND IMAGE
+                                                  Positioned.fill(
+                                                    child: Image.asset(
+                                                      AppImage.eventCardImage,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  ),
+
+                                                  /// DARK GRADIENT OVERLAY
+                                                  Positioned.fill(
+                                                    child: Container(
+                                                      decoration: BoxDecoration(
+                                                        gradient:
+                                                            LinearGradient(
+                                                          begin: Alignment
+                                                              .topCenter,
+                                                          end: Alignment
+                                                              .bottomCenter,
+                                                          colors: [
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.25),
+                                                            Colors.black
+                                                                .withOpacity(
+                                                                    0.7),
+                                                          ],
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ),
+
+                                                  /// TOP CHIPS (Techno / Whiskey)
+                                                  Positioned(
+                                                    top: 12,
+                                                    left: 12,
+                                                    child: Row(
+                                                      children: [
+                                                        _eventChip("Techno"),
+                                                        SizedBox(
+                                                            width: size.width *
+                                                                2 /
+                                                                100),
+                                                        _eventChip("Whiskey"),
+                                                      ],
+                                                    ),
+                                                  ),
+
+                                                  /// BOTTOM TEXT
+                                                  Positioned(
+                                                    left: 14,
+                                                    right: 14,
+                                                    bottom: 16,
+                                                    child: Column(
+                                                      crossAxisAlignment:
+                                                          CrossAxisAlignment
+                                                              .start,
+                                                      children: [
+                                                        Text(
+                                                          "Bass Drop Fridays",
+                                                          style: TextStyle(
+                                                            color: Colors.white,
+                                                            fontSize: 16,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.bold,
+                                                          ),
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        const SizedBox(
+                                                            height: 6),
+                                                        Row(
+                                                          children: const [
+                                                            Icon(
+                                                                Icons
+                                                                    .access_time,
+                                                                size: 14,
+                                                                color: Colors
+                                                                    .pinkAccent),
+                                                            SizedBox(width: 6),
+                                                            Text(
+                                                              "Fri, 10 PM – 4 AM",
+                                                              style: TextStyle(
+                                                                color: Colors
+                                                                    .pinkAccent,
+                                                                fontSize: 12,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
                                             ),
                                           ),
@@ -1315,7 +1540,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                     ),
                                   ),
-
                                   SizedBox(
                                     height: size.height * 3 / 100,
                                   ),
@@ -1335,15 +1559,17 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   ),
                                   Container(
                                     width: size.width * 92 / 100,
-                                    child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(15),
-                                          topRight: Radius.circular(15),
-                                        ),
-                                        child: Image.asset(
-                                          AppImage.followedVenueIcon,
-                                          fit: BoxFit.cover,
-                                        )),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 12),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        _venueCard(AppImage.night),
+                                        _venueCard(AppImage.omnia),
+                                        _venueCard(AppImage.queens),
+                                      ],
+                                    ),
                                   ),
                                   Container(
                                     child: Text(
@@ -1362,33 +1588,79 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   Row(
                                     children: [
                                       Container(
-                                        width: size.width * 23 / 100,
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15),
+                                        width: size.width * 0.28,
+                                        height: size.height * 0.045,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.darkGreyColor,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            /// PERFECT PINK CIRCLE
+                                            Container(
+                                              width: size.width * 0.089,
+                                              height: size.width * 0.089,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFFF2DA1),
+                                                shape: BoxShape.circle,
+                                              ),
                                             ),
-                                            child: Image.asset(
-                                              AppImage.dmxIcon,
-                                              fit: BoxFit.cover,
-                                            )),
+
+                                            SizedBox(width: size.width * 0.03),
+
+                                            /// TEXT
+                                            const Text(
+                                              "DMX", // image ke according
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(
                                         width: size.width * 2 / 100,
                                       ),
                                       Container(
-                                        width: size.width * 40 / 100,
-                                        child: ClipRRect(
-                                            borderRadius:
-                                                const BorderRadius.only(
-                                              topLeft: Radius.circular(15),
-                                              topRight: Radius.circular(15),
+                                        width: size.width * 0.38,
+                                        height: size.height * 0.045,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.darkGreyColor,
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            /// PERFECT PINK CIRCLE
+                                            Container(
+                                              width: size.width * 0.089,
+                                              height: size.width * 0.089,
+                                              decoration: const BoxDecoration(
+                                                color: Color(0xFFFF2DA1),
+                                                shape: BoxShape.circle,
+                                              ),
                                             ),
-                                            child: Image.asset(
-                                              AppImage.benIcon,
-                                              fit: BoxFit.cover,
-                                            )),
+
+                                            SizedBox(width: size.width * 0.03),
+
+                                            /// TEXT
+                                            Text(
+                                              "Ben Böhmer", // image ke according
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 12,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -1396,16 +1668,39 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     height: size.height * 1.5 / 100,
                                   ),
                                   Container(
-                                    width: size.width * 40 / 100,
-                                    child: ClipRRect(
-                                        borderRadius: const BorderRadius.only(
-                                          topLeft: Radius.circular(15),
-                                          topRight: Radius.circular(15),
+                                    width: size.width * 0.38,
+                                    height: size.height * 0.045,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.darkGreyColor,
+                                      borderRadius: BorderRadius.circular(20),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        /// PERFECT PINK CIRCLE
+                                        Container(
+                                          width: size.width * 0.089,
+                                          height: size.width * 0.089,
+                                          decoration: const BoxDecoration(
+                                            color: Color(0xFFFF2DA1),
+                                            shape: BoxShape.circle,
+                                          ),
                                         ),
-                                        child: Image.asset(
-                                          AppImage.martinICon,
-                                          fit: BoxFit.cover,
-                                        )),
+
+                                        SizedBox(width: size.width * 0.03),
+
+                                        /// TEXT
+                                        Text(
+                                          "Martin Garrix", // image ke according
+                                          style: TextStyle(
+                                            color: Colors.white,
+                                            fontSize: 12,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(
                                     height: size.height * 4 / 100,
@@ -1859,6 +2154,53 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
           child: ScaleTransition(scale: anim, child: child),
         );
       },
+    );
+  }
+
+  Widget _eventChip(String text) {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: AppColor.eventSmallCardBorder, width: 1),
+        color: AppColor.cardFillColor,
+      ),
+      child: Text(
+        text,
+        style: const TextStyle(
+          color: Colors.white,
+          fontSize: 7,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+    );
+  }
+
+  Widget _venueCard(String imagePath) {
+    final size = MediaQuery.of(context).size;
+    final double cardWidth = 105 * size.width / 375;
+    final double cardHeight = 105 * size.width / 375;
+    return Container(
+      width: cardWidth,
+      height: cardHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.cardFillColor,
+            blurRadius: 12,
+            spreadRadius: 0.1,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(14),
+        child: Image.asset(
+          imagePath,
+          fit: BoxFit.cover,
+        ),
+      ),
     );
   }
 }

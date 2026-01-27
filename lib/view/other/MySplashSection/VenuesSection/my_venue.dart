@@ -1,10 +1,8 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/past_venue_screeen.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -96,11 +94,6 @@ class _MyVenueState extends State<MyVenue> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     systemNavigationBarColor: AppColor.primaryColor,
-    //     systemNavigationBarIconBrightness: Brightness.light,
-    //     statusBarColor: AppColor.primaryColor,
-    //     statusBarIconBrightness: Brightness.light));
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,

@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails6_screen.dart';
-import 'package:night_life/view/other/calender_screen.dart';
 import 'package:night_life/view/other/calenderscreen1.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -363,16 +361,7 @@ class _BookTableState extends State<BookTable> {
                                             width: 0.8,
                                           ),
                                           boxShadow: [
-                                            // BoxShadow(
-                                            //   color: isSelect
-                                            //       ? AppColor.pinkColor
-                                            //           .withOpacity(0.4)
-                                            //       : AppColor.secondryColor
-                                            //           .withOpacity(0.1),
-                                            //   spreadRadius: 2,
-                                            //   blurRadius: 8,
-                                            //   offset: const Offset(0, 4),
-                                            // ),
+                                    
                                           ],
                                         ),
                                         child: Column(
@@ -409,53 +398,7 @@ class _BookTableState extends State<BookTable> {
                                     );
                                   }),
                                 ),
-                                // Container(
-                                //   height: size.height * 7.5 / 100,
-                                //   width: size.width * 30 / 100,
-                                //   decoration: BoxDecoration(
-                                //       color: AppColor.primaryColor,
-                                //       boxShadow: [
-                                //         BoxShadow(
-                                //           color: AppColor.secondryColor
-                                //               .withOpacity(0.1),
-                                //           spreadRadius: 2,
-                                //           blurRadius: 8,
-                                //           offset: const Offset(0, 4),
-                                //         ),
-                                //       ],
-                                //       borderRadius: BorderRadius.circular(30),
-                                //       border: Border.all(
-                                //           color: AppColor.pinkColor, width: 0.5)),
-                                //   child: Column(
-                                //     mainAxisAlignment: MainAxisAlignment.center,
-                                //     children: [
-                                //       Text(
-                                //         'Today',
-                                //         style: TextStyle(
-                                //           fontFamily: AppFont.fontFamily1,
-                                //           fontWeight: FontWeight.w600,
-                                //           fontSize: 14,
-                                //           color: AppColor.secondryColor,
-                                //         ),
-                                //       ),
-                                //       SizedBox(
-                                //         height: size.height * 0.5 / 100,
-                                //       ),
-                                //       Text(
-                                //         '24 Oct',
-                                //         style: TextStyle(
-                                //           fontFamily: AppFont.fontFamily1,
-                                //           fontWeight: FontWeight.w600,
-                                //           fontSize: 14,
-                                //           color: AppColor.secondryColor,
-                                //         ),
-                                //       ),
-                                //     ],
-                                //   ),
-                                // ),
-                                // SizedBox(
-                                //   height: size.height * 4 / 100,
-                                // ),
+                               
                                 SizedBox(
                                   height: size.height * 3 / 100,
                                 ),
@@ -495,18 +438,7 @@ class _BookTableState extends State<BookTable> {
                                                 : AppColor.secondryColor,
                                             width: 0.8,
                                           ),
-                                          // boxShadow: [
-                                          //   BoxShadow(
-                                          //     color: isSelected
-                                          //         ? AppColor.pinkColor
-                                          //             .withOpacity(0.4)
-                                          //         : AppColor.secondryColor
-                                          //             .withOpacity(0.1),
-                                          //     spreadRadius: 2,
-                                          //     blurRadius: 8,
-                                          //     offset: const Offset(0, 4),
-                                          //   ),
-                                          // ],
+                                         
                                         ),
                                         child: Column(
                                           mainAxisAlignment:

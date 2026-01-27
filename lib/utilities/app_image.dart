@@ -366,4 +366,12 @@ class AppImage {
   static const gallImg3 = "./assets/icons/galleryImg3.jpg";
   static const gallImg4 = "./assets/icons/galleryImg4.png";
   static const stageImg = "./assets/icons/stageImg.png";
+  static const gellery1 = "./assets/icons/galley1.png";
+  static const gellery2 = "./assets/icons/galley2.png";
+  static const gellery3 = "./assets/icons/galley3.png";
+  static const gellery4 = "./assets/icons/galley4.png";
+  static const eventCardImage = "./assets/icons/event_card.png";
+  static const night = "./assets/icons/night.png";
+  static const omnia = "./assets/icons/omnia.png";
+  static const queens = "./assets/icons/queens.png";
 }

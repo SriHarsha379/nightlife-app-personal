@@ -1,23 +1,6 @@
-// import 'dart:html';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:image_picker/image_picker.dart';
-import 'package:night_life/view/authentication/notification_screen.dart';
-import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
-import 'package:night_life/view/other/chats/chat_message_screen.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/city_Preference/vibe_check_screen.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
-
+import 'package:night_life/view/other/city_Preference/vibeCheckScreens/vibe_check_screen1.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
@@ -111,44 +94,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
       'message': 'send',
     },
   ];
-  // final ImagePicker imagePicker = ImagePicker();
-  // List<XFile>? imageFileList = [];
-
-  // void selectImages() async {
-  //   final List<XFile>? selectedImages = await imagePicker.pickMultiImage();
-
-  //   if (selectedImages!.isNotEmpty) {
-  //     imageFileList!.addAll(selectedImages);
-  //   }
-  //   print("Image List Length:" + imageFileList!.length.toString());
-  //   setState(() {});
-  // }
-  // Future<void> _imgFromGallery() async {
-  //   // ignore: deprecated_member_use
-  //   dynamic image = await ImagePicker().pickImage(
-  //       source: ImageSource.gallery,
-  //       maxHeight: 450.0,
-  //       maxWidth: 450.0,
-  //       imageQuality: 50);
-  //   if (image != null) {
-  //     Future.delayed(const Duration(seconds: 2), () {
-  //       setState(() {
-  //         imageFileList!.add(image);
-  //         _imageSelect = File(image!.path);
-  //         fileName = image.path.split('/').last;
-
-  //         var _btnActive = true;
-  //         print(imageFileList);
-  //       });
-  //     });
-  //   } else {
-  //     setState(() {
-  //       var _btnActive = false;
-  //     });
-  //   }
-
-  //   // Navigator.of(context).pop();
-  // }
+ 
 
   @override
   void dispose() {
@@ -216,45 +162,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
                       ],
                     ),
 
-                    // Row(
-                    //   children: [
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //               builder: (context) => const Notifications()),
-                    //         );
-                    //       },
-                    //       child: SizedBox(
-                    //         height:
-                    //             MediaQuery.of(context).size.height * 3 / 100,
-                    //         child: Image.asset(
-                    //           AppImage.bellicon,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //     SizedBox(
-                    //       width: size.width * 2 / 100,
-                    //     ),
-                    //     GestureDetector(
-                    //       onTap: () {
-                    //         Navigator.push(
-                    //           context,
-                    //           MaterialPageRoute(
-                    //               builder: (context) => const Profile()),
-                    //         );
-                    //       },
-                    //       child: SizedBox(
-                    //         height:
-                    //             MediaQuery.of(context).size.height * 5 / 100,
-                    //         child: Image.asset(
-                    //           AppImage.userimage,
-                    //         ),
-                    //       ),
-                    //     ),
-                    //   ],
-                    // )
+                    
                   ],
                 ),
               ),
@@ -294,38 +202,15 @@ class _BadgeScreenState extends State<BadgeScreen> {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => VibeCheckScreen()));
+                            builder: (context) => VibeCheckScreen1()));
                   }),
 
-              //       Image.asset(
-              //         AppImage.undo,
-              //         width: MediaQuery.of(context).size.width * 64 / 100,
-              //         height: MediaQuery.of(context).size.height * 8 / 100,
-              //       ),
-              //     ],
-              //   ),
-              // ),
-
-              // Container(
-
-              //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
-              //   width: MediaQuery.of(context).size.width * 100 / 100,
-              //   height: MediaQuery.of(context).size.width *20 / 100,
-              //   child: Image.asset(
-              //     AppImage.undo,
-              //     fit: BoxFit.contain,
-              //   ),
-              // ),
-
-              // SizedBox(
-              //   height: MediaQuery.of(context).size.height * 2 / 100,
-              // ),
+          
             ],
           ),
         ),
       ),
-      // bottomNavigationBar: const AppFooter(
-      //     selectedMenu: BottomMenus.home, notificationCount: 0),
+
     );
   }
 

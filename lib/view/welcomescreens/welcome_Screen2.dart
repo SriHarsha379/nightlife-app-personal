@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:night_life/view/welcomescreens/welcome_screen3.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:night_life/view/authentication/signup.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';

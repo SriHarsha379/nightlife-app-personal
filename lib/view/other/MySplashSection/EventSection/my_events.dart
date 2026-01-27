@@ -1,11 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/past_events_screen.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_constant.dart';
@@ -89,11 +87,7 @@ class _MyEventsState extends State<MyEvents> {
 
   @override
   Widget build(BuildContext context) {
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     systemNavigationBarColor: AppColor.primaryColor,
-    //     systemNavigationBarIconBrightness: Brightness.light,
-    //     statusBarColor: AppColor.primaryColor,
-    //     statusBarIconBrightness: Brightness.light));
+
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(

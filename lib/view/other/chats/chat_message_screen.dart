@@ -1064,16 +1064,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               child: Padding(
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 4.0),
-                                // child: Text(
-                                //   "Did you meet?",
-                                //   style: TextStyle(
-                                //     fontSize: 15,
-                                //     decoration: TextDecoration.none,
-                                //     color: AppColor.secondryColor,
-                                //     fontFamily: AppFont.fontFamily,
-                                //     fontWeight: FontWeight.w400,
-                                //   ),
-                                // ),
+                               
                               ),
                             ),
                           ],

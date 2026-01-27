@@ -1,3 +1,4 @@
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_constant.dart';
@@ -59,13 +60,13 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(bottom: 40),
               child: AppButton(
-                text: AppLanguage.continueText[language],
+                text: '${AppLanguage.continueText[language]}',
                 onPress: () {
                   Navigator.push(
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: const GalleryScreen(),
+                      child: GalleryScreen(),
                       duration: const Duration(milliseconds: 500),
                     ),
                   );
@@ -75,221 +76,217 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
             body: Container(
               height: size.height * 100 / 100,
               width: size.width * 100 / 100,
-              decoration: const BoxDecoration(
-                  gradient: AppColor.backgroundGradientcolor),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: size.height * 5 / 100,
-                  ),
-                  SizedBox(
-                    width: size.width * 90 / 100,
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: Image.asset(
-                              color: AppColor.secondryColor,
-                              height: size.width * 5 / 100,
-                              width: size.width * 4 / 100,
-                              AppImage.backArrowIcon),
-                        ),
-                        Text(
-                          AppLanguage.aboutYouText[language],
-                          style: const TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w700,
-                              fontSize: 18,
-                              color: AppColor.secondryColor),
-                        ),
-                        SizedBox(
-                          height: size.width * 5 / 100,
-                          width: size.width * 5 / 100,
-                        )
-                      ],
+              decoration:
+                  BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: size.height * 5 / 100,
                     ),
-                  ),
-                  SizedBox(
-                    height: size.height * 2 / 100,
-                  ),
-                  Expanded(
-                    flex: 1,
-                    child: SingleChildScrollView(
-                      child: SizedBox(
-                        width: size.width * 90 / 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(
-                              height: size.height * 2 / 100,
-                            ),
-                            Text(
-                              AppLanguage.knowYouBetterText[language],
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor),
-                            ),
-                            SizedBox(
-                              height: size.height * 2 / 100,
-                            ),
-                            Text(
-                              AppLanguage.knowYouBetterMsg[language],
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColor.listTextColor),
-                            ),
-                            SizedBox(
-                              height: size.height * 2 / 100,
-                            ),
-                            Text(
-                              AppLanguage.sexualityText[language],
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor),
-                            ),
-                            SizedBox(
-                              height: size.height * 0.1 / 100,
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: sexuality.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: size.height * 1.5 / 100,
-                                  ),
-                                  child: AboutRow(
-                                    text: sexuality[index],
-                                    isSelected: sexualitySelectedIndex == index,
-                                    onTap: () {
-                                      setState(() {
-                                        sexualitySelectedIndex = index;
-                                      });
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: size.height * 1 / 100,
-                            ),
-                            Text(
-                              AppLanguage.interestedInText[language],
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor),
-                            ),
-                            SizedBox(
-                              height: size.height * 0.1 / 100,
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: aboutOptions.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: size.height * 1.5 / 100,
-                                  ),
-                                  child: AboutRow(
-                                    text: aboutOptions[index],
-                                    isSelected: selectedIndex == index,
-                                    onTap: () {
-                                      setState(() {
-                                        selectedIndex = index;
-                                      });
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              height: size.height * 1 / 100,
-                            ),
-                            Text(
-                              AppLanguage.yourPronounsText[language],
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor),
-                            ),
-                            SizedBox(
-                              height: size.height * 0.1 / 100,
-                            ),
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: pronouns.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: EdgeInsets.only(
-                                    bottom: size.height * 1.5 / 100,
-                                  ),
-                                  child: AboutRow(
-                                    text: pronouns[index],
-                                    isSelected: pronounsSelectedIndex == index,
-                                    onTap: () {
-                                      setState(() {
-                                        pronounsSelectedIndex = index;
-                                      });
-                                    },
-                                  ),
-                                );
-                              },
-                            ),
-                            Container(
-                              width: size.width * 0.9,
-                              height: size.height * 0.07,
-                              decoration: BoxDecoration(
-                                color: AppColor.themeColor,
-                                borderRadius: BorderRadius.circular(15),
-                                border: Border.all(
-                                  width: 0.3,
-                                  color: AppColor.pinkColor,
-                                ),
-                              ),
-                              child: Row(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        left: size.width * 0.05),
-                                    child: Text(
-                                      AppLanguage
-                                          .enterYourpronounsText[language],
-                                      style: const TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w400,
-                                        color: AppColor.secondryColor,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: size.height * 20 / 100,
-                            ),
-                          ],
-                        ),
+                    Container(
+                      width: size.width * 90 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.pop(context);
+                            },
+                            child: Image.asset(
+                                color: AppColor.secondryColor,
+                                height: size.width * 5 / 100,
+                                width: size.width * 4 / 100,
+                                AppImage.backArrowIcon),
+                          ),
+                          Text(
+                            AppLanguage.aboutYouText[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w700,
+                                fontSize: 18,
+                                color: AppColor.secondryColor),
+                          ),
+                          Container(
+                            height: size.width * 5 / 100,
+                            width: size.width * 5 / 100,
+                          )
+                        ],
                       ),
                     ),
-                  )
-                ],
+                    SizedBox(
+                      height: size.height * 2 / 100,
+                    ),
+                    Container(
+                      width: size.width * 90 / 100,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          SizedBox(
+                            height: size.height * 2 / 100,
+                          ),
+                          Text(
+                            AppLanguage.knowYouBetterText[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.plusJakartaSansFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.secondryColor),
+                          ),
+                          SizedBox(
+                            height: size.height * 2 / 100,
+                          ),
+                          Text(
+                            AppLanguage.knowYouBetterMsg[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.plusJakartaSansFamily,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.listTextColor),
+                          ),
+                          SizedBox(
+                            height: size.height * 2 / 100,
+                          ),
+                          Text(
+                            AppLanguage.sexualityText[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.plusJakartaSansFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.secondryColor),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.1 / 100,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: sexuality.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: size.height * 1.5 / 100,
+                                ),
+                                child: AboutRow(
+                                  text: sexuality[index],
+                                  isSelected: sexualitySelectedIndex == index,
+                                  onTap: () {
+                                    setState(() {
+                                      sexualitySelectedIndex = index;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height: size.height * 1 / 100,
+                          ),
+                          Text(
+                            AppLanguage.interestedInText[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.plusJakartaSansFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.secondryColor),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.1 / 100,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: aboutOptions.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: size.height * 1.5 / 100,
+                                ),
+                                child: AboutRow(
+                                  text: aboutOptions[index],
+                                  isSelected: selectedIndex == index,
+                                  onTap: () {
+                                    setState(() {
+                                      selectedIndex = index;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height: size.height * 1 / 100,
+                          ),
+                          Text(
+                            AppLanguage.yourPronounsText[language],
+                            style: TextStyle(
+                                fontFamily: AppFont.plusJakartaSansFamily,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
+                                color: AppColor.secondryColor),
+                          ),
+                          SizedBox(
+                            height: size.height * 0.1 / 100,
+                          ),
+                          ListView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: pronouns.length,
+                            itemBuilder: (context, index) {
+                              return Padding(
+                                padding: EdgeInsets.only(
+                                  bottom: size.height * 1.5 / 100,
+                                ),
+                                child: AboutRow(
+                                  text: pronouns[index],
+                                  isSelected: pronounsSelectedIndex == index,
+                                  onTap: () {
+                                    setState(() {
+                                      pronounsSelectedIndex = index;
+                                    });
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          Container(
+                            width: size.width * 0.9,
+                            height: size.height * 0.07,
+                            decoration: BoxDecoration(
+                              color: AppColor.themeColor,
+                              borderRadius: BorderRadius.circular(15),
+                              border: Border.all(
+                                width: 0.3,
+                                color: AppColor.pinkColor,
+                              ),
+                            ),
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding:
+                                      EdgeInsets.only(left: size.width * 0.05),
+                                  child: Text(
+                                    AppLanguage.enterYourpronounsText[language],
+                                    style: TextStyle(
+                                      fontFamily: AppFont.plusJakartaSansFamily,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w400,
+                                      color: AppColor.secondryColor,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          SizedBox(
+                            height: size.height * 20 / 100,
+                          ),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
           )),
@@ -333,7 +330,7 @@ class AboutRow extends StatelessWidget {
               padding: EdgeInsets.only(left: size.width * 0.05),
               child: Text(
                 text,
-                style: const TextStyle(
+                style: TextStyle(
                   fontFamily: AppFont.fontFamily,
                   fontSize: 16,
                   fontWeight: FontWeight.w400,

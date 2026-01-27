@@ -6,12 +6,11 @@ import 'provider/darkmode_provider.dart';
 import 'utilities/app_color.dart';
 import 'utilities/app_font.dart';
 
-Future<void> main() async {
+void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setPreferredOrientations([
+  SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-
   runApp(const MyApp());
 }
 

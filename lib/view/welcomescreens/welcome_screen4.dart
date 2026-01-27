@@ -1,11 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/forgot_otp_password_screen.dart';
-import 'package:night_life/view/authentication/forgot_otp_verify_screen.dart';
-import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/authentication/otp_verify_screen.dart';
-import 'package:night_life/view/other/profile_details.dart';
+import 'package:night_life/animation/purple_screen.dart';
 import 'package:night_life/view/authentication/signup.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -15,7 +10,6 @@ import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
-import '../../utilities/widgets.dart';
 
 class WelcomeScreen4 extends StatefulWidget {
   static String routeName = './LoginScreen';
@@ -78,9 +72,8 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-            canPop: false,
-          onPopInvoked: (didPop) {
-  },
+        canPop: false,
+        onPopInvoked: (didPop) {},
         child: Scaffold(
           backgroundColor: AppColor.primaryColor,
           resizeToAvoidBottomInset: false,
@@ -102,7 +95,6 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                     ),
                   ),
                 ),
-        
                 SlideTransition(
                   position: _slideAnimation,
                   child: Align(
@@ -124,7 +116,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           SizedBox(height: h * 0.09),
-        
+
                           /// TITLE
                           SizedBox(
                             width: w * 0.70,
@@ -139,9 +131,9 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                               ),
                             ),
                           ),
-        
+
                           SizedBox(height: h * 0.02),
-        
+
                           SizedBox(
                             width: w * 0.80,
                             child: Text(
@@ -155,30 +147,39 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                               ),
                             ),
                           ),
-        
+
                           SizedBox(height: h * 0.08),
-        
+
                           AppButton(
                             text: AppLanguage.letsgetStartedtext[language],
                             onPress: () {
                               Navigator.push(
                                 context,
                                 PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: SignUp(),
+                                  type: PageTransitionType.bottomToTop,
+                                  child: const PurpleScreen(
+                                    nextScreen: SignUp(),
+                                  ),
                                   duration: const Duration(milliseconds: 400),
                                 ),
                               );
+                              // Navigator.push(
+                              //   context,
+                              //   PageTransition(
+                              //     type: PageTransitionType.rightToLeftWithFade,
+                              //     child: SignUp(),
+                              //     duration: const Duration(milliseconds: 400),
+                              //   ),
+                              // );
                             },
                           ),
-        
+
                           SizedBox(height: h * 0.04),
                         ],
                       ),
                     ),
                   ),
                 ),
-        
                 Positioned(
                   bottom: h * 0.07,
                   left: w * 0.42,

@@ -1,9 +1,6 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
 
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
@@ -190,10 +187,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                  
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -461,10 +455,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(16),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                      
                       ),
                       child: Row(
                         children: [
@@ -524,10 +515,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(16),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                 
                       ),
                       child: Row(
                         children: [
@@ -586,10 +574,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             ),
                           ],
                           borderRadius: BorderRadius.circular(20),
-                          // borderSide: const BorderSide(
-                          //   color: AppColor.textfieldfillColor,
-                          //   width: 0,
-                          // ),
+                     
                         ),
                         child: Column(
                           children: [
@@ -788,9 +773,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //     height:
-                            //         MediaQuery.of(context).size.height * 8 / 100),
+               
                           ],
                         ),
                       ),
@@ -817,10 +800,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             ),
                           ],
                           borderRadius: BorderRadius.circular(20),
-                          // borderSide: const BorderSide(
-                          //   color: AppColor.textfieldfillColor,
-                          //   width: 0,
-                          // ),
+                   
                         ),
                         child: Column(
                           children: [
@@ -1005,9 +985,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 ),
                               ),
                             ),
-                            // SizedBox(
-                            //     height:
-                            //         MediaQuery.of(context).size.height * 8 / 100),
+                           
                           ],
                         ),
                       ),
@@ -1031,10 +1009,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                  
                       ),
                       child: Column(
                         children: [
@@ -1103,10 +1078,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                    
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -1201,17 +1173,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                        // borderSide: const BorderSide(
-                        //   color: AppColor.textfieldfillColor,
-                        //   width: 0,
-                        // ),
+                       
                       ),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                            // SizedBox(
-                            //     height:
-                            //         MediaQuery.of(context).size.height * 1 / 100),
+                          
                             Row(
                               children: [
                                 Container(

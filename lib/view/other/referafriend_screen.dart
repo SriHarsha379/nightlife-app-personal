@@ -1,14 +1,10 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/other/profile_details.dart';
-import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_color.dart';
-import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
-import '../../../../utilities/app_language.dart';
 
 class ReferAFriend extends StatefulWidget {
   static String routeName = "./ReferAFriendScreen";
@@ -152,14 +148,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                         ],
                       ),
 
-                      // Image.asset(
-                      //       "/assets/icons/Line.png",
-                      //       color: AppColor.secondryColor,
-                      //         width:
-                      //             MediaQuery.of(context).size.width * 2 / 100,
-                      //         height:
-                      //             MediaQuery.of(context).size.width * 2 / 100,
-                      //       ),
+                   
                       SizedBox(height: size.height * 3 / 100),
                       Row(
                         crossAxisAlignment: CrossAxisAlignment.start,

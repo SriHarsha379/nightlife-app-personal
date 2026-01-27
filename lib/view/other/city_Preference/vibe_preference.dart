@@ -1,3 +1,5 @@
+// import 'dart:html';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
@@ -42,7 +44,7 @@ class _VibePreferenceState extends State<VibePreference> {
       'id': 1,
       'emoji': '💥',
       'title': 'High Energy',
-      'title1': 'Dance, EDM, full party mode',
+      'title1': 'Dance, EDM, full party',
       'emoji2': '😎',
       "music": "Chill & Easy",
       "music1": "Lounge, acoustic, sundowner"
@@ -52,83 +54,85 @@ class _VibePreferenceState extends State<VibePreference> {
       'emoji': '😍',
       'title': 'Romantic',
       'title1': 'Candlelight, date-friendly',
-      'emoji2': '🤗',
-      "music": "Social & Fun",
-      "music1": "Meet new people, mixers"
+      'emoji2': '🕳️',
+      "music": "Underground",
+      "music1": "Hidden venues, techno"
     },
     {
       'id': 3,
-      'emoji': '👑',
-      'title': 'Exclusive',
-      'title1': 'VIP, invite-only, high-end',
-      'emoji2': '😈',
-      "music": "Wild & Crazy",
-      "music1": "Anything goes, unpredictable"
-    },
-    {
-      'id': 4,
       'emoji': '✨',
       'title': 'Trendy & Stylish',
       'title1': 'Influencer spots, new openings',
+      'emoji2': '👑',
+      "music": "Exclusive",
+      "music1": "VIP, invite-only"
+    },
+    {
+      'id': 4,
+      'emoji': '😈',
+      'title': 'Wild & Crazy',
+      'title1': 'Anything goes, unpredictable',
       'emoji2': '💎',
       "music": "Luxury",
-      "music1": "Premium crowd, craft cocktails"
+      "music1": "Premium crowd,craft cocktails"
     },
     {
       'id': 5,
       'emoji': '📼',
       'title': 'Retro & Nostalgic',
       'title1': '80s/90s/2000s theme',
-      'emoji2': '🎸',
-      "music": "Live & Loud",
-      "music1": "Bands, concerts, performances"
+      'emoji2': '🤗',
+      "music": "Friendly & Fun",
+      "music1": "Meet new people, mixers"
     },
     {
       'id': 6,
       'emoji': '🌆',
       'title': 'Rooftop & Views',
       'title1': 'Skyline bars, scenic venues',
-      'emoji2': '🌅',
-      "music": "Beach & Sundowner",
-      "music1": "Sunset vibes, golden hour"
+      'emoji2': '🎨',
+      "music": "Creative & Artsy",
+      "music1": "Art, fashion, concept parties"
     },
     {
       'id': 7,
-      'emoji': '🎨',
-      'title': 'Creative & Artsy',
-      'title1': 'Art, fashion, concept parties',
-      'emoji2': '💕',
-      "music": "Flirty & Playful",
-      "music1": "Dating, singles nights"
+      'emoji': '🌅',
+      'title': 'Beach & Sundowner',
+      'title1': 'Tropical, relaxed, sunset',
+      'emoji2': '🌙',
+      "music": "Late & Loose",
+      "music1": "Afterparties, unplanned"
     },
     {
       'id': 8,
-      'emoji': '🤝',
-      'title': 'Community & Warm',
-      'title1': 'Familiar faces, regulars',
+      'emoji': '💕',
+      'title': 'Flirty & Playful',
+      'title1': 'Dating, singles nights',
       'emoji2': '🎊',
       "music": "Festive & Themed",
       "music1": "Halloween, Holi, NYE"
     },
     {
       'id': 9,
-      'emoji': '🌙',
-      'title': 'Late & Loose',
-      'title1': 'Afterparties, unplanned',
+      'emoji': '🤝',
+      'title': 'Social & Warm',
+      'title1': 'Familiar faces, regulars',
+      'emoji2': '🎸',
+      "music": "Live & Loud",
+      "music1": "Bands, concerts, performances"
+    },
+    {
+      'id': 10,
+      'emoji': '🌍',
+      'title': 'Cultural & Local',
+      'title1': 'Themed or regional nights',
       'emoji2': '🔬',
       "music": "Experimental",
       "music1": "Fusion, cross-genre, surprise"
     },
-    {
-      'id': 10,
-      'emoji': '🕳️',
-      'title': 'Underground',
-      'title1': 'Hidden venues, techno, secret-',
-      'emoji2': '🌍',
-      "music": "Cultural & Local",
-      "music1": "Themed or regional nights"
-    },
   ];
+
+
 
   TextEditingController searchController = TextEditingController();
 
@@ -236,7 +240,7 @@ class _VibePreferenceState extends State<VibePreference> {
                       textAlign: TextAlign.center,
                       AppLanguage.whatKindofVibeText[language],
                       style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
+                        fontFamily: AppFont.plusJakartaSansFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: AppColor.secondryColor,
@@ -255,7 +259,7 @@ class _VibePreferenceState extends State<VibePreference> {
                       textAlign: TextAlign.center,
                       AppLanguage.vibeTypetext[language],
                       style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
+                        fontFamily: AppFont.plusJakartaSansFamily,
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
                         color: AppColor.secondryColor,
@@ -274,7 +278,7 @@ class _VibePreferenceState extends State<VibePreference> {
                       textAlign: TextAlign.center,
                       AppLanguage.select1to5Text[language],
                       style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
+                        fontFamily: AppFont.plusJakartaSansFamily,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
                         color: AppColor.filledText,
@@ -309,8 +313,6 @@ class _VibePreferenceState extends State<VibePreference> {
                               width:
                                   MediaQuery.of(context).size.width * 2 / 100,
                             ),
-
-                     
                             GestureDetector(
                               onTap: () {
                                 setState(() {
@@ -323,15 +325,14 @@ class _VibePreferenceState extends State<VibePreference> {
                                   }
                                 });
                               },
-                              child: IntrinsicWidth(
+                              child: ConstrainedBox(
+                                constraints: BoxConstraints(
+                                  maxWidth: MediaQuery.of(context).size.width * 0.9, // screen-safe
+                                ),
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.032,
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            0.012,
+                                    horizontal: MediaQuery.of(context).size.width * 0.032,
+                                    vertical: MediaQuery.of(context).size.height * 0.012,
                                   ),
                                   decoration: BoxDecoration(
                                     color: AppColor.filledcolor,
@@ -344,13 +345,12 @@ class _VibePreferenceState extends State<VibePreference> {
                                     ),
                                     boxShadow: isLeftSelected
                                         ? [
-                                            BoxShadow(
-                                              color: AppColor.buttonColor
-                                                  .withOpacity(0.35),
-                                              blurRadius: 8,
-                                              spreadRadius: 1,
-                                            )
-                                          ]
+                                      BoxShadow(
+                                        color: AppColor.buttonColor.withOpacity(0.35),
+                                        blurRadius: 8,
+                                        spreadRadius: 1,
+                                      )
+                                    ]
                                         : [],
                                   ),
                                   child: Row(
@@ -365,43 +365,45 @@ class _VibePreferenceState extends State<VibePreference> {
                                           color: AppColor.secondryColor,
                                         ),
                                       ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          
-                                          Text(
-                                            
-                                            Orders[index]['title'],
-                                            style: TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 13.2,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor,
+
+                                      Flexible(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              Orders[index]['title'],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppFont.plusJakartaSansFamily,
+                                                fontSize: 13.2,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.secondryColor,
+                                              ),
+                                              ),
+                                            SizedBox(height: size.height * 0.1 / 100),
+                                            Text(
+                                              Orders[index]['title1'],
+                                              maxLines: 1,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontSize: 9,
+                                                fontWeight: FontWeight.w400,
+                                                color: AppColor.lightGreyColor,
+                                              ),
                                             ),
-                                          ),
-                                          SizedBox(
-                                              height: size.height * 0.1 / 100),
-                                          Text(
-                                            Orders[index]['title1'],
-                                            style: TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColor.lightGreyColor,
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
                                 ),
                               ),
+
                             ),
-
                             SizedBox(width: size.width * 4 / 100),
-
                             GestureDetector(
                               onTap: () {
                                 setState(() {

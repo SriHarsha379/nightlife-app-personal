@@ -1,27 +1,22 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/forgot_otp_password_screen.dart';
-import 'package:night_life/view/authentication/forgot_otp_verify_screen.dart';
-import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/authentication/otp_verify_screen.dart';
-import 'package:night_life/view/other/profile_details.dart';
-import 'package:night_life/view/authentication/signup.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../utilities/app_button.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
+import '../../utilities/app_footer.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/widgets.dart';
-import 'edit_profile_screen.dart';
+import 'forgot_otp_password_screen.dart';
+import 'signup.dart';
 
 class LoginScreen extends StatefulWidget {
   static String routeName = './LoginScreen';
+  const LoginScreen({super.key, this.doAnimate = false});
 
-  const LoginScreen({super.key});
+  final bool doAnimate;
 
   @override
   State<LoginScreen> createState() => _LoginScreenState();
@@ -31,37 +26,59 @@ TextEditingController passwordController = TextEditingController();
 TextEditingController emailController = TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _animationController;
-  late Animation<Offset> _slideAnimation;
+    with TickerProviderStateMixin {
+  late AnimationController _bottomSheetController;
+  late Animation<Offset> _bottomSheetAnimation;
+
+  late AnimationController _overlayController;
+  late Animation<Offset> _overlaySlideAnimation;
 
   @override
   void initState() {
     super.initState();
 
-    // Initialize animation controller
-    _animationController = AnimationController(
+    /// Bottom login container animation
+    _bottomSheetController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
     );
 
-    _slideAnimation = Tween<Offset>(
+    _bottomSheetAnimation = Tween<Offset>(
       begin: const Offset(0, 1),
       end: Offset.zero,
-    ).animate(CurvedAnimation(
-      parent: _animationController,
-      curve: Curves.easeOutCubic,
-    ));
+    ).animate(
+      CurvedAnimation(
+        parent: _bottomSheetController,
+        curve: Curves.easeOutCubic,
+      ),
+    );
 
-    // Start animation after build
+    /// Purple overlay opening animation
+    _overlayController = AnimationController(
+      vsync: this,
+      duration: Duration(milliseconds: widget.doAnimate ? 1100 : 0),
+    );
+
+    _overlaySlideAnimation = Tween<Offset>(
+      begin: Offset.zero,
+      end: const Offset(0, 1), // slide DOWN
+    ).animate(
+      CurvedAnimation(
+        parent: _overlayController,
+        curve: Curves.easeInOut,
+      ),
+    );
+
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _animationController.forward();
+      _bottomSheetController.forward();
+      _overlayController.forward();
     });
   }
 
   @override
   void dispose() {
-    _animationController.dispose();
+    _bottomSheetController.dispose();
+    _overlayController.dispose();
     super.dispose();
   }
 
@@ -69,365 +86,340 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-  
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
+        statusBarBrightness: Brightness.light,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-              canPop: false,
-          onPopInvoked: (didPop) {
-  },
+        canPop: false,
+        onPopInvoked: (didPop) {},
         child: Scaffold(
-          body: Container(
-            width: MediaQuery.of(context).size.width * 100 / 100,
-            height: MediaQuery.of(context).size.height * 100 / 100,
-            child: Stack(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                  },
-                  child: Container(
-                    width: MediaQuery.of(context).size.width * 100 / 100,
-                    height: MediaQuery.of(context).size.height,
-                    decoration: const BoxDecoration(
-                      image: DecorationImage(
-                        image: AssetImage(AppImage.signupScreen),
-                        fit: BoxFit.cover,
-                      ),
+          body: Stack(
+            children: [
+              /// Background image
+              GestureDetector(
+                onTap: () => FocusScope.of(context).unfocus(),
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  decoration: const BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage(AppImage.signupScreen),
+                      fit: BoxFit.cover,
                     ),
                   ),
                 ),
-        
-                SlideTransition(
-                  position: _slideAnimation,
-                  child: Align(
-                    alignment: Alignment.bottomCenter,
-                    child: SingleChildScrollView(
-                      child: Container(
-                        decoration: BoxDecoration(
-                          gradient: AppColor.backgroundGradientcolor,
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(46),
-                            topRight: Radius.circular(46),
-                          ),
+              ),
+
+              /// Bottom login container
+              SlideTransition(
+                position: _bottomSheetAnimation,
+                child: Align(
+                  alignment: Alignment.bottomCenter,
+                  child: SingleChildScrollView(
+                    child: Container(
+                      decoration: const BoxDecoration(
+                        gradient: AppColor.backgroundGradientcolor,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(46),
+                          topRight: Radius.circular(46),
                         ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 3 / 100,
+                      ),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          SizedBox(height: size.height * 0.03),
+                          Image.asset(
+                            AppImage.dashIcon,
+                            height: size.height * 0.008,
+                            width: size.width * 0.15,
+                          ),
+                          SizedBox(height: size.height * 0.02),
+
+                          Text(
+                            AppLanguage.loginText[language],
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 16,
                             ),
-                            Image.asset(
-                              AppImage.dashIcon,
-                              height: size.height * 0.8 / 100,
-                              width: size.width * 15 / 100,
-                              fit: BoxFit.contain,
+                          ),
+
+                          SizedBox(height: size.height * 0.06),
+
+                          /// Email
+                          SizedBox(
+                            width: size.width * 0.85,
+                            height: size.height * 0.06,
+                            child: CustomTextFieldInput(
+                              hintText: AppLanguage
+                                  .usernameAndemailIdPhonenumberText[language],
+                              maxLength: AppConstant.mobileMaxLenth,
+                              controller: emailController,
+                              fillColor: AppColor.secondryColor,
+                              keyboardType: TextInputType.text,
                             ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 2 / 100,
+                          ),
+
+                          SizedBox(height: size.height * 0.03),
+
+                          /// Password
+                          SizedBox(
+                            width: size.width * 0.85,
+                            height: size.height * 0.06,
+                            child: CustomTextFieldInput(
+                              hintText: AppLanguage.enterpassword[language],
+                              maxLength: AppConstant.mobileMaxLenth,
+                              controller: passwordController,
+                              fillColor: AppColor.secondryColor,
+                              keyboardType: TextInputType.text,
                             ),
-                            Align(
-                              alignment: Alignment.center,
-                              child: Text(
-                                AppLanguage.loginText[language],
-                                style: const TextStyle(
-                                    color: AppColor.secondryColor,
-                                    fontWeight: FontWeight.w700,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 16),
+                          ),
+
+                          SizedBox(height: size.height * 0.03),
+
+                          /// Social login
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                AppImage.google,
+                                width: size.width * 0.14,
+                                height: size.width * 0.14,
                               ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 6 / 100,
-                            ),
-                            Center(
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 85 / 100,
-                                height:
-                                    MediaQuery.of(context).size.height * 6 / 100,
-                                child: CustomTextFieldInput(
-                                  hintText: AppLanguage
-                                      .usernameAndemailIdPhonenumberText[language],
-                                  maxLength: AppConstant.mobileMaxLenth,
-                                  keyboardType: TextInputType.name,
-                                  controller: emailController,
-                                  fillColor: AppColor.secondryColor,
+                              if (AppConstant.deviceType == "ios") ...[
+                                SizedBox(width: size.width * 0.02),
+                                Image.asset(
+                                  AppImage.apple,
+                                  width: size.width * 0.15,
+                                  height: size.width * 0.15,
                                 ),
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 3 / 100,
-                            ),
-                            Center(
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 85 / 100,
-                                height:
-                                    MediaQuery.of(context).size.height * 6 / 100,
-                                child: CustomTextFieldInput(
-                                  hintText: AppLanguage.enterpassword[language],
-                                  maxLength: AppConstant.mobileMaxLenth,
-                                  keyboardType: TextInputType.name,
-                                  controller: passwordController,
-                                  fillColor: AppColor.secondryColor,
+                              ],
+                            ],
+                          ),
+
+                          SizedBox(height: size.height * 0.02),
+
+                          /// Forgot password
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: const ForgotPassword(),
                                 ),
+                              );
+                            },
+                            child: Text(
+                              AppLanguage.forgotpasswordText[language],
+                              style: const TextStyle(
+                                color: AppColor.buttonColor,
+                                fontWeight: FontWeight.w600,
                               ),
                             ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 3 / 100,
-                            ),
-                            Center(
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Image.asset(
-                                    AppImage.google,
-                                    width: MediaQuery.of(context).size.width *
-                                        14 /
-                                        100,
-                                    height: MediaQuery.of(context).size.width *
-                                        14 /
-                                        100,
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 2 / 100,
-                                  ),
-                                  if (AppConstant.deviceType == "ios")
-                                    Image.asset(
-                                      AppImage.apple,
-                                      width: MediaQuery.of(context).size.width *
-                                          15 /
-                                          100,
-                                      height: MediaQuery.of(context).size.width *
-                                          15 /
-                                          100,
-                                    ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 1 / 100),
-                            GestureDetector(
-                              onTap: () {
-                                // Navigator.push(
-                                //   context,
-                                //   PageTransition(
-                                //     type: PageTransitionType.rightToLeftWithFade,
-                                //     child: ForgotPassword(),
-                                //     duration: const Duration(milliseconds: 500),
-                                //   ),
-                                // );
-                              },
-                              child: Container(
-                                alignment: Alignment.center,
-                                width: MediaQuery.of(context).size.width * 70 / 100,
-                                child: Text(
-                                  AppLanguage.forgotpasswordText[language],
-                                  textAlign: TextAlign.center,
+                          ),
+                          SizedBox(height: size.height * 0.02),
+
+                          /// Continue button
+                          AppButton(
+                            text: AppLanguage.continueText[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: const MyAppFooter(initialIndex: 0),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 4 / 100,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 80 / 100,
+                            // height: MediaQuery.of(context).size.height * 3.5 / 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  AppLanguage.venueEventText[language],
                                   style: const TextStyle(
-                                    color: AppColor.buttonColor,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                    fontFamily: AppFont.fontFamily,
+                                      color: AppColor.secondryColor,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 12),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      1 /
+                                      100,
+                                ),
+                                GestureDetector(
+                                  onTap: () {},
+                                  child: Text(
+                                    AppLanguage.clickhereText[language],
+                                    style: const TextStyle(
+                                        color: AppColor.buttonColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 12),
                                   ),
                                 ),
-                              ),
+                              ],
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 2 / 100),
-                            AppButton(
-                                text: AppLanguage.continueText[language],
-                                onPress: () {
-                                  Navigator.push(
-                                    context,
-                                    PageTransition(
-                                      type: PageTransitionType.rightToLeftWithFade,
-                                      child: ForgotOtpverify(),
-                                      duration: const Duration(milliseconds: 500),
-                                    ),
-                                  );
-                                }),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 4 / 100,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 80 / 100,
-                              // height: MediaQuery.of(context).size.height * 3.5 / 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Text(
-                                    AppLanguage.venueEventText[language],
+                          ),
+                          SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 1 / 100,
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 80 / 100,
+                            // height: MediaQuery.of(context).size.height * 3.5 / 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text(
+                                  "New to the app ?",
+                                  style: TextStyle(
+                                      color: AppColor.secondryColor,
+                                      fontWeight: FontWeight.w400,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 12),
+                                ),
+                                SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      1 /
+                                      100,
+                                ),
+                                GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      PageTransition(
+                                        type: PageTransitionType
+                                            .rightToLeftWithFade,
+                                        child: const SignUp(),
+                                        duration:
+                                            const Duration(milliseconds: 500),
+                                      ),
+                                    );
+                                  },
+                                  child: Text(
+                                    AppLanguage.signupText[language],
                                     style: const TextStyle(
-                                        color: AppColor.secondryColor,
-                                        fontWeight: FontWeight.w400,
+                                        color: AppColor.buttonColor,
+                                        fontWeight: FontWeight.w600,
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 12),
                                   ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 1 / 100,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      // Navigator.push(
-                                      //   context,
-                                      //   PageTransition(
-                                      //     type: PageTransitionType.rightToLeftWithFade,
-                                      //     child: LoginScreen(),
-                                      //     duration: const Duration(milliseconds: 500),
-                                      //   ),
-                                      // );
-                                    },
-                                    child: Text(
-                                      AppLanguage.clickhereText[language],
-                                      style: const TextStyle(
-                                          color: AppColor.buttonColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 12),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 1 / 100,
-                            ),
-                            SizedBox(
-                              width: MediaQuery.of(context).size.width * 80 / 100,
-                              // height: MediaQuery.of(context).size.height * 3.5 / 100,
+                          ),
+                          SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 3 / 100,
+                          ),
+                          Center(
+                            child: SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 80 / 100,
+                              height:
+                                  MediaQuery.of(context).size.height * 5 / 100,
                               child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment
+                                    .center, // Horizontally center
+                                crossAxisAlignment: CrossAxisAlignment
+                                    .center, // Vertically center
                                 children: [
-                                  Text(
-                                    "New to the app ?",
-                                    style: const TextStyle(
-                                        color: AppColor.secondryColor,
-                                        fontWeight: FontWeight.w400,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontSize: 12),
-                                  ),
-                                  SizedBox(
-                                    width:
-                                        MediaQuery.of(context).size.width * 1 / 100,
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: SignUp(),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      AppLanguage.signupText[language],
-                                      style: const TextStyle(
-                                          color: AppColor.buttonColor,
-                                          fontWeight: FontWeight.w600,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 12),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: MediaQuery.of(context).size.height * 3 / 100,
-                            ),
-                            Center(
-                              child: SizedBox(
-                                width: MediaQuery.of(context).size.width * 80 / 100,
-                                height:
-                                    MediaQuery.of(context).size.height * 5 / 100,
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment
-                                      .center, // Horizontally center
-                                  crossAxisAlignment: CrossAxisAlignment
-                                      .center, // Vertically center
-                                  children: [
-                                    Column(
-                                      mainAxisAlignment: MainAxisAlignment
-                                          .center, // Center inside column
-                                      crossAxisAlignment: CrossAxisAlignment.center,
-                                      children: [
-                                        Padding(
-                                          padding: const EdgeInsets.only(left: 1.0),
-                                          child: Text(
-                                            AppLanguage
-                                                .bySigningupStatementText[language],
-                                            textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              color: AppColor.secondryColor,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 11,
-                                            ),
+                                  Column(
+                                    mainAxisAlignment: MainAxisAlignment
+                                        .center, // Center inside column
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(left: 1.0),
+                                        child: Text(
+                                          AppLanguage.bySigningupStatementText[
+                                              language],
+                                          textAlign: TextAlign.center,
+                                          style: const TextStyle(
+                                            color: AppColor.secondryColor,
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontSize: 11,
                                           ),
                                         ),
-                                        SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  0.3 /
-                                                  100,
-                                        ),
-                                        Row(
-                                          children: [
-                                            Padding(
-                                              padding:
-                                                  const EdgeInsets.only(left: 10.0),
-                                              child: Text(
-                                                AppLanguage
-                                                        .userAgreementStatementText[
-                                                    language],
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: AppColor.secondryColor,
-                                                  fontWeight: FontWeight.w400,
-                                                  fontFamily: AppFont.fontFamily,
-                                                  fontSize: 11,
-                                                ),
+                                      ),
+                                      SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.3 /
+                                                100,
+                                      ),
+                                      Row(
+                                        children: [
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                                left: 10.0),
+                                            child: Text(
+                                              AppLanguage
+                                                      .userAgreementStatementText[
+                                                  language],
+                                              textAlign: TextAlign.center,
+                                              style: const TextStyle(
+                                                color: AppColor.secondryColor,
+                                                fontWeight: FontWeight.w400,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontSize: 11,
                                               ),
                                             ),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  2 /
-                                                  100,
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2 /
+                                                100,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
                               ),
                             ),
-                            SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 1 / 100),
-                          ],
-                        ),
+                          ),
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 1 / 100),
+                        ],
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
+              ),
+
+              /// 🔥 Purple opening overlay (MUST BE LAST)
+              SlideTransition(
+                position: _overlaySlideAnimation,
+                child: Container(
+                  width: double.infinity,
+                  height: double.infinity,
+                  color: AppColor.purpleScreenColor,
+                ),
+              ),
+            ],
           ),
         ),
       ),

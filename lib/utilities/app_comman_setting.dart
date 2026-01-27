@@ -59,15 +59,7 @@ class SettingRow extends StatelessWidget {
                 ),
               ],
             ),
-            // Container(
-            //   width: MediaQuery.of(context).size.width * 4 / 100,
-            //   height: MediaQuery.of(context).size.width * 4 / 100,
-            //   alignment: Alignment.center,
-            //   child: Image.asset(
-            //     rightLeadingIcon,
-            //     fit: BoxFit.cover,
-            //   ),
-            // ),
+
           ],
         ),
       ),

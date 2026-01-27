@@ -115,32 +115,7 @@ class _ContentScreenState extends State<ContentScreen>
               ),
             
                        
-                        // WebView(
-                        //   initialUrl: widget.contenttype,
-                        //   backgroundColor: AppColor.secondryColor,
-                        //   onProgress: (int progress) {
-                        //     print("WebView is loading (progress : $progress%)");
-                        //   },
-                        //   onPageStarted: (String url) {
-                        //     print('Page started loading: $url');
-                        //     if (mounted) {
-                        //       setState(() {
-                        //         isApiCalling = true;
-                        //       });
-                        //     }
-                        //   },
-                        //   onPageFinished: (String url) {
-                        //     print('Page finished loading: $url');
-                        //     Future.delayed(const Duration(milliseconds: 800),
-                        //         () {
-                        //       if (mounted) {
-                        //         setState(() {
-                        //           isApiCalling = false;
-                        //         });
-                        //       }
-                        //     });
-                        //   },
-                        // ),
+                    
                       
                       ),
 

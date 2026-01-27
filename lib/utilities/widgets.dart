@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-
 import 'app_color.dart';
 import 'app_constant.dart';
 import 'app_font.dart';
-import 'app_image.dart';
 
 
 class CustomTextFieldInput extends StatefulWidget {
@@ -211,10 +208,6 @@ class _CustomTextFieldState extends State<CustomTextField> {
           child: SizedBox(
             height: 24,
             width: 24,
-            // child: Image.asset(
-            //   AppImage.changePasswordIcon,
-            //   color: AppColor.greyLightColor,
-            // ),
           ),
         ),
         prefixIconConstraints: const BoxConstraints(
@@ -229,18 +222,12 @@ class _CustomTextFieldState extends State<CustomTextField> {
               ? const SizedBox(
                   height: 24,
                   width: 24,
-                  // child: Image.asset(
-                  //   AppImage.visibleIcon,
-                  //   color: AppColor.greyLightColor,
-                  // ),
+
                 )
               : SizedBox(
                   height: 24,
                   width: 24,
-                  // child: Image.asset(
-                  //   AppImage.visibleoffIcon,
-                  //   color: AppColor.greyLightColor,
-                  // ),
+
                 ),
           onPressed: () {
             setState(() {
@@ -317,7 +304,7 @@ class _AppIconButtonState extends State<AppIconButton> {
                     color: AppColor.secondryColor,
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
-                    fontFamily: AppFont.fontFamily),
+                    fontFamily: AppFont.lexendFontFamily),
               ),
             ],
           ],
@@ -423,11 +410,7 @@ class CustomTextAreaField extends StatelessWidget {
                     ),
                     SizedBox(width: MediaQuery.of(context).size.width*3/100),
 
-                    // Container(
-                    //   height: 20,
-                    //   width: 1,
-                    //   color: AppColor.primaryColor.withOpacity(0.5),
-                    // ),
+             
                   ],
                 ],
               )
@@ -492,41 +475,3 @@ class InputFieldWrapper extends StatelessWidget {
     );
   }
 }
-// class AppButtonsmalltext extends StatefulWidget {
-//   final String text;
-//   final Function onPress;
-
-//   const AppButtonsmalltext({
-//     Key? key,
-//     required this.text,
-//     required this.onPress,
-//   }) : super(key: key);
-
-//   @override
-//   State<AppButtonsmalltext> createState() => _AppButtonsmalltextState();
-// }
-
-// class _AppButtonsmalltextState extends State<AppButtonsmalltext> {
-//   @override
-//   Widget build(BuildContext context) {
-//     return GestureDetector(
-//       onTap: () {
-//         widget.onPress();
-//       },
-//       child: Container(
-//         width: MediaQuery.of(context).size.width * 90 / 100,
-//         height: MediaQuery.of(context).size.height * 7 / 100,
-//         decoration: const BoxDecoration(
-//           color: AppColor.themeColor,
-//           borderRadius: BorderRadius.all(Radius.circular(40)),
-//         ),
-//         alignment: Alignment.center,
-//         child: Text(
-//           widget.text,
-//           style: const TextStyle(
-//               color: Colors.white, fontWeight: FontWeight.w600, fontSize: 18),
-//         ),
-//       ),
-//     );
-//   }
-// }

@@ -1,10 +1,7 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venudetails7_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -12,7 +9,6 @@ import 'package:page_transition/page_transition.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_image.dart';
-import 'venudetails10_screen.dart';
 
 class ReviewBooking2Details extends StatefulWidget {
   ReviewBooking2Details({super.key});

@@ -527,12 +527,7 @@ class _FriendsListState extends State<FriendsList> {
                                   ),
                                 ),
                                 if (index < chats.length - 0)
-                                  // Divider(
-                                  //   height: 0.2,
-                                  //   // thickness: 0.5,
-                                  //   // color: Colors.grey[300],
-                                  //   indent: 30,
-                                  // ),
+                                 
                                   if (index < chats.length - 0)
                                     SizedBox(height: size.height * 0.1 / 100),
                               ],

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/support_screen.dart';
 import 'package:night_life/view/welcomescreens/welcome_screen1.dart';
 
 import '../../utilities/app_color.dart';

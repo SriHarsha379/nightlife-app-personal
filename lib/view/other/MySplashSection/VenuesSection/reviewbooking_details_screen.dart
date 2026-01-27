@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venudetails7_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_color.dart';
@@ -262,30 +259,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                           SizedBox(
                             height: size.height * 3 / 100,
                           ),
-                          // Row(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Text(
-                          //       AppLanguage.addSpecialRequestText[language],
-                          //       style: TextStyle(
-                          //           fontFamily: AppFont.fontFamily,
-                          //           fontWeight: FontWeight.w400,
-                          //           fontSize: 16,
-                          //           color: AppColor.secondryColor),
-                          //     ),
-                          //     GestureDetector(
-                          //       onTap: () {},
-                          //       child: Text(
-                          //         AppLanguage.plusText[language],
-                          //         style: TextStyle(
-                          //             fontFamily: AppFont.fontFamily,
-                          //             fontWeight: FontWeight.w300,
-                          //             fontSize: 30,
-                          //             color: AppColor.secondryColor),
-                          //       ),
-                          //     ),
-                          //   ],
-                          // ),
+                       
                           SizedBox(
                             height: size.height * 2 / 100,
                           ),

@@ -1,17 +1,13 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_image.dart';
-import '../../../bottom navigation/search_screen.dart';
 
 class CompletePayment2 extends StatefulWidget {
   const CompletePayment2({super.key});
@@ -59,8 +55,7 @@ class _CompletePayment2State extends State<CompletePayment2> {
           child: AppButton(
             text: '${AppLanguage.paySecurelyText[language]} ₹${'450'}',
             onPress: () {
-              //  Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) =>  SearchScreen()));
+
             },
           ),
         ),
@@ -487,211 +482,11 @@ class _CompletePayment2State extends State<CompletePayment2> {
                               ),
                             ],
                           ),
-                          // SizedBox(
-                          //   height: size.height * 4 / 100,
-                          // ),
-                          // Text(
-                          //   AppLanguage.paymentMethodsText[language],
-                          //   style: TextStyle(
-                          //       fontFamily: AppFont.fontFamily,
-                          //       fontWeight: FontWeight.w700,
-                          //       fontSize: 18,
-                          //       color: AppColor.secondryColor),
-                          // ),
+                         
                           SizedBox(
                             height: size.height * 4 / 100,
                           ),
-                          // Column(
-                          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          //   children: [
-                          //     Row(
-                          //       mainAxisAlignment:
-                          //           MainAxisAlignment.spaceBetween,
-                          //       children: [
-                          //         Row(
-                          //           children: [
-                          //             Image.asset(
-                          //                 height: size.width * 6 / 100,
-                          //                 width: size.width * 6 / 100,
-                          //                 AppImage.rupeesIcon),
-                          //             SizedBox(
-                          //               width: size.width * 6 / 100,
-                          //             ),
-                          //             Text(
-                          //               AppLanguage.upiText[language],
-                          //               style: TextStyle(
-                          //                   fontFamily: AppFont.fontFamily,
-                          //                   fontWeight: FontWeight.w400,
-                          //                   fontSize: 16,
-                          //                   color: AppColor.secondryColor),
-                          //             ),
-                          //           ],
-                          //         ),
-
-                          //         // SizedBox(
-                          //         //   width: size.width * 65 / 100,
-                          //         // ),
-                          //         GestureDetector(
-                          //           onTap: () {
-                          //             setState(() {
-                          //               select = 1;
-                          //             });
-                          //           },
-                          //           child: Container(
-                          //             height: size.height * 2.5 / 100,
-                          //             width: size.height * 2.5 / 100,
-                          //             decoration: BoxDecoration(
-                          //               shape: BoxShape.circle,
-                          //               border: Border.all(
-                          //                 color: select == 1
-                          //                     ? AppColor.darkPurpleColor
-                          //                     : AppColor.lightgreyColor,
-                          //                 width: 2,
-                          //               ),
-                          //             ),
-                          //             child: Center(
-                          //               child: Container(
-                          //                 height: size.height * 1.4 / 100,
-                          //                 width: size.height * 1.4 / 100,
-                          //                 decoration: BoxDecoration(
-                          //                   shape: BoxShape.circle,
-                          //                   color: select == 1
-                          //                       ? AppColor.darkPurpleColor
-                          //                       : Colors.transparent,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     SizedBox(
-                          //       height: size.height * 4 / 100,
-                          //     ),
-                          //     Row(
-                          //       mainAxisAlignment:
-                          //           MainAxisAlignment.spaceBetween,
-                          //       children: [
-                          //         Row(
-                          //           children: [
-                          //             Image.asset(
-                          //                 height: size.width * 6 / 100,
-                          //                 width: size.width * 6 / 100,
-                          //                 AppImage.debitCardIcon),
-                          //             SizedBox(
-                          //               width: size.width * 6 / 100,
-                          //             ),
-                          //             Text(
-                          //               AppLanguage.debitCreditText[language],
-                          //               style: TextStyle(
-                          //                   fontFamily: AppFont.fontFamily,
-                          //                   fontWeight: FontWeight.w400,
-                          //                   fontSize: 16,
-                          //                   color: AppColor.secondryColor),
-                          //             ),
-                          //           ],
-                          //         ),
-                          //         //    SizedBox(
-                          //         //   width: size.width * 42 / 100,
-                          //         // ),
-                          //         GestureDetector(
-                          //           onTap: () {
-                          //             setState(() {
-                          //               select = 3;
-                          //             });
-                          //           },
-                          //           child: Container(
-                          //             height: size.height * 2.5 / 100,
-                          //             width: size.height * 2.5 / 100,
-                          //             decoration: BoxDecoration(
-                          //               shape: BoxShape.circle,
-                          //               border: Border.all(
-                          //                 color: select == 3
-                          //                     ? AppColor.darkPurpleColor
-                          //                     : AppColor.lightgreyColor,
-                          //                 width: 2,
-                          //               ),
-                          //             ),
-                          //             child: Center(
-                          //               child: Container(
-                          //                 height: size.height * 1.4 / 100,
-                          //                 width: size.height * 1.4 / 100,
-                          //                 decoration: BoxDecoration(
-                          //                   shape: BoxShape.circle,
-                          //                   color: select == 3
-                          //                       ? AppColor.darkPurpleColor
-                          //                       : Colors.transparent,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //     SizedBox(
-                          //       height: size.height * 4 / 100,
-                          //     ),
-                          //     Row(
-                          //       mainAxisAlignment:
-                          //           MainAxisAlignment.spaceBetween,
-                          //       children: [
-                          //         Row(
-                          //           children: [
-                          //             Image.asset(
-                          //                 height: size.width * 6 / 100,
-                          //                 width: size.width * 6 / 100,
-                          //                 AppImage.walletIcon),
-                          //             SizedBox(
-                          //               width: size.width * 6 / 100,
-                          //             ),
-                          //             Text(
-                          //               AppLanguage.walletAppPayText[language],
-                          //               style: TextStyle(
-                          //                   fontFamily: AppFont.fontFamily,
-                          //                   fontWeight: FontWeight.w400,
-                          //                   fontSize: 16,
-                          //                   color: AppColor.secondryColor),
-                          //             ),
-                          //           ],
-                          //         ),
-
-                          //         GestureDetector(
-                          //           onTap: () {
-                          //             setState(() {
-                          //               select = 2;
-                          //             });
-                          //           },
-                          //           child: Container(
-                          //             height: size.height * 2.5 / 100,
-                          //             width: size.height * 2.5 / 100,
-                          //             decoration: BoxDecoration(
-                          //               shape: BoxShape.circle,
-                          //               border: Border.all(
-                          //                 color: select == 2
-                          //                     ? AppColor.darkPurpleColor
-                          //                     : AppColor.lightgreyColor,
-                          //                 width: 2,
-                          //               ),
-                          //             ),
-                          //             child: Center(
-                          //               child: Container(
-                          //                 height: size.height * 1.4 / 100,
-                          //                 width: size.height * 1.4 / 100,
-                          //                 decoration: BoxDecoration(
-                          //                   shape: BoxShape.circle,
-                          //                   color: select == 2
-                          //                       ? AppColor.darkPurpleColor
-                          //                       : Colors.transparent,
-                          //                 ),
-                          //               ),
-                          //             ),
-                          //           ),
-                          //         ),
-                          //       ],
-                          //     ),
-                          //   ],
-                          // ),
-
+                       
                           SizedBox(
                             height: size.height * 20 / 100,
                           ),

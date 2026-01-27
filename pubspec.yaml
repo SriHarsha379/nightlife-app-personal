@@ -70,6 +70,8 @@ dependencies:
   flutter_card_swiper: ^7.0.2
   dropdown_button2: ^2.3.9
   provider: ^6.1.2
+  animations: ^2.0.11
+
 
   # For GeoLocation
   # geolocator: ^9.0.2

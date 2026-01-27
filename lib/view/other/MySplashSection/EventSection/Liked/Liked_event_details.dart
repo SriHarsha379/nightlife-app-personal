@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_font.dart';
@@ -8,8 +7,8 @@ import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 import 'package:page_transition/page_transition.dart';
+
 import '../../../../../utilities/app_footer.dart';
-import '../../../../../utilities/app_image_video_viewer.dart';
 import '../../../chats/chat_message_screen.dart';
 
 class LikedEventDetail extends StatefulWidget {
@@ -82,6 +81,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'text': 'Mark',
     },
   ];
+  
 
   List chats = [
     {
@@ -140,6 +140,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     },
   ];
 
+
+
   List chatsLists = [
     {
       'id': 1,
@@ -150,6 +152,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'message1': 'Done',
       'isSend': false,
     },
+   
     {
       'id': 2,
       'image': 'assets/icons/riya.png',
@@ -186,7 +189,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'message1': 'Done',
       'isSend': false,
     },
-    {
+       {
       'id': 6,
       'image': AppImage.soham,
       'name': 'soham',
@@ -197,55 +200,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     },
   ];
 
-  List<dynamic> galleryImagesList = [
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg1,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg2,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg3,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg4,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.eventImage1,
-    },
-  ];
-
-  void showMediaViewerBottomSheet({
-    required BuildContext context,
-    required List<dynamic> mediaList,
-    required int initialIndex,
-  }) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: Colors.black.withOpacity(0.4),
-      barrierColor: Colors.black.withOpacity(0.4),
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-      ),
-      builder: (_) {
-        return FractionallySizedBox(
-          heightFactor: 0.95,
-          child: MediaViewerBottomSheet(
-            mediaList: mediaList,
-            initialIndex: initialIndex,
-          ),
-        );
-      },
-    );
-  }
-
-  final List<String> shareIcons = [
+  
+   final List<String> shareIcons = [
     AppImage.shareIcon,
     AppImage.whatsappIcon,
     AppImage.instaIcon,
@@ -255,12 +211,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     systemNavigationBarColor: AppColor.primaryColor,
-    //     systemNavigationBarIconBrightness: Brightness.light,
-    //     statusBarColor: AppColor.primaryColor,
-    //     statusBarIconBrightness: Brightness.light));
-    return AnnotatedRegion<SystemUiOverlayStyle>(
+
+    return  AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light,
@@ -271,8 +223,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
               color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
@@ -282,7 +233,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             height: size.height * 7 / 100,
             child: Row(
               children: [
-                SizedBox(
+                   SizedBox(
                   width: size.width * 3 / 100,
                 ),
                 GestureDetector(
@@ -292,12 +243,12 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                       context,
                       PageTransition(
                         type: PageTransitionType.rightToLeftWithFade,
-                        child: const MyAppFooter(initialIndex: 0),
+                        child: MyAppFooter(initialIndex: 0),
                         duration: const Duration(milliseconds: 500),
                       ),
                     );
                   },
-                  child: SizedBox(
+                  child: Container(
                     width: size.width * 12 / 100,
                     child: ClipRRect(
                         borderRadius: const BorderRadius.only(
@@ -318,8 +269,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     eventstypebottomsheet(context);
                   },
                   child: Container(
-                    width: size.width * 30 / 100,
-                    height: size.height * 4.6 / 100,
+                  width: size.width * 30 / 100,
+                                    height: size.height * 4.6 / 100,
+
                     decoration: BoxDecoration(
                       color: AppColor.secondryColor,
                       borderRadius: BorderRadius.circular(50),
@@ -330,7 +282,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     child: Center(
                       child: Text(
                         AppLanguage.sendInviteText[language],
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
@@ -349,7 +301,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                       context,
                       PageTransition(
                         type: PageTransitionType.rightToLeftWithFade,
-                        child: const MyAppFooter(initialIndex: 0),
+                        child: MyAppFooter(initialIndex: 0),
                         duration: const Duration(milliseconds: 500),
                       ),
                     );
@@ -361,10 +313,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                       color: AppColor.buttonColor,
                       borderRadius: BorderRadius.circular(50),
 
-                      // border: Border.all(
-
-                      //      color : AppColor.primaryColor,
-                      // ),
+                 
                     ),
                     child: Row(
                       children: [
@@ -376,7 +325,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         ),
                         Text(
                           AppLanguage.likeText[language],
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFont.fontFamily,
@@ -397,17 +346,19 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: size.height * 3 / 100),
+
+                 SizedBox(height: size.height * 3 / 100),
+          
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
-                      child: SizedBox(
+                      child: Container(
                         width: size.width * 100 / 100,
                         child: Column(
                           children: [
                             Stack(
                               children: [
-                                SizedBox(
+                                Container(
                                   width: size.width * 100 / 100,
                                   height: size.height * 30 / 100,
                                   child: ClipRRect(
@@ -437,7 +388,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                             SizedBox(
                               height: size.height * 1 / 100,
                             ),
-                            SizedBox(
+                            Container(
                               width: size.width * 90 / 100,
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -572,7 +523,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         ),
                                         Column(
                                           children: [
-                                            SizedBox(
+                                            Container(
                                               width: size.width * 12 / 100,
                                               child: Image.asset(
                                                 AppImage.likeImage,
@@ -580,22 +531,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 height: size.width * 18 / 100,
                                               ),
                                             ),
-                                            // SizedBox(
-                                            //   height: MediaQuery.of(context)
-                                            //           .size
-                                            //           .height *
-                                            //       0.5 /
-                                            //       100,
-                                            // ),
-                                            // Container(
-                                            //   child: Text(
-                                            //     AppLanguage
-                                            //         .like17Text[language],
-                                            //     style: TextStyle(
-                                            //       fontSize: 14,
-                                            //     ),
-                                            //   ),
-                                            // )
+                                         
                                           ],
                                         ),
                                       ],
@@ -606,7 +542,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      Container(
                                         width: size.width * 4.5 / 100,
                                         height: size.width * 4.5 / 100,
                                         child: ClipRRect(
@@ -637,7 +573,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      Container(
                                         width: size.width * 4.5 / 100,
                                         height: size.width * 4.5 / 100,
                                         child: ClipRRect(
@@ -668,7 +604,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ),
                                   Row(
                                     children: [
-                                      SizedBox(
+                                      Container(
                                         width: size.width * 4.5 / 100,
                                         height: size.width * 4.5 / 100,
                                         child: ClipRRect(
@@ -684,35 +620,42 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 2 /
                                                 100,
                                       ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            AppLanguage
-                                                .dummylocationText[language],
-                                            style: const TextStyle(
-                                                fontSize: 15,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColor.secondryColor),
-                                          ),
-                                          Row(
-                                            children: [
-                                              Text(
-                                                AppLanguage
-                                                    .awaylocationText[language],
+                                      Container(
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: [
+                                            Container(
+                                              child: Text(
+                                                AppLanguage.dummylocationText[
+                                                    language],
                                                 style: const TextStyle(
                                                     fontSize: 15,
                                                     fontFamily:
                                                         AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor
-                                                        .greyLightColor),
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColor.secondryColor),
                                               ),
-                                            ],
-                                          ),
-                                        ],
+                                            ),
+                                            Row(
+                                              children: [
+                                                Text(
+                                                  AppLanguage.awaylocationText[
+                                                      language],
+                                                  style: const TextStyle(
+                                                      fontSize: 15,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w400,
+                                                      color: AppColor
+                                                          .greyLightColor),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),
@@ -733,13 +676,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          showMediaViewerBottomSheet(
-                                              context: context,
-                                              mediaList: galleryImagesList,
-                                              initialIndex: 0);
-                                        },
+                                      Container(
                                         child: Text(
                                           AppLanguage.viewAlltext[language],
                                           style: const TextStyle(
@@ -758,47 +695,31 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     scrollDirection: Axis.horizontal,
                                     child: Row(
                                       children: [
-                                        GestureDetector(
-                                          onTap: () {
-                                            showMediaViewerBottomSheet(
-                                                context: context,
-                                                mediaList: galleryImagesList,
-                                                initialIndex: 0);
-                                          },
-                                          child: Container(
-                                            width: size.width * 60 / 100,
-                                            height: size.height * 15 / 100,
-                                            margin: const EdgeInsets.only(
-                                                right: 10),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: Image.asset(
-                                                AppImage.eventimg,
-                                                fit: BoxFit.cover,
-                                              ),
+                                        Container(
+                                          width: size.width * 60 / 100,
+                                          height: size.height * 15 / 100,
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: Image.asset(
+                                              AppImage.eventimg,
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            showMediaViewerBottomSheet(
-                                                context: context,
-                                                mediaList: galleryImagesList,
-                                                initialIndex: 0);
-                                          },
-                                          child: Container(
-                                            width: size.width * 60 / 100,
-                                            height: size.height * 15 / 100,
-                                            margin: const EdgeInsets.only(
-                                                right: 10),
-                                            child: ClipRRect(
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                              child: Image.asset(
-                                                AppImage.eventimg,
-                                                fit: BoxFit.cover,
-                                              ),
+                                        Container(
+                                          width: size.width * 60 / 100,
+                                          height: size.height * 15 / 100,
+                                          margin:
+                                              const EdgeInsets.only(right: 10),
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: Image.asset(
+                                              AppImage.eventimg,
+                                              fit: BoxFit.cover,
                                             ),
                                           ),
                                         ),
@@ -808,13 +729,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   SizedBox(
                                     height: size.height * 4 / 100,
                                   ),
-                                  Text(
-                                    AppLanguage.aboutText[language],
-                                    style: const TextStyle(
-                                        fontSize: 18,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.secondryColor),
+                                  Container(
+                                    child: Text(
+                                      AppLanguage.aboutText[language],
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.secondryColor),
+                                    ),
                                   ),
                                   SizedBox(
                                     height: size.height * 1 / 100,
@@ -832,19 +755,19 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                             color: AppColor.textcolor,
                                           ),
                                         ),
-                                        const TextSpan(
+                                        TextSpan(
                                           text:
                                               "\nmidnight. Dance till the sun comes up with the best techno and EDM DJs...",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 16.5,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
                                             color: AppColor.textcolor,
                                           ),
                                         ),
-                                        const TextSpan(
+                                        TextSpan(
                                           text: " Read More",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
@@ -956,7 +879,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     fontSize: 12,
                                                   ),
                                                 ),
-                                                const SizedBox(
+                                                SizedBox(
                                                     // height: MediaQuery.of(context).size.height * 0.2/100,
                                                     ),
                                                 Text(
@@ -1077,7 +1000,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                       context,
                                                       MaterialPageRoute(
                                                           builder: ((context) =>
-                                                              const BookEvent())));
+                                                              BookEvent())));
                                                 },
                                                 child: Container(
                                                   width: size.width * 45 / 100,
@@ -1164,7 +1087,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       color: AppColor.lightgreyColor,
                                     ),
                                   ),
-                                ],
+                                  
+                  ],
                               ),
                             ),
                             SizedBox(
@@ -1200,7 +1124,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             color: Colors.transparent,
             child: Column(
               children: [
-                SizedBox(
+                Container(
                   width: MediaQuery.of(context).size.width * 100 / 100,
                   height: MediaQuery.of(context).size.height * 60 / 100,
                   child: Column(
@@ -1208,7 +1132,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: const BoxDecoration(
+                          decoration: BoxDecoration(
                             gradient: AppColor.backgroundGradientcolor,
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(46),
@@ -1252,56 +1176,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ),
                                 ),
                               ),
-                              const Divider(
+                              Divider(
                                 height: 0.2,
                                 thickness: 0.5,
                                 color: AppColor.secondryColor,
                                 indent: 28,
                                 endIndent: 28,
                               ),
-                              // Container(
-                              //   child: Row(
-                              //     mainAxisAlignment: MainAxisAlignment.center,
-                              //     children: [
-                              //       GestureDetector(
-                              //         onTap: () {
-                              //           setStateBottomSheet(() {
-                              //             selectedIndex = 0;
-                              //           });
-                              //         },
-                              //         child: Container(
-                              //           width:
-                              //               MediaQuery.of(context).size.width *
-                              //                   0.44,
-                              //           height:
-                              //               MediaQuery.of(context).size.height *
-                              //                   0.003,
-                              //           color: selectedIndex == 0
-                              //               ? AppColor.secondryColor
-                              //               : AppColor.secondryColor,
-                              //         ),
-                              //       ),
-                              //       GestureDetector(
-                              //         onTap: () {
-                              //           setStateBottomSheet(() {
-                              //             selectedIndex = 1;
-                              //           });
-                              //         },
-                              //         child: Container(
-                              //           width:
-                              //               MediaQuery.of(context).size.width *
-                              //                   0.36,
-                              //           height:
-                              //               MediaQuery.of(context).size.height *
-                              //                   0.003,
-                              //           color: selectedIndex == 1
-                              //               ? AppColor.greyLightColor
-                              //               : AppColor.secondryColor,
-                              //         ),
-                              //       ),
-                              //     ],
-                              //   ),
-                              // ),
+                           
 
                               SizedBox(height: size.height * 2 / 100),
                               SizedBox(height: size.height * 1 / 100),
@@ -1316,7 +1198,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
                                         return Wrap(
                                           children: [
-                                            SizedBox(
+                                            Container(
                                               width: size.width * 90 / 100,
                                               height: size.height * 8.5 / 100,
                                               child: ListTile(
@@ -1336,7 +1218,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 ),
                                                 title: Text(
                                                   chat['name'] ?? '',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                     color:
@@ -1345,7 +1227,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 ),
                                                 subtitle: Text(
                                                   chat['lastMessage'] ?? '',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontSize: 14,
                                                     color:
                                                         AppColor.secondryColor,
@@ -1460,6 +1342,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     );
   }
 
+
   void _openGuestBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1488,7 +1371,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                   Row(
                     children: [
                       SizedBox(width: size.width * 3 / 100),
-                      const Align(
+                      Align(
                         alignment: Alignment.centerLeft,
                         child: Text(
                           "Select number of Guest",
@@ -1563,7 +1446,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
-                          child: const BookEvent(),
+                          child: BookEvent(),
                           duration: const Duration(milliseconds: 500),
                         ),
                       );
@@ -1576,7 +1459,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         borderRadius: BorderRadius.circular(30),
                       ),
                       alignment: Alignment.center,
-                      child: const Text(
+                      child: Text(
                         "Continue",
                         style: TextStyle(
                           fontFamily: AppFont.fontFamily,

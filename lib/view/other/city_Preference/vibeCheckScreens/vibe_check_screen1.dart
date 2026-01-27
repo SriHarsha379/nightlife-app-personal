@@ -1,55 +1,33 @@
-// import 'dart:html';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
-import 'package:flutter_html/flutter_html.dart';
-
-import 'package:image_picker/image_picker.dart';
-import 'package:night_life/utilities/app_footer.dart';
-import 'package:night_life/view/authentication/notification_screen.dart';
-import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
-import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_liked_details.dart';
-import 'package:night_life/view/other/chats/chat_message_screen.dart';
-import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
-import 'package:night_life/view/other/city_Preference/vibe_check_screen3.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
+import 'package:night_life/view/other/city_Preference/vibeCheckScreens/vibe_check_screen2.dart';
 import 'package:page_transition/page_transition.dart';
+import '../../../../utilities/app_button.dart';
+import '../../../../utilities/app_color.dart';
+import '../../../../utilities/app_constant.dart';
+import '../../../../utilities/app_font.dart';
+import '../../../../utilities/app_image.dart';
+import '../../../../utilities/app_language.dart';
 
-import '../../../utilities/app_button.dart';
-import '../../../utilities/app_color.dart';
-import '../../../utilities/app_constant.dart';
-import '../../../utilities/app_font.dart';
-import '../../../utilities/app_image.dart';
-import '../../../utilities/app_language.dart';
+class VibeCheckScreen1 extends StatefulWidget {
+  static String routeName = './VibeCheckScreen1';
 
-class VibeCheckScreen2 extends StatefulWidget {
-  static String routeName = './VibeCheckScreen2';
-
-  const VibeCheckScreen2({super.key});
+  const VibeCheckScreen1({super.key});
 
   @override
-  State<VibeCheckScreen2> createState() => _VibeCheckScreen2State();
+  State<VibeCheckScreen1> createState() => _VibeCheckScreen1State();
 }
 
-class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
+class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
   // File? _imageSelect;
   // ignore: prefer_typing_uninitialized_variables
   var fileName;
 
   int reportId = 0;
+  bool isDropdownOpen = false;
+  int selectedIndex = -1;
 
   int selectedId = 2;
-  List Orders = [
-    {'id': 1, 'title': 'Delhi'},
-    {'id': 2, 'title': 'Banglore'},
-    {'id': 3, 'title': 'Gurgaon'},
-    {'id': 4, 'title': 'Mumbai'},
-  ];
   List<Map<String, dynamic>> imageList = [
     {
       "image": AppImage.div3,
@@ -91,8 +69,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
   ];
 
   List<bool> isOpen = [];
-  bool isDropdownOpen = false;
-  int selectedIndex = -1;
+
   @override
   void initState() {
     super.initState();
@@ -100,19 +77,20 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-    //     systemNavigationBarColor: AppColor.primaryColor,
-    //     systemNavigationBarIconBrightness: Brightness.light,
-    //     statusBarColor: AppColor.themeColor,
-    //     statusBarIconBrightness: Brightness.light));
+    // ignore: deprecated_member_use
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
+        statusBarBrightness: Brightness.light, // required for iOS
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
@@ -121,7 +99,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 30),
           child: Column(
-            mainAxisSize: MainAxisSize.min, // <-- ADD THIS
+            mainAxisSize: MainAxisSize.min,
             children: [
               AppButton(
                 text: '${AppLanguage.continueText[language]}',
@@ -130,24 +108,24 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: VibeCheckScreen3(),
+                      child: const VibeCheckScreen2(),
                       duration: const Duration(milliseconds: 500),
                     ),
                   );
                 },
               ),
-              SizedBox(height: 8), // better spacing
+              SizedBox(height: size.height * 1 / 100), // better spacing
               GestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => VibeCheckScreen3()));
+                          builder: (context) => const VibeCheckScreen2()));
                 },
                 child: Text(
                   textAlign: TextAlign.center,
                   AppLanguage.skip[language],
-                  style: TextStyle(
+                  style: const TextStyle(
                     fontFamily: AppFont.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -158,11 +136,11 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
             ],
           ),
         ),
-
         body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration:
+              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -176,6 +154,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           GestureDetector(
                             onTap: () {
@@ -204,7 +183,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                               child: Text(
                                 textAlign: TextAlign.center,
                                 AppLanguage.vibeCheck[language],
-                                style: TextStyle(
+                                style: const TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
@@ -223,11 +202,11 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
 
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 88 / 100,
-                  child: Align(
+                  child: const Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       textAlign: TextAlign.center,
-                      '2/3',
+                      '1/3',
                       style: TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 16,
@@ -241,7 +220,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   child: Image.asset(
-                    AppImage.frequencyTwoicon,
+                    AppImage.frequencyOneicon,
                     width: MediaQuery.of(context).size.width * 20 / 100,
                     height: MediaQuery.of(context).size.width * 10 / 100,
                   ),
@@ -256,14 +235,15 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     });
                   },
                   child: Container(
-                    width: size.width * 0.9,
+                    width: size.width * 90 / 100,
+                    // height: size.heiht *9/100,
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 15),
                     decoration: BoxDecoration(
                       color: AppColor.primaryColor,
                       borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(50),
-                        topRight: Radius.circular(50),
+                        topLeft: const Radius.circular(50),
+                        topRight: const Radius.circular(50),
                         bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
                         bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
                       ),
@@ -271,22 +251,23 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Column(
+                        const Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: const [
+                          children: [
                             Text(
                               "What's your perfect night out?",
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                  fontFamily: AppFont.plusJakartaSansFamily),
                             ),
                             SizedBox(height: 4),
                             Text(
                               "Describe your ideal evening in a few words.",
                               style: TextStyle(
                                 fontSize: 13,
+                                fontFamily: AppFont.plusJakartaSansFamily,
                                 fontWeight: FontWeight.w400,
                                 color: Color(0xffB7AFC9),
                               ),
@@ -295,7 +276,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                         ),
                         AnimatedRotation(
                           turns: isDropdownOpen ? 0.5 : 0,
-                          duration: Duration(milliseconds: 200),
+                          duration: const Duration(milliseconds: 200),
                           child: const Icon(
                             Icons.keyboard_arrow_down_rounded,
                             color: Colors.white,
@@ -308,7 +289,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
 
                 // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
                 if (isDropdownOpen)
-                  Divider(
+                  const Divider(
                     height: 0.2,
                     thickness: 0.5,
                     color: AppColor.greyLightColor,
@@ -319,11 +300,11 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                   Container(
                     width: size.width * 0.9,
                     padding: const EdgeInsets.symmetric(
-                      horizontal: 18,
+                      horizontal: 19,
                     ),
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       color: AppColor.primaryColor,
-                      borderRadius: const BorderRadius.only(
+                      borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
                       ),
@@ -335,13 +316,12 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                       itemBuilder: (context, index) {
                         return GestureDetector(
                           onTap: () {
-                            print("Selected: ${questionList[index]["title"]}");
                             setState(() {
                               isDropdownOpen = false;
                             });
                           },
                           child: Padding(
-                            padding: const EdgeInsets.symmetric(vertical: 10),
+                            padding: const EdgeInsets.symmetric(vertical: 8),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -362,7 +342,6 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                                     color: Color(0xffB7AFC9),
                                   ),
                                 ),
-                                const SizedBox(height: 6),
                               ],
                             ),
                           ),
@@ -371,7 +350,7 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                     ),
                   ),
 
-                SizedBox(height: size.height * 3 / 100),
+                SizedBox(height: size.height * 4 / 100),
 
                 Container(
                   width: size.width * 90 / 100,
@@ -399,59 +378,30 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                           left: size.width * 4 / 100,
                           right: size.width * 2 / 100,
                         ),
-                        // child: Image.asset(
-                        //   AppImage.searchIcon,
-                        //   height: size.width * 4 / 100,
-                        //   width: size.width * 4 / 100,
-                        //   color: AppColor.filledText,
-                        // ),
                       ),
                       prefixIconConstraints: BoxConstraints(
                         minWidth: size.width * 2 / 100,
                         minHeight: size.height * 6 / 100,
                       ),
-                      // enabledBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(12),
-                      //   borderSide: const BorderSide(
-                      //     color: AppColor.borderColor,
-                      //     width: 2,
-                      //   ),
-                      // ),
-                      // focusedBorder: OutlineInputBorder(
-                      //   borderRadius: BorderRadius.circular(12),
-                      //   borderSide: const BorderSide(
-                      //     color: AppColor.borderColor,
-                      //     width: 2,
-                      //   ),
-                      // ),
                       border: InputBorder.none,
-                      hintText: AppLanguage.yourAnswer[language],
-                      hintStyle: AppConstant.textFilledStyle1,
+                      hintText: AppLanguage.myperfectNight[language],
+                      hintStyle: AppConstant.textFilledStyle1.copyWith(
+                        color: AppColor.hintPlaceHolderText,
+                      ),
                       contentPadding: EdgeInsets.only(
                         right: size.width * 4 / 100,
                       ),
                     ),
                   ),
                 ),
- SizedBox(
+
+                SizedBox(
                   height: MediaQuery.of(context).size.height * 22 / 100,
                 ),
-                //       Image.asset(
-                //         AppImage.undo,
-                //         width: MediaQuery.of(context).size.width * 64 / 100,
-                //         height: MediaQuery.of(context).size.height * 8 / 100,
-                //       ),
-                //     ],
-                //   ),
-                // ),
-
-                // Container(
               ],
             ),
           ),
         ),
-        // bottomNavigationBar: const AppFooter(
-        //     selectedMenu: BottomMenus.home, notificationCount: 0),
       ),
     );
   }

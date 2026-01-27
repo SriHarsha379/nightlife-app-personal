@@ -1,18 +1,14 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_constant.dart';
-import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
-import 'package:night_life/view/bottom%20navigation/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
+import '../profile_details.dart';
 
 class CityPreference extends StatefulWidget {
   const CityPreference({super.key});
@@ -96,13 +92,13 @@ class _CityPreferenceState extends State<CityPreference> {
             floatingActionButton: Padding(
               padding: const EdgeInsets.only(bottom: 40),
               child: AppButton(
-                text: '${AppLanguage.continueText[language]}',
+                text: AppLanguage.continueText[language],
                 onPress: () {
                   Navigator.push(
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: AdditionalInfoScreen(),
+                      child: const AdditionalInfoScreen(),
                       duration: const Duration(milliseconds: 500),
                     ),
                   );
@@ -112,21 +108,25 @@ class _CityPreferenceState extends State<CityPreference> {
             body: Container(
               height: size.height * 100 / 100,
               width: size.width * 100 / 100,
-              decoration:
-                  BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+              decoration: const BoxDecoration(
+                  gradient: AppColor.backgroundGradientcolor),
               child: Column(
                 children: [
                   SizedBox(
                     height: size.height * 5 / 100,
                   ),
-                  Container(
+                  SizedBox(
                     width: size.width * 90 / 100,
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         GestureDetector(
                           onTap: () {
-                            Navigator.pop(context);
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        const ProfileDetailsScreen()));
                           },
                           child: Image.asset(
                               color: AppColor.secondryColor,
@@ -136,13 +136,13 @@ class _CityPreferenceState extends State<CityPreference> {
                         ),
                         Text(
                           AppLanguage.cityPreferenceText[language],
-                          style: TextStyle(
+                          style: const TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w700,
                               fontSize: 18,
                               color: AppColor.secondryColor),
                         ),
-                        Container(
+                        SizedBox(
                           height: size.width * 5 / 100,
                           width: size.width * 5 / 100,
                         )
@@ -157,7 +157,7 @@ class _CityPreferenceState extends State<CityPreference> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          Container(
+                          SizedBox(
                             width: size.width * 90 / 100,
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -165,16 +165,34 @@ class _CityPreferenceState extends State<CityPreference> {
                                 SizedBox(
                                   height: size.height * 2 / 100,
                                 ),
-                                Text(
-                                  AppLanguage.whereDoYouGoOutText[language],
-                                  style: TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColor.secondryColor),
+                                Text.rich(
+                                  TextSpan(
+                                    children: [
+                                      TextSpan(
+                                        text: AppLanguage
+                                                .selectYourPrefferedCityText[
+                                            language],
+                                        style: const TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w700,
+                                          color: AppColor.secondryColor,
+                                        ),
+                                      ),
+                                      const TextSpan(
+                                        text: " (Max 4)",
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 17,
+                                          fontWeight: FontWeight.w400,
+                                          color: AppColor.secondryColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                                 SizedBox(
-                                  height: size.height * 2.5 / 100,
+                                  height: size.height * 2 / 100,
                                 ),
                                 Container(
                                   width: size.width * 95 / 100,
@@ -217,14 +235,14 @@ class _CityPreferenceState extends State<CityPreference> {
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: AppColor.borderColor,
                                           width: 0,
                                         ),
                                       ),
                                       focusedBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(12),
-                                        borderSide: BorderSide(
+                                        borderSide: const BorderSide(
                                           color: AppColor.borderColor,
                                           width: 0,
                                         ),
@@ -268,7 +286,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                           Text(
                                             AppLanguage
                                                 .popularCitiesText[language],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                                 fontFamily: AppFont.fontFamily,
                                                 fontSize: 16,
                                                 fontWeight: FontWeight.w500,
@@ -344,7 +362,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                             100),
                                                     Text(
                                                       cityList[index]['name']!,
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontSize: 12,
@@ -370,16 +388,15 @@ class _CityPreferenceState extends State<CityPreference> {
                               ],
                             ),
                           ),
-      SizedBox(
+                          SizedBox(
                             height: size.height * 4 / 100,
                           ),
-
                           Container(
                             width: size.width * 90 / 100,
                             alignment: Alignment.centerLeft,
                             child: Text(
                               AppLanguage.mapViewText[language],
-                              style: TextStyle(
+                              style: const TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -398,7 +415,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                   border: Border.all(
                                       color: AppColor.darkPurpleColor,
                                       width: 2),
-                                  image: DecorationImage(
+                                  image: const DecorationImage(
                                       image: AssetImage(AppImage.mapImageIcon),
                                       fit: BoxFit.cover),
                                 ),
@@ -442,7 +459,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                         Text(
                                           AppLanguage
                                               .currentLocationText[language],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             color: AppColor.secondryColor,
                                             fontSize: 9,
                                             fontWeight: FontWeight.w300,
@@ -462,22 +479,17 @@ class _CityPreferenceState extends State<CityPreference> {
                               ),
                             ],
                           ),
-                          // Divider(
-                          //   thickness: 4,
-                          //   color: AppColor.darkPurpleColor,
-                          // ),
-
                           Padding(
                             padding:
                                 const EdgeInsets.symmetric(horizontal: 25.0),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                SizedBox(height: size.height *4/100),
+                                SizedBox(height: size.height * 4 / 100),
 
                                 Text(
                                   AppLanguage.distanceText[language],
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                     fontFamily: AppFont.fontFamily,
                                     fontSize: 18,
                                     fontWeight: FontWeight.w700,
@@ -485,7 +497,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                   ),
                                 ),
 
-                                SizedBox(height: 14), // instead of size
+                                const SizedBox(height: 14), // instead of size
 
                                 Container(
                                   width: double.infinity,
@@ -509,10 +521,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                               1 /
                                               100),
                                       Padding(
-                                        padding: EdgeInsets.only(left: 18),
+                                        padding:
+                                            const EdgeInsets.only(left: 18),
                                         child: Text(
                                           "Upto ${_currentDistance.toInt()} kilometres away",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
@@ -523,10 +536,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                       SliderTheme(
                                         data: SliderTheme.of(context).copyWith(
                                           trackHeight: 4.0,
-                                          overlayShape: RoundSliderOverlayShape(
-                                              overlayRadius: 20),
-                                          thumbShape: RoundSliderThumbShape(
-                                              enabledThumbRadius: 10),
+                                          overlayShape:
+                                              const RoundSliderOverlayShape(
+                                                  overlayRadius: 20),
+                                          thumbShape:
+                                              const RoundSliderThumbShape(
+                                                  enabledThumbRadius: 10),
                                         ),
                                         child: Slider(
                                           value: _currentDistance,
@@ -538,17 +553,17 @@ class _CityPreferenceState extends State<CityPreference> {
                                           onChanged: (value) {
                                             setState(() {
                                               _currentDistance = value;
-                                            }); 
+                                            });
                                           },
                                         ),
                                       ),
-                                      Row(
+                                      const Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 19.0),
+                                            padding:
+                                                EdgeInsets.only(left: 19.0),
                                             child: Text(
                                               "1km",
                                               style: TextStyle(
@@ -560,8 +575,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                             ),
                                           ),
                                           Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 17.0),
+                                            padding:
+                                                EdgeInsets.only(right: 17.0),
                                             child: Text(
                                               "60km",
                                               style: TextStyle(
@@ -574,12 +589,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                           ),
                                         ],
                                       ),
-                                      SizedBox(height: 2),
+                                      const SizedBox(height: 2),
                                       Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Expanded(
+                                          const Expanded(
                                             child: Padding(
                                               padding:
                                                   EdgeInsets.only(left: 19.0),
@@ -621,8 +636,6 @@ class _CityPreferenceState extends State<CityPreference> {
                                     ],
                                   ),
                                 ),
-                          
-                          
                               ],
                             ),
                           ),
@@ -678,7 +691,7 @@ class AboutRow extends StatelessWidget {
               padding: EdgeInsets.only(left: size.width * 0.05),
               child: Text(
                 text,
-                style: TextStyle(
+                style: const TextStyle(
                   fontFamily: AppFont.fontFamily,
                   fontSize: 16,
                   fontWeight: FontWeight.w400,

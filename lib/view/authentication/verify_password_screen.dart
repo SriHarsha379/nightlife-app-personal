@@ -1,14 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_footer.dart';
-import 'package:night_life/view/authentication/forgot_otp_verify_screen.dart';
-
-import 'package:pinput/pinput.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
-import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 import '../../utilities/widgets.dart';
 
@@ -30,42 +25,7 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
     super.initState();
   }
 
-  // forgotOtpUserValidation(String pinputInputController) async {
-  //   if (pinputInputController.isEmpty) {
-  //     SnackBarToastMessage.showSnackBar(
-  //         context, AppLanguage.otpMessage[language]);
-  //     return false;
-  //   } else if (pinputInputController.length < 4) {
-  //     SnackBarToastMessage.showSnackBar(
-  //         context, AppLanguage.otpMinLenthMessage[language]);
-  //     return false;
-  //   } else {
-  //     Navigator.push(
-  //       context,
-  //       MaterialPageRoute(builder: (context) => const AppFooter()),
-  //     );
-
-  //     // forgotOtpUserApiCall(firstInput, secondInput, thirdInput, fourthInput);
-  //   }
-  // }
-
-  // forgotOtpUserApiCall(String firstInput, String secondInput, String thirdInput,
-  //     String fourthInput) async {
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(builder: (context) => const Home()),
-  //   );
-  //   // Navigator.pushNamed(
-  //   //   context,
-  //   //   Home.routeName,
-  //   //   arguments: SuccessClass(
-  //   //     message: "Hello",
-  //   //     title: "Hello World",
-  //   //   ),
-  //   // );
-
-  //   // print("Call Update Api");
-  // }
+ 
 
   void nextField(String value, FocusNode focusNode) {
     if (value.length == 1) {
@@ -86,7 +46,7 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:  BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration:  const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -194,20 +154,7 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                  SizedBox(
                       height: MediaQuery.of(context).size.height * 3 / 100,
                     ),
-                //     Container(
-                //       alignment: Alignment.center,
-                //       width: MediaQuery.of(context).size.width * 70 / 100,
-                //       child: Text(
-                //         AppLanguage.forgotpasswordText[language],
-                //         textAlign: TextAlign.center,
-                //         style: const TextStyle(
-                //           color: AppColor.buttonColor,
-                //           fontSize: 14,
-                //           fontWeight: FontWeight.w600,
-                //           fontFamily: AppFont.fontFamily,
-                //         ),
-                //       ),
-                //     ),
+               
                    
              
                  
@@ -248,9 +195,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                       text: AppLanguage.continueText[language],
                       
                       onPress: () {
-                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>MyAppFooter()));
-                        // forgotPasswordUserValidation(
-                        //     mobilenumberTextEditingController.text);
+                        Navigator.pushReplacement(context, MaterialPageRoute(builder: (context)=>const MyAppFooter()));
+                
                       }),
 
                   

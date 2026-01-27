@@ -27,8 +27,7 @@ class MusicGenresScreen extends StatefulWidget {
 }
 
 class _MusicGenresScreenState extends State<MusicGenresScreen> {
-  // File? _imageSelect;
-  // ignore: prefer_typing_uninitialized_variables
+
   var fileName;
 
   @override
@@ -141,45 +140,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                         ],
                       ),
               
-                      // Row(
-                      //   children: [
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Notifications()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 3 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.bellicon,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //     SizedBox(
-                      //       width: size.width * 2 / 100,
-                      //     ),
-                      //     GestureDetector(
-                      //       onTap: () {
-                      //         Navigator.push(
-                      //           context,
-                      //           MaterialPageRoute(
-                      //               builder: (context) => const Profile()),
-                      //         );
-                      //       },
-                      //       child: SizedBox(
-                      //         height:
-                      //             MediaQuery.of(context).size.height * 5 / 100,
-                      //         child: Image.asset(
-                      //           AppImage.userimage,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ],
-                      // )
+                  
                     ],
                   ),
                 ),
@@ -191,7 +152,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                       textAlign: TextAlign.center,
                       AppLanguage.pickUpgenreText[language],
                       style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
+                        fontFamily: AppFont.plusJakartaSansFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
                         color: AppColor.secondryColor,
@@ -200,69 +161,69 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                   ),
                 ),
               
-                SizedBox(height: size.height * 2 / 100),
-                Container(
-                  width: size.width * 95 / 100,
-                  height: size.height * 6 / 100,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(12),
-                    color: AppColor.filledcolor,
-                    boxShadow: [
-                      BoxShadow(
-                        offset: const Offset(0, 1),
-                        spreadRadius: 0,
-                        blurRadius: 0,
-                        color: AppColor.transparentColor.withOpacity(0.1),
-                      ),
-                    ],
-                  ),
-                  child: TextFormField(
-                    controller: searchController,
-                    cursorColor: AppColor.secondryColor,
-                    style: const TextStyle(color: AppColor.secondryColor),
-                    textAlignVertical: TextAlignVertical.center,
-                    decoration: InputDecoration(
-                      prefixIcon: Padding(
-                        padding: EdgeInsets.only(
-                          left: size.width * 4 / 100,
-                          right: size.width * 2 / 100,
-                        ),
-                        child: Image.asset(
-                          AppImage.searchIcon,
-                          height: size.width * 4 / 100,
-                          width: size.width * 4 / 100,
-                          color: AppColor.filledText,
-                        ),
-                      ),
-                      prefixIconConstraints: BoxConstraints(
-                        minWidth: size.width * 12 / 100,
-                        minHeight: size.height * 6 / 100,
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColor.borderColor,
-                          width: 0,
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: const BorderSide(
-                          color: AppColor.borderColor,
-                          width: 0,
-                        ),
-                      ),
-                      border: InputBorder.none,
-                      hintText: AppLanguage.searchGenresText[language],
-                      hintStyle: AppConstant.textFilledStyle1,
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: size.height * 2 / 100,
-                        horizontal: size.width * 4 / 100,
-                      ),
-                      isDense: true,
-                    ),
-                  ),
-                ),
+                // SizedBox(height: size.height * 2 / 100),
+                // Container(
+                //   width: size.width * 95 / 100,
+                //   height: size.height * 6 / 100,
+                //   decoration: BoxDecoration(
+                //     borderRadius: BorderRadius.circular(12),
+                //     color: AppColor.filledcolor,
+                //     boxShadow: [
+                //       BoxShadow(
+                //         offset: const Offset(0, 1),
+                //         spreadRadius: 0,
+                //         blurRadius: 0,
+                //         color: AppColor.transparentColor.withOpacity(0.1),
+                //       ),
+                //     ],
+                //   ),
+                //   child: TextFormField(
+                //     controller: searchController,
+                //     cursorColor: AppColor.secondryColor,
+                //     style: const TextStyle(color: AppColor.secondryColor),
+                //     textAlignVertical: TextAlignVertical.center,
+                //     decoration: InputDecoration(
+                //       prefixIcon: Padding(
+                //         padding: EdgeInsets.only(
+                //           left: size.width * 4 / 100,
+                //           right: size.width * 2 / 100,
+                //         ),
+                //         child: Image.asset(
+                //           AppImage.searchIcon,
+                //           height: size.width * 4 / 100,
+                //           width: size.width * 4 / 100,
+                //           color: AppColor.filledText,
+                //         ),
+                //       ),
+                //       prefixIconConstraints: BoxConstraints(
+                //         minWidth: size.width * 12 / 100,
+                //         minHeight: size.height * 6 / 100,
+                //       ),
+                //       enabledBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(12),
+                //         borderSide: const BorderSide(
+                //           color: AppColor.borderColor,
+                //           width: 0,
+                //         ),
+                //       ),
+                //       focusedBorder: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(12),
+                //         borderSide: const BorderSide(
+                //           color: AppColor.borderColor,
+                //           width: 0,
+                //         ),
+                //       ),
+                //       border: InputBorder.none,
+                //       hintText: AppLanguage.searchGenresText[language],
+                //       hintStyle: AppConstant.textFilledStyle1,
+                //       contentPadding: EdgeInsets.symmetric(
+                //         vertical: size.height * 2 / 100,
+                //         horizontal: size.width * 4 / 100,
+                //       ),
+                //       isDense: true,
+                //     ),
+                //   ),
+                // ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
@@ -311,7 +272,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                       Orders.length,
                       (index) {
                         return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 10),
                           child: Row(
                             children: [
                               // First Image
@@ -491,12 +452,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                           left: size.width * 4 / 100,
                           right: size.width * 2 / 100,
                         ),
-                        // child: Image.asset(
-                        //   AppImage.searchIcon,
-                        //   height: size.width * 4 / 100,
-                        //   width: size.width * 4 / 100,
-                        //   color: AppColor.filledText,
-                        // ),
+                      
                       ),
                       prefixIconConstraints: BoxConstraints(
                         minWidth: size.width * 2 / 100,
@@ -526,44 +482,18 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                     ),
                   ),
                 ),
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 4 / 100,
-                // ),
-                // AppButton(
-                //     text: AppLanguage.continueText[language],
-                //     onPress: () {
-                //       Navigator.push(
-                //           context,
-                //           MaterialPageRoute(
-                //               builder: (context) => EventPreference()));
-                //     }),
+               
               
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 18 / 100,
+                  height: MediaQuery.of(context).size.height * 28 / 100,
                 ),
               
-                // ),
-              
-                // Container(
-              
-                //   margin: EdgeInsets.symmetric(horizontal: 90, vertical: 1),
-                //   width: MediaQuery.of(context).size.width * 100 / 100,
-                //   height: MediaQuery.of(context).size.width *20 / 100,
-                //   child: Image.asset(
-                //     AppImage.undo,
-                //     fit: BoxFit.contain,
-                //   ),
-                // ),
-              
-                // SizedBox(
-                //   height: MediaQuery.of(context).size.height * 2 / 100,
-                // ),
+           
               ],
             ),
           ),
         ),
-        // bottomNavigationBar: const AppFooter(
-        //     selectedMenu: BottomMenus.home, notificationCount: 0),
+      
       ),
     );
   }

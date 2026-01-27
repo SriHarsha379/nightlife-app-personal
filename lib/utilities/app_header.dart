@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-
 import 'app_color.dart';
-import 'app_constant.dart';
 import 'app_font.dart';
 import 'app_image.dart';
-import 'app_language.dart';
 
 class AppHeader extends StatelessWidget {
   final String text;
@@ -143,21 +140,7 @@ class AppHeader1 extends StatelessWidget {
               ),
             ),
           ),
-          // SizedBox(
-          //   width: MediaQuery.of(context).size.width * 60 / 100,
-          //   child: Text(text,
-          //       textAlign: TextAlign.center,
-          //       style: const TextStyle(
-          //           color: AppColor.primaryColor,
-          //           fontSize: 17,
-          //           fontWeight: FontWeight.w700,
-          //           fontFamily: AppFont.fontFamily)),
-          // ),
-          // SizedBox(
-          //   // height: MediaQuery.of(context).size.width * 13 / 100,
-          //   width: MediaQuery.of(context).size.width * 15 / 100,
-          //   child: actionButtons != null ? Row(children: actionButtons!) : null,
-          // ),
+       
         ],
       ),
     );

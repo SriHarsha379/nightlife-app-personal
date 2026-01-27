@@ -1,12 +1,9 @@
-import 'package:flutter/cupertino.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/utilities/app_header.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
@@ -58,8 +55,6 @@ class _CompletePaymentState extends State<CompletePayment> {
           child: AppButton(
             text: '${AppLanguage.paySecurelyText[language]} ₹${'450'}',
             onPress: () {
-              //  Navigator.push(context,
-              //     MaterialPageRoute(builder: (context) =>  SearchScreen()));
             },
           ),
         ),
