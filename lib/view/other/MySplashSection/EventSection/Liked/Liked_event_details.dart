@@ -9,7 +9,9 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../../utilities/app_footer.dart';
+import '../../../../../utilities/app_image_media_viewer.dart';
 import '../../../chats/chat_message_screen.dart';
+import 'view_all_image.dart';
 
 class LikedEventDetail extends StatefulWidget {
   static const String routeName = '/LikedEventDetail';
@@ -64,6 +66,28 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'text': 'Mark',
     },
   ];
+  List<dynamic> galleryImagesList = [
+    {
+      "media_type": 1,
+      "workshop_media": AppImage.gallImg1,
+    },
+    {
+      "media_type": 1,
+      "workshop_media": AppImage.gallImg2,
+    },
+    {
+      "media_type": 1,
+      "workshop_media": AppImage.gallImg3,
+    },
+    {
+      "media_type": 1,
+      "workshop_media": AppImage.gallImg4,
+    },
+    {
+      "media_type": 1,
+      "workshop_media": AppImage.eventImage1,
+    },
+  ];
 
   List Bookedlist = [
     {
@@ -81,7 +105,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'text': 'Mark',
     },
   ];
-  
 
   List chats = [
     {
@@ -140,8 +163,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     },
   ];
 
-
-
   List chatsLists = [
     {
       'id': 1,
@@ -152,7 +173,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'message1': 'Done',
       'isSend': false,
     },
-   
     {
       'id': 2,
       'image': 'assets/icons/riya.png',
@@ -189,7 +209,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       'message1': 'Done',
       'isSend': false,
     },
-       {
+    {
       'id': 6,
       'image': AppImage.soham,
       'name': 'soham',
@@ -200,19 +220,43 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     },
   ];
 
-  
-   final List<String> shareIcons = [
+  final List<String> shareIcons = [
     AppImage.shareIcon,
     AppImage.whatsappIcon,
     AppImage.instaIcon,
     AppImage.snapIcon,
   ];
+
+  void showMediaViewerBottomSheet({
+    required BuildContext context,
+    required List<dynamic> mediaList,
+    required int initialIndex,
+  }) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent.withOpacity(0.4),
+      barrierColor: Colors.transparent.withOpacity(0.4),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      builder: (_) {
+        return FractionallySizedBox(
+          heightFactor: 0.98,
+          child: MediaViewerBottomSheet(
+            mediaList: mediaList,
+            initialIndex: initialIndex,
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light,
@@ -223,7 +267,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-            floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
               color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
@@ -233,7 +278,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             height: size.height * 7 / 100,
             child: Row(
               children: [
-                   SizedBox(
+                SizedBox(
                   width: size.width * 3 / 100,
                 ),
                 GestureDetector(
@@ -242,7 +287,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     Navigator.push(
                       context,
                       PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
+                        type: PageTransitionType.leftToRightWithFade,
                         child: MyAppFooter(initialIndex: 0),
                         duration: const Duration(milliseconds: 500),
                       ),
@@ -269,9 +314,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     eventstypebottomsheet(context);
                   },
                   child: Container(
-                  width: size.width * 30 / 100,
-                                    height: size.height * 4.6 / 100,
-
+                    width: size.width * 30 / 100,
+                    height: size.height * 4.6 / 100,
                     decoration: BoxDecoration(
                       color: AppColor.secondryColor,
                       borderRadius: BorderRadius.circular(50),
@@ -312,8 +356,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     decoration: BoxDecoration(
                       color: AppColor.buttonColor,
                       borderRadius: BorderRadius.circular(50),
-
-                 
                     ),
                     child: Row(
                       children: [
@@ -346,9 +388,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-
-                 SizedBox(height: size.height * 3 / 100),
-          
+                SizedBox(height: size.height * 3 / 100),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Center(
@@ -531,7 +571,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 height: size.width * 18 / 100,
                                               ),
                                             ),
-                                         
                                           ],
                                         ),
                                       ],
@@ -676,14 +715,23 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               color: AppColor.secondryColor),
                                         ),
                                       ),
-                                      Container(
-                                        child: Text(
-                                          AppLanguage.viewAlltext[language],
-                                          style: const TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.pinkColor),
+                                      GestureDetector(
+                                        onTap: () {
+                                          // showMediaViewerBottomSheet(
+                                          //     context: context,
+                                          //     mediaList: galleryImagesList,
+                                          //     initialIndex: 0);
+                                          _openGalleryBottomSheet(context);
+                                        },
+                                        child: Container(
+                                          child: Text(
+                                            AppLanguage.viewAlltext[language],
+                                            style: const TextStyle(
+                                                fontSize: 16,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.pinkColor),
+                                          ),
                                         ),
                                       ),
                                     ],
@@ -1087,8 +1135,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       color: AppColor.lightgreyColor,
                                     ),
                                   ),
-                                  
-                  ],
+                                ],
                               ),
                             ),
                             SizedBox(
@@ -1151,7 +1198,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 fit: BoxFit.fill,
                               ),
                               SizedBox(height: size.height * 2 / 100),
-
                               Center(
                                 child: SizedBox(
                                   width: size.width * 90 / 100,
@@ -1183,8 +1229,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 indent: 28,
                                 endIndent: 28,
                               ),
-                           
-
                               SizedBox(height: size.height * 2 / 100),
                               SizedBox(height: size.height * 1 / 100),
                               Expanded(
@@ -1342,7 +1386,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     );
   }
 
-
   void _openGuestBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
@@ -1467,6 +1510,212 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                           fontSize: 15,
                           color: AppColor.pinkColor,
                         ),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: size.height * 2 / 100),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  void _openGalleryBottomSheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    PageController pageController = PageController();
+    int currentPage = 0;
+
+    List<String> galleryImages = [
+      AppImage.gallImg1,
+      AppImage.gallImg2,
+      AppImage.gallImg3,
+      // AppImage.gallImg4,
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return Container(
+              height: size.height * 0.8,
+              decoration: BoxDecoration(
+                color: AppColor.transparentColor.withOpacity(.5),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(30),
+                  topRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                children: [
+                  /// -------- TITLE & CLOSE BUTTON --------
+                  Padding(
+                    padding:
+                        EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        GestureDetector(
+                          onTap: () => Navigator.pop(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.grey.withOpacity(0.2),
+                            ),
+                            child: Icon(
+                              Icons.close,
+                              color: AppColor.secondryColor,
+                              size: 20,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: size.height * 2 / 100),
+
+                  /// -------- MAIN IMAGE WITH ARROWS --------
+                  Container(
+                    height: size.height * 0.35,
+                    child: Stack(
+                      children: [
+                        PageView.builder(
+                          controller: pageController,
+                          itemCount: galleryImages.length,
+                          onPageChanged: (index) {
+                            setState(() {
+                              currentPage = index;
+                            });
+                          },
+                          itemBuilder: (context, index) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * 3 / 100),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.asset(
+                                  galleryImages[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+
+                        /// -------- LEFT ARROW --------
+                        if (currentPage > 0)
+                          Positioned(
+                            left: size.width * 5 / 100,
+                            top: size.height * 0.20,
+                            child: GestureDetector(
+                              onTap: () {
+                                pageController.previousPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                                child: Icon(
+                                  Icons.chevron_left,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                        /// -------- RIGHT ARROW --------
+                        if (currentPage < galleryImages.length - 1)
+                          Positioned(
+                            right: size.width * 5 / 100,
+                            top: size.height * 0.20,
+                            child: GestureDetector(
+                              onTap: () {
+                                pageController.nextPage(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.easeInOut,
+                                );
+                              },
+                              child: Container(
+                                padding: EdgeInsets.all(8),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black.withOpacity(0.5),
+                                ),
+                                child: Icon(
+                                  Icons.chevron_right,
+                                  color: Colors.white,
+                                  size: 24,
+                                ),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+
+                  SizedBox(height: size.height * 2 / 100),
+
+                  /// -------- GALLERY TEXT --------
+
+                  Expanded(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 5 / 100),
+                      child: GridView.builder(
+                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                          crossAxisCount: 3,
+                          crossAxisSpacing: 10,
+                          mainAxisSpacing: 10,
+                          childAspectRatio: 1,
+                        ),
+                        itemCount: galleryImages.length,
+                        itemBuilder: (context, index) {
+                          return GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                currentPage = index;
+                              });
+                              pageController.animateToPage(
+                                index,
+                                duration: Duration(milliseconds: 300),
+                                curve: Curves.easeInOut,
+                              );
+                            },
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                border: Border.all(
+                                  color: currentPage == index
+                                      ? AppColor.pinkColor
+                                      : Colors.transparent,
+                                  width: 2,
+                                ),
+                              ),
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(13),
+                                child: Image.asset(
+                                  galleryImages[index],
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ),

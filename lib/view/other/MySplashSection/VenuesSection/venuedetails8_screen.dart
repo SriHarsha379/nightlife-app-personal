@@ -39,6 +39,12 @@ class _BookEventState extends State<BookEvent> {
     },
   ];
   Set<int> selectedIndexes = {};
+  int selectedPassIndex = 0;
+
+  // Track which containers are expanded
+  bool isEventLayoutExpanded = false;
+  bool isProhibitedItemsExpanded = false;
+  bool isFAQExpanded = false;
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +54,7 @@ class _BookEventState extends State<BookEvent> {
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
@@ -263,69 +269,91 @@ class _BookEventState extends State<BookEvent> {
                               width: size.width * 65 / 100,
                               height: size.height * 5.2 / 100,
                               decoration: BoxDecoration(
-                                  color: AppColor.washpressColor,
-                                  borderRadius: BorderRadius.circular(40)),
+                                color: AppColor.washpressColor,
+                                borderRadius: BorderRadius.circular(40),
+                              ),
                               child: Row(
                                 children: [
-                                  SizedBox(
-                                    width: size.width * 1.2 / 100,
-                                  ),
-                                  Container(
-                                    width: size.width * 32 / 100,
-                                    height: size.height * 4.2 / 100,
-                                    decoration: BoxDecoration(
-                                        color: AppColor.secondryColor,
-                                        borderRadius:
-                                            BorderRadius.circular(44)),
-                                    child: Center(
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              3 /
-                                              100,
-                                          vertical: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              1 /
-                                              100,
-                                        ),
-                                        child: Text(
-                                          "One Day Pass",
-                                          style: const TextStyle(
+                                  SizedBox(width: size.width * 1.2 / 100),
+
+                                  /// -------- ONE DAY PASS --------
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedPassIndex = 0;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: size.width * 30 / 100,
+                                      height: size.height * 4.2 / 100,
+                                      decoration: BoxDecoration(
+                                        color: selectedPassIndex == 0
+                                            ? AppColor.secondryColor
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(44),
+                                      ),
+                                      child: Center(
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            horizontal: size.width * 3 / 100,
+                                            vertical: size.height * 1 / 100,
+                                          ),
+                                          child: Text(
+                                            "One Day Pass",
+                                            style: TextStyle(
                                               fontSize: 12,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.primaryColor),
+                                              color: selectedPassIndex == 0
+                                                  ? AppColor.primaryColor
+                                                  : AppColor.secondryColor,
+                                            ),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        3 /
-                                        100,
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      AppLanguage.mutidayText[language],
-                                      style: const TextStyle(
-                                          fontSize: 12,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor),
+
+                                  SizedBox(width: size.width * 2 / 100),
+
+                                  /// -------- MULTI DAY PASS --------
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        selectedPassIndex = 1;
+                                      });
+                                    },
+                                    child: Container(
+                                      width: size.width * 30 / 100,
+                                      height: size.height * 4.2 / 100,
+                                      decoration: BoxDecoration(
+                                        color: selectedPassIndex == 1
+                                            ? AppColor.secondryColor
+                                            : Colors.transparent,
+                                        borderRadius: BorderRadius.circular(44),
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          AppLanguage.mutidayText[language],
+                                          style: TextStyle(
+                                            fontSize: 12,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            color: selectedPassIndex == 1
+                                                ? AppColor.primaryColor
+                                                : AppColor.secondryColor,
+                                          ),
+                                        ),
+                                      ),
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                             ListView.builder(
-                              // scrollDirection: Axis.vertical,
                               shrinkWrap: true,
                               physics: NeverScrollableScrollPhysics(),
-                              itemCount: topMeals
-                                  .length, // your list of BookEvent items
+                              itemCount: topMeals.length,
                               itemBuilder: (context, index) {
                                 final item = topMeals[index];
                                 return Column(
@@ -334,8 +362,6 @@ class _BookEventState extends State<BookEvent> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.spaceBetween,
                                       children: [
-                                      
-
                                         Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
@@ -406,15 +432,14 @@ class _BookEventState extends State<BookEvent> {
                                               color: selectedIndexes
                                                       .contains(index)
                                                   ? AppColor
-                                                      .logoutContainerColor // DONE
+                                                      .logoutContainerColor
                                                   : AppColor.secondryColor,
                                               border: Border.all(
                                                 width: 1,
                                                 color: selectedIndexes
                                                         .contains(index)
                                                     ? AppColor.pinkColor
-                                                    : AppColor
-                                                        .secondryColor, 
+                                                    : AppColor.secondryColor,
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -449,17 +474,42 @@ class _BookEventState extends State<BookEvent> {
                             SizedBox(height: size.height * 5.5 / 100),
                             Column(
                               children: [
-                                customDropContainer(
+                                // View Event Layout
+                                customExpandableContainer(
                                   title: "View Event Layout",
-                                  onTap: () {},
+                                  isExpanded: isEventLayoutExpanded,
+                                  onTap: () {
+                                    setState(() {
+                                      isEventLayoutExpanded =
+                                          !isEventLayoutExpanded;
+                                    });
+                                  },
+                                  child: _buildEventLayout(size),
                                 ),
-                                customDropContainer(
+
+                                // Prohibited Items
+                                customExpandableContainer(
                                   title: "Prohibited Items",
-                                  onTap: () {},
+                                  isExpanded: isProhibitedItemsExpanded,
+                                  onTap: () {
+                                    setState(() {
+                                      isProhibitedItemsExpanded =
+                                          !isProhibitedItemsExpanded;
+                                    });
+                                  },
+                                  child: _buildProhibitedItems(),
                                 ),
-                                customDropContainer(
+
+                                // FAQ
+                                customExpandableContainer(
                                   title: "Frequently Asked Questions",
-                                  onTap: () {},
+                                  isExpanded: isFAQExpanded,
+                                  onTap: () {
+                                    setState(() {
+                                      isFAQExpanded = !isFAQExpanded;
+                                    });
+                                  },
+                                  child: _buildFAQ(),
                                 ),
                               ],
                             ),
@@ -474,39 +524,290 @@ class _BookEventState extends State<BookEvent> {
     );
   }
 
-  Widget customDropContainer({
+  Widget customExpandableContainer({
     required String title,
+    required bool isExpanded,
     required VoidCallback onTap,
+    required Widget child,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
-        decoration: BoxDecoration(
-          color: const Color(0xFF1A0F29), // background color
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 15,
-                fontWeight: FontWeight.w600,
+    return AnimatedContainer(
+      duration: Duration(milliseconds: 300),
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF1A0F29),
+        borderRadius: BorderRadius.circular(30),
+      ),
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: onTap,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 15,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                AnimatedRotation(
+                  turns: isExpanded ? 0.5 : 0,
+                  duration: Duration(milliseconds: 300),
+                  child: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: Colors.white,
+                    size: 26,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          AnimatedCrossFade(
+            firstChild: SizedBox.shrink(),
+            secondChild: Padding(
+              padding: const EdgeInsets.only(top: 16),
+              child: child,
+            ),
+            crossFadeState: isExpanded
+                ? CrossFadeState.showSecond
+                : CrossFadeState.showFirst,
+            duration: Duration(milliseconds: 300),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEventLayout(Size size) {
+    return Column(
+      children: [
+        // Stage Section
+        Container(
+          width: double.infinity,
+          padding: EdgeInsets.symmetric(vertical: 10),
+          decoration: BoxDecoration(
+            color: Colors.grey.shade300,
+            borderRadius: BorderRadius.circular(15),
+          ),
+          child: Center(
+            child: Text(
+              "STAGE",
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 16,
+                fontWeight: FontWeight.w700,
               ),
             ),
+          ),
+        ),
+        SizedBox(height: 15),
+        // VIP and GA Area
+        Container(
+          height: 280,
+          decoration: BoxDecoration(
+            color: Colors.purple.shade900,
+            borderRadius: BorderRadius.circular(20),
+          ),
+          child: Stack(
+            children: [
+              // VIP Area
+              Positioned(
+                top: 15,
+                left: 15,
+                right: 15,
+                child: Container(
+                  height: 50,
+                  decoration: BoxDecoration(
+                    color: Colors.purple.shade600,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(
+                      "VIP AREA",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              // GA Area
+              Positioned(
+                top: 80,
+                left: 15,
+                right: 15,
+                bottom: 15,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.purple.shade700,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        "GA AREA",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                      SizedBox(height: 30),
+                      // Center Rectangle
+                      Container(
+                        width: 60,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: Colors.grey.shade800,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        SizedBox(height: 15),
+        // Notes
+        Row(
+          children: [
             Icon(
-              Icons.keyboard_arrow_down_rounded,
-              color: Colors.white,
-              size: 26,
+              Icons.info_outline,
+              color: Colors.grey,
+              size: 14,
+            ),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                "This layout is not drawn to the actual scale of the venue.",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 11,
+                ),
+              ),
             ),
           ],
         ),
+        SizedBox(height: 8),
+        Row(
+          children: [
+            Icon(
+              Icons.square,
+              color: Colors.grey,
+              size: 14,
+            ),
+            SizedBox(width: 6),
+            Expanded(
+              child: Text(
+                "Sold Out / Unavailable tickets are marked in grey",
+                style: TextStyle(
+                  color: Colors.grey,
+                  fontSize: 11,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildProhibitedItems() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildBulletPoint("Outside food and beverages"),
+        _buildBulletPoint("Professional cameras and recording equipment"),
+        _buildBulletPoint("Weapons or sharp objects"),
+        _buildBulletPoint("Illegal substances"),
+      ],
+    );
+  }
+
+  Widget _buildFAQ() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildFAQItem(
+          "What time does the event start?",
+          "The event starts at 8:00 PM.",
+        ),
+        SizedBox(height: 12),
+        _buildFAQItem(
+          "Is parking available?",
+          "Yes, parking is available at the venue.",
+        ),
+        SizedBox(height: 12),
+        _buildFAQItem(
+          "Can I get a refund?",
+          "Refunds are available up to 48 hours before the event.",
+        ),
+        SizedBox(height: 12),
+        _buildFAQItem(
+          "Is outside food allowed?",
+          "No, outside food is not permitted inside the venue.",
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBulletPoint(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "• ",
+            style: TextStyle(
+              color: AppColor.secondryColor,
+              fontSize: 14,
+            ),
+          ),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: AppColor.secondryColor,
+                fontSize: 13,
+              ),
+            ),
+          ),
+        ],
       ),
+    );
+  }
+
+  Widget _buildFAQItem(String question, String answer) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          question,
+          style: TextStyle(
+            color: AppColor.secondryColor,
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        SizedBox(height: 4),
+        Text(
+          answer,
+          style: TextStyle(
+            color: Colors.grey,
+            fontSize: 12,
+          ),
+        ),
+      ],
     );
   }
 }

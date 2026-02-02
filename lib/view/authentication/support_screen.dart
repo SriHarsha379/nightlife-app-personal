@@ -2,6 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:night_life/utilities/app_button.dart';
+import 'package:night_life/view/authentication/report_problem.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -10,6 +13,7 @@ import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../content_screen/content_screen.dart';
+import 'chat_support.dart';
 
 class SupportScreen extends StatefulWidget {
   const SupportScreen({Key? key}) : super(key: key);
@@ -18,34 +22,34 @@ class SupportScreen extends StatefulWidget {
   State<SupportScreen> createState() => _SupportScreenState();
 }
 
-List<Map<String, dynamic>> imageList = [
+List<Map<String, dynamic>> faqList = [
   {
     "heading": "How do I create an account?",
     "message":
         "To create an account, download the app, tap 'Sign Up', and follow the prompts. You'll need to provide your email, create a password, and agree to our terms.",
     "image": AppImage.downArrow,
   },
-];
-List<Map<String, dynamic>> itemList = [
   {
     "heading": "What are the community guidelines?",
+    "message":
+        "Our community guidelines help keep the platform safe and respectful for everyone.",
     "image": AppImage.downArrow,
   },
-];
-
-List<Map<String, dynamic>> listitem = [
   {
-    "heading": "How do I create an account?",
+    "heading": "How can I reset my password?",
+    "message":
+        "Go to login screen, tap on 'Forgot Password', enter your registered email and follow instructions.",
     "image": AppImage.downArrow,
   },
 ];
 
 class _SupportScreenState extends State<SupportScreen> {
   List<bool> expanded = [];
+
   @override
   void initState() {
-    super.initState(); // NOW valid
-    expanded = List.generate(imageList.length, (index) => false);
+    super.initState();
+    expanded = List.generate(faqList.length, (index) => false);
   }
 
   @override
@@ -89,29 +93,33 @@ class _SupportScreenState extends State<SupportScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    children: imageList.asMap().entries.map((entry) {
-                      int index = entry.key;
-                      var item = entry.value;
 
-                      return Column(
+                Column(
+                  children: faqList.asMap().entries.map((entry) {
+                    int index = entry.key;
+                    var item = entry.value;
+
+                    return Container(
+                      margin: EdgeInsets.symmetric(
+                        horizontal: size.width * 4 / 100,
+                        vertical: size.height * 0.8 / 100,
+                      ),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: size.width * 4 / 100,
+                        vertical: size.height * 1.8 / 100,
+                      ),
+                      decoration: BoxDecoration(
+                        color: AppColor.notificationContainerColor,
+                        borderRadius: BorderRadius.circular(12),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.primaryColor.withOpacity(0.6),
+                            blurRadius: 6,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           GestureDetector(
@@ -121,7 +129,6 @@ class _SupportScreenState extends State<SupportScreen> {
                               });
                             },
                             child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
                                   child: Text(
@@ -138,15 +145,15 @@ class _SupportScreenState extends State<SupportScreen> {
                                   angle: expanded[index] ? 0 : 3.14,
                                   child: Image.asset(
                                     item["image"],
-                                    width: size.width * 5 / 100,
                                     height: size.width * 5 / 100,
+                                    width: size.width * 5 / 100,
                                   ),
                                 ),
                               ],
                             ),
                           ),
                           if (expanded[index]) ...[
-                            SizedBox(height: 10),
+                            SizedBox(height: size.height * 1 / 100),
                             Text(
                               item["message"],
                               textAlign: TextAlign.justify,
@@ -157,115 +164,11 @@ class _SupportScreenState extends State<SupportScreen> {
                                 fontWeight: FontWeight.w400,
                               ),
                             ),
-                            SizedBox(height: 10),
                           ],
                         ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: itemList.map((items) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  items["heading"],
-                                  textAlign: TextAlign.justify,
-                                  style: const TextStyle(
-                                    color: AppColor.secondryColor,
-                                    fontSize: 14,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.width * 5 / 100,
-                                width: size.width * 5 / 100,
-                                child: Image.asset(
-                                  items["image"],
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 16, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(12),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: listitem.map((list) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Text(
-                                  list["heading"],
-                                  textAlign: TextAlign.justify,
-                                  style: const TextStyle(
-                                    color: AppColor.secondryColor,
-                                    fontSize: 14,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: size.width * 5 / 100,
-                                width: size.width * 5 / 100,
-                                child: Image.asset(
-                                  list["image"],
-                                  fit: BoxFit.contain,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      );
-                    }).toList(),
-                  ),
+                    );
+                  }).toList(),
                 ),
 
                 Padding(
@@ -282,87 +185,104 @@ class _SupportScreenState extends State<SupportScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.topToBottom,
+                        child: ChatSupport(),
+                        duration: const Duration(milliseconds: 400),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.width * 8 / 100,
-                            width: size.width * 12 / 100,
-                            child: Image.asset(
-                              AppImage.messageChatsicon,
-                              fit: BoxFit.contain,
+                    );
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor,
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: size.width * 8 / 100,
+                              width: size.width * 12 / 100,
+                              child: Image.asset(
+                                AppImage.messageChatsicon,
+                                fit: BoxFit.contain,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: size.width * 2 / 100),
-                          Text(
-                            AppLanguage.chatWithus[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w600,
+                            SizedBox(width: size.width * 2 / 100),
+                            Text(
+                              AppLanguage.chatWithus[language],
+                              style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: 14,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 12 / 100,
-                        child: Image.asset(
-                          AppImage.headphoneIcon,
-                          fit: BoxFit.contain,
+                GestureDetector(
+                  onTap: () {
+                    documenttypebottomsheet(context);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor,
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: Offset(0, 1),
                         ),
-                      ),
-                      SizedBox(width: size.width * 2 / 100),
-                      Text(
-                        AppLanguage.liveSupport[language],
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 14,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w600,
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                          height: size.width * 8 / 100,
+                          width: size.width * 12 / 100,
+                          child: Image.asset(
+                            AppImage.headphoneIcon,
+                            fit: BoxFit.contain,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(width: size.width * 2 / 100),
+                        Text(
+                          AppLanguage.liveSupport[language],
+                          style: const TextStyle(
+                            color: AppColor.secondryColor,
+                            fontSize: 14,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -382,51 +302,63 @@ class _SupportScreenState extends State<SupportScreen> {
                     ),
                   ),
                 ),
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeft,
+                        child: ReportProblemScreen(),
+                        duration: const Duration(milliseconds: 400),
                       ),
-                    ],
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      SizedBox(width: size.width * 2 / 100),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.width * 8 / 100,
-                            width: size.width * 12 / 100,
-                            child: Image.asset(
-                              AppImage.flagIcon,
-                              fit: BoxFit.contain,
+                    );
+                  },
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                    margin: const EdgeInsets.symmetric(
+                        horizontal: 10, vertical: 10),
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor,
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor,
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: const Offset(0, 1),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(width: size.width * 2 / 100),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            SizedBox(
+                              height: size.width * 8 / 100,
+                              width: size.width * 12 / 100,
+                              child: Image.asset(
+                                AppImage.flagIcon,
+                                fit: BoxFit.contain,
+                              ),
                             ),
-                          ),
-                          SizedBox(width: size.width * 2 / 100),
-                          Text(
-                            AppLanguage.reportAproblemText[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w600,
+                            SizedBox(width: size.width * 2 / 100),
+                            Text(
+                              AppLanguage.reportAproblemText[language],
+                              style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontSize: 14,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ],
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
 
@@ -502,7 +434,7 @@ class _SupportScreenState extends State<SupportScreen> {
                     ),
                   ),
                 ),
-
+                SizedBox(height: size.height * .2 / 100),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
@@ -562,5 +494,172 @@ class _SupportScreenState extends State<SupportScreen> {
         ),
       ),
     );
+  }
+
+  void documenttypebottomsheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setStateBottomSheet) {
+          return Container(
+            width: MediaQuery.of(context).size.width * 95 / 100,
+            height: MediaQuery.of(context).size.height * 40 / 100,
+            color: Colors.transparent,
+            child: Column(
+              children: [
+                Container(
+                  width: MediaQuery.of(context).size.width * 95 / 100,
+                  height: MediaQuery.of(context).size.height * 40 / 100,
+                  child: Column(
+                    children: [
+                      Expanded(
+                        flex: 1,
+                        child: Container(
+                          decoration: const BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor,
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(45),
+                              topRight: Radius.circular(45),
+                            ),
+                          ),
+                          width: size.width * 1.0,
+                          child: Column(
+                            children: [
+                              SizedBox(height: size.height * 0.02),
+                              Container(
+                                width: size.width * 0.88,
+                                child: Column(
+                                  children: [
+                                    // First Image
+
+                                    Align(
+                                      alignment: Alignment.center,
+                                      child: Image.asset(
+                                        AppImage.dashIcon,
+                                        height: size.height * 0.5 / 100,
+                                        width: size.width * 22 / 100,
+                                        fit: BoxFit.fill,
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 4 / 100),
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.84,
+                                      child: Text(
+                                        AppLanguage
+                                            .contactSupportText[language],
+                                        style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 23,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 1 / 100),
+
+                                    SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          0.84,
+                                      child: Text(
+                                        AppLanguage
+                                            .contactSupportHintText[language],
+                                        style: const TextStyle(
+                                          color: AppColor.secondryColor,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 12,
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.04),
+
+                                    Center(
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 4 / 100,
+                                          vertical: size.height * 1.6 / 100,
+                                        ),
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Image.asset(
+                                              AppImage.email,
+                                              height: size.width * 5 / 100,
+                                              width: size.width * 6 / 100,
+                                              fit: BoxFit.contain,
+                                              color: Colors.white,
+                                            ),
+                                            SizedBox(
+                                                width: size.width * 3 / 100),
+                                            Text(
+                                              "Mail Id: hii.app@support",
+                                              style: const TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 14,
+                                                fontWeight: FontWeight.w600,
+                                                fontFamily: AppFont.fontFamily,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: size.height * 0.03),
+
+                                    GestureDetector(
+                                      onTap: () {
+                                        Navigator.pop(context);
+                                      },
+                                      child: Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                85 /
+                                                100,
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                6.5 /
+                                                100,
+                                        decoration: const BoxDecoration(
+                                          color: AppColor.buttonColor,
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(40)),
+                                        ),
+                                        alignment: Alignment.center,
+                                        child: Text(
+                                          AppLanguage
+                                              .contactSupportText[language],
+                                          style: const TextStyle(
+                                              color: AppColor.secondryColor,
+                                              fontWeight: FontWeight.w600,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 16),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          );
+        });
+      },
+    ).then((_) {});
   }
 }

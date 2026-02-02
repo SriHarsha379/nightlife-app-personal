@@ -374,4 +374,6 @@ class AppImage {
   static const night = "./assets/icons/night.png";
   static const omnia = "./assets/icons/omnia.png";
   static const queens = "./assets/icons/queens.png";
+    static const email = "./assets/icons/email.png";
+
 }

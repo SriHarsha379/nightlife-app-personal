@@ -2,12 +2,14 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:page_transition/page_transition.dart';
 
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
+import '../MySplashSection/MembersSection/member_liked_details.dart';
 
 class ChatMessageScreen extends StatefulWidget {
   static String routeName = "./ChatMessageScreen";
@@ -136,57 +138,72 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 60 / 100,
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Container(
-                                    width: MediaQuery.of(context).size.width *
-                                        10 /
-                                        100,
-                                    height: MediaQuery.of(context).size.width *
-                                        10 /
-                                        100,
-                                    decoration: BoxDecoration(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        // border: Border.all(
-                                        //     color: AppColor.secondaryColor,
-                                        //     width: 1),
-                                        image: DecorationImage(
-                                          image: AssetImage(
-                                            widget.image,
-                                          ),
-                                          fit: BoxFit.cover,
-                                        ))),
-                                SizedBox(
-                                    width: MediaQuery.of(context).size.width *
-                                        2 /
-                                        100),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Text(widget.name,
-                                        style: TextStyle(
-                                            color: AppColor.secondryColor,
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily)),
-                                    Text(
-                                        AppLanguage
-                                            .activeTwominuteAgotext[language],
-                                        style: TextStyle(
-                                            height: 1,
-                                            color: AppColor.textcolor,
-                                            fontSize: 12,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily)),
-                                  ],
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: const LikedMemberDetail(),
+                                  duration: const Duration(milliseconds: 500),
                                 ),
-                              ],
+                              );
+                            },
+                            child: SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 60 / 100,
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Container(
+                                      width: MediaQuery.of(context).size.width *
+                                          10 /
+                                          100,
+                                      height:
+                                          MediaQuery.of(context).size.width *
+                                              10 /
+                                              100,
+                                      decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          // border: Border.all(
+                                          //     color: AppColor.secondaryColor,
+                                          //     width: 1),
+                                          image: DecorationImage(
+                                            image: AssetImage(
+                                              widget.image,
+                                            ),
+                                            fit: BoxFit.cover,
+                                          ))),
+                                  SizedBox(
+                                      width: MediaQuery.of(context).size.width *
+                                          2 /
+                                          100),
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Text(widget.name,
+                                          style: TextStyle(
+                                              color: AppColor.secondryColor,
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: AppFont.fontFamily)),
+                                      Text(
+                                          AppLanguage
+                                              .activeTwominuteAgotext[language],
+                                          style: TextStyle(
+                                              height: 1,
+                                              color: AppColor.textcolor,
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: AppFont.fontFamily)),
+                                    ],
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           // SizedBox(
@@ -262,30 +279,48 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                           children: [
                                             if (messageList[index]['id'] % 2 !=
                                                 1)
-                                              Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      10 /
-                                                      100,
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      10 /
-                                                      100,
-                                                  decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              100),
-                                                      // border: Border.all(
-                                                      //     color: AppColor.secondaryColor,
-                                                      //     width: 1),
-                                                      image: DecorationImage(
-                                                        image: AssetImage(
-                                                          AppImage.profilephoto,
-                                                        ),
-                                                        fit: BoxFit.cover,
-                                                      ))),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type: PageTransitionType
+                                                          .rightToLeftWithFade,
+                                                      child:
+                                                          const LikedMemberDetail(),
+                                                      duration: const Duration(
+                                                          milliseconds: 500),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            10 /
+                                                            100,
+                                                    height:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            10 /
+                                                            100,
+                                                    decoration: BoxDecoration(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(100),
+                                                        // border: Border.all(
+                                                        //     color: AppColor.secondaryColor,
+                                                        //     width: 1),
+                                                        image: DecorationImage(
+                                                          image: AssetImage(
+                                                            AppImage
+                                                                .profilephoto,
+                                                          ),
+                                                          fit: BoxFit.cover,
+                                                        ))),
+                                              ),
                                             if (messageList[index]['id'] % 2 ==
                                                 0)
                                               SizedBox(
@@ -401,7 +436,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                           borderRadius:
                                               BorderRadius.circular(16),
                                           child: Image.asset(
-                                            AppImage.msgCardicon, 
+                                            AppImage.msgCardicon,
                                             fit: BoxFit.cover,
                                             width: MediaQuery.of(context)
                                                     .size
@@ -415,11 +450,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                         ),
                                       ),
                                     ),
-
                                     Positioned(
-                                      left: size.width*24/100,
+                                      left: size.width * 24 / 100,
                                       right: 0,
-                                      bottom: size.height*2/100,
+                                      bottom: size.height * 2 / 100,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -993,7 +1027,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 4.0),
                                 child: Text(
-                                  'Open Share date',
+                                  'Block User',
                                   style: TextStyle(
                                     fontSize: 15,
                                     decoration: TextDecoration.none,
@@ -1017,7 +1051,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 4.0),
                                 child: Text(
-                                  "Report",
+                                  "Unmatch",
                                   style: TextStyle(
                                     fontSize: 15,
                                     decoration: TextDecoration.none,
@@ -1041,7 +1075,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 padding: const EdgeInsets.symmetric(
                                     vertical: 8.0, horizontal: 4.0),
                                 child: Text(
-                                  "Unmatch",
+                                  "Report",
                                   style: TextStyle(
                                     fontSize: 15,
                                     decoration: TextDecoration.none,
@@ -1056,17 +1090,16 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 height: MediaQuery.of(context).size.height *
                                     0.5 /
                                     100),
-                            InkWell(
-                              onTap: () {
-                                // Handle Did you meet action
-                                Navigator.pop(context);
-                              },
-                              child: Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0, horizontal: 4.0),
-                               
-                              ),
-                            ),
+                            // InkWell(
+                            //   onTap: () {
+                            //     // Handle Did you meet action
+                            //     Navigator.pop(context);
+                            //   },
+                            //   child: Padding(
+                            //     padding: const EdgeInsets.symmetric(
+                            //         vertical: 8.0, horizontal: 4.0),
+                            //   ),
+                            // ),
                           ],
                         ),
                       ),

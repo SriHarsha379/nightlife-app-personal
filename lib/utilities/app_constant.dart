@@ -5,20 +5,23 @@ import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_footer.dart';
 import 'app_color.dart';
+
 final GlobalKey<MyAppFooterState> footerKey = GlobalKey<MyAppFooterState>();
 
 int language = 0;
 
 class AppConstant {
-  static const String token ="";
-  static  int selectFooterIndex = 0;
-   static const int describeLength = 500;
+  static String token = "";
+    static String playerID = "123456";
+
+  static int selectFooterIndex = 0;
+  static const int describeLength = 500;
   static String mapkey = '';
   static String deviceType = Platform.operatingSystem;
   static const int appStatus = 0;
   // static var deviceType = Platform.isAndroid ? 'android' : 'ios';
 
-   //! Input Formatter
+  //! Input Formatter
   static List<TextInputFormatter> onlyDigitFormatter = [
     FilteringTextInputFormatter.allow(RegExp(r'[0-9]')) // only digits allowed
   ];
@@ -53,7 +56,7 @@ class AppConstant {
       fontWeight: FontWeight.w400,
       fontFamily: AppFont.fontFamily,
       fontSize: 14);
-       static const TextStyle textFilledStyle1 = TextStyle(
+  static const TextStyle textFilledStyle1 = TextStyle(
       color: AppColor.secondryColor,
       fontWeight: FontWeight.w400,
       fontFamily: AppFont.fontFamily,
@@ -62,11 +65,13 @@ class AppConstant {
   static const int emailMaxLength = 50;
   static const int passwordMaxLength = 16;
   static const int fullNameText = 50;
-  static const int mobileMaxLenth = 15;
+  static const int mobileMaxLenth = 10;
   static const int messageMaxLenth = 250;
 
-  static const TextStyle textFilledHeading =
-      TextStyle(color: AppColor.textfilledColor, fontSize: 15, fontWeight: FontWeight.w400);
+  static const TextStyle textFilledHeading = TextStyle(
+      color: AppColor.textfilledColor,
+      fontSize: 15,
+      fontWeight: FontWeight.w400);
   static const SystemUiOverlayStyle systemUiOverlayStyle = SystemUiOverlayStyle(
     statusBarColor: Colors.black,
     statusBarIconBrightness: Brightness.light,
@@ -82,4 +87,3 @@ class SuccessClass {
 }
 
 enum BottomMenus { notification, home, profile }
-

@@ -1,6 +1,7 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/other/city_Preference/music_genres.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../../utilities/app_button.dart';
@@ -9,6 +10,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
@@ -34,7 +36,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   String imageController = "NA";
   late FocusNode _hobbiesFocusNode;
   bool _isHobbiesFocusNode = false;
-  List<String> hobbies = ["Singing", "Gaming"];
+  List<String> hobbies = [];
   String selectLocation = "NA";
   final FocusNode _focusNode = FocusNode();
   bool _isInstagramFocused = false;
@@ -153,6 +155,90 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     );
   }
 
+  void AdditionalInfoValidation() {
+    // Instagram validation (required field)
+    if (Validation.isFieldEmpty(context,
+        value: instagramTextEditingController.text,
+        fieldName: "Instagram profile link")) {
+      return;
+    }
+
+    // Spotify validation (required field)
+    if (Validation.isFieldEmpty(context,
+        value: spotifyTextEditingController.text,
+        fieldName: "Spotify account")) {
+      return;
+    }
+
+    // Snapchat validation (required field)
+    if (Validation.isFieldEmpty(context,
+        value: snapchattexteditingController.text,
+        fieldName: "Snapchat account")) {
+      return;
+    }
+    if (Validation.isFieldEmpty(context,
+        value: hobbiesTextController.text, fieldName: "Your hobbies")) {
+      return;
+    }
+    // // Instagram username length validation
+    // if (instagramTextEditingController.text.length > 30) {
+    //   SnackBarToastMessage.info(
+    //       context, "Instagram username cannot exceed 30 characters");
+    //   return;
+    // }
+
+    // // Instagram username format validation
+    // final instagramRegex = RegExp(r'^[A-Za-z0-9._]+$');
+    // if (!instagramRegex.hasMatch(instagramTextEditingController.text)) {
+    //   SnackBarToastMessage.info(context,
+    //       "Instagram username can only contain letters, numbers, dots, and underscores");
+    //   return;
+    // }
+
+    // // Spotify length validation
+    // if (spotifyTextEditingController.text.length > 100) {
+    //   SnackBarToastMessage.info(context, "Spotify link is too long");
+    //   return;
+    // }
+
+    // // Basic validation for Spotify
+    // final spotifyRegex = RegExp(r'^[A-Za-z0-9-_]+$');
+    // if (!spotifyRegex.hasMatch(
+    //     spotifyTextEditingController.text.replaceAll('spotify:', ''))) {
+    //   SnackBarToastMessage.info(
+    //       context, "Please enter a valid Spotify username or link");
+    //   return;
+    // }
+
+    // // Snapchat username length validation
+    // if (snapchattexteditingController.text.length < 3 ||
+    //     snapchattexteditingController.text.length > 15) {
+    //   SnackBarToastMessage.info(
+    //       context, "Snapchat username should be 3-15 characters");
+    //   return;
+    // }
+
+    // // Snapchat username format validation
+    // final snapchatRegex = RegExp(r'^[A-Za-z0-9._-]+$');
+    // if (!snapchatRegex.hasMatch(snapchattexteditingController.text)) {
+    //   SnackBarToastMessage.info(context,
+    //       "Snapchat username can only contain letters, numbers, dots, underscores, and hyphens");
+    //   return;
+    // }
+
+   
+
+    // All validations passed - navigate to next screen
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: const MusicGenresScreen(),
+        duration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
   TextEditingController messageTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -261,6 +347,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     maxLength: AppConstant.fullNameText,
                                     // keyboardType: TextInputType.name,
                                     controller: BioTextEditingController,
+                                    readOnly: false,
                                   ),
                                 ),
                               ),
@@ -665,14 +752,15 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 AppButton(
                     text: AppLanguage.continueText[language],
                     onPress: () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: const MusicGenresScreen(),
-                          duration: const Duration(milliseconds: 400),
-                        ),
-                      );
+                      AdditionalInfoValidation();
+                      // Navigator.push(
+                      //   context,
+                      //   PageTransition(
+                      //     type: PageTransitionType.rightToLeftWithFade,
+                      //     child: const MusicGenresScreen(),
+                      //     duration: const Duration(milliseconds: 400),
+                      //   ),
+                      // );
                     }),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,

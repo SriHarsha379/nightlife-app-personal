@@ -209,6 +209,8 @@ class AppColor {
   static const Color refercontainercolor = Color(0xff171217);
 
   static const Color sendinvitecontainercolor = Color(0xff1c1218);
+  static const Color chatSupportcolor = Color(0xff9CA3AF);
+  static const Color spancolor = Color(0xff716A74);
 
   /// change by saket
 

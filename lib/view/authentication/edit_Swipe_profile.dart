@@ -111,7 +111,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
               body: Container(
-              color:AppColor.primaryColor,
+            color: AppColor.primaryColor,
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
             child: SingleChildScrollView(
@@ -176,18 +176,16 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.primaryColor, 
+                        color: AppColor.primaryColor,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.grayColor
-                                .withOpacity(0.4),
+                            color: AppColor.grayColor.withOpacity(0.4),
                             // spreadRadius: 1,
-                            blurRadius: 2, 
+                            blurRadius: 2,
                             offset: Offset(1, 1),
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                  
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -438,65 +436,110 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 4 / 100),
                   Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 19.0),
+                    padding: const EdgeInsets.symmetric(horizontal: 17.0),
                     child: Container(
-                      height: MediaQuery.of(context).size.width * 14 / 100,
-                      width: MediaQuery.of(context).size.width * 90 / 100,
-                      alignment: Alignment.center,
-                      decoration: BoxDecoration(
-                        color: AppColor.themeColor, // background color
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
-                            // spreadRadius: 1,
-                            blurRadius: 2, // blur effect
-                            offset: Offset(1, 1),
-                          ),
-                        ],
-                        borderRadius: BorderRadius.circular(16),
-                      
+                      width: MediaQuery.of(context).size.width * 91 / 100,
+                      padding: EdgeInsets.symmetric(
+                        horizontal: MediaQuery.of(context).size.width * 3 / 100,
+                        vertical: MediaQuery.of(context).size.height * 2 / 100,
                       ),
-                      child: Row(
+                      decoration: BoxDecoration(
+                        color: AppColor.themeColor,
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 78 / 100,
-                            child: Padding(
-                              padding: const EdgeInsets.all(14.0),
-                              child: Text(AppLanguage.interestsText[language],
-                                  style: const TextStyle(
-                                      color: AppColor.secondryColor,
-                                      fontFamily: AppFont.fontFamily,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600)),
+                          /// ---- TITLE ----
+                          Text(
+                            AppLanguage.hobbiestext[language],
+                            style: const TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              fontFamily: AppFont.fontFamily,
                             ),
                           ),
+
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 9 / 100,
-                            height:
-                                MediaQuery.of(context).size.height * 4 / 100,
-                            child: FittedBox(
-                              fit: BoxFit.contain,
-                              child: Switch(
-                                value: switches[9],
-                                onChanged: (value) {
-                                  setState(() {
-                                    switches[9] = value;
-                                  });
-                                },
-                                activeColor: AppColor.secondryColor,
-                                activeTrackColor: AppColor.pinkColor,
-                                inactiveThumbColor: AppColor.secondryColor,
-                                inactiveTrackColor: AppColor.greyLightColor,
+                              height: MediaQuery.of(context).size.height *
+                                  1.25 /
+                                  100),
+
+                          /// ---- SUB TEXT ----
+                          Text(
+                            AppLanguage.hobbiesInsttext[language],
+                            style: const TextStyle(
+                                color: AppColor.textcolor,
+                                fontSize: 13,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w400),
+                          ),
+
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100),
+
+                          /// ---- TEXT FIELD ----
+                          Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 4 / 100,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Color.fromARGB(255, 45, 18, 68),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: TextField(
+                              style: TextStyle(
+                                color: AppColor.secondryColor,
+                                fontFamily: AppFont.fontFamily,
+                              ),
+                              decoration: InputDecoration(
+                                hintText: "Enter your Hobby",
+                                hintStyle: TextStyle(
+                                  color: Color(0xffAD8FCC),
+                                  fontSize: 13,
+                                ),
+                                border: InputBorder.none,
                               ),
                             ),
-                          )
+                          ),
+
+                          SizedBox(
+                              height:
+                                  MediaQuery.of(context).size.height * 2 / 100),
+
+                          /// ---- SAVE BUTTON ----
+                          Center(
+                            child: Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 42 / 100,
+                              height: MediaQuery.of(context).size.height *
+                                  5.5 /
+                                  100,
+                              decoration: BoxDecoration(
+                                color: AppColor.primaryColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              alignment: Alignment.center,
+                              child: const Text(
+                                "Save",
+                                style: TextStyle(
+                                  color: AppColor.secondryColor,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
                   ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100),
+                      height: MediaQuery.of(context).size.height * 3 / 100),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 19.0),
                     child: Container(
@@ -515,7 +558,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(16),
-                 
                       ),
                       child: Row(
                         children: [
@@ -556,7 +598,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                     ),
                   ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100),
+                      height: MediaQuery.of(context).size.height * 3 / 100),
                   SingleChildScrollView(
                     scrollDirection: Axis.vertical,
                     child: Center(
@@ -574,7 +616,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             ),
                           ],
                           borderRadius: BorderRadius.circular(20),
-                     
                         ),
                         child: Column(
                           children: [
@@ -608,7 +649,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         fontWeight: FontWeight.w400)),
                               ),
                             ),
-                              SizedBox(
+                            SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100),
@@ -684,7 +725,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 height: MediaQuery.of(context).size.height *
                                     2 /
                                     100),
-
                             SingleChildScrollView(
                               scrollDirection: Axis.horizontal,
                               child: Row(
@@ -753,12 +793,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 }),
                               ),
                             ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     3 /
                                     100),
-
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
@@ -773,204 +811,375 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 ),
                               ),
                             ),
-               
                           ],
                         ),
                       ),
                     ),
                   ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100),
-                  SingleChildScrollView(
-                    scrollDirection: Axis.vertical,
-                    child: Center(
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * 126 / 100,
-                        width: MediaQuery.of(context).size.width * 92 / 100,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: AppColor.themeColor, // background color
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColor.grayColor
-                                  .withOpacity(0.4), // shadow color
-                              // spreadRadius: 1,
-                              blurRadius: 2, // blur effect
-                              offset: Offset(1, 1),
-                            ),
-                          ],
-                          borderRadius: BorderRadius.circular(20),
-                   
-                        ),
+                      height: MediaQuery.of(context).size.height * 3 / 100),
+                  // SingleChildScrollView(
+                  //   scrollDirection: Axis.vertical,
+                  //   child: Center(
+                  //     child: Container(
+                  //       height: MediaQuery.of(context).size.width * 126 / 100,
+                  //       width: MediaQuery.of(context).size.width * 92 / 100,
+                  //       alignment: Alignment.center,
+                  //       decoration: BoxDecoration(
+                  //         color: AppColor.themeColor, // background color
+                  //         boxShadow: [
+                  //           BoxShadow(
+                  //             color: AppColor.grayColor
+                  //                 .withOpacity(0.4), // shadow color
+                  //             // spreadRadius: 1,
+                  //             blurRadius: 2, // blur effect
+                  //             offset: Offset(1, 1),
+                  //           ),
+                  //         ],
+                  //         borderRadius: BorderRadius.circular(20),
+                  //       ),
+                  //       child: Column(
+                  //         children: [
+                  //           SizedBox(
+                  //               height: MediaQuery.of(context).size.height *
+                  //                   1 /
+                  //                   100),
+                  //           Container(
+                  //             width:
+                  //                 MediaQuery.of(context).size.width * 92 / 100,
+                  //             child: Padding(
+                  //               padding: const EdgeInsets.all(10.0),
+                  //               child: Text(AppLanguage.eventsText[language],
+                  //                   style: const TextStyle(
+                  //                       color: AppColor.secondryColor,
+                  //                       fontFamily: AppFont.fontFamily,
+                  //                       fontSize: 16,
+                  //                       fontWeight: FontWeight.w600)),
+                  //             ),
+                  //           ),
+                  //           SingleChildScrollView(
+                  //             scrollDirection: Axis.horizontal,
+                  //             child: Row(
+                  //               children: List.generate(3, (index) {
+                  //                 // bool isSelected = selectedtickIndex1 == index;
+                  //                 bool isSelected =
+                  //                     selectedTickIndexes.contains(index);
+
+                  //                 return GestureDetector(
+                  //                   behavior: HitTestBehavior.translucent,
+                  //                   onTap: () {
+                  //                     setState(() {
+                  //                       if (isSelected) {
+                  //                         selectedTickIndexes.remove(index);
+                  //                       } else {
+                  //                         selectedTickIndexes.add(index);
+                  //                       }
+                  //                     });
+                  //                   },
+                  //                   child: Container(
+                  //                     width: size.width * 28 / 100,
+                  //                     height: size.height * 20 / 100,
+                  //                     margin: const EdgeInsets.only(right: 3.8),
+                  //                     child: ClipRRect(
+                  //                       borderRadius: BorderRadius.circular(10),
+                  //                       child: Stack(
+                  //                         fit: StackFit.expand,
+                  //                         children: [
+                  //                           Image.asset(
+                  //                             index == 0
+                  //                                 ? AppImage.aroundmeIcon1
+                  //                                 : AppImage.divWithouttick,
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                           Positioned(
+                  //                             right: 7,
+                  //                             bottom: 7,
+                  //                             child: Container(
+                  //                               width: 20,
+                  //                               height: 20,
+                  //                               decoration: BoxDecoration(
+                  //                                 shape: BoxShape.circle,
+                  //                                 color: isSelected
+                  //                                     ? AppColor.buttonColor
+                  //                                     : Colors.transparent,
+                  //                                 border: Border.all(
+                  //                                   color: isSelected
+                  //                                       ? Colors.transparent
+                  //                                       : Colors.white,
+                  //                                   width: 1,
+                  //                                 ),
+                  //                               ),
+                  //                               child: isSelected
+                  //                                   ? const Icon(
+                  //                                       Icons.check,
+                  //                                       size: 14,
+                  //                                       color: AppColor
+                  //                                           .primaryColor,
+                  //                                     )
+                  //                                   : null,
+                  //                             ),
+                  //                           )
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 );
+                  //               }),
+                  //             ),
+                  //           ),
+                  //           SizedBox(
+                  //               height: MediaQuery.of(context).size.height *
+                  //                   1 /
+                  //                   100),
+                  //           SingleChildScrollView(
+                  //             scrollDirection: Axis.horizontal,
+                  //             child: Row(
+                  //               children: List.generate(3, (index) {
+                  //                 // bool isSelected = selectedtickIndex == index;
+                  //                 bool isSelected =
+                  //                     selectedTickIndexes1.contains(index);
+
+                  //                 return GestureDetector(
+                  //                   behavior: HitTestBehavior.translucent,
+                  //                   onTap: () {
+                  //                     setState(() {
+                  //                       if (isSelected) {
+                  //                         selectedTickIndexes1.remove(index);
+                  //                       } else {
+                  //                         selectedTickIndexes1.add(index);
+                  //                       }
+                  //                     });
+                  //                   },
+                  //                   child: Container(
+                  //                     width: size.width * 28 / 100,
+                  //                     height: size.height * 20 / 100,
+                  //                     margin: const EdgeInsets.only(right: 3.8),
+                  //                     child: ClipRRect(
+                  //                       borderRadius: BorderRadius.circular(10),
+                  //                       child: Stack(
+                  //                         fit: StackFit.expand,
+                  //                         children: [
+                  //                           Image.asset(
+                  //                             index == 0
+                  //                                 ? AppImage.aroundmeIcon1
+                  //                                 : AppImage.divWithouttick,
+                  //                             fit: BoxFit.cover,
+                  //                           ),
+                  //                           Positioned(
+                  //                             right: 7,
+                  //                             bottom: 7,
+                  //                             child: Container(
+                  //                               width: 20,
+                  //                               height: 20,
+                  //                               decoration: BoxDecoration(
+                  //                                 shape: BoxShape.circle,
+                  //                                 color: isSelected
+                  //                                     ? AppColor.buttonColor
+                  //                                     : Colors.transparent,
+                  //                                 border: Border.all(
+                  //                                   color: isSelected
+                  //                                       ? Colors.transparent
+                  //                                       : Colors.white,
+                  //                                   width: 1,
+                  //                                 ),
+                  //                               ),
+                  //                               child: isSelected
+                  //                                   ? const Icon(
+                  //                                       Icons.check,
+                  //                                       size: 12,
+                  //                                       color: AppColor
+                  //                                           .primaryColor,
+                  //                                     )
+                  //                                   : null,
+                  //                             ),
+                  //                           )
+                  //                         ],
+                  //                       ),
+                  //                     ),
+                  //                   ),
+                  //                 );
+                  //               }),
+                  //             ),
+                  //           ),
+                  //           SizedBox(
+                  //               height: MediaQuery.of(context).size.height *
+                  //                   2 /
+                  //                   100),
+                  //           Center(
+                  //             child: SizedBox(
+                  //               child: Image.asset(
+                  //                 AppImage.blackviewallicon,
+                  //                 height: MediaQuery.of(context).size.height *
+                  //                     6 /
+                  //                     100,
+                  //                 width: MediaQuery.of(context).size.width *
+                  //                     45 /
+                  //                     100,
+                  //                 fit: BoxFit.fill,
+                  //               ),
+                  //             ),
+                  //           ),
+                  //         ],
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
+                  // SizedBox(height: size.height * 4 / 100),
+                  // Center(
+                  //   child: Container(
+                  //     height: MediaQuery.of(context).size.height * 30 / 100,
+                  //     width: MediaQuery.of(context).size.width * 90 / 100,
+                  //     alignment: Alignment.center,
+                  //     decoration: BoxDecoration(
+                  //       color: AppColor.themeColor, // background color
+                  //       boxShadow: [
+                  //         BoxShadow(
+                  //           color: AppColor.grayColor
+                  //               .withOpacity(0.4), // shadow color
+                  //           // spreadRadius: 1,
+                  //           blurRadius: 2, // blur effect
+                  //           offset: Offset(1, 1),
+                  //         ),
+                  //       ],
+                  //       borderRadius: BorderRadius.circular(20),
+                  //     ),
+                  //     child: Column(
+                  //       children: [
+                  //         SizedBox(
+                  //             height:
+                  //                 MediaQuery.of(context).size.height * 2 / 100),
+                  //         Container(
+                  //           width: MediaQuery.of(context).size.width * 81 / 100,
+                  //           child: Text(AppLanguage.eventsText[language],
+                  //               style: const TextStyle(
+                  //                   color: AppColor.secondryColor,
+                  //                   fontFamily: AppFont.fontFamily,
+                  //                   fontSize: 16,
+                  //                   fontWeight: FontWeight.w600)),
+                  //         ),
+                  //         SizedBox(
+                  //             height: MediaQuery.of(context).size.height *
+                  //                 0.2 /
+                  //                 100),
+                  //         Container(
+                  //           width: size.width * 95 / 100,
+                  //           child: ClipRRect(
+                  //               borderRadius: const BorderRadius.only(
+                  //                 topLeft: Radius.circular(15),
+                  //                 topRight: Radius.circular(15),
+                  //               ),
+                  //               child: Image.asset(
+                  //                 AppImage.followedVenueIcon,
+                  //                 fit: BoxFit.cover,
+                  //               )),
+                  //         ),
+                  //         Center(
+                  //           child: SizedBox(
+                  //             child: Image.asset(
+                  //               AppImage.blackviewallicon,
+                  //               height: MediaQuery.of(context).size.height *
+                  //                   6 /
+                  //                   100,
+                  //               width: MediaQuery.of(context).size.width *
+                  //                   45 /
+                  //                   100,
+                  //               fit: BoxFit.fill,
+                  //             ),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ),
+                  // ),
+
+//==================Recent events==========//
+                  Center(
+                    child: Container(
+                      // height: MediaQuery.of(context).size.width * 30 / 100,
+                      width: MediaQuery.of(context).size.width * 90 / 100,
+                      alignment: Alignment.center,
+                      decoration: BoxDecoration(
+                        color: AppColor.themeColor,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColor.grayColor.withOpacity(0.4),
+                            // spreadRadius: 1,
+                            blurRadius: 2,
+                            offset: Offset(1, 1),
+                          ),
+                        ],
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: SingleChildScrollView(
                         child: Column(
                           children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width *
+                                      78 /
+                                      100,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 12, left: 12, top: 8),
+                                    child: Text(
+                                        AppLanguage.recentEventsText[language],
+                                        style: const TextStyle(
+                                            color: AppColor.secondryColor,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        9 /
+                                        100,
+                                    height: MediaQuery.of(context).size.height *
+                                        4 /
+                                        100,
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: Switch(
+                                        value: switches[5],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            switches[5] = value;
+                                          });
+                                        },
+                                        activeColor: AppColor.secondryColor,
+                                        activeTrackColor: AppColor.pinkColor,
+                                        inactiveThumbColor:
+                                            AppColor.secondryColor,
+                                        inactiveTrackColor:
+                                            AppColor.greyLightColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100),
                             Container(
                               width:
-                                  MediaQuery.of(context).size.width * 92 / 100,
-                              child: Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Text(AppLanguage.eventsText[language],
-                                    style: const TextStyle(
-                                        color: AppColor.secondryColor,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600)),
-                              ),
-                            ),
-
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: List.generate(3, (index) {
-                                  // bool isSelected = selectedtickIndex1 == index;
-                                  bool isSelected =
-                                      selectedTickIndexes.contains(index);
-
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      setState(() {
-                                        if (isSelected) {
-                                          selectedTickIndexes.remove(index);
-                                        } else {
-                                          selectedTickIndexes.add(index);
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      width: size.width * 28 / 100,
-                                      height: size.height * 20 / 100,
-                                      margin: const EdgeInsets.only(right: 3.8),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            Image.asset(
-                                              index == 0
-                                                  ? AppImage.aroundmeIcon1
-                                                  : AppImage.divWithouttick,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                              right: 7,
-                                              bottom: 7,
-                                              child: Container(
-                                                width: 20,
-                                                height: 20,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: isSelected
-                                                      ? AppColor.buttonColor
-                                                      : Colors.transparent,
-                                                  border: Border.all(
-                                                    color: isSelected
-                                                        ? Colors.transparent
-                                                        : Colors.white,
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                                child: isSelected
-                                                    ? const Icon(
-                                                        Icons.check,
-                                                        size: 14,
-                                                        color: AppColor
-                                                            .primaryColor,
-                                                      )
-                                                    : null,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ),
-                            ),
-                            SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    1 /
-                                    100),
-                            SingleChildScrollView(
-                              scrollDirection: Axis.horizontal,
-                              child: Row(
-                                children: List.generate(3, (index) {
-                                  // bool isSelected = selectedtickIndex == index;
-                                  bool isSelected =
-                                      selectedTickIndexes1.contains(index);
-
-                                  return GestureDetector(
-                                    behavior: HitTestBehavior.translucent,
-                                    onTap: () {
-                                      setState(() {
-                                        if (isSelected) {
-                                          selectedTickIndexes1.remove(index);
-                                        } else {
-                                          selectedTickIndexes1.add(index);
-                                        }
-                                      });
-                                    },
-                                    child: Container(
-                                      width: size.width * 28 / 100,
-                                      height: size.height * 20 / 100,
-                                      margin: const EdgeInsets.only(right: 3.8),
-                                      child: ClipRRect(
-                                        borderRadius: BorderRadius.circular(10),
-                                        child: Stack(
-                                          fit: StackFit.expand,
-                                          children: [
-                                            Image.asset(
-                                              index == 0
-                                                  ? AppImage.aroundmeIcon1
-                                                  : AppImage.divWithouttick,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            Positioned(
-                                              right: 7,
-                                              bottom: 7,
-                                              child: Container(
-                                                width: 20,
-                                                height: 20,
-                                                decoration: BoxDecoration(
-                                                  shape: BoxShape.circle,
-                                                  color: isSelected
-                                                      ? AppColor.buttonColor
-                                                      : Colors.transparent,
-                                                  border: Border.all(
-                                                    color: isSelected
-                                                        ? Colors.transparent
-                                                        : Colors.white,
-                                                    width: 1,
-                                                  ),
-                                                ),
-                                                child: isSelected
-                                                    ? const Icon(
-                                                        Icons.check,
-                                                        size: 12,
-                                                        color: AppColor
-                                                            .primaryColor,
-                                                      )
-                                                    : null,
-                                              ),
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }),
-                              ),
+                                  MediaQuery.of(context).size.width * 84 / 100,
+                              child: Text(
+                                  AppLanguage.recentEventsinstText[language],
+                                  style: const TextStyle(
+                                      color: AppColor.textcolor,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400)),
                             ),
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     2 /
                                     100),
-
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
@@ -981,86 +1190,138 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   width: MediaQuery.of(context).size.width *
                                       45 /
                                       100,
-                                  fit: BoxFit.fill,
+                                  fit: BoxFit.contain,
                                 ),
                               ),
                             ),
-                           
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    1 /
+                                    100),
                           ],
                         ),
                       ),
                     ),
                   ),
-                  SizedBox(height: size.height * 4 / 100),
+
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height * 3 / 100),
+
+//=======================recent venues===========//
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.height * 30 / 100,
+                      // height: MediaQuery.of(context).size.width * 30 / 100,
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor, // background color
+                        color: AppColor.themeColor,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
+                            color: AppColor.grayColor.withOpacity(0.4),
                             // spreadRadius: 1,
-                            blurRadius: 2, // blur effect
+                            blurRadius: 2,
                             offset: Offset(1, 1),
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                  
                       ),
-                      child: Column(
-                        children: [
-                          SizedBox(
-                              height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
-                          Container(
-                            width: MediaQuery.of(context).size.width * 81 / 100,
-                            child: Text(AppLanguage.eventsText[language],
-                                style: const TextStyle(
-                                    color: AppColor.secondryColor,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600)),
-                          ),
-                          SizedBox(
-                              height: MediaQuery.of(context).size.height *
-                                  0.2 /
-                                  100),
-                          Container(
-                            width: size.width * 95 / 100,
-                            child: ClipRRect(
-                                borderRadius: const BorderRadius.only(
-                                  topLeft: Radius.circular(15),
-                                  topRight: Radius.circular(15),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: MediaQuery.of(context).size.width *
+                                      78 /
+                                      100,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(
+                                        right: 12, left: 12, top: 8),
+                                    child: Text(
+                                        AppLanguage.recentVenueText[language],
+                                        style: const TextStyle(
+                                            color: AppColor.secondryColor,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w600)),
+                                  ),
                                 ),
-                                child: Image.asset(
-                                  AppImage.followedVenueIcon,
-                                  fit: BoxFit.cover,
-                                )),
-                          ),
-                          Center(
-                            child: SizedBox(
-                              child: Image.asset(
-                                AppImage.blackviewallicon,
+                                Padding(
+                                  padding: const EdgeInsets.only(top: 8),
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        9 /
+                                        100,
+                                    height: MediaQuery.of(context).size.height *
+                                        4 /
+                                        100,
+                                    child: FittedBox(
+                                      fit: BoxFit.contain,
+                                      child: Switch(
+                                        value: switches[6],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            switches[6] = value;
+                                          });
+                                        },
+                                        activeColor: AppColor.secondryColor,
+                                        activeTrackColor: AppColor.pinkColor,
+                                        inactiveThumbColor:
+                                            AppColor.secondryColor,
+                                        inactiveTrackColor:
+                                            AppColor.greyLightColor,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    6 /
-                                    100,
-                                width: MediaQuery.of(context).size.width *
-                                    45 /
-                                    100,
-                                fit: BoxFit.fill,
+                                    1 /
+                                    100),
+                            Container(
+                              width:
+                                  MediaQuery.of(context).size.width * 84 / 100,
+                              child: Text(
+                                  AppLanguage.recentVenueinstText[language],
+                                  style: const TextStyle(
+                                      color: AppColor.textcolor,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400)),
+                            ),
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100),
+                            Center(
+                              child: SizedBox(
+                                child: Image.asset(
+                                  AppImage.blackviewallicon,
+                                  height: MediaQuery.of(context).size.height *
+                                      6 /
+                                      100,
+                                  width: MediaQuery.of(context).size.width *
+                                      45 /
+                                      100,
+                                  fit: BoxFit.contain,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                            SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    1 /
+                                    100),
+                          ],
+                        ),
                       ),
                     ),
                   ),
+
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100),
+                      height: MediaQuery.of(context).size.height * 3 / 100),
+
                   Center(
                     child: Container(
                       height: MediaQuery.of(context).size.width * 30 / 100,
@@ -1078,7 +1339,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                    
                       ),
                       child: SingleChildScrollView(
                         child: Column(
@@ -1155,7 +1415,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                     ),
                   ),
                   SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100),
+                      height: MediaQuery.of(context).size.height * 3 / 100),
                   Center(
                     child: Container(
                       height: MediaQuery.of(context).size.width * 30 / 100,
@@ -1173,12 +1433,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           ),
                         ],
                         borderRadius: BorderRadius.circular(20),
-                       
                       ),
                       child: SingleChildScrollView(
                         child: Column(
                           children: [
-                          
                             Row(
                               children: [
                                 Container(
@@ -1224,12 +1482,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 )
                               ],
                             ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100),
-
                             Center(
                               child: SizedBox(
                                 child: Image.asset(
@@ -1244,7 +1500,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 ),
                               ),
                             ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
@@ -1254,6 +1509,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       ),
                     ),
                   ),
+
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 4 / 100),
                 ],

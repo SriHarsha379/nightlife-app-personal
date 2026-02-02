@@ -10,6 +10,7 @@ import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../other/city_Preference/citypreference_screen.dart';
 
 class WelcomeScreen4 extends StatefulWidget {
   static String routeName = './LoginScreen';
@@ -158,7 +159,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                                 PageTransition(
                                   type: PageTransitionType.bottomToTop,
                                   child: const PurpleScreen(
-                                    nextScreen: SignUp(),
+                                    nextScreen: CityPreference(),
                                   ),
                                   duration: const Duration(milliseconds: 400),
                                 ),

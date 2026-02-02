@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_constant.dart';
@@ -51,9 +50,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                 padding: const EdgeInsets.only(bottom: 40),
                 child: AppButton(
                     text: '${AppLanguage.submitButtonText[language]}',
-                    onPress: () {
- 
-                    }),
+                    onPress: () {}),
               ),
               body: Container(
                   height: size.height * 100 / 100,
@@ -226,7 +223,6 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                               runSpacing: 10,
                               alignment: WrapAlignment.center,
                               children: List.generate(dates.length, (index) {
-
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -640,18 +636,32 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                           });
                                         },
                                         child: AnimatedContainer(
-                                          duration: Duration(milliseconds: 250),
+                                          duration:
+                                              const Duration(milliseconds: 250),
                                           padding: EdgeInsets.all(
-                                              isSelected ? 12 : 8),
+                                              isSelected ? 10 : 8),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
+                                            gradient: isSelected
+                                                ? const LinearGradient(
+                                                    colors: [
+                                                      Color.fromARGB(255, 195,
+                                                          151, 236), // purple
+                                                      Color.fromARGB(255, 80,
+                                                          91, 216), // blue
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  )
+                                                : null,
                                             color: isSelected
-                                                ? AppColor.emojibackgroundColor
+                                                ? null
                                                 : Colors.transparent,
                                           ),
                                           child: Text(
                                             emojis[index],
-                                            style: TextStyle(fontSize: 30),
+                                            style:
+                                                const TextStyle(fontSize: 30),
                                           ),
                                         ),
                                       );
@@ -688,7 +698,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     ),
                                   ),
 
-                                  SizedBox(height:size.height * 1/100),
+                                  SizedBox(height: size.height * 1 / 100),
 
                                   Text(
                                     "Your opinion matters. Tell us what worked and what didn’t.",
@@ -701,7 +711,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     ),
                                   ),
 
-                                  SizedBox(height: size.height *1.2/100),
+                                  SizedBox(height: size.height * 1.2 / 100),
 
                                   Container(
                                     width: size.width,

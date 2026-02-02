@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_footer.dart';
@@ -10,6 +9,7 @@ import 'package:night_life/view/authentication/support_screen.dart';
 import 'package:night_life/view/other/about/aboutscreen.dart';
 import 'package:night_life/view/other/referafriend_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import '../../animation/purple_screen.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_comman_setting.dart';
 import '../../utilities/app_constant.dart';
@@ -30,8 +30,6 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
-
-
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
@@ -50,12 +48,10 @@ class _ProfileState extends State<Profile> {
           ),
           child: Column(
             children: [
-                   SizedBox(
-                          height: MediaQuery.of(context).size.height * 3.5 / 100),
+              SizedBox(height: MediaQuery.of(context).size.height * 3.5 / 100),
               AppHeader(
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.accountText[language],
-             
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -87,7 +83,6 @@ class _ProfileState extends State<Profile> {
                                   Stack(
                                     alignment: Alignment.center,
                                     children: [
-                                    
                                       Image.asset(
                                         AppImage.halfCircleicon,
                                         height:
@@ -99,7 +94,7 @@ class _ProfileState extends State<Profile> {
                                                 35 /
                                                 100,
                                       ),
-        
+
                                       // Profile image
                                       Container(
                                         width:
@@ -128,7 +123,7 @@ class _ProfileState extends State<Profile> {
                                 width: MediaQuery.of(context).size.width *
                                     8 /
                                     100),
-        
+
                             // Profile Text
                             Expanded(
                               child: Column(
@@ -173,7 +168,7 @@ class _ProfileState extends State<Profile> {
                           ],
                         ),
                       ),
-        
+
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.84,
                         child: Row(
@@ -205,7 +200,7 @@ class _ProfileState extends State<Profile> {
                       ),
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 4 / 100),
-        
+
                       // Settings List
                       Column(
                         children: [
@@ -228,12 +223,11 @@ class _ProfileState extends State<Profile> {
                             leadingIcon: AppImage.blacksettingprofile,
                             title: AppLanguage.accountSetting[language],
                             onPress: () {
-                              AppConstant.selectFooterIndex = 4;
                               Navigator.push(
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
-                                  child: const MyAppFooter(),
+                                  child: const EditProfile(),
                                   duration: const Duration(milliseconds: 500),
                                 ),
                               );
@@ -290,11 +284,10 @@ class _ProfileState extends State<Profile> {
                               );
                             },
                           ),
-                           SizedBox(
+                          SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 2 / 100),
-
-                            SettingRow(
+                          SettingRow(
                             leadingIcon: AppImage.referIcon,
                             title: AppLanguage.referaFriText[language],
                             onPress: () {
@@ -332,7 +325,7 @@ class _ProfileState extends State<Profile> {
                             leadingIcon: AppImage.blacksettingAbout,
                             title: AppLanguage.aboutText[language],
                             onPress: () {
-                               Navigator.push(
+                              Navigator.push(
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.rightToLeftWithFade,
@@ -367,9 +360,11 @@ class _ProfileState extends State<Profile> {
                               Navigator.push(
                                 context,
                                 PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: const LoginScreen(),
-                                  duration: const Duration(milliseconds: 500),
+                                  type: PageTransitionType.bottomToTop,
+                                  child: const PurpleScreen(
+                                    nextScreen: LoginScreen(),
+                                  ),
+                                  duration: const Duration(milliseconds: 400),
                                 ),
                               );
                             },

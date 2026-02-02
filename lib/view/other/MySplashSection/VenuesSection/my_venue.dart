@@ -1,7 +1,7 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_color.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/booked_view_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/past_venue_screeen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
@@ -509,6 +509,9 @@ class _MyVenueState extends State<MyVenue> {
                             ],
                             if (selectedIndex == 1) ...[
                               Container(
+                                width: MediaQuery.of(context).size.width *
+                                    85 /
+                                    100,
                                 child: Text(
                                   AppLanguage.ReserveddetailsText[language],
                                   style: const TextStyle(
@@ -518,6 +521,26 @@ class _MyVenueState extends State<MyVenue> {
                                       color: AppColor.secondryColor),
                                 ),
                               ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    1.5 /
+                                    100,
+                              ),
+                              Container(
+                                width: MediaQuery.of(context).size.width *
+                                    85 /
+                                    100,
+                                child: Text(
+                                  AppLanguage
+                                      .upcomingReservationsText[language],
+                                  style: const TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.pinkColor),
+                                ),
+                              ),
+
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     2 /
@@ -535,7 +558,11 @@ class _MyVenueState extends State<MyVenue> {
                                         PageTransition(
                                           type: PageTransitionType
                                               .rightToLeftWithFade,
-                                          child: VenuePages(),
+                                          child: BookedViewDetails(
+                                            image: Reservedlist[index]['image'] ,
+                                            name: Reservedlist[index]
+                                                          ['title'] ,
+                                          ),
                                           duration:
                                               const Duration(milliseconds: 500),
                                         ),

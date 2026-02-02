@@ -406,6 +406,8 @@ class AppLanguage {
   static const earningHistorytext = ["Earning History"];
   static const nextText = ["Next"];
   static const resendOtp = ["Resend Otp"];
+    static const resend = ["Resend"];
+
 //parinay 07/10
 
   static const verifyButtonText = ["Verify"];
@@ -427,9 +429,9 @@ class AppLanguage {
   static const notUsingyourEmail = ["Not Using your email?"];
   static const enteremailidText = ["Enter Email Id"];
   static const xyzgmailText = ["xyz@gmail.com"];
-  static const editHobbiesText=["Edit Hobbies"];
-  static const edityourHobbiesText=["Edit your hobbies "];
-  static const yourHobbiesText=["Your hobbies"];
+  static const editHobbiesText = ["Edit Hobbies"];
+  static const edityourHobbiesText = ["Edit your hobbies "];
+  static const yourHobbiesText = ["Your hobbies"];
   static const letsgetStartedtext = ["Let's Get Started"];
   static const enterphonenumber = ["Enter Phone Number"];
   static const alreadyhaveanacoount = ["Already have an account ?"];
@@ -496,6 +498,12 @@ class AppLanguage {
   static const pronouncsText = ["Pronouns"];
   static const hehimText = ["He/Him"];
   static const Hobbiestext = ["Hobbies:"];
+  static const hobbiestext = ["Hobbies"];
+
+  static const hobbiesInsttext = [
+    "Enter your Hobbies. Use (,) to add more (up to 3)"
+  ];
+
   static const workingPaintingText = ["Workout,Painting,Playing Guitar"];
   static const bioStatementtext = [
     "I love discovering new event spaces — from cozy rooftops to buzzing music arenas. I’m always looking for venues that mix good energy, creative design, and great people."
@@ -503,6 +511,11 @@ class AppLanguage {
   static const interestText = ["Interest"];
   static const vibeCheck = ["Vibe Check"];
   static const instagramText = ["Instagram"];
+  static const recentEventsText = ["Recent Events"];
+  static const recentEventsinstText = ["Shows your Recent 5 Liked Events"];
+  static const recentVenueText = ["Recent Venues"];
+  static const recentVenueinstText = ["Shows your Recent 5 Liked Venues"];
+
   static const rampal72Text = ["@rampal72"];
   static const actorText = ["Actor"];
   static const kapoorg = ["@kapoorg72"];
@@ -554,7 +567,10 @@ class AppLanguage {
 
   static const accessLocationText = ["Allow Hii to access your location"];
   static const managePermissionsText = ["Manage Permissions"];
-  static const contactSupportText = ["Contact Support"];
+  static const contactSupportHintText = [
+    "Contact with the Hii App Team to share any feedback or queries you have."
+  ];
+
   static const chatWithus = ["Chat with us"];
   static const liveSupport = ["Live Support"];
   static const privacyPolicy = ["Privacy Policy"];
@@ -620,6 +636,8 @@ class AppLanguage {
   static const NightLifeAppText = ["NightLifeApp"];
   static const idProoftext = ["ID Proof"];
   static const selectGendertext = ["Select Gender"];
+    static const gendertext = ["Gender"];
+
   static const undoText = ["Undo"];
   static const activeTwominuteAgotext = ["Active 2m ago"];
   static const reservationsText = ["Reservations"];
@@ -648,6 +666,10 @@ class AppLanguage {
   static const usernameAndemailIdPhonenumberText = [
     "Enter Username or Email Id or Phone Number"
   ];
+  static const usernameemailIdPhonenumberText = [
+    "Username or Email Id or Phone Number"
+  ];
+    static const passwordtext = ['Password'];
 
 //////////////Pritam- 31-10-2025///////////////////////
   static const reviewBookingDetailsText = ["Review booking details"];
@@ -736,6 +758,7 @@ class AppLanguage {
   static const viewdetailsText = ["View details"];
   static const pastEventsText = ["Past Events"];
   static const pastReservationsText = ["Past Reservations"];
+  static const upcomingReservationsText = ["Upcoming Reservations"];
 
   static const appPreferencesText = ["App Preferences"];
   static const mediaVisibilityText = ["Media Visibilty"];
@@ -783,4 +806,35 @@ class AppLanguage {
 //09
   static const referaFriText = ["Refer a Friend"];
   static const privacypoliciesText = ["Privacy Policies"];
+
+  //============chat support===========//
+  static const chatSupportText = ["Chat Support"];
+  static const contactSupportText = ["Contact Support"];
+
+  static const describeYourIssueText = [
+    "Describe your issue",
+  ];
+
+  static const addScreenshotsText = [
+    "Add Screenshots",
+  ];
+
+  static const addScreenshotsHintText = [
+    "Attach screenshots or recordings (optional)",
+  ];
+
+  static const reportProblemFooterText = [
+    "By submitting, you allow Hii App to review related technical logs to help resolve your feedback",
+  ];
+
+  //=================validation=============//
+    static const validPhoneNumberMsgText = [
+    "Enter valid phone number",
+  ];
+  static const pleaseEnterText = ["Please Enter"];
+  static const pleaseSelectText = ["Please Select"];
+    static const validEmailText = ["Please Enter valid Email"];
+  static const passwordNotMatchText = [
+    "Password and confirm password fields must be equal"
+  ];
 }

@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
@@ -28,7 +27,14 @@ class _SearchScreenState extends State<SearchScreen> {
   int tapBarStatus = 0;
 
   List trendingSearchList = ["Royal Club", "Arjun Raajpaal", "Music Fest"];
-  List cityList = ["Delhi NCR", "Mumbai", "Banglore", "Goa", "Chennai", "Kolkata"];
+  List cityList = [
+    "Delhi NCR",
+    "Mumbai",
+    "Banglore",
+    "Goa",
+    "Chennai",
+    "Kolkata"
+  ];
 
   final List<Map<String, String>> eventList = [
     {
@@ -43,7 +49,6 @@ class _SearchScreenState extends State<SearchScreen> {
       "distance": "7.2 km",
       "location": "Kaushambi"
     },
-   
     {
       "image": "assets/icons/kingdomofDreamsicon.png",
       "title": "Kingdom of Dreams",
@@ -113,11 +118,10 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
-
     final themeProvider = Provider.of<ThemeProvider>(context);
     bool isDark = themeProvider.isDarkMode;
     final size = MediaQuery.of(context).size;
-    return   AnnotatedRegion<SystemUiOverlayStyle>(
+    return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
         statusBarIconBrightness: Brightness.light,
@@ -145,84 +149,96 @@ class _SearchScreenState extends State<SearchScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 100,
                     ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 90 / 100,
-                      child: Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          GestureDetector(
-                            onTap: () {
-                              _openDistanceBottomSheet(context);
-                            },
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 8 / 100,
-                              height: MediaQuery.of(context).size.width * 8 / 100,
-                              child: Image.asset(
-                                AppImage.locationIcon,
-                                color: isDark
-                                    ? AppColor.secondryColor
-                                    : AppColor.primaryColor,
-                                fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        _openDistanceBottomSheet(context);
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 90 / 100,
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                _openDistanceBottomSheet(context);
+                              },
+                              child: SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 8 / 100,
+                                height:
+                                    MediaQuery.of(context).size.width * 8 / 100,
+                                child: Image.asset(
+                                  AppImage.locationIcon,
+                                  color: isDark
+                                      ? AppColor.secondryColor
+                                      : AppColor.primaryColor,
+                                  fit: BoxFit.cover,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 2 / 100,
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 60 / 100,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Delhi",
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                    color: isDark
-                                        ? AppColor.secondryColor
-                                        : AppColor.primaryColor,
-                                  ),
-                                ),
-                                Text(
-                                  "Chander Nagar, Surya Nagar, Delhi",
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 11,
-                                    fontWeight: FontWeight.w300,
-                                    color: isDark
-                                        ? AppColor.secondryColor
-                                        : AppColor.primaryColor,
-                                  ),
-                                ),
-                              ],
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 2 / 100,
                             ),
-                          ),
-                          const Spacer(),
-                          GestureDetector(
-                            onTap: () {
-                              // bottomSheet(context);
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: CalendarScreen(),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );
-                            },
-                            child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 5 / 100,
-                              height: MediaQuery.of(context).size.width * 5 / 100,
-                              child: Image.asset(
-                                AppImage.calenderImage,
-                                fit: BoxFit.cover,
-                                color: AppColor.pinkColor,
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 60 / 100,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Delhi",
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark
+                                          ? AppColor.secondryColor
+                                          : AppColor.primaryColor,
+                                    ),
+                                  ),
+                                  Text(
+                                    "Chander Nagar, Surya Nagar, Delhi",
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 11,
+                                      fontWeight: FontWeight.w300,
+                                      color: isDark
+                                          ? AppColor.secondryColor
+                                          : AppColor.primaryColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                             ),
-                          ),
-                        ],
+                            const Spacer(),
+                            GestureDetector(
+                              onTap: () {
+                                // bottomSheet(context);
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type:
+                                        PageTransitionType.rightToLeftWithFade,
+                                    child: CalendarScreen(),
+                                    duration: const Duration(milliseconds: 500),
+                                  ),
+                                );
+                              },
+                              child: SizedBox(
+                                width:
+                                    MediaQuery.of(context).size.width * 5 / 100,
+                                height:
+                                    MediaQuery.of(context).size.width * 5 / 100,
+                                child: Image.asset(
+                                  AppImage.calenderImage,
+                                  fit: BoxFit.cover,
+                                  color: AppColor.pinkColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                     SizedBox(
@@ -270,7 +286,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               AppImage.searchIcon,
                               height:
                                   MediaQuery.of(context).size.height * 4 / 100,
-                              width: MediaQuery.of(context).size.width * 4 / 100,
+                              width:
+                                  MediaQuery.of(context).size.width * 4 / 100,
                               color: isDark
                                   ? AppColor.secondryColor
                                   : AppColor.primaryColor,
@@ -301,11 +318,11 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                     ),
-      
+
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 100,
                     ),
-      
+
                     //!====================Tap bar three option===================\\
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 75 / 100,
@@ -321,7 +338,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               });
                             },
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 22 / 100,
+                              width:
+                                  MediaQuery.of(context).size.width * 22 / 100,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -353,7 +371,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               ),
                             ),
                           ),
-      
+
                           // Events option
                           GestureDetector(
                             onTap: () {
@@ -362,7 +380,8 @@ class _SearchScreenState extends State<SearchScreen> {
                               });
                             },
                             child: SizedBox(
-                              width: MediaQuery.of(context).size.width * 22 / 100,
+                              width:
+                                  MediaQuery.of(context).size.width * 22 / 100,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -397,10 +416,10 @@ class _SearchScreenState extends State<SearchScreen> {
                         ],
                       ),
                     ),
-      
+
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 1 / 100),
-      
+
                     Container(
                       width: MediaQuery.of(context).size.width * 55 / 100,
                       alignment: tapBarStatus == 1
@@ -415,7 +434,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                       ),
                     ),
-      
+
                     Container(
                       height: MediaQuery.of(context).size.height * 0.2 / 100,
                       width: MediaQuery.of(context).size.width,
@@ -424,19 +443,20 @@ class _SearchScreenState extends State<SearchScreen> {
                         color: AppColor.textTapColor,
                       ),
                     ),
-      
+
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 100,
                     ),
-      
+
                     Expanded(
                         flex: 1,
                         child: SingleChildScrollView(
                           child: Column(
                             children: [
                               Container(
-                                width:
-                                    MediaQuery.of(context).size.width * 90 / 100,
+                                width: MediaQuery.of(context).size.width *
+                                    90 /
+                                    100,
                                 child: Text(
                                   AppLanguage.trendingSearchText[language],
                                   style: const TextStyle(
@@ -447,8 +467,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                 ),
                               ),
                               SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 2 / 100,
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
                               ),
                               Container(
                                   width: MediaQuery.of(context).size.width *
@@ -461,14 +482,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ...List.generate(
                                             trendingSearchList.length,
                                             (index) => Container(
-                                              margin: const EdgeInsets.symmetric(
-                                                  horizontal: 8),
+                                              margin:
+                                                  const EdgeInsets.symmetric(
+                                                      horizontal: 8),
                                               decoration: BoxDecoration(
                                                   borderRadius:
                                                       BorderRadius.circular(25),
                                                   border: Border.all(
                                                       color: isDark
-                                                          ? AppColor.textTapColor
+                                                          ? AppColor
+                                                              .textTapColor
                                                           : AppColor
                                                               .primaryColor)),
                                               child: Padding(
@@ -524,8 +547,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ],
                                       ))),
                               ////////////////////
-      
-                            
+
                               tapBarStatus == 1
                                   ? Column(children: [
                                       SizedBox(
@@ -535,9 +557,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 100,
                                       ),
                                       Container(
-                                        width: MediaQuery.of(context).size.width *
-                                            90 /
-                                            100,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                90 /
+                                                100,
                                         child: Text(
                                           "Featured",
                                           style: const TextStyle(
@@ -554,10 +577,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 100,
                                       ),
                                       Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  96 /
-                                                  100,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              96 /
+                                              100,
                                           child: GestureDetector(
                                             onTap: () {
                                               Navigator.push(
@@ -572,22 +596,28 @@ class _SearchScreenState extends State<SearchScreen> {
                                               );
                                             },
                                             child: SingleChildScrollView(
-                                                scrollDirection: Axis.horizontal,
+                                                scrollDirection:
+                                                    Axis.horizontal,
                                                 child: Wrap(
                                                   children: [
                                                     ...List.generate(
                                                       3,
                                                       (index) => Container(
-                                                          margin: const EdgeInsets
-                                                              .symmetric(
-                                                              horizontal: 8),
+                                                          margin:
+                                                              const EdgeInsets
+                                                                  .symmetric(
+                                                                  horizontal:
+                                                                      8),
                                                           decoration:
                                                               BoxDecoration(
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(25),
-                                                            border: const Border(
-                                                              bottom: BorderSide(
+                                                                    .circular(
+                                                                        25),
+                                                            border:
+                                                                const Border(
+                                                              bottom:
+                                                                  BorderSide(
                                                                 color: AppColor
                                                                     .pinkColor,
                                                                 width: 0.5,
@@ -616,29 +646,28 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             .black,
                                                                         blurRadius:
                                                                             10,
-                                                                        offset:
-                                                                            const Offset(
-                                                                                0,
-                                                                                4),
+                                                                        offset: const Offset(
+                                                                            0,
+                                                                            4),
                                                                       )
                                                                     ],
                                                                     borderRadius:
-                                                                        BorderRadius
-                                                                            .circular(
-                                                                                25),
+                                                                        BorderRadius.circular(
+                                                                            25),
                                                                     border: Border
                                                                         .all()),
-                                                                child: ClipRRect(
+                                                                child:
+                                                                    ClipRRect(
                                                                   borderRadius: const BorderRadius
                                                                       .only(
                                                                       topLeft: Radius
                                                                           .circular(
                                                                               25),
-                                                                      topRight: Radius
-                                                                          .circular(
+                                                                      topRight:
+                                                                          Radius.circular(
                                                                               25)),
-                                                                  child:
-                                                                      Image.asset(
+                                                                  child: Image
+                                                                      .asset(
                                                                     'assets/icons/imageforlist.jpg',
                                                                     fit: BoxFit
                                                                         .cover,
@@ -677,10 +706,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             FontWeight
                                                                                 .w700,
                                                                         color: isDark
-                                                                            ? AppColor
-                                                                                .secondryColor
-                                                                            : AppColor
-                                                                                .primaryColor),
+                                                                            ? AppColor.secondryColor
+                                                                            : AppColor.primaryColor),
                                                                   ),
                                                                 ),
                                                               ),
@@ -699,30 +726,24 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                   child: Row(
                                                                     children: [
                                                                       Container(
-                                                                        width: MediaQuery.of(context)
-                                                                                .size
-                                                                                .width *
+                                                                        width: MediaQuery.of(context).size.width *
                                                                             6 /
                                                                             100,
-                                                                        height: MediaQuery.of(context)
-                                                                                .size
-                                                                                .width *
+                                                                        height: MediaQuery.of(context).size.width *
                                                                             6 /
                                                                             100,
                                                                         child: Image
                                                                             .asset(
                                                                           AppImage
                                                                               .locationBlackicon,
-                                                                          color: AppColor
-                                                                              .pinkColor,
+                                                                          color:
+                                                                              AppColor.pinkColor,
                                                                           fit: BoxFit
                                                                               .cover,
                                                                         ),
                                                                       ),
                                                                       SizedBox(
-                                                                        width: MediaQuery.of(context)
-                                                                                .size
-                                                                                .width *
+                                                                        width: MediaQuery.of(context).size.width *
                                                                             0.1 /
                                                                             100,
                                                                       ),
@@ -733,10 +754,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 .fontFamily,
                                                                             fontSize:
                                                                                 12,
-                                                                            fontWeight: FontWeight
-                                                                                .w400,
-                                                                            color:
-                                                                                AppColor.pinkColor),
+                                                                            fontWeight:
+                                                                                FontWeight.w400,
+                                                                            color: AppColor.pinkColor),
                                                                       ),
                                                                     ],
                                                                   ),
@@ -779,87 +799,111 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 2.5 /
                                                 100,
                                       ),
-                                      SizedBox(
-                                        width: MediaQuery.of(context).size.width *
-                                            90 /
-                                            100,
-                                        child: Container(
-                                          height: size.height * 22 / 100,
-                                          width: double.infinity,
-                                          child: ListView.builder(
-                                            scrollDirection: Axis.horizontal,
-                                            itemCount: placeList.length,
-                                            itemBuilder: (context, index) {
-                                              return Padding(
-                                                padding: EdgeInsets.only(
-                                                    right: size.width * 3 / 100),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    Container(
-                                                      height:
-                                                          size.height * 12 / 100,
-                                                      width:
-                                                          size.width * 42 / 100,
-                                                      decoration: BoxDecoration(
-                                                        borderRadius:
-                                                            BorderRadius.circular(
-                                                                12),
-                                                        image: DecorationImage(
-                                                          image: AssetImage(
-                                                              placeList[index]
-                                                                  ['image']!),
-                                                          fit: BoxFit.cover,
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageTransition(
+                                              type: PageTransitionType
+                                                  .rightToLeftWithFade,
+                                              child: LikedEventDetail(),
+                                              duration: const Duration(
+                                                  milliseconds: 500),
+                                            ),
+                                          );
+                                        },
+                                        child: SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              90 /
+                                              100,
+                                          child: Container(
+                                            height: size.height * 22 / 100,
+                                            width: double.infinity,
+                                            child: ListView.builder(
+                                              scrollDirection: Axis.horizontal,
+                                              itemCount: placeList.length,
+                                              itemBuilder: (context, index) {
+                                                return Padding(
+                                                  padding: EdgeInsets.only(
+                                                      right:
+                                                          size.width * 3 / 100),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      Container(
+                                                        height: size.height *
+                                                            12 /
+                                                            100,
+                                                        width: size.width *
+                                                            42 /
+                                                            100,
+                                                        decoration:
+                                                            BoxDecoration(
+                                                          borderRadius:
+                                                              BorderRadius
+                                                                  .circular(12),
+                                                          image:
+                                                              DecorationImage(
+                                                            image: AssetImage(
+                                                                placeList[index]
+                                                                    ['image']!),
+                                                            fit: BoxFit.cover,
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                        height: size.height *
-                                                            1 /
-                                                            100),
-                                                    Text(
-                                                      placeList[index]['title']!,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontSize: 13.5,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: isDark
-                                                            ? AppColor
-                                                                .secondryColor
-                                                            : AppColor
-                                                                .primaryColor,
+                                                      SizedBox(
+                                                          height: size.height *
+                                                              1 /
+                                                              100),
+                                                      Text(
+                                                        placeList[index]
+                                                            ['title']!,
+                                                        style: TextStyle(
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontSize: 13.5,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: isDark
+                                                              ? AppColor
+                                                                  .secondryColor
+                                                              : AppColor
+                                                                  .primaryColor,
+                                                        ),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                        height: size.height *
-                                                            0.5 /
-                                                            100),
-                                                    Text(
-                                                      "${placeList[index]['distance']} | ${placeList[index]['location']}",
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontSize: 12,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: AppColor
-                                                            .listTextColor,
+                                                      SizedBox(
+                                                          height: size.height *
+                                                              0.5 /
+                                                              100),
+                                                      Text(
+                                                        "${placeList[index]['distance']} | ${placeList[index]['location']}",
+                                                        style: TextStyle(
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontSize: 12,
+                                                          fontWeight:
+                                                              FontWeight.w400,
+                                                          color: AppColor
+                                                              .listTextColor,
+                                                        ),
                                                       ),
-                                                    ),
-                                                  ],
-                                                ),
-                                              );
-                                            },
+                                                    ],
+                                                  ),
+                                                );
+                                              },
+                                            ),
                                           ),
                                         ),
                                       ),
                                       Container(
-                                        width: MediaQuery.of(context).size.width *
-                                            90 /
-                                            100,
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                90 /
+                                                100,
                                         child: Text(
                                           "Recommended",
                                           style: const TextStyle(
@@ -869,9 +913,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                               color: AppColor.pinkColor),
                                         ),
                                       ),
-      
+
                                       SizedBox(height: 16),
-      
+
                                       // List builder 2 per row
                                       ListView.builder(
                                         itemCount: (items.length / 2).ceil(),
@@ -882,10 +926,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                           final i2 = i1 + 1;
                                           final size =
                                               MediaQuery.of(context).size;
-      
+
                                           return Padding(
-                                            padding:
-                                                const EdgeInsets.only(bottom: 14),
+                                            padding: const EdgeInsets.only(
+                                                bottom: 14),
                                             child: Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.spaceEvenly,
@@ -899,8 +943,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         type: PageTransitionType
                                                             .bottomToTop,
                                                         child: BookTable(),
-                                                        duration: const Duration(
-                                                            milliseconds: 500),
+                                                        duration:
+                                                            const Duration(
+                                                                milliseconds:
+                                                                    500),
                                                       ),
                                                     );
                                                   },
@@ -916,14 +962,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       children: [
                                                         ClipRRect(
                                                           borderRadius:
-                                                              BorderRadius.circular(
-                                                           10
-                                                          ),
+                                                              BorderRadius
+                                                                  .circular(10),
                                                           child: Image.asset(
                                                             items[i1]["image"],
                                                             height: 100,
-                                                            width:
-                                                                size.width * 0.42,
+                                                            width: size.width *
+                                                                0.42,
                                                             fit: BoxFit.cover,
                                                           ),
                                                         ),
@@ -934,14 +979,17 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           child: Text(
                                                             items[i1]["title"],
                                                             style: TextStyle(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               fontSize: 14,
                                                               fontWeight:
-                                                                  FontWeight.w600,
+                                                                  FontWeight
+                                                                      .w600,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 2),
@@ -949,15 +997,17 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           alignment: Alignment
                                                               .centerLeft,
                                                           child: Text(
-                                                            items[i1]["location"],
+                                                            items[i1]
+                                                                ["location"],
                                                             style: TextStyle(
                                                               fontSize: 12,
-                                                              color:
-                                                                  Colors.white60,
+                                                              color: Colors
+                                                                  .white60,
                                                             ),
                                                             maxLines: 1,
-                                                            overflow: TextOverflow
-                                                                .ellipsis,
+                                                            overflow:
+                                                                TextOverflow
+                                                                    .ellipsis,
                                                           ),
                                                         ),
                                                         SizedBox(height: 8),
@@ -970,15 +1020,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             color: Colors.white,
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(8),
+                                                                    .circular(
+                                                                        8),
                                                           ),
                                                           child: Center(
                                                             child: Text(
                                                               "Reserve",
                                                               style: TextStyle(
                                                                 fontSize: 14,
-                                                                color:
-                                                                    Colors.black,
+                                                                color: Colors
+                                                                    .black,
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w600,
@@ -991,7 +1042,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                     ),
                                                   ),
                                                 ),
-      
+
                                                 // ---------- SECOND CARD (IF EXISTS) ----------
                                                 if (i2 < items.length)
                                                   GestureDetector(
@@ -999,8 +1050,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       Navigator.push(
                                                         context,
                                                         PageTransition(
-                                                          type: PageTransitionType
-                                                              .bottomToTop,
+                                                          type:
+                                                              PageTransitionType
+                                                                  .bottomToTop,
                                                           child: VenuePages(),
                                                           duration:
                                                               const Duration(
@@ -1014,26 +1066,27 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       decoration: BoxDecoration(
                                                         color: Colors.black,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                14),
+                                                            BorderRadius
+                                                                .circular(14),
                                                       ),
                                                       child: Column(
                                                         children: [
                                                           ClipRRect(
                                                             borderRadius:
-                                                                BorderRadius.only(
-                                                              topLeft:
-                                                                  Radius.circular(
-                                                                      14),
-                                                              topRight:
-                                                                  Radius.circular(
-                                                                      14),
+                                                                BorderRadius
+                                                                    .only(
+                                                              topLeft: Radius
+                                                                  .circular(14),
+                                                              topRight: Radius
+                                                                  .circular(14),
                                                             ),
                                                             child: Image.asset(
-                                                              items[i2]["image"],
+                                                              items[i2]
+                                                                  ["image"],
                                                               height: 100,
-                                                              width: size.width *
-                                                                  0.42,
+                                                              width:
+                                                                  size.width *
+                                                                      0.42,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
@@ -1042,10 +1095,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             alignment: Alignment
                                                                 .centerLeft,
                                                             child: Text(
-                                                              items[i2]["title"],
+                                                              items[i2]
+                                                                  ["title"],
                                                               style: TextStyle(
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
@@ -1077,12 +1131,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           ),
                                                           SizedBox(height: 8),
                                                           Container(
-                                                            width:
-                                                                size.width * 0.41,
+                                                            width: size.width *
+                                                                0.41,
                                                             height: 32,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -1091,7 +1146,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             child: Center(
                                                               child: Text(
                                                                 "Reserve",
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 14,
                                                                   color: Colors
                                                                       .black,
@@ -1116,16 +1172,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                   : Column(
                                       children: [
                                         SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  2 /
-                                                  100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              2 /
+                                              100,
                                         ),
                                         Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  90 /
-                                                  100,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              90 /
+                                              100,
                                           child: Text(
                                             "Featured",
                                             style: const TextStyle(
@@ -1136,10 +1194,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ),
                                         ),
                                         SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  2 /
-                                                  100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              2 /
+                                              100,
                                         ),
                                         Container(
                                             width: MediaQuery.of(context)
@@ -1222,12 +1281,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       ClipRRect(
                                                                     borderRadius: const BorderRadius
                                                                         .only(
-                                                                        topLeft: Radius
-                                                                            .circular(
+                                                                        topLeft:
+                                                                            Radius.circular(
                                                                                 25),
                                                                         topRight:
-                                                                            Radius.circular(
-                                                                                25)),
+                                                                            Radius.circular(25)),
                                                                     child: Image
                                                                         .asset(
                                                                       'assets/icons/img.png',
@@ -1251,22 +1309,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           .width *
                                                                       55 /
                                                                       100,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets
-                                                                        .symmetric(
-                                                                            horizontal:
-                                                                                10),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
                                                                     child: Text(
                                                                       "Bass Drop,Fridays",
                                                                       style: TextStyle(
-                                                                          fontFamily:
-                                                                              AppFont
-                                                                                  .fontFamily,
+                                                                          fontFamily: AppFont
+                                                                              .fontFamily,
                                                                           fontSize:
                                                                               16.5,
-                                                                          fontWeight:
-                                                                              FontWeight
-                                                                                  .w700,
+                                                                          fontWeight: FontWeight
+                                                                              .w700,
                                                                           color: isDark
                                                                               ? AppColor.secondryColor
                                                                               : AppColor.primaryColor),
@@ -1280,11 +1336,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           .width *
                                                                       55 /
                                                                       100,
-                                                                  child: Padding(
-                                                                    padding: EdgeInsets
-                                                                        .symmetric(
-                                                                            horizontal:
-                                                                                10),
+                                                                  child:
+                                                                      Padding(
+                                                                    padding: EdgeInsets.symmetric(
+                                                                        horizontal:
+                                                                            10),
                                                                     child: Row(
                                                                       children: [
                                                                         Container(
@@ -1294,14 +1350,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           height: MediaQuery.of(context).size.width *
                                                                               5 /
                                                                               100,
-                                                                          child: Image
-                                                                              .asset(
-                                                                            AppImage
-                                                                                .clock,
+                                                                          child:
+                                                                              Image.asset(
+                                                                            AppImage.clock,
                                                                             color:
                                                                                 AppColor.pinkColor,
-                                                                            fit: BoxFit
-                                                                                .cover,
+                                                                            fit:
+                                                                                BoxFit.cover,
                                                                           ),
                                                                         ),
                                                                         SizedBox(
@@ -1312,12 +1367,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                         const Text(
                                                                           "Fri,10 PM - 4 AM",
                                                                           style: TextStyle(
-                                                                              fontFamily: AppFont
-                                                                                  .fontFamily,
-                                                                              fontSize:
-                                                                                  13,
-                                                                              fontWeight:
-                                                                                  FontWeight.w500,
+                                                                              fontFamily: AppFont.fontFamily,
+                                                                              fontSize: 13,
+                                                                              fontWeight: FontWeight.w500,
                                                                               color: AppColor.pinkColor),
                                                                         ),
                                                                       ],
@@ -1339,22 +1391,25 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   )),
                                             )),
                                         SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  4 /
-                                                  100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              4 /
+                                              100,
                                         ),
                                         Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  90 /
-                                                  100,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              90 /
+                                              100,
                                           child: Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
                                               "Events near you",
                                               style: TextStyle(
-                                                  fontFamily: AppFont.fontFamily,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600,
                                                   color: AppColor.pinkColor),
@@ -1362,16 +1417,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ),
                                         ),
                                         SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  3 /
-                                                  100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              3 /
+                                              100,
                                         ),
                                         SizedBox(
-                                          height:
-                                              MediaQuery.of(context).size.height *
-                                                  22 /
-                                                  100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              22 /
+                                              100,
                                           child: ListView.builder(
                                             scrollDirection: Axis.horizontal,
                                             itemCount: eventList.length,
@@ -1379,114 +1436,136 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 horizontal: 16),
                                             itemBuilder: (context, index) {
                                               final event = eventList[index];
-                                              return Container(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    40 /
-                                                    100,
-                                                margin: const EdgeInsets.only(
-                                                    right: 12),
-                                                decoration: BoxDecoration(
-                                                    borderRadius:
-                                                        BorderRadius.circular(14),
-                                                    color: isDark
-                                                        ? AppColor.primaryColor
-                                                        : AppColor.secondryColor),
-                                                child: Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [
-                                                    ClipRRect(
+                                              return GestureDetector(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type: PageTransitionType
+                                                          .rightToLeftWithFade,
+                                                      child: LikedEventDetail(),
+                                                      duration: const Duration(
+                                                          milliseconds: 500),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      40 /
+                                                      100,
+                                                  margin: const EdgeInsets.only(
+                                                      right: 12),
+                                                  decoration: BoxDecoration(
                                                       borderRadius:
                                                           BorderRadius.circular(
-                                                              12),
-                                                      child: Image.asset(
-                                                        event["image"]!,
-                                                        height:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height *
-                                                                12 /
-                                                                100,
-                                                        width: double.infinity,
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        height:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height *
-                                                                1 /
-                                                                100),
-                                                    Text(
-                                                      event["title"]!,
-                                                      style: TextStyle(
-                                                        color: isDark
-                                                            ? AppColor
-                                                                .secondryColor
-                                                            : AppColor
-                                                                .primaryColor,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        fontSize: 13,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        height:
-                                                            MediaQuery.of(context)
-                                                                    .size
-                                                                    .height *
-                                                                1 /
-                                                                100),
-                                                    Row(
-                                                      children: [
-                                                        Text(
-                                                          event["distance"]!,
-                                                          style: TextStyle(
-                                                            color: isDark
-                                                                ? AppColor
-                                                                    .secondryColor
-                                                                : AppColor
-                                                                    .primaryColor,
-                                                            fontSize: 10,
-                                                          ),
+                                                              14),
+                                                      color: isDark
+                                                          ? AppColor
+                                                              .primaryColor
+                                                          : AppColor
+                                                              .secondryColor),
+                                                  child: Column(
+                                                    crossAxisAlignment:
+                                                        CrossAxisAlignment
+                                                            .start,
+                                                    children: [
+                                                      ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(12),
+                                                        child: Image.asset(
+                                                          event["image"]!,
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              12 /
+                                                              100,
+                                                          width:
+                                                              double.infinity,
+                                                          fit: BoxFit.cover,
                                                         ),
-                                                        const SizedBox(width: 4),
-                                                        Icon(
-                                                          Icons.circle,
-                                                          size: 4,
+                                                      ),
+                                                      SizedBox(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              1 /
+                                                              100),
+                                                      Text(
+                                                        event["title"]!,
+                                                        style: TextStyle(
                                                           color: isDark
-                                                              ? Colors.white54
+                                                              ? AppColor
+                                                                  .secondryColor
                                                               : AppColor
                                                                   .primaryColor,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          fontSize: 13,
                                                         ),
-                                                        const SizedBox(width: 4),
-                                                        Text(
-                                                          event["location"]!,
-                                                          style: TextStyle(
+                                                      ),
+                                                      SizedBox(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              1 /
+                                                              100),
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            event["distance"]!,
+                                                            style: TextStyle(
+                                                              color: isDark
+                                                                  ? AppColor
+                                                                      .secondryColor
+                                                                  : AppColor
+                                                                      .primaryColor,
+                                                              fontSize: 10,
+                                                            ),
+                                                          ),
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Icon(
+                                                            Icons.circle,
+                                                            size: 4,
                                                             color: isDark
-                                                                ? AppColor
-                                                                    .secondryColor
+                                                                ? Colors.white54
                                                                 : AppColor
                                                                     .primaryColor,
-                                                            fontSize: 10,
                                                           ),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                  ],
+                                                          const SizedBox(
+                                                              width: 4),
+                                                          Text(
+                                                            event["location"]!,
+                                                            style: TextStyle(
+                                                              color: isDark
+                                                                  ? AppColor
+                                                                      .secondryColor
+                                                                  : AppColor
+                                                                      .primaryColor,
+                                                              fontSize: 10,
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ],
+                                                  ),
                                                 ),
                                               );
                                             },
                                           ),
                                         ),
                                         Container(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  90 /
-                                                  100,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              90 /
+                                              100,
                                           child: Text(
                                             "Recommended",
                                             style: const TextStyle(
@@ -1496,26 +1575,29 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 color: AppColor.pinkColor),
                                           ),
                                         ),
-      
-                                        SizedBox(height: size.height *2.5/100),
-      
+
+                                        SizedBox(
+                                            height: size.height * 2.5 / 100),
+
                                         // List builder 2 per row
                                         ListView.builder(
                                           itemCount: (items.length / 2).ceil(),
                                           shrinkWrap: true,
-                                          physics: NeverScrollableScrollPhysics(),
+                                          physics:
+                                              NeverScrollableScrollPhysics(),
                                           itemBuilder: (context, index) {
                                             final i1 = index * 2;
                                             final i2 = i1 + 1;
                                             final size =
                                                 MediaQuery.of(context).size;
-      
+
                                             return Padding(
                                               padding: const EdgeInsets.only(
                                                   bottom: 14),
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.spaceEvenly,
+                                                    MainAxisAlignment
+                                                        .spaceEvenly,
                                                 children: [
                                                   // ---------- FIRST CARD ----------
                                                   GestureDetector(
@@ -1523,8 +1605,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       Navigator.push(
                                                         context,
                                                         PageTransition(
-                                                          type: PageTransitionType
-                                                              .bottomToTop,
+                                                          type:
+                                                              PageTransitionType
+                                                                  .bottomToTop,
                                                           child: BookEvent(),
                                                           duration:
                                                               const Duration(
@@ -1538,20 +1621,23 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       decoration: BoxDecoration(
                                                         color: Colors.black,
                                                         borderRadius:
-                                                            BorderRadius.circular(
-                                                                14),
+                                                            BorderRadius
+                                                                .circular(14),
                                                       ),
                                                       child: Column(
                                                         children: [
                                                           ClipRRect(
                                                             borderRadius:
                                                                 BorderRadius
-                                                                    .circular(10),
+                                                                    .circular(
+                                                                        10),
                                                             child: Image.asset(
-                                                              items[i1]["image"],
+                                                              items[i1]
+                                                                  ["image"],
                                                               height: 100,
-                                                              width: size.width *
-                                                                  0.42,
+                                                              width:
+                                                                  size.width *
+                                                                      0.42,
                                                               fit: BoxFit.cover,
                                                             ),
                                                           ),
@@ -1560,10 +1646,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             alignment: Alignment
                                                                 .centerLeft,
                                                             child: Text(
-                                                              items[i1]["title"],
+                                                              items[i1]
+                                                                  ["title"],
                                                               style: TextStyle(
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 fontSize: 14,
                                                                 fontWeight:
                                                                     FontWeight
@@ -1595,12 +1682,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           ),
                                                           SizedBox(height: 8),
                                                           Container(
-                                                            width:
-                                                                size.width * 0.41,
+                                                            width: size.width *
+                                                                0.41,
                                                             height: 32,
                                                             decoration:
                                                                 BoxDecoration(
-                                                              color: Colors.white,
+                                                              color:
+                                                                  Colors.white,
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -1609,7 +1697,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             child: Center(
                                                               child: Text(
                                                                 "Book Now",
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 14,
                                                                   color: Colors
                                                                       .black,
@@ -1625,7 +1714,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                       ),
                                                     ),
                                                   ),
-      
+
                                                   // ---------- SECOND CARD (IF EXISTS) ----------
                                                   if (i2 < items.length)
                                                     GestureDetector(
@@ -1646,8 +1735,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         );
                                                       },
                                                       child: Container(
-                                                        width: size.width * 0.42,
-                                                        decoration: BoxDecoration(
+                                                        width:
+                                                            size.width * 0.42,
+                                                        decoration:
+                                                            BoxDecoration(
                                                           color: Colors.black,
                                                           borderRadius:
                                                               BorderRadius
@@ -1661,14 +1752,16 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       .circular(
                                                                 10,
                                                               ),
-                                                              child: Image.asset(
+                                                              child:
+                                                                  Image.asset(
                                                                 items[i2]
                                                                     ["image"],
                                                                 height: 100,
                                                                 width:
                                                                     size.width *
                                                                         0.42,
-                                                                fit: BoxFit.cover,
+                                                                fit: BoxFit
+                                                                    .cover,
                                                               ),
                                                             ),
                                                             SizedBox(height: 8),
@@ -1678,7 +1771,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               child: Text(
                                                                 items[i2]
                                                                     ["title"],
-                                                                style: TextStyle(
+                                                                style:
+                                                                    TextStyle(
                                                                   color: Colors
                                                                       .white,
                                                                   fontSize: 14,
@@ -1697,9 +1791,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               alignment: Alignment
                                                                   .centerLeft,
                                                               child: Text(
-                                                                items[i2]
-                                                                    ["location"],
-                                                                style: TextStyle(
+                                                                items[i2][
+                                                                    "location"],
+                                                                style:
+                                                                    TextStyle(
                                                                   fontSize: 12,
                                                                   color: Colors
                                                                       .white60,
@@ -1712,13 +1807,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             ),
                                                             SizedBox(height: 8),
                                                             Container(
-                                                              width: size.width *
-                                                                  0.41,
+                                                              width:
+                                                                  size.width *
+                                                                      0.41,
                                                               height: 32,
                                                               decoration:
                                                                   BoxDecoration(
-                                                                color:
-                                                                    Colors.white,
+                                                                color: Colors
+                                                                    .white,
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
@@ -1729,7 +1825,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                   "Book Now",
                                                                   style:
                                                                       TextStyle(
-                                                                    fontSize: 14,
+                                                                    fontSize:
+                                                                        14,
                                                                     color: Colors
                                                                         .black,
                                                                     fontWeight:
@@ -1751,10 +1848,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                         ),
                                       ],
                                     ),
-      
+
                               SizedBox(
-                                height:
-                                    MediaQuery.of(context).size.height * 20 / 100,
+                                height: MediaQuery.of(context).size.height *
+                                    20 /
+                                    100,
                               ),
                             ],
                           ),
@@ -2066,7 +2164,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   ),
                   SizedBox(height: size.height * 1 / 100),
                   Container(
-                    width: MediaQuery.of(context).size.width *90/100,
+                    width: MediaQuery.of(context).size.width * 90 / 100,
                     alignment: Alignment.centerLeft,
                     child: Wrap(
                       spacing: 10, // space between chips horizontally
@@ -2104,142 +2202,125 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                   ),
                   SizedBox(height: size.height * 2 / 100),
-             
-                                Container(
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(15),
-                                    border: Border.all(
-                                      color: AppColor.darkPurpleColor,
-                                      width: 1,
-                                    ),
-                                    color: Colors.transparent,
-                                  ),
-                                  padding: const EdgeInsets.only(right: 6),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              1 /
-                                              100),
-                                      Padding(
-                                        padding: EdgeInsets.only(left: 18),
-                                        child: Text(
-                                          "Upto ${_currentDistance.toInt()} kilometres away",
-                                          style: TextStyle(
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                            color: AppColor.secondryColor,
-                                          ),
-                                        ),
-                                      ),
-                                      SliderTheme(
-                                        data: SliderTheme.of(context).copyWith(
-                                          trackHeight: 4.0,
-                                          overlayShape: RoundSliderOverlayShape(
-                                              overlayRadius: 20),
-                                          thumbShape: RoundSliderThumbShape(
-                                              enabledThumbRadius: 10),
-                                        ),
-                                        child: Slider(
-                                          value: _currentDistance,
-                                          min: 1,
-                                          max: 100,
-                                          activeColor: AppColor.pinkColor,
-                                          inactiveColor:
-                                              AppColor.lightgreyColor,
-                                          onChanged: (value) {
-                                            setState(() {
-                                              _currentDistance = value;
-                                            }); 
-                                          },
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 19.0),
-                                            child: Text(
-                                              "1km",
-                                              style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 10,
-                                                color: AppColor.secondryColor,
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 17.0),
-                                            child: Text(
-                                              "60km",
-                                              style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                fontSize: 10,
-                                                color: AppColor.secondryColor,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: 2),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Expanded(
-                                            child: Padding(
-                                              padding:
-                                                  EdgeInsets.only(left: 19.0),
-                                              child: Text(
-                                                "Broaden the vibe zone...",
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontSize: 13,
-                                                  color: AppColor
-                                                      .greygreyLightColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                right: 5.0),
-                                            child: Transform.scale(
-                                              scale: 0.72,
-                                              child: Switch(
-                                                value: _isBroadened,
-                                                onChanged: (value) {
-                                                  setState(() {
-                                                    _isBroadened = value;
-                                                  });
-                                                },
-                                                activeColor: AppColor.pinkColor,
-                                                inactiveTrackColor:
-                                                    AppColor.secondryColor,
-                                                inactiveThumbColor:
-                                                    AppColor.secondryColor,
-                                              ),
-                                            ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
+                  Container(
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(15),
+                      border: Border.all(
+                        color: AppColor.darkPurpleColor,
+                        width: 1,
+                      ),
+                      color: Colors.transparent,
+                    ),
+                    padding: const EdgeInsets.only(right: 6),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 1 / 100),
+                        Padding(
+                          padding: EdgeInsets.only(left: 18),
+                          child: Text(
+                            "Upto ${_currentDistance.toInt()} kilometres away",
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w500,
+                              fontSize: 16,
+                              color: AppColor.secondryColor,
+                            ),
+                          ),
+                        ),
+                        SliderTheme(
+                          data: SliderTheme.of(context).copyWith(
+                            trackHeight: 4.0,
+                            overlayShape:
+                                RoundSliderOverlayShape(overlayRadius: 20),
+                            thumbShape:
+                                RoundSliderThumbShape(enabledThumbRadius: 10),
+                          ),
+                          child: Slider(
+                            value: _currentDistance,
+                            min: 1,
+                            max: 100,
+                            activeColor: AppColor.pinkColor,
+                            inactiveColor: AppColor.lightgreyColor,
+                            onChanged: (value) {
+                              setState(() {
+                                _currentDistance = value;
+                              });
+                            },
+                          ),
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.only(left: 19.0),
+                              child: Text(
+                                "1km",
+                                style: TextStyle(
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: AppColor.secondryColor,
+                                ),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 17.0),
+                              child: Text(
+                                "60km",
+                                style: TextStyle(
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 10,
+                                  color: AppColor.secondryColor,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 2),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(
+                              child: Padding(
+                                padding: EdgeInsets.only(left: 19.0),
+                                child: Text(
+                                  "Broaden the vibe zone...",
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w500,
+                                    fontSize: 13,
+                                    color: AppColor.greygreyLightColor,
                                   ),
                                 ),
-                          
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(right: 5.0),
+                              child: Transform.scale(
+                                scale: 0.72,
+                                child: Switch(
+                                  value: _isBroadened,
+                                  onChanged: (value) {
+                                    setState(() {
+                                      _isBroadened = value;
+                                    });
+                                  },
+                                  activeColor: AppColor.pinkColor,
+                                  inactiveTrackColor: AppColor.secondryColor,
+                                  inactiveThumbColor: AppColor.secondryColor,
+                                ),
+                              ),
+                            )
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
                   SizedBox(height: size.height * 2 / 100),
                 ],
               ),

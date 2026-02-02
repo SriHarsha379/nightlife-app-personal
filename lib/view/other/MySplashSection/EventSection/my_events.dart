@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_color.dart';
@@ -13,6 +12,7 @@ import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../MembersSection/Members.dart';
 import '../VenuesSection/my_venue.dart';
+import 'booked_view_details.dart';
 
 class MyEvents extends StatefulWidget {
   static const String routeName = '/MyEvents';
@@ -87,7 +87,6 @@ class _MyEventsState extends State<MyEvents> {
 
   @override
   Widget build(BuildContext context) {
-
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -532,7 +531,12 @@ class _MyEventsState extends State<MyEvents> {
                                         context,
                                         MaterialPageRoute(
                                             builder: ((context) =>
-                                                LikedEventDetail())));
+                                                BookedViewDetails(
+                                                  image: Bookedlist[index]
+                                                      ['image'],
+                                                  name: Bookedlist[index]
+                                                      ['title'],
+                                                ))));
                                   },
                                   child: Container(
                                     width: size.width * 90 / 100,
@@ -1141,6 +1145,10 @@ class _MyEventsState extends State<MyEvents> {
       // });
     });
   }
+
+
+
+
 
   void showPopupDropdown(BuildContext context) {
     showGeneralDialog(

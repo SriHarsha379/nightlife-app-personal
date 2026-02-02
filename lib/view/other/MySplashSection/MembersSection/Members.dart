@@ -13,6 +13,7 @@ import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
+import '../../chats/chat_message_screen.dart';
 
 class splashMembers extends StatefulWidget {
   static const String routeName = '/splashMembers';
@@ -77,9 +78,9 @@ class _splashMembersState extends State<splashMembers> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 4 / 100,
-                ),
+              SizedBox(
+                height: MediaQuery.of(context).size.height * 4 / 100,
+              ),
               Center(
                 child: SizedBox(
                   width: MediaQuery.of(context).size.width * 90 / 100,
@@ -89,25 +90,24 @@ class _splashMembersState extends State<splashMembers> {
                     children: [
                       GestureDetector(
                         onTap: () {
- Navigator.push(context,
-    
-                    PageTransition(
-                    type: PageTransitionType.rightToLeftWithFade,
-                    child: MyAppFooter(initialIndex: 0),
-                    duration: const Duration(milliseconds: 500),
-                  ),);                        },
+                          Navigator.push(
+                            context,
+                            PageTransition(
+                              type: PageTransitionType.rightToLeftWithFade,
+                              child: MyAppFooter(initialIndex: 0),
+                              duration: const Duration(milliseconds: 500),
+                            ),
+                          );
+                        },
                         child: Container(
-                          height:
-                              MediaQuery.of(context).size.height * 7 / 100,
+                          height: MediaQuery.of(context).size.height * 7 / 100,
                           alignment: Alignment.center,
                           child: Image.asset(
                             AppImage.backarrow,
                             fit: BoxFit.cover,
                             color: AppColor.secondryColor,
-                            height:
-                                MediaQuery.of(context).size.width * 5 / 100,
-                            width:
-                                MediaQuery.of(context).size.width * 5 / 100,
+                            height: MediaQuery.of(context).size.width * 5 / 100,
+                            width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                         ),
                       ),
@@ -115,7 +115,7 @@ class _splashMembersState extends State<splashMembers> {
                         width: MediaQuery.of(context).size.width * 26 / 100,
                       ),
                       GestureDetector(
-                        onTap: (){
+                        onTap: () {
                           documenttypebottomsheet(context);
                         },
                         child: Align(
@@ -132,19 +132,16 @@ class _splashMembersState extends State<splashMembers> {
                           ),
                         ),
                       ),
-                  
                       SizedBox(width: size.width * 2 / 100),
-        
                       GestureDetector(
-                    onTap: (){
-                      documenttypebottomsheet(context);
-                    },
+                        onTap: () {
+                          documenttypebottomsheet(context);
+                        },
                         child: Image.asset(
                           AppImage.downArrow,
                           fit: BoxFit.cover,
                           color: AppColor.secondryColor,
-                          height:
-                              MediaQuery.of(context).size.width * 5 / 100,
+                          height: MediaQuery.of(context).size.width * 5 / 100,
                         ),
                       ),
                     ],
@@ -226,8 +223,7 @@ class _splashMembersState extends State<splashMembers> {
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width * 50 / 100,
-                        height:
-                            MediaQuery.of(context).size.height * 0.3 / 100,
+                        height: MediaQuery.of(context).size.height * 0.3 / 100,
                         color: selectedIndex == 0
                             ? AppColor.pinkColor
                             : AppColor.secondryColor,
@@ -241,8 +237,7 @@ class _splashMembersState extends State<splashMembers> {
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width * 50 / 100,
-                        height:
-                            MediaQuery.of(context).size.height * 0.3 / 100,
+                        height: MediaQuery.of(context).size.height * 0.3 / 100,
                         color: selectedIndex == 1
                             ? AppColor.pinkColor
                             : AppColor.secondryColor,
@@ -314,16 +309,15 @@ class _splashMembersState extends State<splashMembers> {
                                                         ['title'],
                                                     style: const TextStyle(
                                                         fontSize: 18,
-                                                        fontFamily: AppFont
-                                                            .fontFamily,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w700,
                                                         color: AppColor
                                                             .secondryColor),
                                                   ),
                                                   Container(
-                                                    width:
-                                                        size.width * 8 / 100,
+                                                    width: size.width * 8 / 100,
                                                     height:
                                                         size.width * 8 / 100,
                                                     decoration:
@@ -331,8 +325,7 @@ class _splashMembersState extends State<splashMembers> {
                                                             boxShadow: []),
                                                     child: ClipRRect(
                                                         child: Image.asset(
-                                                      AppImage
-                                                          .liked_heart_icon,
+                                                      AppImage.liked_heart_icon,
                                                       fit: BoxFit.cover,
                                                       color: AppColor
                                                           .secondryColor,
@@ -341,18 +334,15 @@ class _splashMembersState extends State<splashMembers> {
                                                 ],
                                               ),
                                               SizedBox(
-                                                height:
-                                                    size.height * 0.4 / 100,
+                                                height: size.height * 0.4 / 100,
                                               ),
                                               Row(
                                                 children: [
                                                   Container(
-                                                    width: size.width *
-                                                        4.5 /
-                                                        100,
-                                                    height: size.width *
-                                                        4.5 /
-                                                        100,
+                                                    width:
+                                                        size.width * 4.5 / 100,
+                                                    height:
+                                                        size.width * 4.5 / 100,
                                                     decoration:
                                                         const BoxDecoration(
                                                             boxShadow: []),
@@ -377,8 +367,8 @@ class _splashMembersState extends State<splashMembers> {
                                                         ['date'],
                                                     style: const TextStyle(
                                                         fontSize: 15,
-                                                        fontFamily: AppFont
-                                                            .fontFamily,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
@@ -392,8 +382,7 @@ class _splashMembersState extends State<splashMembers> {
                                               Row(
                                                 children: [
                                                   Container(
-                                                    width:
-                                                        size.width * 5 / 100,
+                                                    width: size.width * 5 / 100,
                                                     height:
                                                         size.width * 5 / 100,
                                                     decoration:
@@ -406,17 +395,16 @@ class _splashMembersState extends State<splashMembers> {
                                                     )),
                                                   ),
                                                   SizedBox(
-                                                    width: size.width *
-                                                        0.8 /
-                                                        100,
+                                                    width:
+                                                        size.width * 0.8 / 100,
                                                   ),
                                                   Text(
                                                     Followinglist[index]
                                                         ['address'],
                                                     style: const TextStyle(
                                                         fontSize: 14,
-                                                        fontFamily: AppFont
-                                                            .fontFamily,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
@@ -440,26 +428,23 @@ class _splashMembersState extends State<splashMembers> {
                                                           .rightToLeftWithFade,
                                                       child:
                                                           LikedMemberDetail(),
-                                                      duration:
-                                                          const Duration(
-                                                              milliseconds:
-                                                                  500),
+                                                      duration: const Duration(
+                                                          milliseconds: 500),
                                                     ),
                                                   );
                                                 },
                                                 child: Container(
-                                                  height:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .height *
-                                                          6 /
-                                                          100,
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                      6 /
+                                                      100,
                                                   decoration: BoxDecoration(
                                                       color: AppColor
                                                           .secondryColor,
                                                       borderRadius:
-                                                          BorderRadius
-                                                              .circular(10)),
+                                                          BorderRadius.circular(
+                                                              10)),
                                                   child: Center(
                                                     child: Text(
                                                       AppLanguage
@@ -560,21 +545,21 @@ class _splashMembersState extends State<splashMembers> {
                                                       color: AppColor
                                                           .secondryColor),
                                                 ),
-                                                Container(
-                                                  width: size.width * 8 / 100,
-                                                  height:
-                                                      size.width * 8 / 100,
-                                                  decoration:
-                                                      const BoxDecoration(
-                                                          boxShadow: []),
-                                                  child: ClipRRect(
-                                                      child: Image.asset(
-                                                    AppImage.liked_heart_icon,
-                                                    fit: BoxFit.cover,
-                                                    color: AppColor
-                                                        .secondryColor,
-                                                  )),
-                                                ),
+                                                // Container(
+                                                //   width: size.width * 8 / 100,
+                                                //   height:
+                                                //       size.width * 8 / 100,
+                                                //   decoration:
+                                                //       const BoxDecoration(
+                                                //           boxShadow: []),
+                                                //   child: ClipRRect(
+                                                //       child: Image.asset(
+                                                //     AppImage.liked_heart_icon,
+                                                //     fit: BoxFit.cover,
+                                                //     color: AppColor
+                                                //         .secondryColor,
+                                                //   )),
+                                                // ),
                                               ],
                                             ),
                                             SizedBox(
@@ -583,8 +568,7 @@ class _splashMembersState extends State<splashMembers> {
                                             Row(
                                               children: [
                                                 Container(
-                                                  width:
-                                                      size.width * 4.5 / 100,
+                                                  width: size.width * 4.5 / 100,
                                                   height:
                                                       size.width * 4.5 / 100,
                                                   decoration:
@@ -592,23 +576,20 @@ class _splashMembersState extends State<splashMembers> {
                                                           boxShadow: []),
                                                   child: ClipRRect(
                                                     child: Image.asset(
-                                                      AppImage
-                                                          .calenderPinkIcon,
+                                                      AppImage.calenderPinkIcon,
                                                       fit: BoxFit.cover,
                                                     ),
                                                   ),
                                                 ),
                                                 SizedBox(
-                                                  width:
-                                                      MediaQuery.of(context)
-                                                              .size
-                                                              .width *
-                                                          1 /
-                                                          100,
+                                                  width: MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                      1 /
+                                                      100,
                                                 ),
                                                 Text(
-                                                  connectionlist[index]
-                                                      ['date'],
+                                                  connectionlist[index]['date'],
                                                   style: const TextStyle(
                                                       fontSize: 15,
                                                       fontFamily:
@@ -627,8 +608,7 @@ class _splashMembersState extends State<splashMembers> {
                                               children: [
                                                 Container(
                                                   width: size.width * 5 / 100,
-                                                  height:
-                                                      size.width * 5 / 100,
+                                                  height: size.width * 5 / 100,
                                                   decoration:
                                                       const BoxDecoration(
                                                           boxShadow: []),
@@ -639,8 +619,7 @@ class _splashMembersState extends State<splashMembers> {
                                                   )),
                                                 ),
                                                 SizedBox(
-                                                  width:
-                                                      size.width * 0.8 / 100,
+                                                  width: size.width * 0.8 / 100,
                                                 ),
                                                 Text(
                                                   connectionlist[index]
@@ -663,30 +642,48 @@ class _splashMembersState extends State<splashMembers> {
                                                   1.5 /
                                                   100,
                                             ),
-                                            Container(
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  6 /
-                                                  100,
-                                              decoration: BoxDecoration(
-                                                  color:
-                                                      AppColor.secondryColor,
-                                                  borderRadius:
-                                                      BorderRadius.circular(
-                                                          10)),
-                                              child: Center(
-                                                child: Text(
-                                                  AppLanguage
-                                                      .messageText[language],
-                                                  style: const TextStyle(
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      color:
-                                                          AppColor.pinkColor),
+                                            GestureDetector(
+                                              onTap: () {
+                                                Navigator.push(
+                                                  context,
+                                                  PageTransition(
+                                                    type: PageTransitionType
+                                                        .rightToLeftWithFade,
+                                                    child: ChatMessageScreen(
+                                                        name: connectionlist[
+                                                            index]['title'],
+                                                        image: connectionlist[
+                                                            index]['image']),
+                                                    duration: const Duration(
+                                                        milliseconds: 500),
+                                                  ),
+                                                );
+                                              },
+                                              child: Container(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    6 /
+                                                    100,
+                                                decoration: BoxDecoration(
+                                                    color:
+                                                        AppColor.secondryColor,
+                                                    borderRadius:
+                                                        BorderRadius.circular(
+                                                            10)),
+                                                child: Center(
+                                                  child: Text(
+                                                    AppLanguage
+                                                        .messageText[language],
+                                                    style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColor.pinkColor),
+                                                  ),
                                                 ),
                                               ),
                                             ),
@@ -904,7 +901,6 @@ class _splashMembersState extends State<splashMembers> {
     });
   }
 
-
 // Ye function use karo - koi key ki zarurat nahi
   void showPopupDropdown(BuildContext context) {
     showGeneralDialog(
@@ -953,7 +949,8 @@ class _splashMembersState extends State<splashMembers> {
                           false),
                       divider(),
                       dropdownItem(
-                          "Venues", () =>  Navigator.push(
+                          "Venues",
+                          () => Navigator.push(
                                 context,
                                 MaterialPageRoute(
                                   builder: (context) => MyVenue(),
@@ -1001,7 +998,6 @@ class _splashMembersState extends State<splashMembers> {
       ),
     );
   }
-
 
   Widget divider() {
     return const Divider(

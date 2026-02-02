@@ -19,7 +19,8 @@ class AppButton extends StatelessWidget {
       onTap: () {
         onPress();
       },
-      child: Container(
+      child: 
+      Container(
         width: MediaQuery.of(context).size.width * 80 / 100,
         height: MediaQuery.of(context).size.height * 7 / 100,
         decoration: const BoxDecoration(
@@ -36,6 +37,9 @@ class AppButton extends StatelessWidget {
               fontSize: 16),
         ),
       ),
+   
+   
+   
     );
   }
 }

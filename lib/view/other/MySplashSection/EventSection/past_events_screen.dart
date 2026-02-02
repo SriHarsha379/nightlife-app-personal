@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_constant.dart';
@@ -51,9 +50,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                 padding: const EdgeInsets.only(bottom: 40),
                 child: AppButton(
                     text: '${AppLanguage.submitButtonText[language]}',
-                    onPress: () {
-  
-                    }),
+                    onPress: () {}),
               ),
               body: Container(
                   height: size.height * 100 / 100,
@@ -76,7 +73,6 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
-                               
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
                                   child: Center(
@@ -222,7 +218,6 @@ class _PastEventScreenState extends State<PastEventScreen> {
                               runSpacing: 10,
                               alignment: WrapAlignment.center,
                               children: List.generate(dates.length, (index) {
-
                                 return GestureDetector(
                                   onTap: () {
                                     setState(() {
@@ -633,21 +628,40 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                             selectedEmoji = index;
                                           });
                                         },
-                                        child: AnimatedContainer(
-                                          duration: Duration(milliseconds: 250),
+                                        child:
+                                         AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 250),
                                           padding: EdgeInsets.all(
-                                              isSelected ? 12 : 8),
+                                              isSelected ? 10 : 8),
                                           decoration: BoxDecoration(
                                             shape: BoxShape.circle,
+                                            gradient: isSelected
+                                                ? const LinearGradient(
+                                                    colors: [
+                                                      Color.fromARGB(255, 195,
+                                                          151, 236), // purple
+                                                      Color.fromARGB(255, 80,
+                                                          91, 216), // blue
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  )
+                                                : null,
                                             color: isSelected
-                                                ? AppColor.emojibackgroundColor
+                                                ? null
                                                 : Colors.transparent,
                                           ),
                                           child: Text(
                                             emojis[index],
-                                            style: TextStyle(fontSize: 30),
+                                            style:
+                                                const TextStyle(fontSize: 30),
                                           ),
                                         ),
+                                    
+                                    
+                                    
+                                    
                                       );
                                     }),
                                   ),
@@ -682,7 +696,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                   ),
 
-                                  SizedBox(height:size.height * 1/100),
+                                  SizedBox(height: size.height * 1 / 100),
 
                                   Text(
                                     "Your opinion matters. Tell us what worked and what didn’t.",
@@ -695,7 +709,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                     ),
                                   ),
 
-                                  SizedBox(height: size.height *1.2/100),
+                                  SizedBox(height: size.height * 1.2 / 100),
 
                                   Container(
                                     width: size.width,

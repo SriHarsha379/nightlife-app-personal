@@ -33,47 +33,137 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor,
         systemNavigationBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
         statusBarColor: AppColor.primaryColor,
         statusBarIconBrightness: Brightness.light));
 
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          width: size.width,
-          height: size.height,
-          color: AppColor.primaryColor,
-          child: SingleChildScrollView(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: size.height * 2 / 100),
-                AppHeader(
-                  onPress: () => Navigator.pop(context),
-                  text: AppLanguage.privacyPolicyText[language],
-                ),
-                SizedBox(height: size.height * 2 / 100),
+      body: Container(
+        width: size.width,
+        height: size.height,
+        color: AppColor.primaryColor,
+        child: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: size.height * 5 / 100),
+              AppHeader(
+                onPress: () => Navigator.pop(context),
+                text: AppLanguage.privacyPolicyText[language],
+              ),
+              SizedBox(height: size.height * 2 / 100),
 
-                /// --- Visibility Section Heading ---
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: Text(
-                    AppLanguage.visibilityText[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
-                    ),
+              /// --- Visibility Section Heading ---
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 17.0),
+                child: Text(
+                  AppLanguage.visibilityText[language],
+                  textAlign: TextAlign.left,
+                  style:const TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondryColor,
                   ),
                 ),
+              ),
 
-                /// --- Visibility Container ---
-                Container(
-                  padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                  margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              /// --- Visibility Container ---
+              Container(
+                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                decoration: BoxDecoration(
+                  color: AppColor.notificationContainerColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.primaryColor,
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: Offset(0, 1),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLanguage.showMeonText[language],
+                          style: const TextStyle(
+                            color: AppColor.secondryColor,
+                            fontSize: 15,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                            height: 1.0,
+                          ),
+                        ),
+                        Transform.scale(
+                          scale: 0.80,
+                          child: CupertinoSwitch(
+                            value: mileageSwitch,
+                            onChanged: (value) {
+                              setState(() {
+                                mileageSwitch = value;
+                              });
+                            },
+                            activeColor: AppColor.pinkColor,
+                            thumbColor: Colors.white,
+                            trackColor: AppColor.toggleColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                    Text(
+                      AppLanguage.allowOthersText[language],
+                      style: const TextStyle(
+                        color: AppColor.notificationtextColor,
+                        fontSize: 14,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w400,
+                        height: 0,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
+                child: Text(
+                  AppLanguage.blockedUsersText[language],
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondryColor,
+                  ),
+                ),
+              ),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: BlockUserScreen(),
+                      duration: const Duration(milliseconds: 500),
+                    ),
+                  );
+                },
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: BoxDecoration(
                     color: AppColor.notificationContainerColor,
                     borderRadius: BorderRadius.circular(8),
@@ -82,295 +172,199 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                         color: AppColor.primaryColor,
                         spreadRadius: 3,
                         blurRadius: 7,
-                        offset: Offset(0, 1),
+                        offset: const Offset(0, 1),
                       ),
                     ],
                   ),
                   child: Column(
-                    mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      SizedBox(width: size.width * 2 / 100),
                       Row(
-                        crossAxisAlignment: CrossAxisAlignment.center,
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            AppLanguage.showMeonText[language],
+                            AppLanguage.blockedUsersText[language],
                             style: const TextStyle(
                               color: AppColor.secondryColor,
-                              fontSize: 15,
+                              fontSize: 16,
                               fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
-                              height: 1.0,
+                              fontWeight: FontWeight.w400,
                             ),
                           ),
-                          Transform.scale(
-                            scale: 0.80,
-                            child: CupertinoSwitch(
-                              value: mileageSwitch,
-                              onChanged: (value) {
-                                setState(() {
-                                  mileageSwitch = value;
-                                });
-                              },
-                              activeColor: AppColor.pinkColor,
-                              thumbColor: Colors.white,
-                              trackColor: AppColor.toggleColor,
+                          SizedBox(
+                            height: size.width * 8 / 100,
+                            width: size.width * 9 / 100,
+                            child: Image.asset(
+                              AppImage.frontArrowIcon,
+                              fit: BoxFit.contain,
                             ),
                           ),
                         ],
                       ),
-                      Text(
-                        AppLanguage.allowOthersText[language],
-                        style: const TextStyle(
-                          color: AppColor.notificationtextColor,
-                          fontSize: 14,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
-                          height: 0,
-                        ),
-                      ),
                     ],
                   ),
                 ),
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 17.0, vertical: 10),
-                  child: Text(
-                    AppLanguage.blockedUsersText[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
+                child: Text(
+                  AppLanguage.locationSharingText[language],
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondryColor,
+                  ),
+                ),
+              ),
+
+              Container(
+                height: size.height * 6 / 100,
+                width: size.width * 94 / 100,
+                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                decoration: BoxDecoration(
+                  color: AppColor.notificationContainerColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.primaryColor,
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: const Offset(0, 1),
                     ),
-                  ),
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: BlockUserScreen(),
-                        duration: const Duration(milliseconds: 500),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppLanguage.managePermissionsText[language],
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w400,
                       ),
-                    );
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                    margin: const EdgeInsets.symmetric(
-                        horizontal: 10, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColor.primaryColor,
-                          spreadRadius: 3,
-                          blurRadius: 7,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(width: size.width * 2 / 100),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              AppLanguage.blockedUsersText[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                            SizedBox(
-                              height: size.width * 8 / 100,
-                              width: size.width * 9 / 100,
-                              child: Image.asset(
-                                AppImage.frontArrowIcon,
-                                fit: BoxFit.contain,
-                              ),
-                            ),
-                          ],
-                        ),
-                      
-                      ],
+                    SizedBox(
+                      height: size.width * 8 / 100,
+                      width: size.width * 9 / 100,
+                      child: Image.asset(
+                        AppImage.frontArrowIcon,
+                        fit: BoxFit.contain,
+                      ),
                     ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
+                child: Text(
+                  AppLanguage.dataAndsecurity[language],
+                  textAlign: TextAlign.left,
+                  style: TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondryColor,
                   ),
                 ),
+              ),
 
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 17.0, vertical: 10),
-                  child: Text(
-                    AppLanguage.locationSharingText[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+              Container(
+                height: size.height * 7 / 100,
+                width: size.width * 94 / 100,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColor.notificationContainerColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.primaryColor,
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: const Offset(0, 1),
                     ),
-                  ),
+                  ],
                 ),
-
-                Container(
-                  height: size.height * 6 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                  margin:
-                      const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppLanguage.downloadDatatext[language],
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w400,
                       ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLanguage.managePermissionsText[language],
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 9 / 100,
-                        child: Image.asset(
-                          AppImage.frontArrowIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                      horizontal: 17.0, vertical: 10),
-                  child: Text(
-                    AppLanguage.dataAndsecurity[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
                     ),
-                  ),
+                    SizedBox(
+                      height: size.width * 8 / 100,
+                      width: size.width * 9 / 100,
+                      child: Image.asset(
+                        AppImage.frontArrowIcon,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ],
                 ),
+              ),
 
-                Container(
-                  height: size.height * 7 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLanguage.downloadDatatext[language],
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 9 / 100,
-                        child: Image.asset(
-                          AppImage.frontArrowIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
+              Container(
+                height: size.height * 7 / 100,
+                width: size.width * 94 / 100,
+                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                margin: const EdgeInsets.symmetric(
+                  horizontal: 10,
                 ),
-
-                Container(
-                  height: size.height * 7 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor,
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLanguage.deleteAccount[language],
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 9 / 100,
-                        child: Image.asset(
-                          AppImage.frontArrowIcon,
-                          fit: BoxFit.contain,
-                        ),
-                      ),
-                    ],
-                  ),
+                decoration: BoxDecoration(
+                  color: AppColor.notificationContainerColor,
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColor.primaryColor,
+                      spreadRadius: 3,
+                      blurRadius: 7,
+                      offset: const Offset(0, 1),
+                    ),
+                  ],
                 ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      AppLanguage.deleteAccount[language],
+                      style: const TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w400,
+                      ),
+                    ),
+                    SizedBox(
+                      height: size.width * 8 / 100,
+                      width: size.width * 9 / 100,
+                      child: Image.asset(
+                        AppImage.frontArrowIcon,
+                        fit: BoxFit.contain,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
 
-                SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
-              ],
-            ),
+              SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
+            ],
           ),
         ),
       ),

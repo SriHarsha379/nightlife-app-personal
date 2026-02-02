@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/other/profile_details.dart';
 import 'package:page_transition/page_transition.dart';
@@ -10,7 +11,9 @@ import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
+import 'refer_code_screen.dart';
 
 class SignUp extends StatefulWidget {
   static String routeName = './SignUp';
@@ -54,8 +57,26 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     });
   }
 
+  void LoginValidation() {
+    if (Validation.isFieldEmpty(context,
+        value: mobileNumberTextEditingController.text,
+        fieldName: AppLanguage.mobileNumberText[language])) return;
+
+    // Add numeric-only validation
+    if (!Validation.isMobileNumericOnly(
+        context, mobileNumberTextEditingController.text)) return;
+
+    if (!Validation.isMobilValid(
+        context, mobileNumberTextEditingController.text)) return;
+
+    // final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);
+  }
+
   @override
   void dispose() {
+    mobileNumberTextEditingController.dispose();
+
     _overlayController.dispose();
     super.dispose();
   }
@@ -172,7 +193,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       height: size.height * 0.06,
                       child: CustomTextAreaField(
                         hintText: AppLanguage.enterphonenumber[language],
-                        keyboardType: TextInputType.number,
+                        keyboardtype: TextInputType.phone,
                         maxLength: AppConstant.mobileMaxLenth,
                         controller: mobileNumberTextEditingController,
                         prefixText: "+91",
@@ -183,11 +204,14 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                     AppButton(
                       text: AppLanguage.continueText[language],
                       onPress: () {
+                        LoginValidation();
                         Navigator.push(
                           context,
                           PageTransition(
                             type: PageTransitionType.rightToLeftWithFade,
-                            child: const ProfileDetailsScreen(),
+                            child: ProfileDetailsScreen(
+                              mobile: mobileNumberTextEditingController.text,
+                            ),
                           ),
                         );
                       },
@@ -226,7 +250,94 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         ),
                       ],
                     ),
-                    SizedBox(height: size.height * 0.03),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 2 / 100,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 80 / 100,
+                      // height: MediaQuery.of(context).size.height * 3.5 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            "Have an Invite Code ?",
+                            style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: AppFont.fontFamily,
+                                fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 1 / 100,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: UseReferCodeScreen(),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              "Enter Here",
+                              style: const TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 1 / 100,
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 80 / 100,
+                      // height: MediaQuery.of(context).size.height * 3.5 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            AppLanguage.venueEventText[language],
+                            style: const TextStyle(
+                                color: AppColor.secondryColor,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: AppFont.fontFamily,
+                                fontSize: 12),
+                          ),
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 1 / 100,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              // Navigator.push(
+                              //   context,
+                              //   PageTransition(
+                              //     type: PageTransitionType.rightToLeftWithFade,
+                              //     child: LoginScreen(),
+                              //     duration: const Duration(milliseconds: 500),
+                              //   ),
+                              // );
+                            },
+                            child: Text(
+                              AppLanguage.clickhereText[language],
+                              style: const TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontSize: 13),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 3 / 100),
                   ],
                 ),
               ),

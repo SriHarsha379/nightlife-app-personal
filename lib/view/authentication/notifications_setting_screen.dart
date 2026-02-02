@@ -51,75 +51,74 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor,
+        statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light));
 
     final size = MediaQuery.of(context).size;
 
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          width: size.width,
-          color: AppColor.primaryColor,
-          child: Column(
-            children: [
-              SizedBox(height: size.height * 2 / 100),
-              AppHeader(
-                onPress: () => Navigator.pop(context),
-                text: AppLanguage.notificationText[language],
-              ),
-              Expanded(
-                child: SingleChildScrollView(
-                  child: Column(
-                    children: [
-                      SizedBox(height: size.height * 1 / 100),
-                      SizedBox(height: size.height * 2 / 100),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                          child: Text(
-                            AppLanguage.eventRemaindersText[language],
-                            textAlign: TextAlign.left,
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 17,
-                              fontWeight: FontWeight.w700,
-                              color: AppColor.secondryColor,
-                            ),
+      body: Container(
+        width: size.width,
+        color: AppColor.primaryColor,
+        child: Column(
+          children: [
+            SizedBox(height: size.height * 5 / 100),
+            AppHeader(
+              onPress: () => Navigator.pop(context),
+              text: AppLanguage.notificationText[language],
+            ),
+            Expanded(
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: size.height * 1 / 100),
+                    SizedBox(height: size.height * 2 / 100),
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 17.0),
+                        child: Text(
+                          AppLanguage.eventRemaindersText[language],
+                          textAlign: TextAlign.left,
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.secondryColor,
                           ),
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 1 / 100,
-                      ),
-                      ListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: notifications.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          List<Widget> widgets = [];
-
-                          widgets.add(notificationCard(
-                              context, notifications[index], index));
-
-                          //  Add headings conditionally
-                          if (index == 0) {
-                            widgets.add(sectionHeading("Social"));
-                          } else if (index == 2) {
-                            widgets.add(sectionHeading("Updates"));
-                          } else if (index == 3) {
-                            widgets.add(sectionHeading("Promotions"));
-                          }
-
-                          return Column(children: widgets);
-                        },
-                      ),
-                    ],
-                  ),
+                    ),
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 1 / 100,
+                    ),
+                    ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: notifications.length,
+                      itemBuilder: (BuildContext context, int index) {
+                        List<Widget> widgets = [];
+      
+                        widgets.add(notificationCard(
+                            context, notifications[index], index));
+      
+                        //  Add headings conditionally
+                        if (index == 0) {
+                          widgets.add(sectionHeading("Social"));
+                        } else if (index == 2) {
+                          widgets.add(sectionHeading("Updates"));
+                        } else if (index == 3) {
+                          widgets.add(sectionHeading("Promotions"));
+                        }
+      
+                        return Column(children: widgets);
+                      },
+                    ),
+                  ],
                 ),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

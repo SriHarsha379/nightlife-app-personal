@@ -8,7 +8,10 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_footer.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_validation.dart';
+import '../../utilities/custom_password.dart';
 import '../../utilities/widgets.dart';
+import '../content_screen/content_screen.dart';
 import 'forgot_otp_password_screen.dart';
 import 'signup.dart';
 
@@ -74,6 +77,29 @@ class _LoginScreenState extends State<LoginScreen>
       _overlayController.forward();
     });
   }
+
+  void LoginValidation() {
+    if (Validation.isFieldEmpty(context,
+        value: emailController.text,
+        fieldName: AppLanguage.usernameemailIdPhonenumberText[language]))
+      return;
+    if (Validation.isFieldEmpty(context,
+        value: passwordController.text,
+        fieldName: AppLanguage.passwordtext[language])) return;
+    if (!Validation.isPasswordLength(context, passwordController.text)) return;
+    // // Add numeric-only validation
+    // if (!Validation.isMobileNumericOnly(
+    //     context, mobileNumberTextEditingController.text)) return;
+
+    // if (!Validation.isMobilValid(
+    //     context, mobileNumberTextEditingController.text)) return;
+
+    // final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);
+  }
+
+
+
 
   @override
   void dispose() {
@@ -153,31 +179,48 @@ class _LoginScreenState extends State<LoginScreen>
                           SizedBox(height: size.height * 0.06),
 
                           /// Email
+
                           SizedBox(
                             width: size.width * 0.85,
-                            height: size.height * 0.06,
-                            child: CustomTextFieldInput(
+                            height: size.height * 0.066,
+                            child: CustomLoginTextField(
+                              controller: emailController,
                               hintText: AppLanguage
                                   .usernameAndemailIdPhonenumberText[language],
-                              maxLength: AppConstant.mobileMaxLenth,
-                              controller: emailController,
+                              maxLength: 50,
                               fillColor: AppColor.secondryColor,
-                              keyboardType: TextInputType.text,
+                              textColor: AppColor.primaryColor,
+                              borderColor: AppColor.transparentColor,
+                              // iconColor: AppColor.primaryColor,
                             ),
                           ),
 
                           SizedBox(height: size.height * 0.03),
 
                           /// Password
+                          // SizedBox(
+                          //   width: size.width * 0.85,
+                          //   height: size.height * 0.06,
+                          //   child: CustomTextFieldInput(
+                          //     hintText: AppLanguage.enterpassword[language],
+                          //     maxLength: AppConstant.mobileMaxLenth,
+                          //     controller: passwordController,
+                          //     fillColor: AppColor.secondryColor,
+                          //     keyboardType: TextInputType.text,
+                          //   ),
+                          // ),
+
                           SizedBox(
                             width: size.width * 0.85,
-                            height: size.height * 0.06,
-                            child: CustomTextFieldInput(
-                              hintText: AppLanguage.enterpassword[language],
-                              maxLength: AppConstant.mobileMaxLenth,
+                            height: size.height * 0.066,
+                            child: CustomPasswordField(
                               controller: passwordController,
+                              hintText: "Create Password",
+                              maxLength: 20,
                               fillColor: AppColor.secondryColor,
-                              keyboardType: TextInputType.text,
+                              textColor: AppColor.primaryColor,
+                              borderColor: AppColor.transparentColor,
+                              iconColor: AppColor.primaryColor,
                             ),
                           ),
 
@@ -230,6 +273,7 @@ class _LoginScreenState extends State<LoginScreen>
                           AppButton(
                             text: AppLanguage.continueText[language],
                             onPress: () {
+                              LoginValidation();
                               Navigator.push(
                                 context,
                                 PageTransition(
@@ -328,75 +372,94 @@ class _LoginScreenState extends State<LoginScreen>
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,
                           ),
-                          Center(
-                            child: SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 80 / 100,
-                              height:
-                                  MediaQuery.of(context).size.height * 5 / 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment
-                                    .center, // Horizontally center
-                                crossAxisAlignment: CrossAxisAlignment
-                                    .center, // Vertically center
-                                children: [
-                                  Column(
-                                    mainAxisAlignment: MainAxisAlignment
-                                        .center, // Center inside column
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      Padding(
-                                        padding:
-                                            const EdgeInsets.only(left: 1.0),
-                                        child: Text(
-                                          AppLanguage.bySigningupStatementText[
-                                              language],
-                                          textAlign: TextAlign.center,
-                                          style: const TextStyle(
-                                            color: AppColor.secondryColor,
-                                            fontWeight: FontWeight.w400,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontSize: 11,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                0.3 /
-                                                100,
-                                      ),
-                                      Row(
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 10.0),
-                                            child: Text(
-                                              AppLanguage
-                                                      .userAgreementStatementText[
-                                                  language],
-                                              textAlign: TextAlign.center,
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
-                                                fontWeight: FontWeight.w400,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 11,
-                                              ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => ContentScreen(
+                                    contenttype: "privacypolicy",
+                                    header: AppLanguage
+                                        .privacypoliciesText[language],
+                                  ),
+                                ),
+                              );
+                            },
+                            child: Center(
+                              child: SizedBox(
+                                width: MediaQuery.of(context).size.width *
+                                    80 /
+                                    100,
+                                height: MediaQuery.of(context).size.height *
+                                    5 /
+                                    100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment
+                                      .center, // Horizontally center
+                                  crossAxisAlignment: CrossAxisAlignment
+                                      .center, // Vertically center
+                                  children: [
+                                    Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center, // Center inside column
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding:
+                                              const EdgeInsets.only(left: 1.0),
+                                          child: Text(
+                                            AppLanguage
+                                                    .bySigningupStatementText[
+                                                language],
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: AppColor.secondryColor,
+                                              fontWeight: FontWeight.w400,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 11,
                                             ),
                                           ),
-                                          SizedBox(
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                2 /
-                                                100,
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ],
+                                        ),
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              0.3 /
+                                              100,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Padding(
+                                              padding: const EdgeInsets.only(
+                                                  left: 10.0),
+                                              child: Text(
+                                                AppLanguage
+                                                        .userAgreementStatementText[
+                                                    language],
+                                                textAlign: TextAlign.center,
+                                                style: const TextStyle(
+                                                  color: AppColor.secondryColor,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                  fontSize: 11,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  2 /
+                                                  100,
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ),

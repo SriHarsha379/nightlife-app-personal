@@ -3,14 +3,13 @@ import 'app_color.dart';
 import 'app_constant.dart';
 import 'app_font.dart';
 
-
 class CustomTextFieldInput extends StatefulWidget {
   final TextEditingController controller;
   final String hintText;
   final int maxLength;
   final TextInputType keyboardType;
   final String? prefixIcon;
- final Color? fillColor;
+  final Color? fillColor;
 
   const CustomTextFieldInput({
     Key? key,
@@ -18,7 +17,7 @@ class CustomTextFieldInput extends StatefulWidget {
     required this.hintText,
     required this.maxLength,
     required this.keyboardType,
-     this.fillColor,
+    this.fillColor,
     this.prefixIcon,
   }) : super(key: key);
 
@@ -41,7 +40,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
         ), // Added spacing
         prefixIcon: widget.prefixIcon != null
             ? Padding(
-                padding: const EdgeInsets.only(left: 12, right: 8), 
+                padding: const EdgeInsets.only(left: 12, right: 8),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -80,8 +79,6 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
     );
   }
 }
-
-
 
 class CustomDescriptionBox extends StatelessWidget {
   final TextEditingController controller;
@@ -151,29 +148,30 @@ class CustomDescriptionBox extends StatelessWidget {
   }
 }
 
-
-
 class CustomTextField extends StatefulWidget {
-
-
   final TextEditingController controller;
   final String hintText;
   final int maxLength;
-  
+  final bool readOnly;
+  final bool isPassword; // Add this parameter
+  final Widget? prefixIcon; // Optional prefix icon
+
   const CustomTextField({
     Key? key,
     required this.controller,
     required this.hintText,
     required this.maxLength,
+    this.readOnly = false,
+    this.isPassword = false, // Default to false
+    this.prefixIcon,
   }) : super(key: key);
-  
+
   @override
   State<CustomTextField> createState() => _CustomTextFieldState();
 }
 
-
 class _CustomTextFieldState extends State<CustomTextField> {
-  bool isPasswordVisible = true;
+  bool isPasswordVisible = false; // Changed to false (obscured by default)
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
@@ -192,49 +190,55 @@ class _CustomTextFieldState extends State<CustomTextField> {
     _focusNode.dispose();
     super.dispose();
   }
-  
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       style: const TextStyle(color: AppColor.secondryColor),
-      keyboardType: TextInputType.text,
+      keyboardType: widget.isPassword
+          ? TextInputType.visiblePassword
+          : TextInputType.text,
       controller: widget.controller,
-      focusNode: _focusNode, // Add focus node
+      focusNode: _focusNode,
       maxLength: widget.maxLength,
-      // obscureText: isPasswordVisible,
+      readOnly: widget.readOnly,
+      obscureText: widget.isPassword &&
+          !isPasswordVisible, // Only obscure if it's a password field
       decoration: InputDecoration(
-        prefixIcon: Padding(
-          padding: const EdgeInsets.only(left: 1, right: 5), 
-          child: SizedBox(
-            height: 24,
-            width: 24,
-          ),
-        ),
-        prefixIconConstraints: const BoxConstraints(
-          minWidth: 30, 
-          minHeight: 40,
-        ),
-        fillColor: _isFocused ? Colors.black : AppColor.themeColor, // Dynamic color
+        prefixIcon: widget.prefixIcon != null
+            ? Padding(
+                padding: const EdgeInsets.only(left: 1, right: 5),
+                child: SizedBox(
+                  height: 24,
+                  width: 24,
+                  child: widget.prefixIcon,
+                ),
+              )
+            : null,
+        prefixIconConstraints: widget.prefixIcon != null
+            ? const BoxConstraints(
+                minWidth: 30,
+                minHeight: 40,
+              )
+            : null,
+        fillColor: _isFocused ? Colors.black : AppColor.themeColor,
         filled: true,
         counterText: '',
-        suffixIcon: IconButton(
-          icon: isPasswordVisible
-              ? const SizedBox(
-                  height: 24,
-                  width: 24,
-
-                )
-              : SizedBox(
-                  height: 24,
-                  width: 24,
-
+        suffixIcon: widget
+                .isPassword // Only show suffix icon if it's a password field
+            ? IconButton(
+                icon: Icon(
+                  isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  color: AppColor.secondryColor,
+                  size: 20,
                 ),
-          onPressed: () {
-            setState(() {
-              isPasswordVisible = !isPasswordVisible;
-            });
-          },
-        ),
+                onPressed: () {
+                  setState(() {
+                    isPasswordVisible = !isPasswordVisible;
+                  });
+                },
+              )
+            : null,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
           borderSide: const BorderSide(
@@ -252,7 +256,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
         hintText: widget.hintText,
         hintStyle: AppConstant.textFilledStyle,
         contentPadding: const EdgeInsets.only(
-          left: 10,  
+          left: 25,
           right: 20,
           top: 15,
           bottom: 15,
@@ -362,7 +366,7 @@ class CustomTextAreaField extends StatelessWidget {
   final String hintText;
   final int maxLength;
   final bool readOnly;
-  final TextInputType keyboardType;
+  final TextInputType keyboardtype;
 
   final EdgeInsets? contentPadding;
   final int? maxLines;
@@ -373,7 +377,7 @@ class CustomTextAreaField extends StatelessWidget {
     required this.controller,
     required this.hintText,
     required this.maxLength,
-    required this.keyboardType,
+    required this.keyboardtype,
     this.maxLines,
     this.prefixIcon,
     this.prefixText,
@@ -381,10 +385,10 @@ class CustomTextAreaField extends StatelessWidget {
     this.contentPadding,
   });
   @override
- Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
     return TextFormField(
       style: const TextStyle(color: AppColor.primaryColor),
-      // keyboardType: widget.keyboardType,
+      keyboardType: keyboardtype,
       controller: controller,
       cursorColor: AppColor.primaryColor,
       maxLength: maxLength,
@@ -393,10 +397,12 @@ class CustomTextAreaField extends StatelessWidget {
             ? Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  SizedBox(width: MediaQuery.of(context).size.width*3.5/100),
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 3.5 / 100),
                   if (prefixIcon != null) ...[
                     prefixIcon!,
-                    SizedBox(width: MediaQuery.of(context).size.width*3/100),
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 3 / 100),
                   ],
                   if (prefixText != null) ...[
                     Text(
@@ -408,9 +414,8 @@ class CustomTextAreaField extends StatelessWidget {
                         fontSize: 16,
                       ),
                     ),
-                    SizedBox(width: MediaQuery.of(context).size.width*3/100),
-
-             
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 3 / 100),
                   ],
                 ],
               )
@@ -434,7 +439,6 @@ class CustomTextAreaField extends StatelessWidget {
         counterText: '',
         hintText: hintText,
         hintStyle: AppConstant.textFilledStyle,
-        
       ),
     );
   }
@@ -472,6 +476,160 @@ class InputFieldWrapper extends StatelessWidget {
             height: 12.0,
           ),
       ],
+    );
+  }
+}
+
+class CustomLoginTextField extends StatelessWidget {
+  final TextEditingController controller;
+  final String hintText;
+  final int maxLength;
+  final bool readOnly;
+  final TextInputType keyboardType;
+  final Color? fillColor;
+  final Color? textColor;
+  final Color? hintColor;
+  final Color? borderColor;
+  final Color? cursorColor;
+  final EdgeInsets? contentPadding;
+  final int? maxLines;
+  final Widget? prefixIcon;
+  final String? prefixText;
+  final Widget? suffixIcon;
+  final Function(String)? onChanged;
+  final String? Function(String?)? validator;
+  final TextInputAction? textInputAction;
+  final bool? enabled;
+
+  const CustomLoginTextField({
+    super.key,
+    required this.controller,
+    required this.hintText,
+    required this.maxLength,
+    this.keyboardType = TextInputType.text,
+    this.readOnly = false,
+    this.fillColor,
+    this.textColor,
+    this.hintColor,
+    this.borderColor,
+    this.cursorColor,
+    this.contentPadding,
+    this.maxLines,
+    this.prefixIcon,
+    this.prefixText,
+    this.suffixIcon,
+    this.onChanged,
+    this.validator,
+    this.textInputAction,
+    this.enabled,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return TextFormField(
+      style: TextStyle(
+        color: textColor ?? AppColor.primaryColor,
+        fontFamily: AppFont.fontFamily,
+      ),
+      keyboardType: keyboardType,
+      controller: controller,
+      cursorColor: cursorColor ?? textColor ?? AppColor.primaryColor,
+      maxLength: maxLength,
+      maxLines: maxLines ?? 1,
+      readOnly: readOnly,
+      enabled: enabled,
+      onChanged: onChanged,
+      validator: validator,
+      textInputAction: textInputAction,
+      decoration: InputDecoration(
+        prefixIcon: prefixText != null || prefixIcon != null
+            ? Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  SizedBox(
+                      width: MediaQuery.of(context).size.width * 3.5 / 100),
+                  if (prefixIcon != null) ...[
+                    prefixIcon!,
+                    SizedBox(
+                        width: MediaQuery.of(context).size.width * 3 / 100),
+                  ],
+                  if (prefixText != null) ...[
+                    Text(
+                      prefixText!,
+                      style: TextStyle(
+                        color: textColor ?? AppColor.primaryColor,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                      ),
+                    ),
+                    // SizedBox(
+                    //     width: MediaQuery.of(context).size.width * 3 / 100),
+                  ],
+                ],
+              )
+            : null,
+        suffixIcon: suffixIcon != null
+            ? Padding(
+                padding: EdgeInsets.only(
+                  right: MediaQuery.of(context).size.width * 5 / 100,
+                ),
+                child: suffixIcon,
+              )
+            : null,
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColor.textfieldfillColor,
+            width: 1,
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColor.textfieldfillColor,
+            width: 1.5,
+          ),
+        ),
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: BorderSide(
+            color: borderColor ?? AppColor.textfieldfillColor,
+            width: 1,
+          ),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1,
+          ),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(40),
+          borderSide: const BorderSide(
+            color: Colors.red,
+            width: 1.5,
+          ),
+        ),
+        fillColor: fillColor ?? AppColor.textfieldfillColor,
+        filled: true,
+        counterText: '',
+        hintText: hintText,
+        hintStyle: hintColor != null
+            ? TextStyle(
+                color: hintColor,
+                fontFamily: AppFont.fontFamily,
+                fontSize: 14,
+                fontWeight: FontWeight.w400,
+              )
+            : AppConstant.textFilledStyle,
+        contentPadding: contentPadding ??
+            const EdgeInsets.symmetric(
+              horizontal: 30,
+              vertical: 15,
+            ),
+      ),
     );
   }
 }

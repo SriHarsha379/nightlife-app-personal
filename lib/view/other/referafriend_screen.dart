@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -8,7 +7,6 @@ import '../../../../utilities/app_image.dart';
 
 class ReferAFriend extends StatefulWidget {
   static String routeName = "./ReferAFriendScreen";
-
   const ReferAFriend({super.key});
 
   @override
@@ -16,329 +14,298 @@ class ReferAFriend extends StatefulWidget {
 }
 
 class _ReferAFriendState extends State<ReferAFriend> {
-  TextEditingController referCodeController = TextEditingController();
-  bool isCodeGenerated = false;
-  String referralCode = "03AERET78"; // demo code
+  final String referralCode = "03AERET78";
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: SystemUiOverlayStyle(
+      value: const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
       ),
       child: Scaffold(
-        body: Container(
-          color: AppColor.primaryColor,
-          width: size.width,
-          height: size.height,
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: size.height * 5 / 100),
-                SizedBox(
-                  width: size.width * 90 / 100,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: Image.asset(
-                            AppImage.backarrow,
-                            width: MediaQuery.of(context).size.width * 5 / 100,
-                            height:
-                                MediaQuery.of(context).size.height * 5 / 100,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: size.width * 2 / 100),
-                      Text(
-                        "Refer a Friend",
-                        style: TextStyle(
-                            color: AppColor.secondryColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily),
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: size.height * 5 / 100),
+        backgroundColor: AppColor.primaryColor,
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: size.height * 6 / 100),
 
-                Text(
-                  "Enter a Refer Code shared by your friend to get\nexclusive gifts!",
+              /// ---------- HEADER ----------
+              SizedBox(
+                width: size.width * 0.9,
+                child: Row(
+                  children: [
+                    GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Image.asset(
+                        AppImage.backarrow,
+                        width: size.width * 5 / 100,
+                        height: size.width * 5 / 100,
+                        color: AppColor.secondryColor,
+                      ),
+                    ),
+                    SizedBox(width: size.width * 2 / 100),
+                    Text(
+                      "Refer a Friend",
+                      style: TextStyle(
+                        color: AppColor.secondryColor,
+                        fontSize: 20,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFont.fontFamily,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 2.5 / 100),
+
+              /// ---------- DESCRIPTION ----------
+              Center(
+                child: Text(
+                  "Refer a Friend and Get Exclusive Discount Vouchers\neach on in app purchases!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 12,
                     color: AppColor.secondryColor,
-                    fontWeight: FontWeight.w400,
+                    fontSize: 12,
                     fontFamily: AppFont.fontFamily,
+                    fontWeight: FontWeight.w400,
                   ),
                 ),
+              ),
 
-                SizedBox(height: size.height * 4 / 100),
+              SizedBox(height: size.height * 3 / 100),
 
-                // Icon Card
-                Container(
-                  width: size.width * 88 / 100,
-                  height: size.height * 23 / 100,
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
-                    borderRadius: BorderRadius.circular(14),
-                  ),
-                  child: Column(
-                    children: [
-                      SizedBox(height: size.height * 2 / 100),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            width: size.width * 12 / 100,
-                            child: Stack(
-                              alignment: Alignment.topCenter,
-                              children: [
-                                Positioned(
-                                  top: size.width * 5 / 100,
-                                  child: Image.asset(
-                                    AppImage.Line,
-                                    color: Colors.white,
-                                    width: size.width * 14 / 100,
-                                    height: size.width * 14 / 100,
+              /// ---------- INFO CARD ----------
+              Container(
+                width: size.width * 0.88,
+                padding: EdgeInsets.all(size.width * 3 / 100),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 36, 29, 36),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Column(
+                  children: [
+                    /// First Row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _circleIcon(
+                          size,
+                          AppImage.inviteIcon,
+                        ),
+                        SizedBox(width: size.width * 3 / 100),
+                        Expanded(
+                          child: Text(
+                            "Invite your friend to install the app\nvia link or ask to add code during\nsignup",
+                            style: TextStyle(
+                              color: AppColor.secondryColor,
+                              fontSize: 14,
+                              height: 1,
+                              fontFamily: AppFont.fontFamily,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(height: size.height * 1 / 100),
+
+                    /// Dotted Line
+                    Row(
+                      children: [
+                        SizedBox(
+                          width: size.width * 0.14,
+                          child: Center(
+                            child: Column(
+                              children: List.generate(
+                                3,
+                                (index) => Container(
+                                  margin: EdgeInsets.symmetric(vertical: 1),
+                                  width: 2,
+                                  height: 4,
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.withOpacity(0.5),
+                                    borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
-                                Container(
-                                  width: size.width * 12 / 100,
-                                  height: size.width * 12 / 100,
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: AppColor.secondryColor,
-                                  ),
-                                  child: Center(
-                                    child: Image.asset(
-                                      AppImage.inviteIcon,
-                                      width: size.width * 7 / 100,
-                                      height: size.width * 7 / 100,
-                                    ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // SizedBox(height: size.height * 1 / 100),
+
+                    /// Second Row
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _circleIcon(
+                          size,
+                          AppImage.giftnewIcon,
+                        ),
+                        SizedBox(width: size.width * 3 / 100),
+                        Expanded(
+                          child: RichText(
+                            text: TextSpan(
+                              style: TextStyle(
+                                fontSize: 13,
+                                height: 1.2,
+                                fontFamily: AppFont.fontFamily,
+                                color: AppColor.secondryColor,
+                              ),
+                              children: const [
+                                TextSpan(
+                                  text:
+                                      "When your friend signup's you will get\n",
+                                ),
+                                TextSpan(
+                                  text: "Exclusive Discount Coupons for each!",
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(width: size.width * 2.5 / 100),
-                          Expanded(
-                            child: Text(
-                              "Invite your friend to install the app via link or ask to add code during\nsignup",
-                              style: TextStyle(
-                                fontSize: 14,
-                                height: 1.3,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
-                                color: AppColor.secondryColor,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-
-                   
-                      SizedBox(height: size.height * 3 / 100),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Container(
-                            width: MediaQuery.of(context).size.width * 12 / 100,
-                            height:
-                                MediaQuery.of(context).size.width * 12 / 100,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: AppColor.secondryColor,
-                            ),
-                            child: Center(
-                              child: Image.asset(
-                                AppImage.giftnewIcon,
-                                width:
-                                    MediaQuery.of(context).size.width * 7 / 100,
-                                height:
-                                    MediaQuery.of(context).size.width * 7 / 100,
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: size.width * 2.5 / 100),
-                          Padding(
-                            padding:
-                                EdgeInsets.only(top: size.height * 0.9 / 100),
-                            child: RichText(
-                              text: TextSpan(
-                                style: TextStyle(
-                                  fontSize: 13.5,
-                                  // height: 1,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColor.secondryColor,
-                                ),
-                                children: [
-                                  const TextSpan(
-                                    text:
-                                        "When your friend signup’s you will get\n",
-                                  ),
-                                  TextSpan(
-                                    text:
-                                        "Exclusive Discount Coupons for each!",
-                                    style: const TextStyle(
-                                      fontWeight: FontWeight.w700,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                ),
-
-                SizedBox(height: size.height * 5 / 100),
-
-                SizedBox(height: size.height * 4 / 100),
-
-                if (isCodeGenerated)
-                  Container(
-                    width: size.width * 0.82,
-                    padding: EdgeInsets.symmetric(
-                      horizontal: size.width * 0.04,
-                      vertical: size.height * 0.022,
-                    ),
-                    decoration: BoxDecoration(
-                      color: AppColor.secondryColor,
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: [
-                        /// LEFT CONTENT
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Text(
-                                "Your referral code",
-                                style: TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontSize: size.width * 0.042,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                              Text(
-                                referralCode,
-                                style: TextStyle(
-                                  color: AppColor.primaryColor,
-                                  fontSize: size.width * 0.055,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        Container(
-                          height: size.height * 0.055, // line height
-                          width: 1,
-                          color: Colors.grey.withOpacity(0.5),
-                        ),
-
-                        SizedBox(width: size.width * 0.03),
-
-                        /// COPY SECTION
-                        Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                Clipboard.setData(
-                                  ClipboardData(text: referralCode),
-                                );
-                              },
-                              child: Text(
-                                "Copy",
-                                style: TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontSize: size.width * 0.042,
-                                  fontWeight: FontWeight.w700,
-                                ),
-                              ),
-                            ),
-                            Text(
-                              "Code",
-                              style: TextStyle(
-                                color: AppColor.buttonColor,
-                                fontSize: size.width * 0.042,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                          ],
-                        ),
-
-                        SizedBox(width: size.width * 0.025),
-
-                        /// ICON
-                        Icon(
-                          Icons.copy,
-                          color: AppColor.primaryColor,
-                          size: size.width * 0.06,
                         ),
                       ],
                     ),
-                  ),
-                SizedBox(
-                  height:
-                      isCodeGenerated ? size.height * 0.15 : size.height * 0.02,
+                  ],
                 ),
+              ),
 
-                GestureDetector(
-                  onTap: () {
-                    if (!isCodeGenerated) {
-                      setState(() {
-                        isCodeGenerated = true;
-                      });
-                    } else {
-                      // invite action
-                    }
-                  },
-                  child: Container(
-                    width:
-                        isCodeGenerated ? size.width * 0.88 : size.width * 0.50,
-                    height: size.height * 0.06,
-                    decoration: BoxDecoration(
-                      color: AppColor.buttonColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    alignment: Alignment.center,
-                    child: Text(
-                      isCodeGenerated ? "Invite a Friend" : "Generate Code",
-                      style: TextStyle(
-                        fontSize: size.width * 0.042,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.secondryColor,
+              SizedBox(height: size.height * 3.5 / 100),
+
+              /// ---------- REFERRAL CODE CARD ----------
+              Container(
+                width: size.width * 0.85,
+                padding: EdgeInsets.symmetric(
+                  horizontal: size.width * 5 / 100,
+                  vertical: size.height * 3.5 / 100,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColor.secondryColor,
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  children: [
+                    /// LEFT
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Your referral code",
+                            style: TextStyle(
+                              color: AppColor.buttonColor,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                          SizedBox(height: size.height * 0.3 / 100),
+                          Text(
+                            referralCode,
+                            style: TextStyle(
+                              color: AppColor.primaryColor,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
+
+                    Container(
+                      height: size.height * 0.05,
+                      width: 1,
+                      color: Colors.grey.withOpacity(0.5),
+                    ),
+
+                    SizedBox(width: size.width * 3 / 100),
+
+                    /// RIGHT
+                    Column(
+                      children: [
+                        Text(
+                          "Copy",
+                          style: TextStyle(
+                            color: AppColor.buttonColor,
+                            fontSize: size.width * 0.038,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                        Text(
+                          "Code",
+                          style: TextStyle(
+                            color: AppColor.buttonColor,
+                            fontSize: size.width * 0.038,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    SizedBox(width: size.width * 2 / 100),
+
+                    Icon(
+                      Icons.copy,
+                      color: AppColor.primaryColor,
+                      size: size.width * 0.06,
+                    ),
+                  ],
+                ),
+              ),
+
+              SizedBox(height: size.height * 32 / 100),
+
+              /// ---------- INVITE BUTTON ----------
+              Container(
+                width: size.width * 0.88,
+                height: size.height * 6 / 100,
+                decoration: BoxDecoration(
+                  color: AppColor.buttonColor,
+                  borderRadius: BorderRadius.circular(50),
+                ),
+                alignment: Alignment.center,
+                child: Text(
+                  "Invite a Friend",
+                  style: TextStyle(
+                    color: AppColor.secondryColor,
+                    fontSize: size.width * 0.042,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: AppFont.fontFamily,
                   ),
                 ),
+              ),
 
-                SizedBox(height: size.height * 2 / 100),
-              ],
-            ),
+              SizedBox(height: size.height * 3 / 100),
+            ],
           ),
+        ),
+      ),
+    );
+  }
+
+  /// ---------- ICON CIRCLE ----------
+  Widget _circleIcon(Size size, String icon) {
+    return Container(
+      width: size.width * 14 / 100,
+      height: size.width * 14 / 100,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: AppColor.secondryColor,
+      ),
+      child: Center(
+        child: Image.asset(
+          icon,
+          width: size.width * 8 / 100,
+          height: size.width * 8 / 100,
         ),
       ),
     );

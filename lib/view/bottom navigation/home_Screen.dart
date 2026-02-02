@@ -8,6 +8,7 @@ import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_e
 import 'package:night_life/view/other/chats/chat_message_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import '../../commonWidget/home_widget.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -45,7 +46,6 @@ class _HomeState extends State<Home> {
     {'id': 1, 'title': 'Members'},
     {'id': 2, 'title': 'Events'},
     {'id': 3, 'title': 'Venues'},
-    {'id': 4, 'title': 'All'},
   ];
 
   List chats = [
@@ -55,7 +55,7 @@ class _HomeState extends State<Home> {
       'name': 'Brew&Bloom',
       'lastMessage': '@Brew&BloomCafé',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
@@ -64,7 +64,7 @@ class _HomeState extends State<Home> {
       'name': 'Techno',
       'lastMessage': '@Techno',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
@@ -73,7 +73,7 @@ class _HomeState extends State<Home> {
       'name': 'SUNBURN',
       'lastMessage': '@Sunburn',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
@@ -82,7 +82,7 @@ class _HomeState extends State<Home> {
       'name': 'Mitro',
       'lastMessage': '@Mitro',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
@@ -91,7 +91,7 @@ class _HomeState extends State<Home> {
       'name': 'Razberry',
       'lastMessage': '@Razberry',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
     {
@@ -100,7 +100,7 @@ class _HomeState extends State<Home> {
       'name': 'CCD',
       'lastMessage': '@CCD',
       'message': 'Send',
-      'message1': 'Done',
+      'message1': 'Send',
       'isSend': false,
     },
   ];
@@ -162,6 +162,9 @@ class _HomeState extends State<Home> {
     },
   ];
 
+  bool showHeart = false;
+  bool showCross = false;
+  String? lastSwipeType; // 'heart' or 'cross'
   bool isSend = true;
   final CardSwiperController membersSwiperController = CardSwiperController();
   final CardSwiperController eventsSwiperController = CardSwiperController();
@@ -196,8 +199,41 @@ class _HomeState extends State<Home> {
   bool _onSwipeMembers(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
-      // Handle like
-    } else if (direction == CardSwiperDirection.left) {}
+      // Swipe right to left (cross)
+      setState(() {
+        showCross = true;
+        showHeart = false;
+        lastSwipeType = 'heart';
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            showCross = false;
+            lastSwipeType = null;
+          });
+        }
+      });
+    } else if (direction == CardSwiperDirection.left) {
+      // Swipe left to right (heart)
+      setState(() {
+        showHeart = true;
+        showCross = false;
+        lastSwipeType = 'cross';
+      });
+
+      // Reset after animation duration
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            showHeart = false;
+            lastSwipeType = null;
+          });
+        }
+      });
+    }
+
     setState(() {
       currentMemberIndex = currentIndex ?? 0;
     });
@@ -207,31 +243,37 @@ class _HomeState extends State<Home> {
   bool _onSwipeEvents(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
+      // Swipe right to left (cross)
       print('Liked event: ${eventsData[previousIndex]['_id']}');
       setState(() {
-        isYes = true;
-        isNope = false;
+        showCross = true;
+        showHeart = false;
+        lastSwipeType = 'heart';
       });
 
       // Reset after animation duration
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
-            isYes = false;
+            showCross = false;
+            lastSwipeType = null;
           });
         }
       });
     } else if (direction == CardSwiperDirection.left) {
+      // Swipe left to right (heart)
       setState(() {
-        isNope = true;
-        isYes = false;
+        showHeart = true;
+        showCross = false;
+        lastSwipeType = 'cross';
       });
 
       // Reset after animation duration
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
-            isNope = false;
+            showHeart = false;
+            lastSwipeType = null;
           });
         }
       });
@@ -248,31 +290,37 @@ class _HomeState extends State<Home> {
   bool _onSwipeVenues(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     if (direction == CardSwiperDirection.right) {
+      // Swipe right to left (cross)
       print('Liked venue: ${venuesData[previousIndex]['_id']}');
       setState(() {
-        isYes = true;
-        isNope = false;
+        showCross = true;
+        showHeart = false;
+        lastSwipeType = 'heart';
       });
 
       // Reset after animation duration
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
-            isYes = false;
+            showCross = false;
+            lastSwipeType = null;
           });
         }
       });
     } else if (direction == CardSwiperDirection.left) {
+      // Swipe left to right (heart)
       setState(() {
-        isNope = true;
-        isYes = false;
+        showHeart = true;
+        showCross = false;
+        lastSwipeType = 'cross';
       });
 
       // Reset after animation duration
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
-            isNope = false;
+            showHeart = false;
+            lastSwipeType = null;
           });
         }
       });
@@ -557,7 +605,7 @@ class _HomeState extends State<Home> {
                                               1 /
                                               100,
                                     ),
-                                    membersCard(
+                                    HomeWidget.membersCard(
                                       context,
                                       membersData[index]['image'],
                                       membersData[index]['name'],
@@ -575,6 +623,15 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "member_image_${eventTabVersion}_$index"),
+                                      showHeart: showHeart,
+                                      showCross: showCross,
+                                      lastSwipeType: lastSwipeType,
+                                      onMessageTap: () {
+                                        eventstypebottomsheet(context);
+                                      },
+                                      onHeartTap: () {
+                                        // Handle heart tap for members
+                                      },
                                     ),
                                     SizedBox(
                                         height:
@@ -673,7 +730,7 @@ class _HomeState extends State<Home> {
                                               1 /
                                               100,
                                     ),
-                                    eventsCard(
+                                    HomeWidget.eventsCard(
                                       context,
                                       eventsData[index]['image'],
                                       "Bass Drop Fridays",
@@ -691,6 +748,15 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "events_tab_${eventTabVersion}_$index"),
+                                      showHeart: showHeart,
+                                      showCross: showCross,
+                                      lastSwipeType: lastSwipeType,
+                                      onShareTap: () {
+                                        eventstypebottomsheet(context);
+                                      },
+                                      onHeartTap: () {
+                                        // Handle heart tap for events
+                                      },
                                     ),
                                     SizedBox(
                                         height:
@@ -713,7 +779,7 @@ class _HomeState extends State<Home> {
                                       ),
                                       child: GestureDetector(
                                         onTap: () {
-                                          membersSwiperController.undo();
+                                          eventsSwiperController.undo();
                                         },
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -789,7 +855,7 @@ class _HomeState extends State<Home> {
                                               1 /
                                               100,
                                     ),
-                                    venusCard(
+                                    HomeWidget.venuesCard(
                                       context,
                                       venuesData[index]['image'],
                                       "Brew & Bloom Café",
@@ -807,6 +873,15 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "venues_tab_${venusTabVersion}_$index"),
+                                      showHeart: showHeart,
+                                      showCross: showCross,
+                                      lastSwipeType: lastSwipeType,
+                                      onShareTap: () {
+                                        eventstypebottomsheet(context);
+                                      },
+                                      onHeartTap: () {
+                                        // Handle heart tap for venues
+                                      },
                                     ),
                                     SizedBox(
                                         height:
@@ -829,7 +904,7 @@ class _HomeState extends State<Home> {
                                       ),
                                       child: GestureDetector(
                                         onTap: () {
-                                          membersSwiperController.undo();
+                                          venuesSwiperController.undo();
                                         },
                                         child: Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -1107,1500 +1182,6 @@ class _HomeState extends State<Home> {
           );
         });
       },
-    );
-  }
-
-  void documenttypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setStateBottomSheet) {
-            return Container(
-              width: size.width,
-              height: size.height * 0.6,
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: AppColor.backgroundGradientcolor,
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(46),
-                          topRight: Radius.circular(46),
-                        ),
-                      ),
-                      child: Column(
-                        children: [
-                          SizedBox(height: size.height * 0.02),
-
-                          /// Drag Indicator
-                          Image.asset(
-                            AppImage.dashIcon,
-                            height: size.height * 0.005,
-                            width: size.width * 0.28,
-                            fit: BoxFit.fill,
-                          ),
-
-                          SizedBox(height: size.height * 0.02),
-
-                          /// 🔁 TOGGLE HEADER
-                          SizedBox(
-                            height: size.height * 0.08,
-                            child: Row(
-                              children: [
-                                /// EVENTS
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setStateBottomSheet(() {
-                                        selectedIndex = 0;
-                                      });
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        AppLanguage.eventsText[language],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15,
-                                          fontFamily: AppFont.fontFamily,
-                                          color: selectedIndex == 0
-                                              ? AppColor.secondryColor
-                                              : AppColor.greyLightColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-
-                                /// VENUES
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      setStateBottomSheet(() {
-                                        selectedIndex = 1;
-                                      });
-                                    },
-                                    child: Center(
-                                      child: Text(
-                                        AppLanguage.venuesText[language],
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 15,
-                                          fontFamily: AppFont.fontFamily,
-                                          color: selectedIndex == 1
-                                              ? AppColor.secondryColor
-                                              : AppColor.greyLightColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-
-                          /// 🔁 INDICATOR
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Container(
-                                width: size.width * 0.44,
-                                height: size.height * 0.003,
-                                color: selectedIndex == 0
-                                    ? AppColor.secondryColor
-                                    : AppColor.greyLightColor,
-                              ),
-                              Container(
-                                width: size.width * 0.36,
-                                height: size.height * 0.003,
-                                color: selectedIndex == 1
-                                    ? AppColor.secondryColor
-                                    : AppColor.greyLightColor,
-                              ),
-                            ],
-                          ),
-
-                          SizedBox(height: size.height * 0.02),
-
-                          /// 🔁 LIST CONTENT
-                          Expanded(
-                            child: SingleChildScrollView(
-                              child: Column(
-                                children: List.generate(chats.length, (index) {
-                                  final chat = chats[index];
-                                  return Column(
-                                    children: [
-                                      SizedBox(
-                                        width: size.width * 0.9,
-                                        height: size.height * 0.085,
-                                        child: ListTile(
-                                          contentPadding: EdgeInsets.zero,
-                                          leading: CircleAvatar(
-                                            radius: size.width * 0.065,
-                                            backgroundImage:
-                                                AssetImage(chat['image']),
-                                          ),
-                                          title: Text(
-                                            chat['name'],
-                                            style: const TextStyle(
-                                              fontWeight: FontWeight.w600,
-                                              fontSize: 16,
-                                              color: AppColor.secondryColor,
-                                            ),
-                                          ),
-                                          subtitle: Text(
-                                            chat['lastMessage'],
-                                            maxLines: 1,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.secondryColor,
-                                            ),
-                                          ),
-                                          trailing: GestureDetector(
-                                            onTap: () {
-                                              setStateBottomSheet(() {
-                                                chats[index]['isSend'] = true;
-                                              });
-
-                                              Future.delayed(
-                                                const Duration(
-                                                    milliseconds: 200),
-                                                () {
-                                                  Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                      type: PageTransitionType
-                                                          .bottomToTop,
-                                                      child: ChatMessageScreen(
-                                                        name: chat['name'],
-                                                        image: chat['image'],
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                              );
-                                            },
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 20,
-                                                      vertical: 8),
-                                              decoration: BoxDecoration(
-                                                color: chat['isSend'] == true
-                                                    ? AppColor
-                                                        .logoutContainerColor
-                                                    : AppColor.secondryColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: chat['isSend'] == true
-                                                    ? Border.all(
-                                                        color: AppColor
-                                                            .buttonColor,
-                                                      )
-                                                    : null,
-                                              ),
-                                              child: Text(
-                                                chat['isSend'] == true
-                                                    ? chat['message1']
-                                                    : chat['message'],
-                                                style: TextStyle(
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  color: chat['isSend'] == true
-                                                      ? AppColor.secondryColor
-                                                      : AppColor.primaryColor,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(height: size.height * 0.005),
-                                    ],
-                                  );
-                                }),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            );
-          },
-        );
-      },
-    );
-  }
- 
-  //! Members Card
-  Widget membersCard(
-      BuildContext context, String image, String name, VoidCallback onTap,
-      {Key? key}) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 450),
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
-      child: GestureDetector(
-        key: key,
-        onTap: onTap,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 90 / 100,
-          height: MediaQuery.of(context).size.height * 60.5 / 100,
-          child: Stack(
-            children: [
-              //! Main Card
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.8),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 0),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: Column(
-                      children: [
-                        //! Image Section
-                        Expanded(
-                          flex: 7,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.grey[300]!,
-                                      Colors.grey[200]!,
-                                    ],
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  image,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              // Shadow overlay that blends into the info section
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height:
-                                    150, // Adjust this value to control shadow spread
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black,
-                                      ],
-                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        //! Info Section
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors
-                                  .black, // Solid black to match the gradient end
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Text(
-                                  'Weekend explorer who loves live gigs, latte art, and late-night jam sessions.',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 13,
-                                    height: 1.4,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                const Text(
-                                  'Foodie · Explorer · Creative',
-                                  style: TextStyle(
-                                    color: AppColor.pinkColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: AppColor.pinkColor,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Lane 7, Koregaon Park • 1.8 km',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )),
-              ),
-
-              //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 41,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //! Heart Button on Right Side
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 100,
-                child: Center(
-                  child: Container(
-                    width: 40,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff341941).withOpacity(.6),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                // documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.heart)),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 2 / 100,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.messageIcon)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  //! Events Card
-  Widget eventsCard(
-      BuildContext context, String image, String name, VoidCallback onTap,
-      {Key? key}) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 450),
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
-      child: GestureDetector(
-        key: key,
-        onTap: onTap,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 90 / 100,
-          height: MediaQuery.of(context).size.height * 60.5 / 100,
-          child: Stack(
-            children: [
-              //! Main Card
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.8),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 0),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: Column(
-                      children: [
-                        //! Image Section
-                        Expanded(
-                          flex: 7,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.grey[300]!,
-                                      Colors.grey[200]!,
-                                    ],
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  image,
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                              // Shadow overlay that blends into the info section
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height:
-                                    150, // Adjust this value to control shadow spread
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black,
-                                      ],
-                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        //! Info Section
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors
-                                  .black, // Solid black to match the gradient end
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Text(
-                                  'Bass-heavy techno night with DJ Armin, drink specials till midnight',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 13,
-                                    height: 1.4,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time_rounded,
-                                      color: AppColor.pinkColor,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      'Fri, 10 PM – 4 AM',
-                                      style: TextStyle(
-                                        color: AppColor.pinkColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: AppColor.pinkColor,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Club Neon, Downtown • 2.3 km',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )),
-              ),
-
-              //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 100,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Likes Count
-                      const Positioned(
-                        top: 42,
-                        right: 19,
-                        child: SizedBox(
-                          child: Text(
-                            "17.6K Likes",
-                            style: TextStyle(
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.textcolor),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //! Beverages on Left Side
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  // width: 105,
-                  height: 41,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 5 / 100,
-                      ),
-                      //! Cafe Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Techno",
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 2 / 100,
-                      ),
-
-                      //! Coffee Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Whiskey",
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //! Heart Button on Right Side
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 100,
-                child: Center(
-                  child: Container(
-                    width: 40,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff341941).withOpacity(.6),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                // documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.heart)),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 2 / 100,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.messageIcon)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              //! Yes - with fade animation
-              if (isYes)
-                Positioned(
-                  left: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.greenColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.greenColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Yes",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-              //! Nope - with fade animation
-              if (isNope)
-                Positioned(
-                  right: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.redColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.redColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Nope",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  //! Venus Card
-  Widget venusCard(
-      BuildContext context, String image, String name, VoidCallback onTap,
-      {Key? key}) {
-    return AnimatedSwitcher(
-      duration: const Duration(milliseconds: 450),
-      transitionBuilder: (child, animation) => FadeTransition(
-        opacity: animation,
-        child: child,
-      ),
-      child: GestureDetector(
-        key: key,
-        onTap: onTap,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 90 / 100,
-          height: MediaQuery.of(context).size.height * 60.5 / 100,
-          child: Stack(
-            children: [
-              //! Main Card
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.8),
-                      blurRadius: 10,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 0),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                    borderRadius: BorderRadius.circular(32),
-                    child: Column(
-                      children: [
-                        //! Image Section
-                        Expanded(
-                          flex: 7,
-                          child: Stack(
-                            children: [
-                              Container(
-                                width: double.infinity,
-                                height: double.infinity,
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    begin: Alignment.topCenter,
-                                    end: Alignment.bottomCenter,
-                                    colors: [
-                                      Colors.grey[300]!,
-                                      Colors.grey[200]!,
-                                    ],
-                                  ),
-                                ),
-                                child: Image.asset(
-                                  image,
-                                  fit: BoxFit.fitHeight,
-                                ),
-                              ),
-                              // Shadow overlay that blends into the info section
-                              Positioned(
-                                bottom: 0,
-                                left: 0,
-                                right: 0,
-                                height:
-                                    150, // Adjust this value to control shadow spread
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment.topCenter,
-                                      end: Alignment.bottomCenter,
-                                      colors: [
-                                        Colors.transparent,
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black,
-                                      ],
-                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-
-                        //! Info Section
-                        Expanded(
-                          flex: 3,
-                          child: Container(
-                            width: double.infinity,
-                            decoration: const BoxDecoration(
-                              color: Colors
-                                  .black, // Solid black to match the gradient end
-                            ),
-                            padding: const EdgeInsets.symmetric(horizontal: 18),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  name,
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 22,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Text(
-                                  'Cozy café with coffee, desserts, events—perfect for work, conversations, meetups.',
-                                  style: TextStyle(
-                                    color: Colors.white.withOpacity(0.9),
-                                    fontSize: 13,
-                                    height: 1.4,
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                                const Row(
-                                  children: [
-                                    Icon(
-                                      Icons.access_time_rounded,
-                                      color: AppColor.pinkColor,
-                                      size: 18,
-                                    ),
-                                    SizedBox(width: 4),
-                                    Text(
-                                      '8 AM – 11 PM',
-                                      style: TextStyle(
-                                        color: AppColor.pinkColor,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
-                                ),
-                                Row(
-                                  children: [
-                                    const Icon(
-                                      Icons.location_on,
-                                      color: AppColor.pinkColor,
-                                      size: 18,
-                                    ),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      'Lane 7, Koregaon Park • 1.8 km',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      1 /
-                                      100,
-                                ),
-                              ],
-                            ),
-                          ),
-                        )
-                      ],
-                    )),
-              ),
-
-              //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 100,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Likes Count
-                      const Positioned(
-                        top: 42,
-                        right: 19,
-                        child: SizedBox(
-                          child: Text(
-                            "17.6K Likes",
-                            style: TextStyle(
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: AppColor.textcolor),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //! Beverages on Left Side
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  // width: 105,
-                  height: 41,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 5 / 100,
-                      ),
-                      //! Cafe Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Cafe",
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 2 / 100,
-                      ),
-                      //! Coffee Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Coffee",
-                            style: TextStyle(
-                              color: AppColor.secondryColor,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
-              //! Heart Button on Right Side
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 100,
-                child: Center(
-                  child: Container(
-                    width: 40,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff341941).withOpacity(.6),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                // documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.heart)),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 2 / 100,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                              onTap: () {
-                                documenttypebottomsheet(context);
-                              },
-                              child: Image.asset(AppImage.messageIcon)),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-
-              //! Yes - with fade animation
-              if (isYes)
-                Positioned(
-                  left: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.greenColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.greenColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Yes",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-              //! Nope - with fade animation
-              if (isNope)
-                Positioned(
-                  right: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.redColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.redColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: const Center(
-                        child: Text(
-                          "Nope",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }
