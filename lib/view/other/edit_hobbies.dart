@@ -148,7 +148,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
             decoration:
-                const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+                 BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
             child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
@@ -170,7 +170,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       MediaQuery.of(context).size.height * 0.05,
                                   child: Image.asset(
                                     AppImage.backArrowIcon,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               ),
@@ -178,11 +178,11 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                 child: Center(
                                   child: Text(
                                     AppLanguage.editHobbiesText[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
@@ -202,7 +202,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           // Hobbies Input Field
                           TextFormField(
                             style:
-                                const TextStyle(color: AppColor.secondryColor),
+                                 TextStyle(color: AppColor.secondryColor(context)),
                             controller: hobbiesTextController,
                             focusNode: _hobbiesFocusNode,
                             readOnly: true,
@@ -241,12 +241,12 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                     color: AppColor.buttonColor, width: 1.5),
                               ),
                               fillColor: _isHobbiesFocusNode
-                                  ? AppColor.primaryColor
+                                  ? AppColor.primaryColor(context)
                                   : AppColor.themeColor,
                               filled: true,
                               counterText: '',
                               hintText: AppLanguage.yourHobbiesText[language],
-                              hintStyle: AppConstant.textFilledStyle,
+                              hintStyle: AppConstant.textFilledStyle(context),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 30,
                                 vertical: 15,
@@ -276,7 +276,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: AppColor.primaryColor,
+                                    color: AppColor.primaryColor(context),
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
@@ -301,11 +301,11 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                         ),
                                         child: Text(
                                           '#$id',
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor,
+                                            color: AppColor.secondryColor(context),
                                           ),
                                         ),
                                       ),
@@ -313,11 +313,11 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       Expanded(
                                         child: Text(
                                           hobbyName,
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                             fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor,
+                                            color: AppColor.secondryColor(context),
                                           ),
                                         ),
                                       ),
@@ -325,9 +325,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       GestureDetector(
                                         onTap: () => _showEditHobbyBottomSheet(
                                             id, hobbyName),
-                                        child: const Icon(
+                                        child:  Icon(
                                           Icons.edit_outlined,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                           size: 20,
                                         ),
                                       ),
@@ -412,13 +412,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                 Text(
                   "Add a hobby",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -436,17 +436,17 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child:  Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -466,13 +466,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child:  Text(
                             "Add",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -515,13 +515,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               children: [
                 Row(
                   children: [
-                    const Text(
+                     Text(
                       "Edit hobby",
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppFont.fontFamily,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -531,16 +531,16 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.primaryColor,
+                        color: AppColor.primaryColor(context),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
                         'ID: $id',
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
                     ),
@@ -561,17 +561,17 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child:  Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -591,13 +591,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child:  Text(
                             "Update",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -623,32 +623,32 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text(
+          title:  Text(
             "Delete Hobby",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
             ),
           ),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
+               Text(
                 "Are you sure you want to delete this hobby?",
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: AppFont.fontFamily,
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                 ),
               ),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColor.primaryColor,
+                  color: AppColor.primaryColor(context),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -664,11 +664,11 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                       ),
                       child: Text(
                         '#$id',
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
                     ),
@@ -676,11 +676,11 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                     Expanded(
                       child: Text(
                         hobbyName,
-                        style: const TextStyle(
+                        style:  TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
                     ),
@@ -692,10 +692,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child:  Text(
                 "Cancel",
                 style: TextStyle(
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                   fontFamily: AppFont.fontFamily,
                 ),
               ),
@@ -727,8 +727,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     List<TextInputFormatter>? inputFormatters,
   }) {
     return TextField(
-      style: const TextStyle(
-        color: AppColor.secondryColor,
+      style:  TextStyle(
+        color: AppColor.secondryColor(context),
         fontFamily: AppFont.fontFamily,
       ),
       controller: controller,
@@ -737,7 +737,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white54),
         filled: true,
-        fillColor: AppColor.primaryColor,
+        fillColor: AppColor.primaryColor(context),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(

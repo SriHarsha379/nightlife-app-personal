@@ -18,10 +18,10 @@ class AboutScreen extends StatefulWidget {
 class _AboutScreenState extends State<AboutScreen> {
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+      systemNavigationBarColor: AppColor.primaryColor(context),
       systemNavigationBarIconBrightness: Brightness.light,
-      statusBarColor: AppColor.primaryColor,
+      statusBarColor: AppColor.primaryColor(context),
       statusBarIconBrightness: Brightness.light,
     ));
 
@@ -31,12 +31,12 @@ class _AboutScreenState extends State<AboutScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         body: SafeArea(
           child: Container(
             height: h,
             width: w,
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             child: Column(
               children: [
                 AppHeader(
@@ -69,11 +69,11 @@ class _AboutScreenState extends State<AboutScreen> {
                         vertical: h * 0.005,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.notificationContainerColor,
+                        color: AppColor.notificationContainerColor(context),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             spreadRadius: 3,
                             blurRadius: 7,
                             offset: const Offset(0, 1),
@@ -87,7 +87,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           Text(
                             "Hii App",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               fontSize: w * 0.042,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
@@ -96,7 +96,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           Text(
                             "Version 1.021",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               fontSize: w * 0.038,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w400,
@@ -121,11 +121,11 @@ class _AboutScreenState extends State<AboutScreen> {
                         vertical: h * 0.005,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.notificationContainerColor,
+                        color: AppColor.notificationContainerColor(context),
                         borderRadius: BorderRadius.circular(8),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             spreadRadius: 3,
                             blurRadius: 7,
                             offset: const Offset(0, 1),
@@ -138,7 +138,7 @@ class _AboutScreenState extends State<AboutScreen> {
                           Text(
                             "Check for Updates",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               fontSize: w * 0.042,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
@@ -157,7 +157,7 @@ class _AboutScreenState extends State<AboutScreen> {
                     Text(
                       "A product of",
                       style: TextStyle(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                         fontSize: w * 0.042,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w500,

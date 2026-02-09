@@ -45,16 +45,16 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 20), // adjust as needed
@@ -103,25 +103,23 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                       fontFamily: AppFont.fontFamily,
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
-                      color: AppColor.lightGreyColor,
+                      color: AppColor.lightGreyColor(context),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: size.height *1/100),
+              SizedBox(height: size.height * 1 / 100),
               AppButton(
                 text: AppLanguage.continueText[language],
                 onPress: () {
-      
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: CompletePayment2(),
-                        duration: Duration(milliseconds: 500),
-                      ),
-                    );
-                  
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: CompletePayment2(),
+                      duration: Duration(milliseconds: 500),
+                    ),
+                  );
                 },
               ),
             ],
@@ -146,7 +144,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                           Navigator.pop(context);
                         },
                         child: Image.asset(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             height: size.width * 5 / 100,
                             width: size.width * 5 / 100,
                             AppImage.backArrowIcon),
@@ -157,7 +155,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
-                            color: AppColor.secondryColor),
+                            color: AppColor.secondryColor(context)),
                       ),
                       Container(
                         height: size.width * 5 / 100,
@@ -196,7 +194,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 16,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               )
@@ -225,7 +223,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                   Text(
                                     'Santacruz East, Mumbai',
@@ -260,7 +258,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 16,
-                                    color: AppColor.secondryColor),
+                                    color: AppColor.secondryColor(context)),
                               ),
                               GestureDetector(
                                 onTap: () {},
@@ -270,7 +268,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w300,
                                       fontSize: 30,
-                                      color: AppColor.secondryColor),
+                                      color: AppColor.secondryColor(context)),
                                 ),
                               ),
                             ],
@@ -284,7 +282,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 18,
-                                color: AppColor.secondryColor),
+                                color: AppColor.secondryColor(context)),
                           ),
                           SizedBox(
                             height: size.height * 2 / 100,
@@ -305,7 +303,8 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Text(
@@ -326,7 +325,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -349,7 +348,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(right: 14.0),
@@ -372,7 +371,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor),
+                                      color: AppColor.secondryColor(context)),
                                 ),
                               ),
                             ],
@@ -395,7 +394,8 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Text(
@@ -416,7 +416,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -441,7 +441,8 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Padding(
@@ -466,7 +467,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -490,7 +491,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 18,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 Transform.rotate(
@@ -523,7 +524,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 );

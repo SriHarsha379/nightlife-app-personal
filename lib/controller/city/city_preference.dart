@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import '../provider/common_api_helper.dart';
-import '../utilities/app_config_provider.dart';
-import '../utilities/app_constant.dart';
+
+import '../../provider/common_api_helper.dart';
+import '../../utilities/app_config_provider.dart';
 
 class CityPreferenceController with ChangeNotifier {
   List<dynamic> _cityList = [];
@@ -23,7 +23,7 @@ class CityPreferenceController with ChangeNotifier {
   Map<String, Map<String, dynamic>> get getCityRadiusData => _cityRadiusData;
 
   // Current working values (for the city being configured)
-  double _currentDistance = 10.0;
+  double _currentDistance = 1.0;
   bool _isBroadened = false;
 
   double get getCurrentDistance => _currentDistance;
@@ -68,7 +68,7 @@ class CityPreferenceController with ChangeNotifier {
         _currentDistance = _cityRadiusData[nextCityId]!['radius'];
         _isBroadened = _cityRadiusData[nextCityId]!['is_broadened'];
       } else {
-        _currentDistance = 10.0;
+        _currentDistance = 1.0;
         _isBroadened = false;
       }
     }
@@ -80,7 +80,7 @@ class CityPreferenceController with ChangeNotifier {
   void resetCityConfiguration() {
     _currentCityIndex = 0;
     _cityRadiusData.clear();
-    _currentDistance = 10.0;
+    _currentDistance = 1.0;
     _isBroadened = false;
     notifyListeners();
   }
@@ -247,7 +247,7 @@ class CityPreferenceController with ChangeNotifier {
     _selectedCities.clear();
     _cityRadiusData.clear();
     _currentCityIndex = 0;
-    _currentDistance = 10.0;
+    _currentDistance = 1.0;
     _isBroadened = false;
     notifyListeners();
   }
@@ -258,7 +258,7 @@ class CityPreferenceController with ChangeNotifier {
     _selectedCities = [];
     _cityRadiusData = {};
     _currentCityIndex = 0;
-    _currentDistance = 10.0;
+    _currentDistance = 1.0;
     _isBroadened = false;
     _isLoading = false;
     notifyListeners();

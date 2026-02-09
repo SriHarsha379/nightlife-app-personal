@@ -63,8 +63,8 @@ class _splashMembersState extends State<splashMembers> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value:  SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -74,7 +74,7 @@ class _splashMembersState extends State<splashMembers> {
         body: Container(
           width: size.width * 100 / 100,
           height: size.height * 100 / 100,
-          color: AppColor.primaryColor,
+          color: AppColor.primaryColor(context),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -105,7 +105,7 @@ class _splashMembersState extends State<splashMembers> {
                           child: Image.asset(
                             AppImage.backarrow,
                             fit: BoxFit.cover,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             height: MediaQuery.of(context).size.width * 5 / 100,
                             width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
@@ -123,8 +123,8 @@ class _splashMembersState extends State<splashMembers> {
                           child: Text(
                             AppLanguage.membersText[language],
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style:  TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
                               fontFamily: AppFont.fontFamily,
@@ -140,7 +140,7 @@ class _splashMembersState extends State<splashMembers> {
                         child: Image.asset(
                           AppImage.downArrow,
                           fit: BoxFit.cover,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           height: MediaQuery.of(context).size.width * 5 / 100,
                         ),
                       ),
@@ -150,7 +150,7 @@ class _splashMembersState extends State<splashMembers> {
               ),
               SizedBox(height: size.height * 2 / 100),
               Container(
-                color: AppColor.primaryColor,
+                color: AppColor.primaryColor(context),
                 width: MediaQuery.of(context).size.width * 100 / 100,
                 height: MediaQuery.of(context).size.height * 8 / 100,
                 child: Center(
@@ -174,7 +174,7 @@ class _splashMembersState extends State<splashMembers> {
                                 fontWeight: FontWeight.w500,
                                 color: selectedIndex == 0
                                     ? AppColor.pinkColor
-                                    : AppColor.secondryColor,
+                                    : AppColor.secondryColor(context),
                                 fontSize: 15,
                                 fontFamily: AppFont.fontFamily,
                               ),
@@ -199,7 +199,7 @@ class _splashMembersState extends State<splashMembers> {
                                 fontWeight: FontWeight.w500,
                                 color: selectedIndex == 1
                                     ? AppColor.pinkColor
-                                    : AppColor.secondryColor,
+                                    : AppColor.secondryColor(context),
                                 fontSize: 15,
                                 fontFamily: AppFont.fontFamily,
                               ),
@@ -226,7 +226,7 @@ class _splashMembersState extends State<splashMembers> {
                         height: MediaQuery.of(context).size.height * 0.3 / 100,
                         color: selectedIndex == 0
                             ? AppColor.pinkColor
-                            : AppColor.secondryColor,
+                            : AppColor.secondryColor(context),
                       ),
                     ),
                     GestureDetector(
@@ -240,7 +240,7 @@ class _splashMembersState extends State<splashMembers> {
                         height: MediaQuery.of(context).size.height * 0.3 / 100,
                         color: selectedIndex == 1
                             ? AppColor.pinkColor
-                            : AppColor.secondryColor,
+                            : AppColor.secondryColor(context),
                       ),
                     ),
                   ],
@@ -266,7 +266,7 @@ class _splashMembersState extends State<splashMembers> {
                                   child: Container(
                                     width: size.width * 90 / 100,
                                     decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                     child: Column(
@@ -307,14 +307,15 @@ class _splashMembersState extends State<splashMembers> {
                                                   Text(
                                                     Followinglist[index]
                                                         ['title'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 18,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w700,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                   Container(
                                                     width: size.width * 8 / 100,
@@ -328,7 +329,8 @@ class _splashMembersState extends State<splashMembers> {
                                                       AppImage.liked_heart_icon,
                                                       fit: BoxFit.cover,
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                     )),
                                                   ),
                                                 ],
@@ -365,14 +367,15 @@ class _splashMembersState extends State<splashMembers> {
                                                   Text(
                                                     Followinglist[index]
                                                         ['date'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 15,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -401,14 +404,15 @@ class _splashMembersState extends State<splashMembers> {
                                                   Text(
                                                     Followinglist[index]
                                                         ['address'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 14,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -441,7 +445,8 @@ class _splashMembersState extends State<splashMembers> {
                                                       100,
                                                   decoration: BoxDecoration(
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10)),
@@ -475,11 +480,11 @@ class _splashMembersState extends State<splashMembers> {
                             Container(
                               child: Text(
                                 AppLanguage.ReserveddetailsText[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                     fontSize: 16,
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
-                                    color: AppColor.secondryColor),
+                                    color: AppColor.secondryColor(context)),
                               ),
                             ),
                           SizedBox(
@@ -495,7 +500,7 @@ class _splashMembersState extends State<splashMembers> {
                                 child: Container(
                                   width: size.width * 90 / 100,
                                   decoration: BoxDecoration(
-                                    color: AppColor.primaryColor,
+                                    color: AppColor.primaryColor(context),
                                     borderRadius: BorderRadius.circular(15),
                                   ),
                                   child: Column(
@@ -536,14 +541,15 @@ class _splashMembersState extends State<splashMembers> {
                                                 Text(
                                                   connectionlist[index]
                                                       ['title'],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                       fontSize: 18,
                                                       fontFamily:
                                                           AppFont.fontFamily,
                                                       fontWeight:
                                                           FontWeight.w700,
                                                       color: AppColor
-                                                          .secondryColor),
+                                                          .secondryColor(
+                                                              context)),
                                                 ),
                                                 // Container(
                                                 //   width: size.width * 8 / 100,
@@ -590,14 +596,15 @@ class _splashMembersState extends State<splashMembers> {
                                                 ),
                                                 Text(
                                                   connectionlist[index]['date'],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                       fontSize: 15,
                                                       fontFamily:
                                                           AppFont.fontFamily,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: AppColor
-                                                          .secondryColor),
+                                                          .secondryColor(
+                                                              context)),
                                                 ),
                                               ],
                                             ),
@@ -624,14 +631,15 @@ class _splashMembersState extends State<splashMembers> {
                                                 Text(
                                                   connectionlist[index]
                                                       ['address'],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                       fontSize: 14,
                                                       fontFamily:
                                                           AppFont.fontFamily,
                                                       fontWeight:
                                                           FontWeight.w500,
                                                       color: AppColor
-                                                          .secondryColor),
+                                                          .secondryColor(
+                                                              context)),
                                                 ),
                                               ],
                                             ),
@@ -667,7 +675,7 @@ class _splashMembersState extends State<splashMembers> {
                                                     100,
                                                 decoration: BoxDecoration(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10)),
@@ -734,7 +742,7 @@ class _splashMembersState extends State<splashMembers> {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(45),
                               topRight: Radius.circular(45),
@@ -765,8 +773,8 @@ class _splashMembersState extends State<splashMembers> {
                                           0.84,
                                       child: Text(
                                         AppLanguage.myspacetext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 23,
@@ -779,8 +787,8 @@ class _splashMembersState extends State<splashMembers> {
                                       child: Text(
                                         AppLanguage
                                             .eventStatementtext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12.2,
@@ -924,7 +932,7 @@ class _splashMembersState extends State<splashMembers> {
                 child: Container(
                   width: 202,
                   decoration: BoxDecoration(
-                    color: AppColor.primaryColor,
+                    color: AppColor.primaryColor(context),
                     borderRadius: BorderRadius.circular(15), // four side radius
                     boxShadow: [
                       BoxShadow(
@@ -978,7 +986,7 @@ class _splashMembersState extends State<splashMembers> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? AppColor.dropdownColor : Colors.transparent,
+          color: isActive ? AppColor.dropdownColor(context) : Colors.transparent,
           borderRadius: isActive
               ? const BorderRadius.only(
                   bottomLeft: Radius.circular(15),
@@ -990,7 +998,7 @@ class _splashMembersState extends State<splashMembers> {
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isActive ? AppColor.secondryColor : AppColor.greyLightColor,
+            color: isActive ? AppColor.secondryColor(context) : AppColor.greyLightColor,
             fontSize: 16,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),

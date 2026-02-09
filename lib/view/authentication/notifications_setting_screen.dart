@@ -49,8 +49,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light));
 
@@ -59,7 +59,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
     return Scaffold(
       body: Container(
         width: size.width,
-        color: AppColor.primaryColor,
+        color: AppColor.primaryColor(context),
         child: Column(
           children: [
             SizedBox(height: size.height * 5 / 100),
@@ -84,7 +84,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                             fontFamily: AppFont.fontFamily,
                             fontSize: 17,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -135,7 +135,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
             fontFamily: AppFont.fontFamily,
             fontSize: 18,
             fontWeight: FontWeight.w700,
-            color: AppColor.secondryColor,
+            color: AppColor.secondryColor(context),
           ),
         ),
       ),
@@ -150,11 +150,11 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
       width: size.width * 100 / 100,
       height: size.height * 10 / 100,
       decoration: BoxDecoration(
-        color: AppColor.notificationContainerColor,
+        color: AppColor.notificationContainerColor(context),
         borderRadius: BorderRadius.circular(8),
         boxShadow: [
           BoxShadow(
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             spreadRadius: 3,
             blurRadius: 7,
             offset: const Offset(0, 1),
@@ -189,8 +189,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                       textHeightBehavior: const TextHeightBehavior(
                         applyHeightToFirstAscent: false,
                       ),
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
@@ -202,8 +202,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                     ),
                     Text(
                       notification['message'],
-                      style: const TextStyle(
-                        color: AppColor.notificationtextColor,
+                      style:  TextStyle(
+                        color: AppColor.notificationtextColor(context),
                         fontSize: 15.6,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w400,
@@ -228,7 +228,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                 },
                 activeColor: AppColor.pinkColor,
                 thumbColor: Colors.white,
-                trackColor: AppColor.toggleColor,
+                trackColor: AppColor.toggleColor(context),
               ),
             ),
           ),

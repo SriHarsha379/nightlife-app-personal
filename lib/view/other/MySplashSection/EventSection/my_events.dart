@@ -103,7 +103,7 @@ class _MyEventsState extends State<MyEvents> {
           body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -135,7 +135,7 @@ class _MyEventsState extends State<MyEvents> {
                             child: Image.asset(
                               AppImage.backarrow,
                               fit: BoxFit.cover,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               height:
                                   MediaQuery.of(context).size.width * 5 / 100,
                               width:
@@ -155,8 +155,8 @@ class _MyEventsState extends State<MyEvents> {
                             child: Text(
                               AppLanguage.myeventText[language],
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppFont.fontFamily,
@@ -172,7 +172,7 @@ class _MyEventsState extends State<MyEvents> {
                           child: Image.asset(
                             AppImage.downArrow,
                             fit: BoxFit.cover,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             height: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                         ),
@@ -182,7 +182,7 @@ class _MyEventsState extends State<MyEvents> {
                 ),
                 SizedBox(height: size.height * 2 / 100),
                 Container(
-                  color: AppColor.darlpurpalColor,
+                  color: AppColor.darlpurpalColor(context),
                   width: MediaQuery.of(context).size.width * 100 / 100,
                   height: MediaQuery.of(context).size.height * 8 / 100,
                   child: Center(
@@ -206,7 +206,7 @@ class _MyEventsState extends State<MyEvents> {
                                   fontWeight: FontWeight.w500,
                                   color: selectedIndex == 0
                                       ? AppColor.pinkColor
-                                      : AppColor.secondryColor,
+                                      : AppColor.secondryColor(context),
                                   fontSize: 16,
                                   fontFamily: AppFont.fontFamily,
                                 ),
@@ -231,7 +231,7 @@ class _MyEventsState extends State<MyEvents> {
                                   fontWeight: FontWeight.w500,
                                   color: selectedIndex == 1
                                       ? AppColor.pinkColor
-                                      : AppColor.secondryColor,
+                                      : AppColor.secondryColor(context),
                                   fontSize: 16,
                                   fontFamily: AppFont.fontFamily,
                                 ),
@@ -259,7 +259,7 @@ class _MyEventsState extends State<MyEvents> {
                               MediaQuery.of(context).size.height * 0.3 / 100,
                           color: selectedIndex == 0
                               ? AppColor.pinkColor
-                              : AppColor.secondryColor,
+                              : AppColor.secondryColor(context),
                         ),
                       ),
                       GestureDetector(
@@ -274,7 +274,7 @@ class _MyEventsState extends State<MyEvents> {
                               MediaQuery.of(context).size.height * 0.3 / 100,
                           color: selectedIndex == 1
                               ? AppColor.pinkColor
-                              : AppColor.secondryColor,
+                              : AppColor.secondryColor(context),
                         ),
                       ),
                     ],
@@ -309,7 +309,7 @@ class _MyEventsState extends State<MyEvents> {
                                   child: Container(
                                     width: size.width * 90 / 100,
                                     decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(15),
                                     ),
                                     child: Column(
@@ -349,14 +349,15 @@ class _MyEventsState extends State<MyEvents> {
                                                 children: [
                                                   Text(
                                                     Likedlist[index]['title'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 18,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w700,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                   Container(
                                                     width: size.width * 8 / 100,
@@ -404,14 +405,15 @@ class _MyEventsState extends State<MyEvents> {
                                                   ),
                                                   Text(
                                                     Likedlist[index]['date'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 15,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -435,14 +437,15 @@ class _MyEventsState extends State<MyEvents> {
                                                   ),
                                                   Text(
                                                     Likedlist[index]['address'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 14,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -461,7 +464,7 @@ class _MyEventsState extends State<MyEvents> {
                                                     100,
                                                 decoration: BoxDecoration(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10)),
@@ -494,11 +497,11 @@ class _MyEventsState extends State<MyEvents> {
                                   MediaQuery.of(context).size.width * 90 / 100,
                               child: Text(
                                 AppLanguage.confirmBookeddetailsText[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                     fontSize: 14,
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.normal,
-                                    color: AppColor.secondryColor),
+                                    color: AppColor.secondryColor(context)),
                               ),
                             ),
                             SizedBox(
@@ -541,7 +544,7 @@ class _MyEventsState extends State<MyEvents> {
                                   child: Container(
                                     width: size.width * 90 / 100,
                                     decoration: BoxDecoration(
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                             color:
@@ -583,14 +586,15 @@ class _MyEventsState extends State<MyEvents> {
                                                 children: [
                                                   Text(
                                                     Bookedlist[index]['title'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 18,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w700,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -625,14 +629,15 @@ class _MyEventsState extends State<MyEvents> {
                                                   ),
                                                   Text(
                                                     Bookedlist[index]['date'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 15,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -657,14 +662,15 @@ class _MyEventsState extends State<MyEvents> {
                                                   Text(
                                                     Bookedlist[index]
                                                         ['address'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 14,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -683,7 +689,7 @@ class _MyEventsState extends State<MyEvents> {
                                                     100,
                                                 decoration: BoxDecoration(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10)),
@@ -751,7 +757,7 @@ class _MyEventsState extends State<MyEvents> {
                                       width:
                                           size.width * 36 / 100, // Card width
                                       decoration: BoxDecoration(
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                         borderRadius: BorderRadius.circular(10),
                                         border: Border.all(
                                             color:
@@ -784,11 +790,11 @@ class _MyEventsState extends State<MyEvents> {
                                                 100,
                                             child: Text(
                                               pastEventlist[index]['title'],
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                 fontSize: 9,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColor.secondryColor,
+                                                color: AppColor.secondryColor(context),
                                               ),
                                               overflow: TextOverflow.ellipsis,
                                             ),
@@ -822,13 +828,13 @@ class _MyEventsState extends State<MyEvents> {
                                                         size.width * 1.5 / 100),
                                                 Text(
                                                   pastEventlist[index]['date'],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                     fontSize: 7,
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w400,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                 ),
                                               ],
@@ -864,13 +870,13 @@ class _MyEventsState extends State<MyEvents> {
                                                 Text(
                                                   pastEventlist[index]
                                                       ['address'],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                     fontSize: 7,
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w400,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                   maxLines: 1,
                                                   overflow:
@@ -909,7 +915,7 @@ class _MyEventsState extends State<MyEvents> {
                                                   33 /
                                                   100,
                                               decoration: BoxDecoration(
-                                                color: AppColor.secondryColor,
+                                                color: AppColor.secondryColor(context),
                                                 borderRadius:
                                                     BorderRadius.circular(8),
                                               ),
@@ -979,7 +985,7 @@ class _MyEventsState extends State<MyEvents> {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(45),
                               topRight: Radius.circular(45),
@@ -1010,8 +1016,8 @@ class _MyEventsState extends State<MyEvents> {
                                           0.84,
                                       child: Text(
                                         AppLanguage.myspacetext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 23,
@@ -1024,8 +1030,8 @@ class _MyEventsState extends State<MyEvents> {
                                       child: Text(
                                         AppLanguage
                                             .eventStatementtext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12.2,
@@ -1173,7 +1179,7 @@ class _MyEventsState extends State<MyEvents> {
                   width: 202,
                   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 10),
                   decoration: BoxDecoration(
-                    color: AppColor.primaryColor,
+                    color: AppColor.primaryColor(context),
                     borderRadius: BorderRadius.circular(15), // four side radius
                     boxShadow: [
                       BoxShadow(
@@ -1234,7 +1240,7 @@ class _MyEventsState extends State<MyEvents> {
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
         decoration: BoxDecoration(
-          color: isActive ? AppColor.dropdownColor : Colors.transparent,
+          color: isActive ? AppColor.dropdownColor(context) : Colors.transparent,
           borderRadius: isActive
               ? const BorderRadius.only(
                   bottomLeft: Radius.circular(15),
@@ -1246,7 +1252,7 @@ class _MyEventsState extends State<MyEvents> {
           text,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: isActive ? AppColor.secondryColor : AppColor.greyLightColor,
+            color: isActive ? AppColor.secondryColor(context) : AppColor.greyLightColor,
             fontSize: 16,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),

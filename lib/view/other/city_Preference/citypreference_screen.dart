@@ -7,7 +7,8 @@ import 'package:night_life/view/authentication/signup.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
-import '../../../controller/city_preference.dart';
+import '../../../controller/city/city_preference.dart';
+import '../../../provider/darkmode_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
@@ -26,14 +27,13 @@ class _CityPreferenceState extends State<CityPreference> {
   DateTime? lastPressed;
   GoogleMapController? mapController;
   Set<Circle> circles = {};
+  Set<Marker> markers = {};
 
-  // ADD THIS: Map ready flag
   bool _isMapReady = false;
 
   @override
   void initState() {
     super.initState();
-    // Fetch city list when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<CityPreferenceController>(context, listen: false)
           .fetchCityList(context);
@@ -47,7 +47,6 @@ class _CityPreferenceState extends State<CityPreference> {
     super.dispose();
   }
 
-  // Filter cities based on search
   List<dynamic> _getFilteredCities(List<dynamic> cities) {
     if (searchController.text.isEmpty) {
       return cities;
@@ -58,31 +57,52 @@ class _CityPreferenceState extends State<CityPreference> {
     }).toList();
   }
 
-  // UPDATED: Update map circles with safety checks
+  double _getZoomLevel(double radiusInKm) {
+    if (radiusInKm <= 10) return 11.5;
+    if (radiusInKm <= 20) return 10.5;
+    if (radiusInKm <= 30) return 10.0;
+    if (radiusInKm <= 40) return 9.5;
+    return 9.0;
+  }
+
   void _updateMapCircles(CityPreferenceController controller) {
     if (controller.getCurrentConfigCity == null) return;
-    if (!_isMapReady) return; // Safety check
+    if (!_isMapReady) return;
 
     final currentCity = controller.getCurrentConfigCity!;
     final lat = controller.getCityLatitude(currentCity);
     final lng = controller.getCityLongitude(currentCity);
+    final cityName = currentCity['city_name'] ?? '';
 
     setState(() {
       circles = {
         Circle(
           circleId: const CircleId('radius'),
           center: LatLng(lat, lng),
-          radius: controller.getCurrentDistance * 1000, // Convert km to meters
+          radius: controller.getCurrentDistance * 1000,
           fillColor: AppColor.pinkColor.withOpacity(0.2),
           strokeColor: AppColor.pinkColor,
           strokeWidth: 2,
         ),
       };
+
+      markers = {
+        Marker(
+          markerId: const MarkerId('city_center'),
+          position: LatLng(lat, lng),
+          infoWindow: InfoWindow(
+            title: cityName,
+            snippet: '${controller.getCurrentDistance.toInt()} km radius',
+          ),
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueViolet,
+          ),
+        ),
+      };
     });
   }
 
-  // ADD THIS: Safe camera movement method
-  void _moveCameraToLocation(LatLng location) {
+  void _moveCameraToLocation(LatLng location, double radiusInKm) {
     if (mapController == null || !_isMapReady) {
       print("Map not ready yet");
       return;
@@ -90,7 +110,10 @@ class _CityPreferenceState extends State<CityPreference> {
 
     try {
       mapController!.animateCamera(
-        CameraUpdate.newLatLngZoom(location, 12.0),
+        CameraUpdate.newLatLngZoom(
+          location,
+          _getZoomLevel(radiusInKm),
+        ),
       );
     } catch (e) {
       print("Error animating camera: $e");
@@ -100,7 +123,8 @@ class _CityPreferenceState extends State<CityPreference> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return Consumer<CityPreferenceController>(
       builder: (context, controller, child) {
         return PopScope(
@@ -120,12 +144,12 @@ class _CityPreferenceState extends State<CityPreference> {
             }
           },
           child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: const SystemUiOverlayStyle(
+            value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.light,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarIconBrightness: Brightness.light,
+              statusBarIconBrightness:
+                  isDark ? Brightness.light : Brightness.dark,
+              statusBarBrightness:
+                  isDark ? Brightness.dark : Brightness.light, // iOS
             ),
             child: GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -139,7 +163,6 @@ class _CityPreferenceState extends State<CityPreference> {
                         ? AppLanguage.continueText[language]
                         : "Next",
                     onPress: () {
-                      // Check if at least one city is selected
                       if (controller.getSelectedCities.isEmpty) {
                         SnackBarToastMessage.showSnackBar(
                           context,
@@ -148,37 +171,47 @@ class _CityPreferenceState extends State<CityPreference> {
                         return;
                       }
 
-                      // If not all cities configured, move to next city
                       if (!controller.allCitiesConfigured) {
                         controller.moveToNextCity();
 
-                        // UPDATED: Safe camera update with delay
                         if (controller.getCurrentConfigCity != null) {
                           final nextCity = controller.getCurrentConfigCity!;
                           final lat = controller.getCityLatitude(nextCity);
                           final lng = controller.getCityLongitude(nextCity);
 
-                          // Use delay to ensure map is ready
                           Future.delayed(const Duration(milliseconds: 300), () {
-                            _moveCameraToLocation(LatLng(lat, lng));
+                            _moveCameraToLocation(
+                              LatLng(lat, lng),
+                              controller.getCurrentDistance,
+                            );
                             _updateMapCircles(controller);
                           });
                         }
                         return;
                       }
 
-                      // All cities configured, get data and navigate
-                      Map<String, dynamic> data =
-                          controller.getDataForNextScreen();
+                      // ✅ Prepare city data in required format
+                      final cityRadiusData = controller.getAllCityRadiusData();
+                      List<Map<String, dynamic>> preferredCities =
+                          cityRadiusData.map((city) {
+                        return {
+                          "city_id": city['city_id'],
+                          "latitude": city['latitude'],
+                          "longitude": city['longitude'],
+                          "radius": city['radius'].toInt(),
+                        };
+                      }).toList();
 
-                      print("Data to pass: $data");
+                      print("✅ Preferred Cities Data: $preferredCities");
 
-                      // Navigate to next screen
+                      // ✅ Navigate to AdditionalInfo with city data
                       Navigator.push(
                         context,
                         PageTransition(
                           type: PageTransitionType.rightToLeftWithFade,
-                          child: const AdditionalInfoScreen(),
+                          child: AdditionalInfoScreen(
+                            preferredCities: preferredCities,
+                          ),
                           duration: const Duration(milliseconds: 500),
                         ),
                       );
@@ -188,8 +221,8 @@ class _CityPreferenceState extends State<CityPreference> {
                 body: Container(
                   height: size.height * 100 / 100,
                   width: size.width * 100 / 100,
-                  decoration: const BoxDecoration(
-                      gradient: AppColor.backgroundGradientcolor),
+                  decoration: BoxDecoration(
+                      gradient: AppColor.backgroundGradientcolor(context)),
                   child: Column(
                     children: [
                       SizedBox(height: size.height * 5 / 100),
@@ -208,18 +241,18 @@ class _CityPreferenceState extends State<CityPreference> {
                                         builder: (context) => const SignUp()));
                               },
                               child: Image.asset(
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                   height: size.width * 5 / 100,
                                   width: size.width * 5 / 100,
                                   AppImage.backArrowIcon),
                             ),
                             Text(
                               AppLanguage.cityPreferenceText[language],
-                              style: const TextStyle(
+                              style: TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w700,
                                   fontSize: 18,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                             SizedBox(
                               height: size.width * 5 / 100,
@@ -251,20 +284,22 @@ class _CityPreferenceState extends State<CityPreference> {
                                             text: AppLanguage
                                                     .selectYourPrefferedCityText[
                                                 language],
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 17,
                                               fontWeight: FontWeight.w700,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                             ),
                                           ),
-                                          const TextSpan(
+                                          TextSpan(
                                             text: " (Max 4)",
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 17,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                             ),
                                           ),
                                         ],
@@ -279,7 +314,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                       height: size.height * 6 / 100,
                                       decoration: BoxDecoration(
                                         borderRadius: BorderRadius.circular(12),
-                                        color: AppColor.filledcolor,
+                                        color: AppColor.filledcolor(context),
                                         boxShadow: [
                                           BoxShadow(
                                             offset: const Offset(0, 1),
@@ -292,9 +327,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                       ),
                                       child: TextFormField(
                                         controller: searchController,
-                                        cursorColor: AppColor.secondryColor,
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor),
+                                        cursorColor:
+                                            AppColor.secondryColor(context),
+                                        style: TextStyle(
+                                            color: AppColor.secondryColor(
+                                                context)),
                                         textAlignVertical:
                                             TextAlignVertical.center,
                                         onChanged: (value) {
@@ -310,7 +347,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                               AppImage.searchIcon,
                                               height: size.width * 4 / 100,
                                               width: size.width * 4 / 100,
-                                              color: AppColor.filledText,
+                                              color:
+                                                  AppColor.filledText(context),
                                             ),
                                           ),
                                           prefixIconConstraints: BoxConstraints(
@@ -337,7 +375,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                           hintText: AppLanguage
                                               .searchForaCityText[language],
                                           hintStyle:
-                                              AppConstant.textFilledStyle,
+                                              AppConstant.textFilledStyle(
+                                                  context),
                                           contentPadding: EdgeInsets.symmetric(
                                             vertical: size.height * 2 / 100,
                                             horizontal: size.width * 4 / 100,
@@ -373,13 +412,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                             Text(
                                               AppLanguage
                                                   .popularCitiesText[language],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w500,
-                                                  color:
-                                                      AppColor.secondryColor),
+                                                  color: Colors.white),
                                             ),
                                             SizedBox(
                                                 height:
@@ -412,13 +450,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                     .isNotEmpty
                                                                 ? "No cities found"
                                                                 : "No cities available",
-                                                            style:
-                                                                const TextStyle(
+                                                            style: TextStyle(
                                                               fontFamily: AppFont
                                                                   .fontFamily,
                                                               fontSize: 14,
-                                                              color: AppColor
-                                                                  .greygreyLightColor,
+                                                              color:
+                                                                  Colors.white,
                                                             ),
                                                           ),
                                                         ),
@@ -442,7 +479,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                               city['city_name'] ??
                                                                   'Unknown';
                                                           String cityImage =
-                                                              city['image'] ??
+                                                              city['city_image'] ??
                                                                   '';
 
                                                           bool isSelected =
@@ -468,14 +505,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                   .toggleCitySelection(
                                                                       city);
 
-                                                              // UPDATED: Safe camera movement with delay
                                                               if (controller
                                                                   .getSelectedCities
                                                                   .isNotEmpty) {
                                                                 controller
                                                                     .resetCityConfiguration();
 
-                                                                // Wait before moving camera
                                                                 Future.delayed(
                                                                     const Duration(
                                                                         milliseconds:
@@ -493,9 +528,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                             .getCityLongitude(firstCity);
 
                                                                     _moveCameraToLocation(
-                                                                        LatLng(
-                                                                            lat,
-                                                                            lng));
+                                                                      LatLng(
+                                                                          lat,
+                                                                          lng),
+                                                                      controller
+                                                                          .getCurrentDistance,
+                                                                    );
                                                                     _updateMapCircles(
                                                                         controller);
                                                                   }
@@ -519,7 +557,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                   decoration:
                                                                       BoxDecoration(
                                                                     color: AppColor
-                                                                        .filledcolor,
+                                                                        .filledcolor(
+                                                                            context),
                                                                     border:
                                                                         Border
                                                                             .all(
@@ -557,11 +596,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                                 ? cityName[0].toUpperCase()
                                                                                 : '?',
                                                                             style:
-                                                                                const TextStyle(
+                                                                                TextStyle(
                                                                               fontFamily: AppFont.fontFamily,
                                                                               fontSize: 24,
                                                                               fontWeight: FontWeight.bold,
-                                                                              color: AppColor.secondryColor,
+                                                                              color: AppColor.whiteBlackcolor(context),
                                                                             ),
                                                                           ),
                                                                         )
@@ -575,7 +614,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                 Text(
                                                                   cityName,
                                                                   style:
-                                                                      const TextStyle(
+                                                                      TextStyle(
                                                                     fontFamily:
                                                                         AppFont
                                                                             .fontFamily,
@@ -584,8 +623,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color: AppColor
-                                                                        .secondryColor,
+                                                                    color: Colors
+                                                                        .white,
                                                                   ),
                                                                 ),
                                                               ],
@@ -605,7 +644,7 @@ class _CityPreferenceState extends State<CityPreference> {
 
                               SizedBox(height: size.height * 4 / 100),
 
-                              // Map View Section - Only show if cities are selected
+                              // Map View Section
                               if (controller.getSelectedCities.isNotEmpty &&
                                   controller.getCurrentConfigCity != null) ...[
                                 Container(
@@ -613,17 +652,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                   alignment: Alignment.centerLeft,
                                   child: Text(
                                     "${AppLanguage.mapViewText[language]} - ${controller.getCurrentConfigCity!['city_name']} (${controller.getCurrentCityIndex + 1}/${controller.getSelectedCities.length})",
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 18,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
 
                                 SizedBox(height: size.height * 2.5 / 100),
 
-                                // UPDATED: Google Map Container with proper initialization
                                 Container(
                                   height: size.height * 45 / 100,
                                   width: size.width * 100 / 100,
@@ -640,15 +678,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                         controller.getCityLongitude(
                                             controller.getCurrentConfigCity!),
                                       ),
-                                      zoom: 12.0,
+                                      zoom: _getZoomLevel(
+                                          controller.getCurrentDistance),
                                     ),
                                     circles: circles,
+                                    markers: markers,
                                     onMapCreated:
                                         (GoogleMapController gController) {
                                       print("Map created callback");
                                       mapController = gController;
 
-                                      // Wait for map to be fully initialized
                                       Future.delayed(
                                           const Duration(milliseconds: 500),
                                           () {
@@ -662,6 +701,10 @@ class _CityPreferenceState extends State<CityPreference> {
                                     myLocationButtonEnabled: false,
                                     zoomControlsEnabled: false,
                                     mapToolbarEnabled: false,
+                                    scrollGesturesEnabled: true,
+                                    zoomGesturesEnabled: true,
+                                    tiltGesturesEnabled: true,
+                                    rotateGesturesEnabled: true,
                                   ),
                                 ),
 
@@ -676,11 +719,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                       SizedBox(height: size.height * 4 / 100),
                                       Text(
                                         AppLanguage.distanceText[language],
-                                        style: const TextStyle(
+                                        style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
-                                          color: AppColor.secondryColor,
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                       const SizedBox(height: 14),
@@ -712,12 +756,13 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   left: 18),
                                               child: Text(
                                                 "Upto ${controller.getCurrentDistance.toInt()} kilometres away",
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
-                                                  color: AppColor.secondryColor,
+                                                  color: AppColor.secondryColor(
+                                                      context),
                                                 ),
                                               ),
                                             ),
@@ -744,6 +789,21 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   controller
                                                       .updateDistance(value);
                                                   _updateMapCircles(controller);
+
+                                                  if (_isMapReady) {
+                                                    final currentCity = controller
+                                                        .getCurrentConfigCity!;
+                                                    final lat = controller
+                                                        .getCityLatitude(
+                                                            currentCity);
+                                                    final lng = controller
+                                                        .getCityLongitude(
+                                                            currentCity);
+                                                    _moveCameraToLocation(
+                                                      LatLng(lat, lng),
+                                                      value,
+                                                    );
+                                                  }
                                                 },
                                               ),
                                             ),
@@ -751,7 +811,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                               mainAxisAlignment:
                                                   MainAxisAlignment
                                                       .spaceBetween,
-                                              children: const [
+                                              children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
                                                       left: 19.0),
@@ -764,7 +824,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                           FontWeight.w500,
                                                       fontSize: 10,
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                     ),
                                                   ),
                                                 ),
@@ -780,7 +841,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                           FontWeight.w500,
                                                       fontSize: 10,
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                     ),
                                                   ),
                                                 ),
@@ -792,7 +854,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   MainAxisAlignment
                                                       .spaceBetween,
                                               children: [
-                                                const Expanded(
+                                                Expanded(
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 19.0),
@@ -804,8 +866,10 @@ class _CityPreferenceState extends State<CityPreference> {
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         fontSize: 13,
-                                                        color: AppColor
-                                                            .greygreyLightColor,
+                                                        color: isDark
+                                                            ? AppColor
+                                                                .greygreyLightColor
+                                                            : Colors.black,
                                                       ),
                                                     ),
                                                   ),
@@ -825,12 +889,30 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                 value);
                                                         _updateMapCircles(
                                                             controller);
+
+                                                        if (_isMapReady) {
+                                                          final currentCity =
+                                                              controller
+                                                                  .getCurrentConfigCity!;
+                                                          final lat = controller
+                                                              .getCityLatitude(
+                                                                  currentCity);
+                                                          final lng = controller
+                                                              .getCityLongitude(
+                                                                  currentCity);
+                                                          _moveCameraToLocation(
+                                                            LatLng(lat, lng),
+                                                            controller
+                                                                .getCurrentDistance,
+                                                          );
+                                                        }
                                                       },
                                                       activeColor:
                                                           AppColor.pinkColor,
                                                       inactiveTrackColor:
                                                           AppColor
-                                                              .secondryColor,
+                                                              .secondryColor(
+                                                                  context),
                                                       inactiveThumbColor:
                                                           AppColor.pinkColor,
                                                     ),

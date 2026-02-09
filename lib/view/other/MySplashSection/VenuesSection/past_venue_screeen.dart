@@ -33,8 +33,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value: SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -43,7 +43,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-              backgroundColor: AppColor.primaryColor,
+              backgroundColor: AppColor.primaryColor(context),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
@@ -84,7 +84,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                       AppImage.backarrow,
                                       width: size.width * 5 / 100,
                                       height: size.width * 5 / 100,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
@@ -113,7 +113,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 24,
-                                          color: AppColor.secondryColor,
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),
@@ -189,7 +190,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -199,7 +200,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -209,7 +210,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -233,10 +234,10 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     height: size.height * 7 / 100,
                                     width: size.width * 28 / 100,
                                     decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(40),
                                       border: Border.all(
-                                        color: AppColor.pasttimecolor,
+                                        color: AppColor.pasttimecolor(context),
                                         width: 0.8,
                                       ),
                                     ),
@@ -250,7 +251,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: AppColor.pasttimecolor,
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                         SizedBox(
@@ -261,7 +263,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
-                                            color: AppColor.pasttimecolor,
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                       ],
@@ -341,7 +344,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                         detailsRow("Ticket Charges", "₹14,999"),
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                         SizedBox(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -352,7 +356,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
 
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
 
                                         SizedBox(
                                             height: MediaQuery.of(context)
@@ -387,7 +392,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                                         : Icons
                                                             .keyboard_arrow_up,
                                                     color:
-                                                        AppColor.lightGreyColor,
+                                                        AppColor.lightGreyColor(
+                                                            context),
                                                   ),
                                                 ],
                                               ),
@@ -395,7 +401,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: AppColor
-                                                          .secondryColor)),
+                                                          .secondryColor(
+                                                              context))),
                                             ],
                                           ),
                                         ),
@@ -484,7 +491,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                                 100),
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
 
                                         SizedBox(
                                             height: MediaQuery.of(context)
@@ -518,8 +526,9 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w600,
-                                                    color: AppColor
-                                                        .secondryColor)),
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context))),
                                           ],
                                         ),
 
@@ -557,7 +566,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: AppColor
-                                                          .secondryColor)),
+                                                          .secondryColor(
+                                                              context))),
                                             ),
                                           ],
                                         ),
@@ -577,7 +587,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                               padding: EdgeInsets.symmetric(
                                   vertical: 18, horizontal: 16),
                               decoration: BoxDecoration(
-                                color: AppColor.bookeventcontainercolor,
+                                color:
+                                    AppColor.bookeventcontainercolor(context),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
@@ -589,7 +600,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                       fontFamily: AppFont.fontFamily,
                                     ),
                                     textAlign: TextAlign.center,
@@ -603,7 +614,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColor.lightGreyColor
+                                      color: AppColor.lightGreyColor(context)
                                           .withOpacity(0.8),
                                       fontFamily: AppFont.fontFamily,
                                     ),
@@ -681,7 +692,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 18),
                               decoration: BoxDecoration(
-                                color: AppColor.bookeventcontainercolor,
+                                color:
+                                    AppColor.bookeventcontainercolor(context),
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
@@ -694,7 +706,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
 
@@ -707,7 +719,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.lightGreyColor,
+                                      color: AppColor.lightGreyColor(context),
                                     ),
                                   ),
 
@@ -728,7 +740,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 14, vertical: 10),
                                     decoration: BoxDecoration(
-                                      color: AppColor.myperfectcontainercolr,
+                                      color: AppColor.myperfectcontainercolr(
+                                          context),
                                       borderRadius: BorderRadius.circular(14),
                                     ),
                                     child: TextField(
@@ -786,7 +799,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
             style: TextStyle(
               fontSize: fontSize ?? 13, // default 13
               fontWeight: fontWeight ?? FontWeight.w400,
-              color: AppColor.lightGreyColor,
+              color: AppColor.lightGreyColor(context),
             ),
           ),
           Text(
@@ -812,7 +825,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: AppColor.secondryColor,
+            color: AppColor.secondryColor(context),
           ),
         ),
         SizedBox(height: 4),

@@ -2,8 +2,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
+import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/other/city_Preference/music_genres.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import '../../../provider/darkmode_provider.dart';
+import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
@@ -14,7 +18,9 @@ import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
-  const AdditionalInfoScreen({super.key});
+  final List<Map<String, dynamic>>? preferredCities;
+
+  const AdditionalInfoScreen({super.key, this.preferredCities});
   static String routeName = './AdditionalInfoScreen';
   @override
   State<AdditionalInfoScreen> createState() => _AdditionalInfoScreenState();
@@ -80,6 +86,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
         _isHobbiesFocusNode = _hobbiesFocusNode.hasFocus;
       });
     });
+    print("Cities: ${widget.preferredCities}");
   }
 
   @override
@@ -157,29 +164,29 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
   void AdditionalInfoValidation() {
     // Instagram validation (required field)
-    if (Validation.isFieldEmpty(context,
-        value: instagramTextEditingController.text,
-        fieldName: "Instagram profile link")) {
-      return;
-    }
+    // if (Validation.isFieldEmpty(context,
+    //     value: instagramTextEditingController.text,
+    //     fieldName: "Instagram profile link")) {
+    //   return;
+    // }
 
-    // Spotify validation (required field)
-    if (Validation.isFieldEmpty(context,
-        value: spotifyTextEditingController.text,
-        fieldName: "Spotify account")) {
-      return;
-    }
+    // // Spotify validation (required field)
+    // if (Validation.isFieldEmpty(context,
+    //     value: spotifyTextEditingController.text,
+    //     fieldName: "Spotify account")) {
+    //   return;
+    // }
 
-    // Snapchat validation (required field)
-    if (Validation.isFieldEmpty(context,
-        value: snapchattexteditingController.text,
-        fieldName: "Snapchat account")) {
-      return;
-    }
-    if (Validation.isFieldEmpty(context,
-        value: hobbiesTextController.text, fieldName: "Your hobbies")) {
-      return;
-    }
+    // // Snapchat validation (required field)
+    // if (Validation.isFieldEmpty(context,
+    //     value: snapchattexteditingController.text,
+    //     fieldName: "Snapchat account")) {
+    //   return;
+    // }
+    // if (Validation.isFieldEmpty(context,
+    //     value: hobbiesTextController.text, fieldName: "Your hobbies")) {
+    //   return;
+    // }
     // // Instagram username length validation
     // if (instagramTextEditingController.text.length > 30) {
     //   SnackBarToastMessage.info(
@@ -226,29 +233,30 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     //   return;
     // }
 
-   
-
     // All validations passed - navigate to next screen
-    Navigator.push(
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    apiProvider.signupStepTwoUserApi(
       context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: const MusicGenresScreen(),
-        duration: const Duration(milliseconds: 400),
-      ),
+      widget.preferredCities,
+      BioTextEditingController.text,
+      instagramTextEditingController.text,
+      spotifyTextEditingController.text,
+      snapchattexteditingController.text,
+      hobbies,
     );
   }
 
   TextEditingController messageTextEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -256,8 +264,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
-            decoration:
-                const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+            decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor(context)),
             child: Column(
               children: [
                 SizedBox(
@@ -265,6 +273,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
+                    physics: NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
                         SizedBox(
@@ -293,7 +302,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                                 100,
                                             child: Image.asset(
                                               AppImage.backArrowIcon,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                             ),
                                           ),
                                         ),
@@ -308,11 +318,12 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                             textAlign: TextAlign.center,
                                             AppLanguage
                                                 .additionalInfoText[language],
-                                            style: const TextStyle(
+                                            style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 18,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                             ),
                                           ),
                                         ),
@@ -353,15 +364,15 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    2 /
+                                    1 /
                                     100,
                               ),
 
                               //! Instagram Profile
                               Center(
                                 child: TextFormField(
-                                  style: const TextStyle(
-                                      color: AppColor.secondryColor),
+                                  style: TextStyle(
+                                      color: AppColor.secondryColor(context)),
                                   keyboardType: TextInputType.name,
                                   controller: instagramTextEditingController,
                                   focusNode: _instagramFocusNode,
@@ -408,9 +419,11 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     ),
                                     enabledBorder: OutlineInputBorder(
                                       borderRadius: BorderRadius.circular(40),
-                                      borderSide: const BorderSide(
-                                        color: AppColor.buttonColor,
-                                        width: 0,
+                                      borderSide: BorderSide(
+                                        color: isDark
+                                            ? AppColor.buttonColor
+                                            : AppColor.greyLightColor,
+                                        width: 1,
                                       ),
                                     ),
                                     focusedBorder: OutlineInputBorder(
@@ -421,13 +434,14 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       ),
                                     ),
                                     fillColor: _isInstagramFocused
-                                        ? AppColor.primaryColor
-                                        : AppColor.themeColor,
+                                        ? AppColor.whiteBlackcolor(context)
+                                        : AppColor.textFieldColor(context),
                                     filled: true,
                                     counterText: '',
                                     hintText: AppLanguage
                                         .yourInstagramProfileText[language],
-                                    hintStyle: AppConstant.textFilledStyle,
+                                    hintStyle:
+                                        AppConstant.textFilledStyle(context),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 30,
                                       vertical: 15,
@@ -444,8 +458,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
                               //! Spotify Account
                               TextFormField(
-                                style: const TextStyle(
-                                    color: AppColor.secondryColor),
+                                style: TextStyle(
+                                    color: AppColor.secondryColor(context)),
                                 keyboardType: TextInputType.name,
                                 controller: spotifyTextEditingController,
                                 focusNode: _spotifyFocusNode,
@@ -490,9 +504,11 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(40),
-                                    borderSide: const BorderSide(
-                                      color: AppColor.buttonColor,
-                                      width: 0,
+                                    borderSide: BorderSide(
+                                      color: isDark
+                                          ? AppColor.buttonColor
+                                          : AppColor.greyLightColor,
+                                      width: 1,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -503,13 +519,14 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     ),
                                   ),
                                   fillColor: _isSpotifyFocused
-                                      ? AppColor.primaryColor
-                                      : AppColor.themeColor,
+                                      ? AppColor.whiteBlackcolor(context)
+                                      : AppColor.textFieldColor(context),
                                   filled: true,
                                   counterText: '',
                                   hintText: AppLanguage
                                       .yourSpotifyaccountText[language],
-                                  hintStyle: AppConstant.textFilledStyle,
+                                  hintStyle:
+                                      AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -525,8 +542,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
                               //! Snapchat
                               TextFormField(
-                                style: const TextStyle(
-                                    color: AppColor.secondryColor),
+                                style: TextStyle(
+                                    color: AppColor.secondryColor(context)),
                                 keyboardType: TextInputType.name,
                                 controller: snapchattexteditingController,
                                 focusNode: _snapchatFocusNode,
@@ -571,9 +588,11 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(40),
-                                    borderSide: const BorderSide(
-                                      color: AppColor.buttonColor,
-                                      width: 0,
+                                    borderSide: BorderSide(
+                                      color: isDark
+                                          ? AppColor.buttonColor
+                                          : AppColor.greyLightColor,
+                                      width: 1,
                                     ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
@@ -584,13 +603,14 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     ),
                                   ),
                                   fillColor: _isSnapchatFocused
-                                      ? AppColor.primaryColor
-                                      : AppColor.themeColor,
+                                      ? AppColor.whiteBlackcolor(context)
+                                      : AppColor.textFieldColor(context),
                                   filled: true,
                                   counterText: '',
                                   hintText: AppLanguage
                                       .yourSnapchataccountText[language],
-                                  hintStyle: AppConstant.textFilledStyle,
+                                  hintStyle:
+                                      AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -606,8 +626,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
                               //! Hobbies Input Field
                               TextFormField(
-                                style: const TextStyle(
-                                    color: AppColor.secondryColor),
+                                style: TextStyle(
+                                    color: AppColor.secondryColor(context)),
                                 controller: hobbiesTextController,
                                 focusNode: _hobbiesFocusNode,
                                 readOnly: true,
@@ -619,47 +639,61 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.06),
+                                              6 /
+                                              100),
                                       Image.asset(
                                         AppImage.hobbiesImage,
                                         width:
                                             MediaQuery.of(context).size.width *
-                                                0.06,
+                                                6 /
+                                                100,
                                         height:
                                             MediaQuery.of(context).size.width *
-                                                0.06,
+                                                6 /
+                                                100,
                                         color: AppColor.greyLightColor,
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              0.03),
+                                              3 /
+                                              100),
                                     ],
                                   ),
                                   prefixIconConstraints: const BoxConstraints(
-                                      minWidth: 0, minHeight: 0),
+                                    minWidth: 0,
+                                    minHeight: 0,
+                                  ),
                                   suffixIconConstraints: const BoxConstraints(
-                                      minWidth: 35, minHeight: 10),
+                                    minWidth: 35,
+                                    minHeight: 10,
+                                  ),
                                   enabledBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(40),
-                                    borderSide: const BorderSide(
-                                        color: AppColor.buttonColor, width: 0),
+                                    borderSide: BorderSide(
+                                      color: isDark
+                                          ? AppColor.buttonColor
+                                          : AppColor.greyLightColor,
+                                      width: 1,
+                                    ),
                                   ),
                                   focusedBorder: OutlineInputBorder(
                                     borderRadius: BorderRadius.circular(40),
                                     borderSide: const BorderSide(
-                                        color: AppColor.buttonColor,
-                                        width: 1.5),
+                                      color: AppColor.buttonColor,
+                                      width: 1.5,
+                                    ),
                                   ),
                                   fillColor: _isHobbiesFocusNode
-                                      ? AppColor.primaryColor
-                                      : AppColor.themeColor,
+                                      ? AppColor.whiteBlackcolor(context)
+                                      : AppColor.textFieldColor(context),
                                   filled: true,
                                   counterText: '',
                                   hintText:
                                       AppLanguage.yourHobbiesText[language],
-                                  hintStyle: AppConstant.textFilledStyle,
+                                  hintStyle:
+                                      AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -685,7 +719,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 16, vertical: 12),
                                       decoration: BoxDecoration(
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                         borderRadius: BorderRadius.circular(8),
                                         boxShadow: [
                                           BoxShadow(
@@ -701,11 +735,12 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                           Expanded(
                                             child: Text(
                                               hobbies[index],
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400,
                                                 fontFamily: AppFont.fontFamily,
-                                                color: AppColor.secondryColor,
+                                                color: AppColor.secondryColor(
+                                                    context),
                                               ),
                                             ),
                                           ),
@@ -714,9 +749,10 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                             onTap: () =>
                                                 _showEditHobbyBottomSheet(
                                                     index),
-                                            child: const Icon(
+                                            child: Icon(
                                               Icons.edit_outlined,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                               size: 20,
                                             ),
                                           ),
@@ -749,19 +785,21 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 ),
 
                 //! Continue Button
-                AppButton(
-                    text: AppLanguage.continueText[language],
-                    onPress: () {
-                      AdditionalInfoValidation();
-                      // Navigator.push(
-                      //   context,
-                      //   PageTransition(
-                      //     type: PageTransitionType.rightToLeftWithFade,
-                      //     child: const MusicGenresScreen(),
-                      //     duration: const Duration(milliseconds: 400),
-                      //   ),
-                      // );
-                    }),
+
+                Consumer<PostApiProvider>(
+                  builder: (context, apiprovider, child) {
+                    return apiprovider.loading
+                        ? const CircularProgressIndicator(
+                            color: AppColor.pinkColor)
+                        : AppButton(
+                            text: AppLanguage.continueText[language],
+                            onPress: () {
+                              FocusScope.of(context).unfocus();
+                              AdditionalInfoValidation();
+                            },
+                          );
+                  },
+                ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
@@ -837,17 +875,18 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Add a hobby",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
-                    color: AppColor.secondryColor,
+                    color: Colors.white,
                   ),
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
+                  context: context,
                   hint: "Type here...",
                   controller: hobbyInputController,
                   inputFormatters: AppConstant.alphabetFormatter,
@@ -861,17 +900,17 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child: Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -891,13 +930,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child: Text(
                             "Add",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -938,17 +977,18 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   "Edit hobby",
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
                 const SizedBox(height: 20),
                 _buildTextField(
+                  context: context,
                   hint: "Type here...",
                   controller: hobbyInputController,
                   inputFormatters: AppConstant.alphabetFormatter,
@@ -960,19 +1000,19 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       child: GestureDetector(
                         onTap: () => Navigator.pop(context),
                         child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          padding: EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child: Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -992,13 +1032,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child: const Text(
+                          child: Text(
                             "Update",
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -1024,30 +1064,30 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title: const Text(
+          title: Text(
             "Delete Hobby",
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
               fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
             ),
           ),
           content: Text(
             "Are you sure you want to delete '${hobbies[index]}'?",
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child: const Text(
+              child: Text(
                 "Cancel",
                 style: TextStyle(
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                   fontFamily: AppFont.fontFamily,
                 ),
               ),
@@ -1091,11 +1131,11 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 Container(
                     width: MediaQuery.of(context).size.width * 100 / 100,
                     height: MediaQuery.of(context).size.height * 40 / 100,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(46),
                             topRight: Radius.circular(46)),
-                        color: AppColor.secondryColor),
+                        color: AppColor.secondryColor(context)),
                     child: Column(
                       children: [
                         SizedBox(
@@ -1113,10 +1153,10 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     child: Text(
                                       AppLanguage
                                           .selectdocumentTypetext[language],
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontSize: 18,
                                         decoration: TextDecoration.none,
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w600,
                                       ),
@@ -1165,22 +1205,26 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
 // Build TextField Widget
 Widget _buildTextField({
+  required BuildContext context,
   required String hint,
   required TextEditingController controller,
   List<TextInputFormatter>? inputFormatters,
 }) {
   return TextField(
-    style: const TextStyle(
-      color: AppColor.secondryColor,
-      fontFamily: AppFont.fontFamily,
-    ),
     controller: controller,
     inputFormatters: inputFormatters,
+    style: TextStyle(
+      color: AppColor.secondryColor(context),
+      fontFamily: AppFont.fontFamily,
+    ),
     decoration: InputDecoration(
       hintText: hint,
-      hintStyle: const TextStyle(color: Colors.white54),
+      hintStyle: TextStyle(
+        color: Theme.of(context).hintColor,
+        fontFamily: AppFont.fontFamily,
+      ),
       filled: true,
-      fillColor: AppColor.primaryColor,
+      fillColor: AppColor.primaryColor(context),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),

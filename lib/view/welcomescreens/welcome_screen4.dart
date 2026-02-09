@@ -76,7 +76,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
         canPop: false,
         onPopInvoked: (didPop) {},
         child: Scaffold(
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
           resizeToAvoidBottomInset: false,
           body: SizedBox(
             width: w,
@@ -88,7 +88,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                   child: Container(
                     width: w,
                     height: h,
-                    decoration: BoxDecoration(
+                    decoration: const BoxDecoration(
                       image: DecorationImage(
                         image: AssetImage(AppImage.signupScreen),
                         fit: BoxFit.cover,
@@ -104,7 +104,8 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                       width: w,
                       height: h * 0.56,
                       decoration: BoxDecoration(
-                        gradient: AppColor.backgroundGradientcolor,
+                        gradient:
+                            AppColor.welcomebackgroundGradientcolor(context),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(50),
                           topRight: Radius.circular(50),
@@ -125,7 +126,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                               "All in One Place",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppColor.secondryColor,
+                                color: Colors.white,
                                 fontSize: w * 0.085,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppFont.fontFamily,
@@ -141,7 +142,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                               "Discover the best venues, book your seats with ease, and connect with people who share your vibe—all from one app.",
                               textAlign: TextAlign.center,
                               style: TextStyle(
-                                color: AppColor.secondryColor,
+                                color: Colors.white,
                                 fontSize: w * 0.043,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
@@ -159,19 +160,12 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                                 PageTransition(
                                   type: PageTransitionType.bottomToTop,
                                   child: const PurpleScreen(
-                                    nextScreen: CityPreference(),
+                                    nextScreen: SignUp(),
                                   ),
                                   duration: const Duration(milliseconds: 400),
                                 ),
                               );
-                              // Navigator.push(
-                              //   context,
-                              //   PageTransition(
-                              //     type: PageTransitionType.rightToLeftWithFade,
-                              //     child: SignUp(),
-                              //     duration: const Duration(milliseconds: 400),
-                              //   ),
-                              // );
+                           
                             },
                           ),
 

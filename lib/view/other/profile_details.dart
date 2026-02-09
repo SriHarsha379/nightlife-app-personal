@@ -5,7 +5,8 @@ import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../commonWidget/city_bottomsheet.dart';
-import '../../controller/city_preference.dart';
+import '../../controller/city/city_preference.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_button.dart';
 import '../../utilities/app_color.dart';
@@ -18,7 +19,9 @@ import '../../utilities/widgets.dart';
 
 class ProfileDetailsScreen extends StatefulWidget {
   final String? mobile;
-  const ProfileDetailsScreen({super.key, this.mobile});
+  final String? screen;
+
+  const ProfileDetailsScreen({super.key, this.mobile, this.screen});
   static String routeName = './ProfileDetailsScreen';
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
@@ -59,7 +62,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    mobileNumberTextEditingController.text = widget.mobile.toString();
+    mobileNumberTextEditingController.text =
+        widget.mobile == null ? "" : widget.mobile.toString();
     _dobFocusNode.addListener(() {
       setState(() {
         _isDobFocused = _dobFocusNode.hasFocus;
@@ -206,13 +210,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -220,8 +224,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
-            decoration:
-                const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+            decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor(context)),
             child: Column(
               children: [
                 SizedBox(
@@ -245,22 +249,22 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                   Center(
                                     child: Text(
                                       AppLanguage.profileDetailstext[language],
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 36,
                                         fontFamily: AppFont.fontFamily,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ),
                                   Center(
                                     child: Text(
                                       AppLanguage.fillupDetailstext[language],
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         fontWeight: FontWeight.w400,
                                         fontSize: 16,
                                         fontFamily: AppFont.fontFamily,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ),
@@ -402,7 +406,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.mobileMaxLenth,
                                     controller:
                                         mobileNumberTextEditingController,
-                                    readOnly: false,
+                                    readOnly:
+                                        widget.screen == "refer" ? false : true,
                                   ),
                                 ),
                               ),
@@ -467,8 +472,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     onTap: () {
                                       _showDatePicker();
                                     },
-                                    style: const TextStyle(
-                                        color: AppColor.secondryColor),
+                                    style: TextStyle(
+                                        color: AppColor.secondryColor(context)),
                                     keyboardType: TextInputType.name,
                                     controller: dobtexteditingController,
                                     focusNode: _dobFocusNode,
@@ -512,12 +517,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         ),
                                       ),
                                       fillColor: _isDobFocused
-                                          ? AppColor.primaryColor
+                                          ? AppColor.primaryColor(context)
                                           : AppColor.themeColor,
                                       filled: true,
                                       counterText: '',
                                       hintText: 'DOB',
-                                      hintStyle: AppConstant.textFilledStyle,
+                                      hintStyle:
+                                          AppConstant.textFilledStyle(context),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                         horizontal: 30,
@@ -572,8 +578,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                             _showCitySelectionSheet(context);
                                           }
                                         },
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor),
+                                        style: TextStyle(
+                                            color: AppColor.secondryColor(
+                                                context)),
                                         controller: cityTextEditingController,
                                         decoration: InputDecoration(
                                           suffixIcon: Padding(
@@ -619,7 +626,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           filled: true,
                                           hintText: "Select City",
                                           hintStyle:
-                                              AppConstant.textFilledStyle,
+                                              AppConstant.textFilledStyle(
+                                                  context),
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                             horizontal: 30,
@@ -711,8 +719,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
-            color: AppColor.secondryColor,
+          style: TextStyle(
+            color: AppColor.secondryColor(context),
             fontFamily: AppFont.fontFamily,
             fontWeight: FontWeight.w500,
             fontSize: 12,
@@ -725,8 +733,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             child: DropdownButtonFormField<String>(
               value: value,
               dropdownColor: AppColor.themeColor,
-              style: const TextStyle(
-                color: AppColor.secondryColor,
+              style: TextStyle(
+                color: AppColor.secondryColor(context),
                 fontFamily: AppFont.fontFamily,
               ),
               icon: const SizedBox.shrink(),
@@ -761,7 +769,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 fillColor: AppColor.themeColor,
                 filled: true,
                 hintText: AppLanguage.selectGendertext[language],
-                hintStyle: AppConstant.textFilledStyle,
+                hintStyle: AppConstant.textFilledStyle(context),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 30,
                   vertical: 15,
@@ -803,10 +811,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CupertinoButton(
-                    child: const Text(
+                    child: Text(
                       'Cancel',
                       style: TextStyle(
-                        color: AppColor.secondryColor,
+                        color: Colors.white,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w500,
                         fontSize: 16,
@@ -815,10 +823,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoButton(
-                      child: const Text(
+                      child: Text(
                         'Done',
                         style: TextStyle(
-                          color: AppColor.secondryColor,
+                          color: Colors.white,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w500,
                           fontSize: 16,

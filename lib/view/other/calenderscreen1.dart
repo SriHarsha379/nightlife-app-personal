@@ -45,15 +45,15 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
            floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
             floatingActionButton: Padding(
@@ -76,7 +76,7 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
             child: Container(
               height: MediaQuery.of(context).size.height * 100 / 100,
               width: MediaQuery.of(context).size.width * 100 / 100,
-              color: AppColor.primaryColor,
+              color: AppColor.primaryColor(context),
               child: Column(children: [
                 AppHeader(
                     text: AppLanguage.calendarText[language],
@@ -156,23 +156,23 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
                                     ),
                                   ],
                                 ),
-                                selectedTextStyle: const TextStyle(
-                                  color: AppColor.secondryColor,
+                                selectedTextStyle:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                                 todayDecoration: const BoxDecoration(
                                   color: AppColor.statusbar,
                                   shape: BoxShape.circle,
                                 ),
-                                disabledTextStyle: const TextStyle(
-                                  color: AppColor.secondryColor,
+                                disabledTextStyle:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                 ),
-                                defaultTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
-                                weekendTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
-                                outsideTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
+                                defaultTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
+                                weekendTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
+                                outsideTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
                                 cellMargin: const EdgeInsets.all(
                                     4), // Reduced margin to compact height
                                 cellPadding:

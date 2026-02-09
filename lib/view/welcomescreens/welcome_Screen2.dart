@@ -75,7 +75,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
             height: h,
             width: w,
             decoration: BoxDecoration(
-              gradient: AppColor.backgroundGradientcolor,
+              gradient: AppColor.welcomebackgroundGradientcolor(context),
             ),
           ),
 
@@ -184,7 +184,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
           top: h * 0.10,
           child: Container(
             width: w * 0.82,
-            height: MediaQuery.of(context).size.height *70/100,
+            height: MediaQuery.of(context).size.height * 70 / 100,
             padding: EdgeInsets.symmetric(
                 horizontal: w * 0.045, vertical: h * 0.045),
             decoration: BoxDecoration(
@@ -200,13 +200,10 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
                         fontSize: w * 0.075,
                         height: 1.2,
                         fontWeight: FontWeight.w700)),
-
                 SizedBox(height: h * 0.19),
-
-                Text("", style: TextStyle(color: Colors.white, fontSize: w * 0.06)),
-
+                Text("",
+                    style: TextStyle(color: Colors.white, fontSize: w * 0.06)),
                 SizedBox(height: h * 0.03),
-
                 Text(desc,
                     style: TextStyle(
                         color: Colors.white,
@@ -236,7 +233,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
 
         /// Dot Indicator
         Positioned(
-          bottom: MediaQuery.of(context).size.height *4/100,
+          bottom: MediaQuery.of(context).size.height * 4 / 100,
           child: Row(
             children: [
               _dot(_activeIndex == 1),

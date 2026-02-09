@@ -1,137 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../utilities/app_color.dart';
-import '../utilities/app_constant.dart';
 import '../utilities/app_font.dart';
 import '../utilities/app_image.dart';
-import '../utilities/app_language.dart';
-import '../view/other/chats/chat_message_screen.dart';
+import '../view/other/MySplashSection/MembersSection/member_liked_details.dart';
 
 class HomeWidget {
   int selectedIndex = 0;
-
-  List chats = [
-    {
-      'id': 1,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Brew&Bloom',
-      'lastMessage': '@Brew&BloomCafé',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Techno',
-      'lastMessage': '@Techno',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'SUNBURN',
-      'lastMessage': '@Sunburn',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/eventstory1.jpg',
-      'name': 'Mitro',
-      'lastMessage': '@Mitro',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 5,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Razberry',
-      'lastMessage': '@Razberry',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 6,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'CCD',
-      'lastMessage': '@CCD',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-  ];
-
-  List chatsLists = [
-    {
-      'id': 1,
-      'image': 'assets/icons/ProfilePhoto.png',
-      'name': 'Gaurav Kapoor',
-      'lastMessage': '@gkapoor02',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/riya.png',
-      'name': 'Riya',
-      'lastMessage': '@riya00',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/galleryIcon.png',
-      'name': 'Bloom Café',
-      'lastMessage': '@cafebloom34',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/aadityaIcon.png',
-      'name': 'Aaditya',
-      'lastMessage': '@aadi54',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 5,
-      'image': 'assets/icons/rushi.png',
-      'name': 'Rushi',
-      'lastMessage': '@rushi87',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 6,
-      'image': 'assets/icons/Soham.png',
-      'name': 'soham',
-      'lastMessage': '@soham23',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-  ];
-  final List<String> shareIcons = [
-    AppImage.shareIcon,
-    AppImage.whatsappIcon,
-    AppImage.instaIcon,
-    AppImage.snapIcon,
-  ];
-
-  //! Members Card
 
   // Method to build members card
   static Widget membersCard(
@@ -153,6 +28,20 @@ class HomeWidget {
         child: child,
       ),
       child: GestureDetector(
+        onVerticalDragEnd: (details) {
+          final velocity = details.primaryVelocity ?? 0;
+
+          if (velocity < -300) {
+            Navigator.push(
+              context,
+              PageTransition(
+                type: PageTransitionType.bottomToTop,
+                child: const LikedMemberDetail(),
+                duration: const Duration(milliseconds: 400),
+              ),
+            );
+          }
+        },
         key: key,
         onTap: onTap,
         child: SizedBox(
@@ -402,80 +291,80 @@ class HomeWidget {
                 ),
 
               //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 41,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+              // Positioned(
+              //   top: 12,
+              //   right: 0,
+              //   child: SizedBox(
+              //     width: 105,
+              //     height: 41,
+              //     child: Stack(
+              //       children: [
+              //         //! First Avatar
+              //         Positioned(
+              //           left: 0,
+              //           child: Container(
+              //             width: 38,
+              //             height: 38,
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                   color: const Color(0xFF9C27B0), width: 3),
+              //               image: const DecorationImage(
+              //                 image: NetworkImage(
+              //                     'https://i.pravatar.cc/150?img=1'),
+              //                 fit: BoxFit.cover,
+              //               ),
+              //             ),
+              //           ),
+              //         ),
 
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+              //         //! Second Avatar
+              //         // Positioned(
+              //         //   left: 27,
+              //         //   child: Container(
+              //         //     width: 38,
+              //         //     height: 38,
+              //         //     decoration: BoxDecoration(
+              //         //       shape: BoxShape.circle,
+              //         //       border: Border.all(
+              //         //           color: const Color(0xFF9C27B0), width: 3),
+              //         //       image: const DecorationImage(
+              //         //         image: NetworkImage(
+              //         //             'https://i.pravatar.cc/150?img=5'),
+              //         //         fit: BoxFit.cover,
+              //         //       ),
+              //         //     ),
+              //         //   ),
+              //         // ),
 
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              //         //! +2 Badge
+              //         // Positioned(
+              //         //   left: 56,
+              //         //   child: Container(
+              //         //     width: 38,
+              //         //     height: 38,
+              //         //     decoration: BoxDecoration(
+              //         //       shape: BoxShape.circle,
+              //         //       color: const Color(0xFF7B1FA2),
+              //         //       border: Border.all(
+              //         //           color: const Color(0xFF9C27B0), width: 3),
+              //         //     ),
+              //         //     child: const Center(
+              //         //       child: Text(
+              //         //         '+2',
+              //         //         style: TextStyle(
+              //         //           color: Colors.white,
+              //         //           fontSize: 16,
+              //         //           fontWeight: FontWeight.bold,
+              //         //         ),
+              //         //       ),
+              //         //     ),
+              //         //   ),
+              //         // ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               //! Heart Button on Right Side
               Positioned(
@@ -719,97 +608,97 @@ class HomeWidget {
               ),
 
               //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 100,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+              // Positioned(
+              //   top: 12,
+              //   right: 0,
+              //   child: SizedBox(
+              //     width: 105,
+              //     height: 100,
+              //     child: Stack(
+              //       children: [
+              //         //! First Avatar
+              //         Positioned(
+              //           left: 0,
+              //           child: Container(
+              //             width: 38,
+              //             height: 38,
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                   color: const Color(0xFF9C27B0), width: 3),
+              //               image: const DecorationImage(
+              //                 image: NetworkImage(
+              //                     'https://i.pravatar.cc/150?img=1'),
+              //                 fit: BoxFit.cover,
+              //               ),
+              //             ),
+              //           ),
+              //         ),
 
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
+              //         //! Second Avatar
+              //         Positioned(
+              //           left: 27,
+              //           child: Container(
+              //             width: 38,
+              //             height: 38,
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               border: Border.all(
+              //                   color: const Color(0xFF9C27B0), width: 3),
+              //               image: const DecorationImage(
+              //                 image: NetworkImage(
+              //                     'https://i.pravatar.cc/150?img=5'),
+              //                 fit: BoxFit.cover,
+              //               ),
+              //             ),
+              //           ),
+              //         ),
 
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+              //         //! +2 Badge
+              //         Positioned(
+              //           left: 56,
+              //           child: Container(
+              //             width: 38,
+              //             height: 38,
+              //             decoration: BoxDecoration(
+              //               shape: BoxShape.circle,
+              //               color: const Color(0xFF7B1FA2),
+              //               border: Border.all(
+              //                   color: const Color(0xFF9C27B0), width: 3),
+              //             ),
+              //             child: const Center(
+              //               child: Text(
+              //                 '+2',
+              //                 style: TextStyle(
+              //                   color: Colors.white,
+              //                   fontSize: 16,
+              //                   fontWeight: FontWeight.bold,
+              //                 ),
+              //               ),
+              //             ),
+              //           ),
+              //         ),
 
-                      //! Likes Count
-                      const Positioned(
-                        top: 42,
-                        right: 19,
-                        child: SizedBox(
-                          child: Text(
-                            "17.6K Likes",
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.textcolor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              //         //! Likes Count
+              //         const Positioned(
+              //           top: 42,
+              //           right: 19,
+              //           child: SizedBox(
+              //             child: Text(
+              //               "17.6K Likes",
+              //               style: TextStyle(
+              //                 fontFamily: AppFont.fontFamily,
+              //                 fontSize: 12,
+              //                 fontWeight: FontWeight.w600,
+              //                 color: AppColor.textcolor,
+              //               ),
+              //             ),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ),
+              // ),
 
               //! Beverages on Left Side
               Positioned(
@@ -830,13 +719,13 @@ class HomeWidget {
                           border: Border.all(
                               color: const Color(0xFF9C27B0), width: 3),
                         ),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 2.0, horizontal: 10),
                           child: Text(
                             "Techno",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: Colors.white,
                               fontSize: 14,
                             ),
                           ),
@@ -854,13 +743,13 @@ class HomeWidget {
                           border: Border.all(
                               color: const Color(0xFF9C27B0), width: 3),
                         ),
-                        child: const Padding(
+                        child: Padding(
                           padding: EdgeInsets.symmetric(
                               vertical: 2.0, horizontal: 10),
                           child: Text(
                             "Whiskey",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: Colors.white,
                               fontSize: 14,
                             ),
                           ),
@@ -945,14 +834,14 @@ class HomeWidget {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           "Yes",
                           style: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -992,14 +881,14 @@ class HomeWidget {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           "Nope",
                           style: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -1206,99 +1095,6 @@ class HomeWidget {
                 ),
               ),
 
-              //! Profile Avatars at Top Right (Overlapping)
-              Positioned(
-                top: 12,
-                right: 0,
-                child: SizedBox(
-                  width: 105,
-                  height: 100,
-                  child: Stack(
-                    children: [
-                      //! First Avatar
-                      Positioned(
-                        left: 0,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=1'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Second Avatar
-                      Positioned(
-                        left: 27,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                            image: const DecorationImage(
-                              image: NetworkImage(
-                                  'https://i.pravatar.cc/150?img=5'),
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! +2 Badge
-                      Positioned(
-                        left: 56,
-                        child: Container(
-                          width: 38,
-                          height: 38,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: const Color(0xFF7B1FA2),
-                            border: Border.all(
-                                color: const Color(0xFF9C27B0), width: 3),
-                          ),
-                          child: const Center(
-                            child: Text(
-                              '+2',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-
-                      //! Likes Count
-                      const Positioned(
-                        top: 42,
-                        right: 19,
-                        child: SizedBox(
-                          child: Text(
-                            "17.6K Likes",
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.textcolor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-
               //! Beverages on Left Side
               Positioned(
                 top: 10,
@@ -1324,7 +1120,7 @@ class HomeWidget {
                           child: Text(
                             "Cafe",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: Colors.white,
                               fontSize: 14,
                             ),
                           ),
@@ -1347,7 +1143,7 @@ class HomeWidget {
                           child: Text(
                             "Coffee",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: Colors.white,
                               fontSize: 14,
                             ),
                           ),
@@ -1432,14 +1228,14 @@ class HomeWidget {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           "Yes",
                           style: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -1479,14 +1275,14 @@ class HomeWidget {
                           ),
                         ],
                       ),
-                      child: const Center(
+                      child: Center(
                         child: Text(
                           "Nope",
                           style: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -1497,797 +1293,6 @@ class HomeWidget {
           ),
         ),
       ),
-    );
-  }
-
-  void documenttypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOutCubic,
-            builder: (context, value, child) {
-              return Transform.translate(
-                offset: Offset(0, (1 - value) * size.height * 0.3),
-                child: Opacity(
-                  opacity: value.clamp(0.0, 1.0),
-                  child: child,
-                ),
-              );
-            },
-            child: Container(
-              width: MediaQuery.of(context).size.width * 100 / 100,
-              height: MediaQuery.of(context).size.height * 60 / 100,
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 100 / 100,
-                    height: MediaQuery.of(context).size.height * 60 / 100,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient: AppColor.backgroundGradientcolor,
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(46),
-                                topRight: Radius.circular(46),
-                              ),
-                            ),
-                            width: size.width * 100 / 100,
-                            height: size.height * 80 / 100,
-                            child: Column(
-                              children: [
-                                SizedBox(height: size.height * 2 / 100),
-
-                                /// -------- DRAG INDICATOR --------
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeOut,
-                                  builder: (context, value, child) {
-                                    return Opacity(
-                                      opacity: value.clamp(0.0, 1.0),
-                                      child: Transform.scale(
-                                        scale: 0.8 + (0.2 * value),
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: Image.asset(
-                                    AppImage.dashIcon,
-                                    height: size.height * 0.5 / 100,
-                                    width: size.width * 28 / 100,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-
-                                SizedBox(height: size.height * 2 / 100),
-
-                                /// -------- TABS (EVENTS & VENUES) --------
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: const Duration(milliseconds: 600),
-                                  curve: Curves.easeOut,
-                                  builder: (context, value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(0, -20 * (1 - value)),
-                                      child: Opacity(
-                                        opacity: value.clamp(0.0, 1.0),
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    color: AppColor.transparentColor,
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height *
-                                        8 /
-                                        100,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * 5 / 100,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        /// -------- EVENTS TAB --------
-                                        GestureDetector(
-                                          onTap: () {
-                                            setStateBottomSheet(() {
-                                              selectedIndex = 0;
-                                            });
-                                          },
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                45 /
-                                                100,
-                                            child: Center(
-                                              child: AnimatedDefaultTextStyle(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                style: TextStyle(
-                                                  fontWeight: selectedIndex == 0
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                  color: selectedIndex == 0
-                                                      ? AppColor.secondryColor
-                                                      : AppColor.greyLightColor,
-                                                  fontSize: selectedIndex == 0
-                                                      ? 16
-                                                      : 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .eventsText[language],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        /// -------- VENUES TAB --------
-                                        GestureDetector(
-                                          onTap: () {
-                                            setStateBottomSheet(() {
-                                              selectedIndex = 1;
-                                            });
-                                          },
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                45 /
-                                                100,
-                                            child: Center(
-                                              child: AnimatedDefaultTextStyle(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                style: TextStyle(
-                                                  fontWeight: selectedIndex == 1
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                  color: selectedIndex == 1
-                                                      ? AppColor.secondryColor
-                                                      : AppColor.greyLightColor,
-                                                  fontSize: selectedIndex == 1
-                                                      ? 16
-                                                      : 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .venuesText[language],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                /// -------- TAB INDICATOR (FULL WIDTH) --------
-                                Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
-                                  height: 2,
-                                  child: Stack(
-                                    children: [
-                                      // Background line (full width)
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 2,
-                                        color: AppColor.greyLightColor
-                                            .withOpacity(0.3),
-                                      ),
-                                      // Animated indicator
-                                      AnimatedAlign(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                        alignment: selectedIndex == 0
-                                            ? Alignment.centerLeft
-                                            : Alignment.centerRight,
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          curve: Curves.easeInOut,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.45,
-                                          height: 3,
-                                          decoration: BoxDecoration(
-                                            color: AppColor.secondryColor,
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: AppColor.secondryColor
-                                                    .withOpacity(0.4),
-                                                blurRadius: 8,
-                                                spreadRadius: 1,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                SizedBox(height: size.height * 2 / 100),
-                                SizedBox(height: size.height * 1 / 100),
-
-                                /// -------- CONTACTS LIST --------
-                                Expanded(
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 400),
-                                    switchInCurve: Curves.easeInOut,
-                                    switchOutCurve: Curves.easeInOut,
-                                    transitionBuilder: (Widget child,
-                                        Animation<double> animation) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(0.1, 0),
-                                            end: Offset.zero,
-                                          ).animate(animation),
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: SingleChildScrollView(
-                                      key: ValueKey<int>(selectedIndex),
-                                      child: Column(
-                                        children: [
-                                          ...List.generate(
-                                            selectedIndex == 0
-                                                ? chats.length
-                                                : chatsLists.length,
-                                            (index) {
-                                              final chat = selectedIndex == 0
-                                                  ? chats[index]
-                                                  : chats[index];
-                                              final isSend = selectedIndex == 0
-                                                  ? (chats[index]['isSend'] ==
-                                                      true)
-                                                  : (chatsLists[index]
-                                                          ['isSend'] ==
-                                                      true);
-
-                                              return TweenAnimationBuilder<
-                                                  double>(
-                                                tween:
-                                                    Tween(begin: 0.0, end: 1.0),
-                                                duration: Duration(
-                                                    milliseconds:
-                                                        300 + (index * 50)),
-                                                curve: Curves.easeOutBack,
-                                                builder:
-                                                    (context, value, child) {
-                                                  return Transform.translate(
-                                                    offset: Offset(
-                                                        30 * (1 - value), 0),
-                                                    child: Opacity(
-                                                      opacity:
-                                                          value.clamp(0.0, 1.0),
-                                                      child: child,
-                                                    ),
-                                                  );
-                                                },
-                                                child: Wrap(
-                                                  children: [
-                                                    Container(
-                                                      width:
-                                                          size.width * 90 / 100,
-                                                      height: size.height *
-                                                          8.5 /
-                                                          100,
-                                                      child: ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        leading: Container(
-                                                          height: size.height *
-                                                              10 /
-                                                              100,
-                                                          width: size.width *
-                                                              13 /
-                                                              100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            image:
-                                                                DecorationImage(
-                                                              image: AssetImage(
-                                                                  chat['image'] ??
-                                                                      ''),
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        title: Row(
-                                                          children: [
-                                                            Text(
-                                                              chat['name'] ??
-                                                                  '',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                                color: AppColor
-                                                                    .secondryColor,
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                width:
-                                                                    size.width *
-                                                                        2 /
-                                                                        100),
-                                                            // Bordered label for Event/Venue
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    size.width *
-                                                                        2 /
-                                                                        100,
-                                                                vertical: 2,
-                                                              ),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: AppColor
-                                                                      .pinkColor,
-                                                                  width: .3,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              child: Text(
-                                                                selectedIndex ==
-                                                                        0
-                                                                    ? AppLanguage
-                                                                            .eventsText[
-                                                                        language]
-                                                                    : AppLanguage
-                                                                            .venuesText[
-                                                                        language],
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 8,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
-                                                                  color: AppColor
-                                                                      .secondryColor,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        subtitle: Text(
-                                                          chat['lastMessage'] ??
-                                                              '',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: AppColor
-                                                                .secondryColor,
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                        trailing:
-                                                            GestureDetector(
-                                                          onTap: () {
-                                                            setStateBottomSheet(
-                                                                () {
-                                                              if (selectedIndex ==
-                                                                  0) {
-                                                                chats[index][
-                                                                        'isSend'] =
-                                                                    true;
-                                                              } else {
-                                                                chatsLists[index]
-                                                                        [
-                                                                        'isSend'] =
-                                                                    true;
-                                                              }
-                                                            });
-
-                                                            Future.delayed(
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      200),
-                                                              () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                    type: PageTransitionType
-                                                                        .bottomToTop,
-                                                                    child:
-                                                                        ChatMessageScreen(
-                                                                      name: chat[
-                                                                              'name'] ??
-                                                                          '',
-                                                                      image:
-                                                                          chat['image'] ??
-                                                                              '',
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          child:
-                                                              AnimatedContainer(
-                                                            duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        17,
-                                                                    vertical:
-                                                                        7),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: isSend
-                                                                  ? AppColor
-                                                                      .logoutContainerColor
-                                                                  : AppColor
-                                                                      .secondryColor,
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              border: isSend
-                                                                  ? Border.all(
-                                                                      color: AppColor
-                                                                          .buttonColor,
-                                                                      width: 1)
-                                                                  : null,
-                                                            ),
-                                                            child: Text(
-                                                              isSend
-                                                                  ? (chat['message1']
-                                                                          ?.toString() ??
-                                                                      'Send')
-                                                                  : (chat['message']
-                                                                          ?.toString() ??
-                                                                      'Send'),
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                color: isSend
-                                                                    ? AppColor
-                                                                        .secondryColor
-                                                                    : AppColor
-                                                                        .primaryColor,
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    if (index <
-                                                        (selectedIndex == 0
-                                                                ? chats.length
-                                                                : chatsLists
-                                                                    .length) -
-                                                            1)
-                                                      SizedBox(
-                                                          height: size.height *
-                                                              0.1 /
-                                                              100),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
-
-  void sharetypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return Container(
-            width: MediaQuery.of(context).size.width * 100 / 100,
-            height: MediaQuery.of(context).size.height * 60 / 100,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 100 / 100,
-                  height: MediaQuery.of(context).size.height * 60 / 100,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(46),
-                              topRight: Radius.circular(46),
-                            ),
-                          ),
-                          width: size.width * 100 / 100,
-                          height: size.height * 80 / 100,
-                          child: Column(
-                            children: [
-                              SizedBox(height: size.height * 2 / 100),
-
-                              /// -------- DRAG INDICATOR --------
-                              Image.asset(
-                                AppImage.dashIcon,
-                                height: size.height * 0.5 / 100,
-                                width: size.width * 28 / 100,
-                                fit: BoxFit.fill,
-                              ),
-
-                              SizedBox(height: size.height * 2 / 100),
-
-                              /// -------- SOCIAL SHARE ICONS --------
-                              Center(
-                                child: SizedBox(
-                                  width: size.width * 90 / 100,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: List.generate(shareIcons.length,
-                                        (index) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * 3 / 100,
-                                            vertical: size.height * 2 / 100),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // Handle share icon tap
-                                          },
-                                          child: Image.asset(
-                                            shareIcons[index],
-                                            width: size.width * 14 / 100,
-                                            height: size.width * 14 / 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-
-                              /// -------- DIVIDER --------
-                              Divider(
-                                height: 0.2,
-                                thickness: 0.5,
-                                color: AppColor.secondryColor,
-                                indent: 28,
-                                endIndent: 28,
-                              ),
-
-                              SizedBox(height: size.height * 2 / 100),
-                              SizedBox(height: size.height * 1 / 100),
-
-                              /// -------- CONTACTS LIST --------
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      ...List.generate(chats.length, (index) {
-                                        final chat = chats[index];
-                                        final isSend =
-                                            chats[index]['isSend'] == true;
-
-                                        return Wrap(
-                                          children: [
-                                            Container(
-                                              width: size.width * 90 / 100,
-                                              height: size.height * 8.5 / 100,
-                                              child: ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                leading: Container(
-                                                  height:
-                                                      size.height * 10 / 100,
-                                                  width: size.width * 13 / 100,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                      image: AssetImage(
-                                                          chat['image'] ?? ''),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                title: Text(
-                                                  chat['name'] ?? '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                    color:
-                                                        AppColor.secondryColor,
-                                                  ),
-                                                ),
-                                                subtitle: Text(
-                                                  chat['lastMessage'] ?? '',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color:
-                                                        AppColor.secondryColor,
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                trailing: GestureDetector(
-                                                  onTap: () {
-                                                    setStateBottomSheet(() {
-                                                      chats[index]['isSend'] =
-                                                          true;
-                                                    });
-
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 200),
-                                                        () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageTransition(
-                                                          type:
-                                                              PageTransitionType
-                                                                  .bottomToTop,
-                                                          child:
-                                                              ChatMessageScreen(
-                                                            name: chats[index]
-                                                                    ['name'] ??
-                                                                '',
-                                                            image: chats[index]
-                                                                    ['image'] ??
-                                                                '',
-                                                          ),
-                                                        ),
-                                                      );
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: isSend
-                                                          ? AppColor
-                                                              .logoutContainerColor
-                                                          : AppColor
-                                                              .secondryColor,
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: isSend
-                                                          ? Border.all(
-                                                              color: AppColor
-                                                                  .buttonColor,
-                                                              width: 1)
-                                                          : null,
-                                                    ),
-                                                    child: Text(
-                                                      isSend
-                                                          ? (chats[index][
-                                                                      'message1']
-                                                                  ?.toString() ??
-                                                              'Send')
-                                                          : (chats[index][
-                                                                      'message']
-                                                                  ?.toString() ??
-                                                              'Send'),
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        color: isSend
-                                                            ? AppColor
-                                                                .secondryColor
-                                                            : AppColor
-                                                                .primaryColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            if (index < chats.length - 1)
-                                              SizedBox(
-                                                  height:
-                                                      size.height * 0.1 / 100),
-                                          ],
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-      },
     );
   }
 }

@@ -355,17 +355,14 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     final themeProvider = Provider.of<ThemeProvider>(context);
-
-    bool isDark = themeProvider.isDarkMode;
-
+    final isDark = themeProvider.isDarkMode;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: PopScope(
         canPop: false,
@@ -383,7 +380,7 @@ class _HomeState extends State<Home> {
           }
         },
         child: Scaffold(
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
           body: SafeArea(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 100 / 100,
@@ -437,7 +434,7 @@ class _HomeState extends State<Home> {
                                     fontSize: 21,
                                     fontWeight: FontWeight.w500,
                                     color: isDark
-                                        ? AppColor.secondryColor
+                                        ? AppColor.secondryColor(context)
                                         : AppColor.richBlackColor,
                                   ),
                                 ),
@@ -539,11 +536,11 @@ class _HomeState extends State<Home> {
                                   decoration: BoxDecoration(
                                       color: selectedId == orders[index]['id']
                                           ? isDark
-                                              ? AppColor.primaryColor
-                                              : AppColor.secondryColor
+                                              ? Colors.black
+                                              : Colors.white
                                           : isDark
-                                              ? AppColor.primaryColor
-                                              : AppColor.secondryColor,
+                                              ? Colors.black
+                                              : Colors.white,
                                       borderRadius: BorderRadius.circular(50),
                                       border: Border.all(
                                           color:
@@ -627,7 +624,7 @@ class _HomeState extends State<Home> {
                                       showCross: showCross,
                                       lastSwipeType: lastSwipeType,
                                       onMessageTap: () {
-                                        eventstypebottomsheet(context);
+                                        documenttypebottomsheet(context);
                                       },
                                       onHeartTap: () {
                                         // Handle heart tap for members
@@ -661,8 +658,8 @@ class _HomeState extends State<Home> {
                                           children: [
                                             Text(
                                               AppLanguage.undoText[language],
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
+                                              style: TextStyle(
+                                                color: Colors.white,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -682,7 +679,7 @@ class _HomeState extends State<Home> {
                                                       .size
                                                       .height *
                                                   0.02,
-                                              color: AppColor.secondryColor,
+                                              color: Colors.white,
                                             ),
                                           ],
                                         ),
@@ -786,8 +783,8 @@ class _HomeState extends State<Home> {
                                           children: [
                                             Text(
                                               AppLanguage.undoText[language],
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
+                                              style: TextStyle(
+                                                color: Colors.white,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -807,7 +804,7 @@ class _HomeState extends State<Home> {
                                                       .size
                                                       .height *
                                                   0.02,
-                                              color: AppColor.secondryColor,
+                                              color: Colors.white,
                                             ),
                                           ],
                                         ),
@@ -911,8 +908,8 @@ class _HomeState extends State<Home> {
                                           children: [
                                             Text(
                                               AppLanguage.undoText[language],
-                                              style: const TextStyle(
-                                                color: AppColor.secondryColor,
+                                              style: TextStyle(
+                                                color: Colors.white,
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w500,
                                               ),
@@ -932,7 +929,7 @@ class _HomeState extends State<Home> {
                                                       .size
                                                       .height *
                                                   0.02,
-                                              color: AppColor.secondryColor,
+                                              color: Colors.white,
                                             ),
                                           ],
                                         ),
@@ -952,6 +949,565 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    );
+  }
+
+  void documenttypebottomsheet(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    showModalBottomSheet<void>(
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(),
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(builder: (context, setStateBottomSheet) {
+          return TweenAnimationBuilder<double>(
+            tween: Tween(begin: 0.0, end: 1.0),
+            duration: const Duration(milliseconds: 400),
+            curve: Curves.easeOutCubic,
+            builder: (context, value, child) {
+              return Transform.translate(
+                offset: Offset(0, (1 - value) * size.height * 0.3),
+                child: Opacity(
+                  opacity: value.clamp(0.0, 1.0),
+                  child: child,
+                ),
+              );
+            },
+            child: Container(
+              width: MediaQuery.of(context).size.width * 100 / 100,
+              height: MediaQuery.of(context).size.height * 60 / 100,
+              color: Colors.transparent,
+              child: Column(
+                children: [
+                  Container(
+                    width: MediaQuery.of(context).size.width * 100 / 100,
+                    height: MediaQuery.of(context).size.height * 60 / 100,
+                    child: Column(
+                      children: [
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              gradient:
+                                  AppColor.backgroundGradientcolor(context),
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(46),
+                                topRight: Radius.circular(46),
+                              ),
+                            ),
+                            width: size.width * 100 / 100,
+                            height: size.height * 80 / 100,
+                            child: Column(
+                              children: [
+                                SizedBox(height: size.height * 2 / 100),
+
+                                /// -------- DRAG INDICATOR --------
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: const Duration(milliseconds: 500),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Opacity(
+                                      opacity: value.clamp(0.0, 1.0),
+                                      child: Transform.scale(
+                                        scale: 0.8 + (0.2 * value),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: Image.asset(
+                                    AppImage.dashIcon,
+                                    height: size.height * 0.5 / 100,
+                                    width: size.width * 28 / 100,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
+
+                                SizedBox(height: size.height * 2 / 100),
+
+                                /// -------- TABS (EVENTS & VENUES) --------
+                                TweenAnimationBuilder<double>(
+                                  tween: Tween(begin: 0.0, end: 1.0),
+                                  duration: const Duration(milliseconds: 600),
+                                  curve: Curves.easeOut,
+                                  builder: (context, value, child) {
+                                    return Transform.translate(
+                                      offset: Offset(0, -20 * (1 - value)),
+                                      child: Opacity(
+                                        opacity: value.clamp(0.0, 1.0),
+                                        child: child,
+                                      ),
+                                    );
+                                  },
+                                  child: Container(
+                                    color: AppColor.transparentColor,
+                                    width: MediaQuery.of(context).size.width,
+                                    height: MediaQuery.of(context).size.height *
+                                        8 /
+                                        100,
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * 5 / 100,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        /// -------- EVENTS TAB --------
+                                        GestureDetector(
+                                          onTap: () {
+                                            setStateBottomSheet(() {
+                                              selectedIndex = 0;
+                                            });
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                45 /
+                                                100,
+                                            child: Center(
+                                              child: AnimatedDefaultTextStyle(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                style: TextStyle(
+                                                  fontWeight: selectedIndex == 0
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w500,
+                                                  color: selectedIndex == 0
+                                                      ? AppColor.secondryColor(
+                                                          context)
+                                                      : AppColor.greyLightColor,
+                                                  fontSize: selectedIndex == 0
+                                                      ? 16
+                                                      : 15,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                ),
+                                                child: Text(
+                                                  AppLanguage
+                                                      .eventsText[language],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+
+                                        /// -------- VENUES TAB --------
+                                        GestureDetector(
+                                          onTap: () {
+                                            setStateBottomSheet(() {
+                                              selectedIndex = 1;
+                                            });
+                                          },
+                                          child: AnimatedContainer(
+                                            duration: const Duration(
+                                                milliseconds: 300),
+                                            curve: Curves.easeInOut,
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                45 /
+                                                100,
+                                            child: Center(
+                                              child: AnimatedDefaultTextStyle(
+                                                duration: const Duration(
+                                                    milliseconds: 300),
+                                                style: TextStyle(
+                                                  fontWeight: selectedIndex == 1
+                                                      ? FontWeight.w600
+                                                      : FontWeight.w500,
+                                                  color: selectedIndex == 1
+                                                      ? AppColor.secondryColor(
+                                                          context)
+                                                      : AppColor.greyLightColor,
+                                                  fontSize: selectedIndex == 1
+                                                      ? 16
+                                                      : 15,
+                                                  fontFamily:
+                                                      AppFont.fontFamily,
+                                                ),
+                                                child: Text(
+                                                  AppLanguage
+                                                      .venuesText[language],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+
+                                /// -------- TAB INDICATOR (FULL WIDTH) --------
+                                Container(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: 2,
+                                  child: Stack(
+                                    children: [
+                                      // Background line (full width)
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        height: 2,
+                                        color: AppColor.greyLightColor
+                                            .withOpacity(0.3),
+                                      ),
+                                      // Animated indicator
+                                      AnimatedAlign(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        curve: Curves.easeInOut,
+                                        alignment: selectedIndex == 0
+                                            ? Alignment.centerLeft
+                                            : Alignment.centerRight,
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              0.45,
+                                          height: 3,
+                                          decoration: BoxDecoration(
+                                            color:
+                                                AppColor.secondryColor(context),
+                                            borderRadius:
+                                                BorderRadius.circular(2),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppColor.secondryColor(
+                                                        context)
+                                                    .withOpacity(0.4),
+                                                blurRadius: 8,
+                                                spreadRadius: 1,
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+
+                                SizedBox(height: size.height * 2 / 100),
+                                SizedBox(height: size.height * 1 / 100),
+
+                                /// -------- CONTACTS LIST --------
+                                Expanded(
+                                  child: AnimatedSwitcher(
+                                    duration: const Duration(milliseconds: 400),
+                                    switchInCurve: Curves.easeInOut,
+                                    switchOutCurve: Curves.easeInOut,
+                                    transitionBuilder: (Widget child,
+                                        Animation<double> animation) {
+                                      return FadeTransition(
+                                        opacity: animation,
+                                        child: SlideTransition(
+                                          position: Tween<Offset>(
+                                            begin: const Offset(0.1, 0),
+                                            end: Offset.zero,
+                                          ).animate(animation),
+                                          child: child,
+                                        ),
+                                      );
+                                    },
+                                    child: SingleChildScrollView(
+                                      key: ValueKey<int>(selectedIndex),
+                                      child: Column(
+                                        children: [
+                                          ...List.generate(
+                                            selectedIndex == 0
+                                                ? chats.length
+                                                : chatsLists.length,
+                                            (index) {
+                                              final chat = selectedIndex == 0
+                                                  ? chats[index]
+                                                  : chats[index];
+                                              final isSend = selectedIndex == 0
+                                                  ? (chats[index]['isSend'] ==
+                                                      true)
+                                                  : (chatsLists[index]
+                                                          ['isSend'] ==
+                                                      true);
+
+                                              return TweenAnimationBuilder<
+                                                  double>(
+                                                tween:
+                                                    Tween(begin: 0.0, end: 1.0),
+                                                duration: Duration(
+                                                    milliseconds:
+                                                        300 + (index * 50)),
+                                                curve: Curves.easeOutBack,
+                                                builder:
+                                                    (context, value, child) {
+                                                  return Transform.translate(
+                                                    offset: Offset(
+                                                        30 * (1 - value), 0),
+                                                    child: Opacity(
+                                                      opacity:
+                                                          value.clamp(0.0, 1.0),
+                                                      child: child,
+                                                    ),
+                                                  );
+                                                },
+                                                child: Wrap(
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          size.width * 90 / 100,
+                                                      height: size.height *
+                                                          8.5 /
+                                                          100,
+                                                      child: ListTile(
+                                                        contentPadding:
+                                                            EdgeInsets.zero,
+                                                        leading: Container(
+                                                          height: size.height *
+                                                              10 /
+                                                              100,
+                                                          width: size.width *
+                                                              13 /
+                                                              100,
+                                                          decoration:
+                                                              BoxDecoration(
+                                                            shape:
+                                                                BoxShape.circle,
+                                                            image:
+                                                                DecorationImage(
+                                                              image: AssetImage(
+                                                                  chat['image'] ??
+                                                                      ''),
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                        title: Row(
+                                                          children: [
+                                                            Text(
+                                                              chat['name'] ??
+                                                                  '',
+                                                              style: TextStyle(
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 16,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                width:
+                                                                    size.width *
+                                                                        2 /
+                                                                        100),
+                                                            // Bordered label for Event/Venue
+                                                            Container(
+                                                              padding: EdgeInsets
+                                                                  .symmetric(
+                                                                horizontal:
+                                                                    size.width *
+                                                                        2 /
+                                                                        100,
+                                                                vertical: 2,
+                                                              ),
+                                                              decoration:
+                                                                  BoxDecoration(
+                                                                border:
+                                                                    Border.all(
+                                                                  color: AppColor
+                                                                      .pinkColor,
+                                                                  width: .3,
+                                                                ),
+                                                                borderRadius:
+                                                                    BorderRadius
+                                                                        .circular(
+                                                                            12),
+                                                              ),
+                                                              child: Text(
+                                                                selectedIndex ==
+                                                                        0
+                                                                    ? AppLanguage
+                                                                            .eventsText[
+                                                                        language]
+                                                                    : AppLanguage
+                                                                            .venuesText[
+                                                                        language],
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 8,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w400,
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  color: AppColor
+                                                                      .secondryColor(
+                                                                          context),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                        subtitle: Text(
+                                                          chat['lastMessage'] ??
+                                                              '',
+                                                          style: TextStyle(
+                                                            fontSize: 14,
+                                                            color: AppColor
+                                                                .secondryColor(
+                                                                    context),
+                                                          ),
+                                                          maxLines: 1,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                        ),
+                                                        trailing:
+                                                            GestureDetector(
+                                                          onTap: () {
+                                                            setStateBottomSheet(
+                                                                () {
+                                                              if (selectedIndex ==
+                                                                  0) {
+                                                                chats[index][
+                                                                        'isSend'] =
+                                                                    true;
+                                                              } else {
+                                                                chatsLists[index]
+                                                                        [
+                                                                        'isSend'] =
+                                                                    true;
+                                                              }
+                                                            });
+
+                                                            Future.delayed(
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      200),
+                                                              () {
+                                                                Navigator.push(
+                                                                  context,
+                                                                  PageTransition(
+                                                                    type: PageTransitionType
+                                                                        .bottomToTop,
+                                                                    child:
+                                                                        ChatMessageScreen(
+                                                                      name: chat[
+                                                                              'name'] ??
+                                                                          '',
+                                                                      image:
+                                                                          chat['image'] ??
+                                                                              '',
+                                                                    ),
+                                                                  ),
+                                                                );
+                                                              },
+                                                            );
+                                                          },
+                                                          child:
+                                                              AnimatedContainer(
+                                                            duration:
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                        300),
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .symmetric(
+                                                                    horizontal:
+                                                                        17,
+                                                                    vertical:
+                                                                        7),
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              color: isSend
+                                                                  ? AppColor
+                                                                      .logoutContainerColor(
+                                                                          context)
+                                                                  : AppColor
+                                                                      .secondryColor(
+                                                                          context),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10),
+                                                              border: isSend
+                                                                  ? Border.all(
+                                                                      color: AppColor
+                                                                          .buttonColor,
+                                                                      width: 1)
+                                                                  : null,
+                                                            ),
+                                                            child: Text(
+                                                              isSend
+                                                                  ? (chat['message1']
+                                                                          ?.toString() ??
+                                                                      'Send')
+                                                                  : (chat['message']
+                                                                          ?.toString() ??
+                                                                      'Send'),
+                                                              style: TextStyle(
+                                                                fontSize: 13,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                color: isSend
+                                                                    ? AppColor
+                                                                        .secondryColor(
+                                                                            context)
+                                                                    : AppColor
+                                                                        .primaryColor(
+                                                                            context),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (index <
+                                                        (selectedIndex == 0
+                                                                ? chats.length
+                                                                : chatsLists
+                                                                    .length) -
+                                                            1)
+                                                      SizedBox(
+                                                          height: size.height *
+                                                              0.1 /
+                                                              100),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        });
+      },
     );
   }
 
@@ -979,8 +1535,8 @@ class _HomeState extends State<Home> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                          decoration: BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(46),
                               topRight: Radius.circular(46),
@@ -1022,10 +1578,10 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                               ),
-                              const Divider(
+                              Divider(
                                 height: 0.2,
                                 thickness: 0.5,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 indent: 28,
                                 endIndent: 28,
                               ),
@@ -1061,19 +1617,21 @@ class _HomeState extends State<Home> {
                                                 ),
                                                 title: Text(
                                                   chat['name'] ?? '',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(
+                                                            context),
                                                   ),
                                                 ),
                                                 subtitle: Text(
                                                   chat['lastMessage'] ?? '',
-                                                  style: const TextStyle(
+                                                  style: TextStyle(
                                                     fontSize: 14,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(
+                                                            context),
                                                   ),
                                                   maxLines: 1,
                                                   overflow:
@@ -1117,9 +1675,11 @@ class _HomeState extends State<Home> {
                                                     decoration: BoxDecoration(
                                                       color: isSend
                                                           ? AppColor
-                                                              .logoutContainerColor
+                                                              .logoutContainerColor(
+                                                                  context)
                                                           : AppColor
-                                                              .secondryColor,
+                                                              .secondryColor(
+                                                                  context),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
@@ -1148,9 +1708,11 @@ class _HomeState extends State<Home> {
                                                             AppFont.fontFamily,
                                                         color: isSend
                                                             ? AppColor
-                                                                .secondryColor
+                                                                .secondryColor(
+                                                                    context)
                                                             : AppColor
-                                                                .primaryColor,
+                                                                .primaryColor(
+                                                                    context),
                                                       ),
                                                     ),
                                                   ),

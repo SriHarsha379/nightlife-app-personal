@@ -61,17 +61,17 @@ class _NotificationsState extends State<Notifications> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     return Scaffold(
-      backgroundColor: AppColor.primaryColor,
+      backgroundColor: AppColor.primaryColor(context),
 
       // ),
       body: SafeArea(
         child: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
-          color: AppColor.primaryColor,
+          color: AppColor.primaryColor(context),
           child: Column(
             children: [
               SizedBox(
@@ -97,7 +97,7 @@ class _NotificationsState extends State<Notifications> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 20,
                       fontWeight: FontWeight.w500,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),
@@ -171,7 +171,7 @@ class _NotificationsState extends State<Notifications> {
                                 margin: const EdgeInsets.symmetric(
                                     horizontal: 10, vertical: 8),
                                 decoration: BoxDecoration(
-                                  color: AppColor.profilesettignrowColor,
+                                  color: AppColor.profilesettignrowColor(context),
                                   borderRadius: BorderRadius.circular(16),
                                   boxShadow: [
                                     BoxShadow(
@@ -229,9 +229,10 @@ class _NotificationsState extends State<Notifications> {
                                                   child: Text(
                                                     notifications[index]
                                                         ['notification'],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                       fontSize: 14,
                                                       fontFamily:
                                                           AppFont.fontFamily,
@@ -272,8 +273,8 @@ class _NotificationsState extends State<Notifications> {
                                               alignment: Alignment.centerLeft,
                                               child: Text(
                                                 notifications[index]['message'],
-                                                style: const TextStyle(
-                                                  color: AppColor.secondryColor,
+                                                style:  TextStyle(
+                                                  color: AppColor.secondryColor(context),
                                                   fontSize: 14,
                                                   fontFamily:
                                                       AppFont.fontFamily,
@@ -290,8 +291,8 @@ class _NotificationsState extends State<Notifications> {
                                                   100,
                                               child: Text(
                                                 notifications[index]['time'],
-                                                style: const TextStyle(
-                                                  color: AppColor.secondryColor,
+                                                style:  TextStyle(
+                                                  color: AppColor.secondryColor(context),
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w500,
                                                 ),
@@ -339,7 +340,7 @@ class _NotificationsState extends State<Notifications> {
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 20,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),

@@ -87,9 +87,9 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final themeProvider = Provider.of<ThemeProvider>(context);
+    // final themeProvider = Provider.of<ThemeProvider>(context);
 
-    bool isDark = themeProvider.isDarkMode;
+    // bool isDark = themeProvider.isDarkMode;
      return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
@@ -108,8 +108,8 @@ class _ChatScreenState extends State<ChatScreen> {
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-            backgroundColor:
-                isDark ? AppColor.primaryColor : AppColor.secondryColor,
+            // backgroundColor:
+            //     isDark ? AppColor.primaryColor : AppColor.secondryColor(context),
             body: SafeArea(
               child: Container(
                 height: size.height * 100 / 100,
@@ -131,9 +131,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                     MediaQuery.of(context).size.height * 14 / 100,
                                 child: Image.asset(
                                   AppImage.hiilogo,
-                                  color: isDark
-                                      ? AppColor.darkTextColor
-                                      : AppColor.richBlackColor,
+                                  color:  AppColor.secondryColor(context),
                                   width: MediaQuery.of(context).size.width *
                                       10 /
                                       100,
@@ -153,9 +151,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 11,
                                       fontWeight: FontWeight.w400,
-                                      color: isDark
-                                          ? AppColor.darkTextColor
-                                          : AppColor.richBlackColor,
+                                      color: 
+                                          AppColor.secondryColor(context)
                                     ),
                                   ),
                                   Text(
@@ -164,9 +161,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 21,
                                       fontWeight: FontWeight.w500,
-                                      color: isDark
-                                          ? AppColor.secondryColor
-                                          : AppColor.richBlackColor,
+                                      color: 
+                                          AppColor.secondryColor(context)
                                     ),
                                   ),
                                 ],
@@ -233,27 +229,21 @@ class _ChatScreenState extends State<ChatScreen> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40), // pill shape
                         border: Border.all(color: AppColor.textfieldfillColor),
-                        color: isDark
-                            ? AppColor.primaryColor
-                            : AppColor.secondryColor,
+                        color:  AppColor.secondryColor(context),
                         boxShadow: [
                           BoxShadow(
                             offset: const Offset(0, 4),
                             spreadRadius: 0,
                             blurRadius: 4,
-                            color: AppColor.primaryColor.withOpacity(0.1),
+                            color: AppColor.primaryColor(context).withOpacity(0.1),
                           ),
                         ],
                       ),
                       child: TextFormField(
                         controller: searchController,
-                        cursorColor: isDark
-                            ? AppColor.secondryColor
-                            : AppColor.primaryColor,
+                        cursorColor:  AppColor.secondryColor(context),
                         style: TextStyle(
-                            color: isDark
-                                ? AppColor.secondryColor
-                                : AppColor.primaryColor,
+                            color:AppColor.secondryColor(context),
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
                             fontSize: 14),
@@ -268,28 +258,26 @@ class _ChatScreenState extends State<ChatScreen> {
                               AppImage.searchIcon,
                               height: size.width * 4 / 100,
                               width: size.width * 4 / 100,
-                              color: isDark
-                                  ? AppColor.secondryColor
-                                  : AppColor.primaryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(40),
-                            borderSide: const BorderSide(
-                              color: AppColor.primaryColor,
+                            borderSide:  BorderSide(
+                              color: AppColor.primaryColor(context),
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(40),
-                            borderSide: const BorderSide(
-                              color: AppColor.primaryColor,
+                            borderSide:  BorderSide(
+                              color: AppColor.primaryColor(context),
                               width: 0,
                             ),
                           ),
                           border: InputBorder.none,
                           // hintText: AppLanguage.searchText[language],
-                          hintStyle: AppConstant.textFilledStyle,
+                          hintStyle: AppConstant.textFilledStyle(context),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal: size.width * 2 / 100,
@@ -343,7 +331,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                                     BorderRadius.circular(35),
                                                 boxShadow: [
                                                   BoxShadow(
-                                                    color: AppColor.primaryColor
+                                                    color: AppColor.primaryColor(
+                                                                context)
                                                         .withOpacity(0.25),
                                                     blurRadius: 4,
                                                     offset: const Offset(0, 4),
@@ -389,8 +378,8 @@ class _ChatScreenState extends State<ChatScreen> {
                                       SizedBox(height: size.height * 0.8 / 100),
                                       Text(
                                         storyImages[index]["name"] ?? "No Name",
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12,
                                         ),
@@ -426,7 +415,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       child: Container(
                         width: size.width,
                         decoration: BoxDecoration(
-                          gradient: AppColor.backgroundGradientcolor,
+                          gradient: AppColor.backgroundGradientcolor(context),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(32),
                             topRight: Radius.circular(32),
@@ -472,7 +461,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     subtitle: Text(
@@ -481,7 +470,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     trailing: Column(

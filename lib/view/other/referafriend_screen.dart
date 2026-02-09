@@ -27,7 +27,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
         statusBarBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -44,14 +44,14 @@ class _ReferAFriendState extends State<ReferAFriend> {
                         AppImage.backarrow,
                         width: size.width * 5 / 100,
                         height: size.width * 5 / 100,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                     SizedBox(width: size.width * 2 / 100),
                     Text(
                       "Refer a Friend",
                       style: TextStyle(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppFont.fontFamily,
@@ -69,7 +69,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                   "Refer a Friend and Get Exclusive Discount Vouchers\neach on in app purchases!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                     fontSize: 12,
                     fontFamily: AppFont.fontFamily,
                     fontWeight: FontWeight.w400,
@@ -102,7 +102,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                           child: Text(
                             "Invite your friend to install the app\nvia link or ask to add code during\nsignup",
                             style: TextStyle(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               fontSize: 14,
                               height: 1,
                               fontFamily: AppFont.fontFamily,
@@ -157,7 +157,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                                 fontSize: 13,
                                 height: 1.2,
                                 fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                               children: const [
                                 TextSpan(
@@ -190,7 +190,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                   vertical: size.height * 3.5 / 100,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Row(
@@ -212,7 +212,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                           Text(
                             referralCode,
                             style: TextStyle(
-                              color: AppColor.primaryColor,
+                              color: AppColor.primaryColor(context),
                               fontSize: 22,
                               fontWeight: FontWeight.w700,
                             ),
@@ -255,7 +255,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
 
                     Icon(
                       Icons.copy,
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       size: size.width * 0.06,
                     ),
                   ],
@@ -276,7 +276,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                 child: Text(
                   "Invite a Friend",
                   style: TextStyle(
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                     fontSize: size.width * 0.042,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
@@ -299,7 +299,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
       height: size.width * 14 / 100,
       decoration: BoxDecoration(
         shape: BoxShape.circle,
-        color: AppColor.secondryColor,
+        color: AppColor.secondryColor(context),
       ),
       child: Center(
         child: Image.asset(

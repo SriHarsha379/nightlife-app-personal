@@ -11,6 +11,7 @@ final GlobalKey<MyAppFooterState> footerKey = GlobalKey<MyAppFooterState>();
 int language = 0;
 
 class AppConstant {
+
   static String token = "";
     static String playerID = "123456";
 
@@ -51,16 +52,22 @@ class AppConstant {
   static final RegExp emailValidatorRegExp =
       RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
-  static const TextStyle textFilledStyle = TextStyle(
-      color: AppColor.textfilledColor,
+  static TextStyle textFilledStyle(BuildContext context) {
+    return TextStyle(
+      color: AppColor.hinttextcolor(context),
       fontWeight: FontWeight.w400,
       fontFamily: AppFont.fontFamily,
-      fontSize: 14);
-  static const TextStyle textFilledStyle1 = TextStyle(
-      color: AppColor.secondryColor,
-      fontWeight: FontWeight.w400,
-      fontFamily: AppFont.fontFamily,
-      fontSize: 14);
+      fontSize: 14,
+    );
+  }
+
+ static TextStyle textFilledStyle1(BuildContext context) {
+    return Theme.of(context).textTheme.bodyMedium!.copyWith(
+          fontFamily: AppFont.fontFamily,
+          fontWeight: FontWeight.w400,
+        );
+  }
+
   // Defination of max length
   static const int emailMaxLength = 50;
   static const int passwordMaxLength = 16;

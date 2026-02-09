@@ -69,7 +69,7 @@ class MyAppFooterState extends State<MyAppFooter> {
           }
 
           return Container(
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             child: FadeTransition(
               opacity: animation,
               child: SlideTransition(
@@ -180,7 +180,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                       iconList[index]['icon'],
                       width: getIconWidth(index),
                       height: getIconHeight(index),
-                      color: AppColor.secondryColor,
+                      color: Colors.white,
                     ),
                   ),
                 );
@@ -263,8 +263,8 @@ class MyAppFooterState extends State<MyAppFooter> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                          decoration: BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(45),
                               topRight: Radius.circular(45),
@@ -295,8 +295,9 @@ class MyAppFooterState extends State<MyAppFooter> {
                                           0.84,
                                       child: Text(
                                         AppLanguage.myspacetext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style: TextStyle(
+                                          color:
+                                              AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 23,
@@ -309,8 +310,9 @@ class MyAppFooterState extends State<MyAppFooter> {
                                       child: Text(
                                         AppLanguage
                                             .eventStatementtext[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style: TextStyle(
+                                          color:
+                                              AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12.2,
@@ -422,8 +424,4 @@ class MyAppFooterState extends State<MyAppFooter> {
       },
     ).then((_) {});
   }
-
-
-
-
 }

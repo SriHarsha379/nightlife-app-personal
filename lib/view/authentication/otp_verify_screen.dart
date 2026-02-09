@@ -114,11 +114,11 @@ class _OtpVerifyState extends State<OtpVerify> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
+        backgroundColor: AppColor.secondryColor(context),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -142,8 +142,8 @@ class _OtpVerifyState extends State<OtpVerify> {
                       child: Text(
                         AppLanguage.otpVerificationText[language],
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
+                        style:  TextStyle(
+                          color: AppColor.secondryColor(context),
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                           fontFamily: AppFont.fontFamily,
@@ -178,8 +178,8 @@ class _OtpVerifyState extends State<OtpVerify> {
                           Text(
                             "+91 ${widget.mobile}",
                             textAlign: TextAlign.center,
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style:  TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
                               fontFamily: AppFont.fontFamily,
@@ -202,21 +202,22 @@ class _OtpVerifyState extends State<OtpVerify> {
                       defaultPinTheme: PinTheme(
                         width: MediaQuery.of(context).size.width * 15.8 / 100,
                         height: MediaQuery.of(context).size.width * 14 / 100,
-                        textStyle: const TextStyle(
+                        textStyle:  TextStyle(
                           fontFamily: AppFont.fontFamily,
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                         ),
                         decoration: BoxDecoration(
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           border: Border.all(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                           boxShadow: [
                             BoxShadow(
                                 blurRadius: 0,
-                                color: AppColor.primaryColor.withOpacity(0.25))
+                                color: AppColor.primaryColor(context)
+                                    .withOpacity(0.25))
                           ],
                           borderRadius: BorderRadius.circular(13),
                         ),
@@ -295,8 +296,8 @@ class _OtpVerifyState extends State<OtpVerify> {
                         children: [
                           TextSpan(
                             text: "${AppLanguage.cantacessthis[language]} ",
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style:  TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
                               fontFamily: AppFont.fontFamily,

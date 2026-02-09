@@ -139,12 +139,12 @@ class _SearchScreenState extends State<SearchScreen> {
         child: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
-              backgroundColor: AppColor.primaryColor,
+              backgroundColor: AppColor.primaryColor(context),
               body: SafeArea(
                 child: Container(
                   height: MediaQuery.of(context).size.height * 100 / 100,
                   width: MediaQuery.of(context).size.width * 100 / 100,
-                  color: AppColor.primaryColor,
+                  color: AppColor.primaryColor(context),
                   child: Column(children: [
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 2 / 100,
@@ -170,8 +170,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                 child: Image.asset(
                                   AppImage.locationIcon,
                                   color: isDark
-                                      ? AppColor.secondryColor
-                                      : AppColor.primaryColor,
+                                      ? AppColor.secondryColor(context)
+                                      : AppColor.primaryColor(context),
                                   fit: BoxFit.cover,
                                 ),
                               ),
@@ -193,8 +193,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600,
                                       color: isDark
-                                          ? AppColor.secondryColor
-                                          : AppColor.primaryColor,
+                                          ? AppColor.secondryColor(context)
+                                          : AppColor.primaryColor(context),
                                     ),
                                   ),
                                   Text(
@@ -204,8 +204,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontSize: 11,
                                       fontWeight: FontWeight.w300,
                                       color: isDark
-                                          ? AppColor.secondryColor
-                                          : AppColor.primaryColor,
+                                          ? AppColor.secondryColor(context)
+                                          : AppColor.primaryColor(context),
                                     ),
                                   ),
                                 ],
@@ -249,28 +249,29 @@ class _SearchScreenState extends State<SearchScreen> {
                       height: MediaQuery.of(context).size.height * 6 / 100,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40), // pill shape
-                        border: Border.all(color: AppColor.secondryColor),
-                        //  color: AppColor.secondryColor,
+                        border: Border.all(color: AppColor.secondryColor(context)),
+                        //  color: AppColor.secondryColor(context),
                         boxShadow: [
                           BoxShadow(
                             offset: const Offset(0, 4),
                             spreadRadius: 0,
                             blurRadius: 4,
                             color: isDark
-                                ? AppColor.primaryColor.withOpacity(0.1)
-                                : AppColor.secondryColor,
+                                ? AppColor.primaryColor(context)
+                                    .withOpacity(0.1)
+                                : AppColor.secondryColor(context),
                           ),
                         ],
                       ),
                       child: TextFormField(
                         controller: searchController,
                         cursorColor: isDark
-                            ? AppColor.secondryColor
-                            : AppColor.primaryColor,
+                            ? AppColor.secondryColor(context)
+                            : AppColor.primaryColor(context),
                         style: TextStyle(
                             color: isDark
-                                ? AppColor.secondryColor
-                                : AppColor.primaryColor,
+                                ? AppColor.secondryColor(context)
+                                : AppColor.primaryColor(context),
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
                             fontSize: 14),
@@ -289,27 +290,27 @@ class _SearchScreenState extends State<SearchScreen> {
                               width:
                                   MediaQuery.of(context).size.width * 4 / 100,
                               color: isDark
-                                  ? AppColor.secondryColor
-                                  : AppColor.primaryColor,
+                                  ? AppColor.secondryColor(context)
+                                  : AppColor.primaryColor(context),
                             ),
                           ),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(40),
-                            borderSide: const BorderSide(
-                              color: AppColor.primaryColor,
+                            borderSide:  BorderSide(
+                              color: AppColor.primaryColor(context),
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(40),
-                            borderSide: const BorderSide(
-                              color: AppColor.primaryColor,
+                            borderSide:  BorderSide(
+                              color: AppColor.primaryColor(context),
                               width: 0,
                             ),
                           ),
                           border: InputBorder.none,
                           // hintText: AppLanguage.searchText[language],
-                          hintStyle: AppConstant.textFilledStyle1,
+                          hintStyle: AppConstant.textFilledStyle(context),
                           contentPadding: EdgeInsets.symmetric(
                             vertical: 12,
                             horizontal:
@@ -353,7 +354,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       AppImage.venuesIcon,
                                       color: tapBarStatus == 1
                                           ? AppColor.pinkColor
-                                          : AppColor.textTapColor,
+                                          : AppColor.textTapColor(context),
                                     ),
                                   ),
                                   Text(
@@ -364,7 +365,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontWeight: FontWeight.w400,
                                       color: tapBarStatus == 1
                                           ? AppColor.pinkColor
-                                          : AppColor.textTapColor,
+                                          : AppColor.textTapColor(context),
                                     ),
                                   ),
                                 ],
@@ -395,7 +396,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       AppImage.eventsIcon,
                                       color: tapBarStatus == 2
                                           ? AppColor.pinkColor
-                                          : AppColor.textTapColor,
+                                          : AppColor.textTapColor(context),
                                     ),
                                   ),
                                   Text(
@@ -406,7 +407,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                       fontWeight: FontWeight.w400,
                                       color: tapBarStatus == 2
                                           ? AppColor.pinkColor
-                                          : AppColor.textTapColor,
+                                          : AppColor.textTapColor(context),
                                     ),
                                   ),
                                 ],
@@ -440,7 +441,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: MediaQuery.of(context).size.width,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(10),
-                        color: AppColor.textTapColor,
+                        color: AppColor.textTapColor(context),
                       ),
                     ),
 
@@ -491,9 +492,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   border: Border.all(
                                                       color: isDark
                                                           ? AppColor
-                                                              .textTapColor
+                                                              .textTapColor(
+                                                                  context)
                                                           : AppColor
-                                                              .primaryColor)),
+                                                              .primaryColor(
+                                                                  context))),
                                               child: Padding(
                                                 padding:
                                                     const EdgeInsets.symmetric(
@@ -511,9 +514,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             FontWeight.w400,
                                                         color: isDark
                                                             ? AppColor
-                                                                .secondryColor
+                                                                .secondryColor(
+                                                                    context)
                                                             : AppColor
-                                                                .primaryColor,
+                                                                .primaryColor(
+                                                                    context),
                                                       ),
                                                     ),
                                                     Container(
@@ -534,9 +539,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         fit: BoxFit.cover,
                                                         color: isDark
                                                             ? AppColor
-                                                                .secondryColor
+                                                                .secondryColor(
+                                                                    context)
                                                             : AppColor
-                                                                .primaryColor,
+                                                                .primaryColor(
+                                                                    context),
                                                       ),
                                                     ),
                                                   ],
@@ -706,8 +713,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             FontWeight
                                                                                 .w700,
                                                                         color: isDark
-                                                                            ? AppColor.secondryColor
-                                                                            : AppColor.primaryColor),
+                                                                            ? AppColor.secondryColor(context)
+                                                                            : AppColor.primaryColor(context)),
                                                                   ),
                                                                 ),
                                                               ),
@@ -870,9 +877,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               FontWeight.w600,
                                                           color: isDark
                                                               ? AppColor
-                                                                  .secondryColor
+                                                                  .secondryColor(
+                                                                      context)
                                                               : AppColor
-                                                                  .primaryColor,
+                                                                  .primaryColor(
+                                                                      context),
                                                         ),
                                                       ),
                                                       SizedBox(
@@ -888,7 +897,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           color: AppColor
-                                                              .listTextColor,
+                                                              .listTextColor(
+                                                                  context),
                                                         ),
                                                       ),
                                                     ],
@@ -1324,8 +1334,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           fontWeight: FontWeight
                                                                               .w700,
                                                                           color: isDark
-                                                                              ? AppColor.secondryColor
-                                                                              : AppColor.primaryColor),
+                                                                              ? AppColor.secondryColor(context)
+                                                                              : AppColor.primaryColor(context)),
                                                                     ),
                                                                   ),
                                                                 ),
@@ -1463,9 +1473,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               14),
                                                       color: isDark
                                                           ? AppColor
-                                                              .primaryColor
+                                                              .primaryColor(
+                                                                  context)
                                                           : AppColor
-                                                              .secondryColor),
+                                                              .secondryColor(
+                                                                  context)),
                                                   child: Column(
                                                     crossAxisAlignment:
                                                         CrossAxisAlignment
@@ -1500,9 +1512,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                         style: TextStyle(
                                                           color: isDark
                                                               ? AppColor
-                                                                  .secondryColor
+                                                                  .secondryColor(
+                                                                      context)
                                                               : AppColor
-                                                                  .primaryColor,
+                                                                  .primaryColor(
+                                                                      context),
                                                           fontWeight:
                                                               FontWeight.w600,
                                                           fontSize: 13,
@@ -1522,9 +1536,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             style: TextStyle(
                                                               color: isDark
                                                                   ? AppColor
-                                                                      .secondryColor
+                                                                      .secondryColor(
+                                                                          context)
                                                                   : AppColor
-                                                                      .primaryColor,
+                                                                      .primaryColor(
+                                                                          context),
                                                               fontSize: 10,
                                                             ),
                                                           ),
@@ -1536,7 +1552,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             color: isDark
                                                                 ? Colors.white54
                                                                 : AppColor
-                                                                    .primaryColor,
+                                                                    .primaryColor(
+                                                                        context),
                                                           ),
                                                           const SizedBox(
                                                               width: 4),
@@ -1545,9 +1562,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             style: TextStyle(
                                                               color: isDark
                                                                   ? AppColor
-                                                                      .secondryColor
+                                                                      .secondryColor(
+                                                                          context)
                                                                   : AppColor
-                                                                      .primaryColor,
+                                                                      .primaryColor(
+                                                                          context),
                                                               fontSize: 10,
                                                             ),
                                                           ),
@@ -1901,7 +1920,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -1933,7 +1952,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               border: Border.all(
                                 color: isSelected
                                     ? AppColor.pinkColor
-                                    : AppColor.textTapColor,
+                                    : AppColor.textTapColor(context),
                                 width: 1,
                               ),
                               color: isSelected
@@ -1949,7 +1968,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   fontSize: 14,
                                   color: isSelected
                                       ? AppColor.pinkColor
-                                      : AppColor.secondryColor,
+                                      : AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -1970,7 +1989,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       width: size.width * 75 / 100,
                       height: size.height * 6 / 100,
                       decoration: BoxDecoration(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       alignment: Alignment.center,
@@ -2034,7 +2053,7 @@ class _SearchScreenState extends State<SearchScreen> {
                     height: size.height * 6 / 100,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-                      color: AppColor.filledcolor,
+                      color: AppColor.filledcolor(context),
                       boxShadow: [
                         BoxShadow(
                           offset: const Offset(0, 1),
@@ -2046,8 +2065,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
                     child: TextFormField(
                       controller: searchController,
-                      cursorColor: AppColor.secondryColor,
-                      style: const TextStyle(color: AppColor.secondryColor),
+                      cursorColor: AppColor.secondryColor(context),
+                      style:  TextStyle(color: AppColor.secondryColor(context)),
                       textAlignVertical: TextAlignVertical.center,
                       decoration: InputDecoration(
                         prefixIcon: Padding(
@@ -2059,7 +2078,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             AppImage.searchIcon,
                             height: size.width * 4 / 100,
                             width: size.width * 4 / 100,
-                            color: AppColor.filledText,
+                            color: AppColor.filledText(context),
                           ),
                         ),
                         prefixIconConstraints: BoxConstraints(
@@ -2082,7 +2101,7 @@ class _SearchScreenState extends State<SearchScreen> {
                         ),
                         border: InputBorder.none,
                         hintText: AppLanguage.searchForaCityText[language],
-                        hintStyle: AppConstant.textFilledStyle,
+                        hintStyle: AppConstant.textFilledStyle(context),
                         contentPadding: EdgeInsets.symmetric(
                           vertical: size.height * 2 / 100,
                           horizontal: size.width * 4 / 100,
@@ -2127,13 +2146,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                   height: MediaQuery.of(context).size.height *
                                       2 /
                                       100,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                                 SizedBox(width: size.width * 2 / 100),
                                 Text(
                                   AppLanguage.currentLocationText[language],
                                   style: TextStyle(
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontSize: 9,
                                     fontWeight: FontWeight.w300,
                                     fontFamily: AppFont.fontFamily,
@@ -2176,15 +2195,15 @@ class _SearchScreenState extends State<SearchScreen> {
                               vertical: 7, horizontal: 18),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(25),
-                            border: Border.all(color: AppColor.textTapColor),
+                            border: Border.all(color: AppColor.textTapColor(context)),
                           ),
                           child: Text(
                             cityList[index],
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontSize: 14,
                               fontWeight: FontWeight.w400,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -2227,7 +2246,7 @@ class _SearchScreenState extends State<SearchScreen> {
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
                               fontSize: 16,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -2263,7 +2282,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 10,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -2275,7 +2294,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w500,
                                   fontSize: 10,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -2311,8 +2330,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                     });
                                   },
                                   activeColor: AppColor.pinkColor,
-                                  inactiveTrackColor: AppColor.secondryColor,
-                                  inactiveThumbColor: AppColor.secondryColor,
+                                  inactiveTrackColor: AppColor.secondryColor(context),
+                                  inactiveThumbColor: AppColor.secondryColor(context),
                                 ),
                               ),
                             )

@@ -72,7 +72,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
             /// Background Gradient
             Container(
               decoration: BoxDecoration(
-                gradient: AppColor.backgroundGradientcolor,
+                gradient: AppColor.welcomebackgroundGradientcolor(context),
               ),
             ),
 
@@ -183,7 +183,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
             padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 35),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(28),
-              gradient: AppColor.welcomefrontCardcolor,
+              gradient: AppColor.welcomefrontCardcolor(context),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -226,7 +226,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
 
         /// Dots indicator
         Positioned(
-          bottom: MediaQuery.of(context).size.height *4/100,
+          bottom: MediaQuery.of(context).size.height * 4 / 100,
           child: Row(
             children: [
               _dot(_activeIndex == 2),

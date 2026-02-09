@@ -3,7 +3,7 @@ import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:provider/provider.dart';
 
-import '../controller/city_preference.dart';
+import '../controller/city/city_preference.dart';
 
 class CitySelectionBottomSheet extends StatefulWidget {
   final List<dynamic> cities; // API city list
@@ -56,8 +56,8 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: AppColor.backgroundGradientcolor,
+      decoration:  BoxDecoration(
+        gradient: AppColor.backgroundGradientcolor(context),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
           topRight: Radius.circular(24),
@@ -76,12 +76,12 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
             ),
           ),
 
-          const Padding(
+           Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
               'Select Your City',
               style: TextStyle(
-                color: AppColor.secondryColor,
+                color: AppColor.secondryColor(context),
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 fontFamily: AppFont.fontFamily,
@@ -95,7 +95,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextField(
               controller: searchController,
-              cursorColor: AppColor.secondryColor,
+              cursorColor: AppColor.secondryColor(context),
               decoration: InputDecoration(
                 hintText: 'Search cities...',
                 hintStyle: TextStyle(
@@ -134,8 +134,8 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                   vertical: 12,
                 ),
               ),
-              style: const TextStyle(
-                color: AppColor.secondryColor,
+              style:  TextStyle(
+                color: AppColor.secondryColor(context),
                 fontFamily: AppFont.fontFamily,
               ),
             ),
@@ -195,7 +195,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                           height: 40,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(8),
-                            color: AppColor.filledcolor,
+                            color: AppColor.filledcolor(context),
                             border: Border.all(
                               color: AppColor.borderColor,
                               width: 0.5,
@@ -214,11 +214,11 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                                           cityName.isNotEmpty
                                               ? cityName[0].toUpperCase()
                                               : '?',
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColor.secondryColor,
+                                            color: AppColor.secondryColor(context),
                                           ),
                                         ),
                                       );
@@ -230,21 +230,23 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                                     cityName.isNotEmpty
                                         ? cityName[0].toUpperCase()
                                         : '?',
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
+                       
+                       
                         ),
                         title: Text(
                           cityName,
                           style: TextStyle(
                             color: isSelected
                                 ? AppColor.buttonColor
-                                : AppColor.secondryColor,
+                                : AppColor.secondryColor(context),
                             fontWeight:
                                 isSelected ? FontWeight.w600 : FontWeight.w500,
                             fontFamily: AppFont.fontFamily,

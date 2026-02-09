@@ -36,7 +36,7 @@ class _ChatSupportState extends State<ChatSupport> {
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         body: Column(
           children: [
             SizedBox(height: size.height * 5 / 100),
@@ -96,7 +96,7 @@ class _ChatSupportState extends State<ChatSupport> {
                                   horizontal: size.width * 4 / 100,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: AppColor.toggleColor,
+                                  color: AppColor.toggleColor(context),
                                   borderRadius: BorderRadius.circular(12),
                                 ),
                                 child: Row(
@@ -176,9 +176,9 @@ class _ChatSupportState extends State<ChatSupport> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       height: MediaQuery.of(context).size.height * 7 / 100,
                       child: TextFormField(
-                        cursorColor: AppColor.secondryColor,
-                        style: const TextStyle(
-                            height: 1, color: AppColor.secondryColor),
+                        cursorColor: AppColor.secondryColor(context),
+                        style:  TextStyle(
+                            height: 1, color: AppColor.secondryColor(context)),
                         textAlignVertical: TextAlignVertical.center,
                         keyboardType: TextInputType.name,
                         maxLength: AppConstant.describeLength,
@@ -218,7 +218,7 @@ class _ChatSupportState extends State<ChatSupport> {
                                     width: MediaQuery.of(context).size.width *
                                         7 /
                                         100,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 SizedBox(
@@ -249,8 +249,8 @@ class _ChatSupportState extends State<ChatSupport> {
                           filled: true,
                           counterText: '',
                           hintText: AppLanguage.messageText[language],
-                          hintStyle: const TextStyle(
-                              color: AppColor.chatSupportcolor,
+                          hintStyle:  TextStyle(
+                              color: AppColor.chatSupportcolor(context),
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w400,
                               fontSize: 16),

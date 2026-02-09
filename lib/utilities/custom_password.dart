@@ -50,11 +50,11 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
   Widget build(BuildContext context) {
     return TextFormField(
       style: TextStyle(
-        color: widget.textColor ?? AppColor.primaryColor,
+        color: widget.textColor ?? AppColor.primaryColor(context),
       ),
       keyboardType: TextInputType.visiblePassword,
       controller: widget.controller,
-      cursorColor: widget.textColor ?? AppColor.primaryColor,
+      cursorColor: widget.textColor ?? AppColor.primaryColor(context),
       maxLength: widget.maxLength,
       obscureText: _obscureText,
       readOnly: widget.readOnly,
@@ -74,7 +74,8 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
                     Text(
                       widget.prefixText!,
                       style: TextStyle(
-                        color: widget.textColor ?? AppColor.primaryColor,
+                        color:
+                            widget.textColor ?? AppColor.primaryColor(context),
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -94,7 +95,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
             onTap: _togglePasswordVisibility,
             child: Icon(
               _obscureText ? Icons.visibility_off : Icons.visibility,
-              color: widget.iconColor ?? AppColor.primaryColor.withOpacity(0.6),
+              color: Colors.black.withOpacity(0.6),
               size: 22,
             ),
           ),
@@ -124,7 +125,12 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               )
-            : AppConstant.textFilledStyle,
+            : TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontFamily: AppFont.fontFamily,
+                fontSize: 14,
+              ),
         contentPadding: widget.contentPadding ??
             const EdgeInsets.symmetric(
               horizontal: 30,

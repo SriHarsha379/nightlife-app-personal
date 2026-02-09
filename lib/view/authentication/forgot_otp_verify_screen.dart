@@ -42,12 +42,12 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
+        backgroundColor: AppColor.secondryColor(context),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
@@ -68,7 +68,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                         height: MediaQuery.of(context).size.width * 5 / 100,
                         child: Image.asset(
                           AppImage.backarrow,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -79,8 +79,8 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                     Text(
                       AppLanguage.otpVerificationText[language],
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppFont.fontFamily,
@@ -125,8 +125,8 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                                   ? AppLanguage.xyzgmailText[language]
                                   : AppLanguage.mobilenoText[language],
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 17,
                                 fontWeight: FontWeight.normal,
                                 fontFamily: AppFont.fontFamily,
@@ -149,11 +149,11 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                             //         AppLanguage.editText[language],
                             //         textAlign: TextAlign.center,
                             //         style: const TextStyle(
-                            //           color: AppColor.secondryColor,
+                            //           color: AppColor.secondryColor(context),
                             //           fontSize: 11,
                             //           fontFamily: AppFont.fontFamily,
                             //            decoration: TextDecoration.underline,
-                            //            decorationColor: AppColor.secondryColor,
+                            //            decorationColor: AppColor.secondryColor(context),
                             //             decorationThickness: 0.8,
                             //             height: 2.8,
                             //         ),
@@ -167,7 +167,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                             //         AppImage.pencilIcon,
                             //         height: size.height * 2 / 100,
                             //         width: size.width * 2 / 100,
-                            //         color: AppColor.secondryColor,
+                            //         color: AppColor.secondryColor(context),
                             //       ),
                             //     ],
                             //   ),
@@ -184,23 +184,24 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                         defaultPinTheme: PinTheme(
                           width: MediaQuery.of(context).size.width * 15.8 / 100,
                           height: MediaQuery.of(context).size.width * 14 / 100,
-                          textStyle: const TextStyle(
+                          textStyle:  TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.primaryColor,
+                            color: AppColor.primaryColor(context),
                           ),
                           decoration: BoxDecoration(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             border: Border.all(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                             boxShadow: [
                               BoxShadow(
                                   // offset: const Offset(0, 4),
                                   blurRadius: 0,
                                   color:
-                                      AppColor.primaryColor.withOpacity(0.25))
+                                      AppColor.primaryColor(context)
+                                      .withOpacity(0.25))
                             ],
                             borderRadius: BorderRadius.circular(13),
                           ),
@@ -231,8 +232,8 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                             ),
                             Text(
                               AppLanguage.requestAgaintext[language],
-                              style: const TextStyle(
-                                  color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14),
                             ),

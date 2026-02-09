@@ -35,8 +35,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value:  SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -45,7 +45,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-              backgroundColor: AppColor.primaryColor,
+              backgroundColor: AppColor.primaryColor(context),
               body: Container(
                   height: size.height * 100 / 100,
                   width: size.width * 100 / 100,
@@ -74,7 +74,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                       AppImage.backarrow,
                                       width: size.width * 5 / 100,
                                       height: size.width * 5 / 100,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
@@ -102,7 +102,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 24,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),
@@ -176,7 +176,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -186,7 +186,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -196,7 +196,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fontFamily: AppFont.fontFamily1,
                                   ),
                                 ),
@@ -221,10 +221,10 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                     height: size.height * 7 / 100,
                                     width: size.width * 28 / 100,
                                     decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(40),
                                       border: Border.all(
-                                        color: AppColor.pasttimecolor,
+                                        color: AppColor.pasttimecolor(context),
                                         width: 0.8,
                                       ),
                                     ),
@@ -238,7 +238,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: AppColor.pasttimecolor,
+                                            color: AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                         SizedBox(
@@ -249,7 +249,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
-                                            color: AppColor.pasttimecolor,
+                                            color: AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                       ],
@@ -273,7 +273,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 18, vertical: 20),
                                     decoration: BoxDecoration(
-                                      color: AppColor.bookeventcontainercolor,
+                                      color: AppColor.bookeventcontainercolor(
+                                          context),
                                       borderRadius: BorderRadius.circular(14),
                                     ),
                                     child: Column(
@@ -328,7 +329,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                         detailsRow("Ticket Charges", "₹14,999"),
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                         SizedBox(
                                             height: MediaQuery.of(context)
                                                     .size
@@ -339,7 +341,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                         detailsRow("Cover charge", "₹50"),
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
 
                                         SizedBox(
                                             height: MediaQuery.of(context)
@@ -375,7 +378,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                         : Icons
                                                             .keyboard_arrow_up,
                                                     color:
-                                                        AppColor.lightGreyColor,
+                                                        AppColor.lightGreyColor(
+                                                            context),
                                                   ),
                                                 ],
                                               ),
@@ -383,7 +387,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                   style: TextStyle(
                                                       fontSize: 14,
                                                       color: AppColor
-                                                          .secondryColor)),
+                                                          .secondryColor(
+                                                              context))),
                                             ],
                                           ),
                                         ),
@@ -472,7 +477,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                 100),
                                         Divider(
                                             thickness: 0.2,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
 
                                         SizedBox(
                                             height: MediaQuery.of(context)
@@ -507,7 +513,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w600,
                                                     color: AppColor
-                                                        .secondryColor)),
+                                                        .secondryColor(
+                                                            context))),
                                           ],
                                         ),
 
@@ -545,7 +552,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: AppColor
-                                                          .secondryColor)),
+                                                          .secondryColor(
+                                                              context))),
                                             ),
                                           ],
                                         ),
@@ -596,7 +604,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
               fontSize: fontSize ?? 13, // default 13
               fontWeight: FontWeight.w400,
 
-              color: AppColor.lightGreyColor,
+              color: AppColor.lightGreyColor(context),
             ),
           ),
           Text(
@@ -621,7 +629,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
           style: TextStyle(
             fontSize: 15,
             fontWeight: FontWeight.w500,
-            color: AppColor.secondryColor,
+            color: AppColor.secondryColor(context),
           ),
         ),
         SizedBox(height: 4),

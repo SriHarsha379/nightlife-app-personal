@@ -105,8 +105,8 @@ class _BadgeScreenState extends State<BadgeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        statusBarColor: AppColor.secondryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        statusBarColor: AppColor.secondryColor(context),
         statusBarIconBrightness: Brightness.dark));
 
     // ignore: deprecated_member_use
@@ -117,7 +117,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
         child: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
@@ -139,7 +139,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
                                   MediaQuery.of(context).size.height * 5 / 100,
                               child: Image.asset(
                                 AppImage.backArrowIcon,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                           ),
@@ -154,7 +154,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
                                 fontFamily: AppFont.fontFamily,
                                 fontSize: 20,
                                 fontWeight: FontWeight.w700,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                           ),
@@ -177,7 +177,7 @@ class _BadgeScreenState extends State<BadgeScreen> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 16,
                       fontWeight: FontWeight.w400,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),

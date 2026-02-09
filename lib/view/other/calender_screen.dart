@@ -43,20 +43,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
           body: SafeArea(
             child: Container(
               height: MediaQuery.of(context).size.height * 100 / 100,
               width: MediaQuery.of(context).size.width * 100 / 100,
-              color: AppColor.primaryColor,
+              color: AppColor.primaryColor(context),
               child: Column(children: [
                 AppHeader(
                     text: AppLanguage.calendarText[language],
@@ -128,8 +128,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     ),
                                   ],
                                 ),
-                                selectedTextStyle: const TextStyle(
-                                  color: AppColor.secondryColor,
+                                selectedTextStyle:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w600,
                                 ),
                                 todayDecoration: BoxDecoration(
@@ -146,15 +146,15 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ],
                                 ),
 
-                                disabledTextStyle: const TextStyle(
-                                  color: AppColor.secondryColor,
+                                disabledTextStyle:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                 ),
-                                defaultTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
-                                weekendTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
-                                outsideTextStyle: const TextStyle(
-                                    color: AppColor.secondryColor),
+                                defaultTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
+                                weekendTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
+                                outsideTextStyle:  TextStyle(
+                                    color: AppColor.secondryColor(context)),
                                 cellMargin: const EdgeInsets.all(4),
                                 cellPadding:
                                     const EdgeInsets.all(0), // Reduced padding
@@ -194,11 +194,11 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: Text(
                               AppLanguage.eventsText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                           ),
                           SizedBox(
@@ -273,7 +273,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                           .width *
                                                       45 /
                                                       100,
-                                                  child: const Text(
+                                                  child:  Text(
                                                     "Open Mic",
                                                     style: TextStyle(
                                                       fontFamily:
@@ -282,7 +282,8 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                       fontWeight:
                                                           FontWeight.w600,
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                     ),
                                                   ),
                                                 ),
@@ -305,7 +306,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                       .width *
                                                   60 /
                                                   100,
-                                              child: const Text(
+                                              child:  Text(
                                                 "Open mic session at saket mall..",
                                                 overflow: TextOverflow.ellipsis,
                                                 style: TextStyle(
@@ -313,7 +314,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                       AppFont.fontFamily,
                                                   fontSize: 14,
                                                   fontWeight: FontWeight.w600,
-                                                  color: AppColor.secondryColor,
+                                                  color: AppColor.secondryColor(context),
                                                 ),
                                               ),
                                             ),

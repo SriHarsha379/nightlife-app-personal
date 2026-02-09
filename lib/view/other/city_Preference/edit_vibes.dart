@@ -165,7 +165,7 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -193,7 +193,7 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                     100,
                                 child: Image.asset(
                                   AppImage.backArrowIcon,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -204,11 +204,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                               child: Text(
                                 textAlign: TextAlign.center,
                                 AppLanguage.vibePreferenceText[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -227,11 +227,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                     child: Text(
                       textAlign: TextAlign.center,
                       AppLanguage.whatKindofVibeText[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                   ),
@@ -246,11 +246,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                     child: Text(
                       textAlign: TextAlign.center,
                       AppLanguage.vibeTypetext[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 22,
                         fontWeight: FontWeight.w600,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                   ),
@@ -265,11 +265,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                     child: Text(
                       textAlign: TextAlign.center,
                       AppLanguage.select1to5Text[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: AppColor.filledText,
+                        color: AppColor.filledText(context),
                       ),
                     ),
                   ),
@@ -324,7 +324,7 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                             0.012,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColor.filledcolor,
+                                    color: AppColor.filledcolor(context),
                                     borderRadius: BorderRadius.circular(11),
                                     border: Border.all(
                                       color: isLeftSelected
@@ -348,11 +348,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                     children: [
                                       Text(
                                         '${Orders[index]['emoji']} ',
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 13.2,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                         ),
                                       ),
                                       Column(
@@ -362,22 +362,23 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                         children: [
                                           Text(
                                             Orders[index]['title'],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 13.2,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(context),
                                             ),
                                           ),
                                           SizedBox(
                                               height: size.height * 0.1 / 100),
                                           Text(
                                             Orders[index]['title1'],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 9,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColor.lightGreyColor,
+                                              color: AppColor.lightGreyColor(
+                                                  context),
                                             ),
                                           ),
                                         ],
@@ -411,7 +412,7 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                             0.012,
                                   ),
                                   decoration: BoxDecoration(
-                                    color: AppColor.filledcolor,
+                                    color: AppColor.filledcolor(context),
                                     borderRadius: BorderRadius.circular(11),
                                     border: Border.all(
                                       color: isRightSelected
@@ -435,11 +436,11 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                     children: [
                                       Text(
                                         '${Orders[index]['emoji2']} ',
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 13.2,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                         ),
                                       ),
                                       Column(
@@ -449,22 +450,23 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                                         children: [
                                           Text(
                                             Orders[index]['music'],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 13.2,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(context),
                                             ),
                                           ),
                                           SizedBox(
                                               height: size.height * 0.1 / 100),
                                           Text(
                                             Orders[index]['music1'],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 9,
                                               fontWeight: FontWeight.w400,
-                                              color: AppColor.lightGreyColor,
+                                              color: AppColor.lightGreyColor(
+                                                  context),
                                             ),
                                           ),
                                         ],

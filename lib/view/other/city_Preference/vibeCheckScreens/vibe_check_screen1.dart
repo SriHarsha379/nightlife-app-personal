@@ -139,8 +139,8 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
         body: Container(
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -169,7 +169,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                                     100,
                                 child: Image.asset(
                                   AppImage.backArrowIcon,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -183,11 +183,11 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                               child: Text(
                                 textAlign: TextAlign.center,
                                 AppLanguage.vibeCheck[language],
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -202,7 +202,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
 
                 SizedBox(
                   width: MediaQuery.of(context).size.width * 88 / 100,
-                  child: const Align(
+                  child: Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       textAlign: TextAlign.center,
@@ -211,7 +211,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                         fontFamily: AppFont.fontFamily,
                         fontSize: 16,
                         fontWeight: FontWeight.w400,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                   ),
@@ -240,7 +240,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                     padding: const EdgeInsets.symmetric(
                         horizontal: 18, vertical: 15),
                     decoration: BoxDecoration(
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       borderRadius: BorderRadius.only(
                         topLeft: const Radius.circular(50),
                         topRight: const Radius.circular(50),
@@ -302,8 +302,8 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                     padding: const EdgeInsets.symmetric(
                       horizontal: 19,
                     ),
-                    decoration: const BoxDecoration(
-                      color: AppColor.primaryColor,
+                    decoration: BoxDecoration(
+                      color: AppColor.primaryColor(context),
                       borderRadius: BorderRadius.only(
                         bottomLeft: Radius.circular(50),
                         bottomRight: Radius.circular(50),
@@ -357,7 +357,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                   height: size.height * 6 / 100,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: AppColor.filledcolor,
+                    color: AppColor.filledcolor(context),
                     boxShadow: [
                       BoxShadow(
                         offset: const Offset(0, 1),
@@ -369,8 +369,8 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                   ),
                   child: TextFormField(
                     controller: searchController,
-                    cursorColor: AppColor.secondryColor,
-                    style: const TextStyle(color: AppColor.secondryColor),
+                    cursorColor: AppColor.secondryColor(context),
+                    style: TextStyle(color: AppColor.secondryColor(context)),
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Padding(
@@ -385,7 +385,7 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                       ),
                       border: InputBorder.none,
                       hintText: AppLanguage.myperfectNight[language],
-                      hintStyle: AppConstant.textFilledStyle1.copyWith(
+                      hintStyle: AppConstant.textFilledStyle1(context).copyWith(
                         color: AppColor.hintPlaceHolderText,
                       ),
                       contentPadding: EdgeInsets.only(

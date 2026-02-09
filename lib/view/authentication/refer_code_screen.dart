@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/profile_details.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
+import '../../provider/darkmode_provider.dart';
 
 class UseReferCodeScreen extends StatefulWidget {
   static String routeName = "./UseReferCodeScreen";
@@ -23,18 +25,18 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return  AnnotatedRegion<SystemUiOverlayStyle>(
-      value:  SystemUiOverlayStyle(
-        statusBarColor: AppColor.statusbar,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         body: Container(
-          decoration:
-              BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
           width: size.width,
           height: size.height,
           child: SingleChildScrollView(
@@ -54,7 +56,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                             width: MediaQuery.of(context).size.width * 5 / 100,
                             height:
                                 MediaQuery.of(context).size.height * 5 / 100,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -62,7 +64,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                       Text(
                         "Use Refer Code",
                         style: TextStyle(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             fontSize: 20,
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFont.fontFamily),
@@ -71,177 +73,176 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                   ),
                 ),
                 SizedBox(height: size.height * 5 / 100),
-              
+
                 Text(
                   "Enter a Refer Code shared by your friend to get\nexclusive gifts!",
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 12,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                     fontWeight: FontWeight.w400,
                     fontFamily: AppFont.fontFamily,
                   ),
                 ),
-              
+
                 SizedBox(height: size.height * 4 / 100),
-              
+
                 // Icon Card
-       Container(
-  width: size.width * 88 / 100,
-  padding: const EdgeInsets.all(18),
-  decoration: BoxDecoration(
-    color: AppColor.notificationContainerColor,
-    borderRadius: BorderRadius.circular(14),
-  ),
-  child: Row(
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      /// 🔹 LEFT SIDE (ICONS + LINE)
-      SizedBox(
-        width: size.width * 12 / 100,
-        child: Stack(
-          alignment: Alignment.topCenter,
-          children: [
-            Positioned(
-              top: size.width * 5 / 100,
-                child: Image.asset(
-                      AppImage.Line,
-                      color: Colors.white,
-                      width: size.width * 12 / 100,
-                      height: size.width * 12 / 100,
-                    ),
-            ),
-
-            Column(
-              children: [
                 Container(
-                  width: size.width * 12 / 100,
-                  height: size.width * 12 / 100,
+                  width: size.width * 88 / 100,
+                  padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColor.secondryColor,
+                    color: AppColor.notificationContainerColor(context),
+                    borderRadius: BorderRadius.circular(14),
                   ),
-                  child: Center(
-                    child: Image.asset(
-                      AppImage.inviteIcon,
-                      width: size.width * 7 / 100,
-                      height: size.width * 7 / 100,
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      /// 🔹 LEFT SIDE (ICONS + LINE)
+                      SizedBox(
+                        width: size.width * 12 / 100,
+                        child: Stack(
+                          alignment: Alignment.topCenter,
+                          children: [
+                            Positioned(
+                              top: size.width * 5 / 100,
+                              child: Image.asset(
+                                AppImage.Line,
+                                color: Colors.white,
+                                width: size.width * 12 / 100,
+                                height: size.width * 12 / 100,
+                              ),
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  width: size.width * 12 / 100,
+                                  height: size.width * 12 / 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      AppImage.inviteIcon,
+                                      width: size.width * 7 / 100,
+                                      height: size.width * 7 / 100,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: size.height * 3 / 100),
+                                Container(
+                                  width: size.width * 12 / 100,
+                                  height: size.width * 12 / 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                  child: Center(
+                                    child: Image.asset(
+                                      AppImage.giftnewIcon,
+                                      width: size.width * 7 / 100,
+                                      height: size.width * 7 / 100,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(width: size.width * 4 / 100),
+
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              "Enter the invite code shared to you\nby your friend.",
+                              style: TextStyle(
+                                fontSize: 14,
+                                height: 1.3,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.secondryColor(context),
+                              ),
+                            ),
+                            SizedBox(height: size.height * 4.5 / 100),
+                            Text(
+                              "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
+                              style: TextStyle(
+                                fontSize: 13.6,
+                                height: 1.3,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w400,
+                                color: AppColor.secondryColor(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: size.height * 5 / 100),
+
+                Container(
+                  width: size.width * 88 / 100,
+                  decoration: BoxDecoration(
+                    color: AppColor.refercontainercolor(context),
+                    borderRadius: BorderRadius.circular(50),
+                  ),
+                  child: TextFormField(
+                    controller: referCodeController,
+                    cursorColor: AppColor.secondryColor(context),
+                    style: TextStyle(
+                      color: AppColor.secondryColor(context),
+                      fontFamily: AppFont.fontFamily,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: "Enter your code here",
+                      hintStyle: TextStyle(
+                        color: AppColor.hinttextcolor(context),
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 12,
+                      ),
+                      contentPadding: const EdgeInsets.symmetric(
+                          vertical: 16, horizontal: 20),
+
+                      // ✅ DEFAULT BORDER KE SAATH RADIUS
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(color: AppColor.buttonColor),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(color: AppColor.buttonColor),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(50),
+                        borderSide: BorderSide(color: AppColor.buttonColor),
+                      ),
                     ),
                   ),
                 ),
-
-                SizedBox(height: size.height * 3 / 100),
-
-                Container(
-                  width: size.width * 12 / 100,
-                  height: size.width * 12 / 100,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: AppColor.secondryColor,
-                  ),
-                  child: Center(
-                    child: Image.asset(
-                      AppImage.giftnewIcon,
-                      width: size.width * 7 / 100,
-                      height: size.width * 7 / 100,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-
-      SizedBox(width: size.width * 4 / 100),
-
-      Expanded(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              "Enter the invite code shared to you\nby your friend.",
-              style: TextStyle(
-                fontSize: 14,
-                height: 1.3,
-                fontFamily: AppFont.fontFamily,
-                fontWeight: FontWeight.w400,
-                color: AppColor.secondryColor,
-              ),
-            ),
-
-            SizedBox(height: size.height * 4.5 / 100),
-
-            Text(
-              "Complete the Signup process and\nboth will receive a discount coupon\non your mail.",
-              style: TextStyle(
-                fontSize: 13.6,
-                height: 1.3,
-                fontFamily: AppFont.fontFamily,
-                fontWeight: FontWeight.w400,
-                color: AppColor.secondryColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    ],
-  ),
-),
-         SizedBox(height: size.height * 5 / 100),
-              
-              
-Container(
-  width: size.width * 88 / 100,
-  decoration: BoxDecoration(
-    color: AppColor.refercontainercolor,
-    borderRadius: BorderRadius.circular(50), // 🔥 OUTER RADIUS
-  ),
-  child: TextFormField(
-    controller: referCodeController,
-    cursorColor: AppColor.secondryColor,
-    style: TextStyle(
-      color: AppColor.secondryColor,
-      fontFamily: AppFont.fontFamily,
-    ),
-    decoration: InputDecoration(
-      hintText: "Enter your code here",
-      hintStyle: TextStyle(
-        color: AppColor.hinttextcolor,
-        fontFamily: AppFont.fontFamily,
-        fontWeight: FontWeight.w500,
-        fontSize: 12,
-      ),
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 16, horizontal: 20),
-
-      // ✅ DEFAULT BORDER KE SAATH RADIUS
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: BorderSide(color: AppColor.buttonColor),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: BorderSide(color: AppColor.buttonColor),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(50),
-        borderSide: BorderSide(color: AppColor.buttonColor),
-      ),
-    ),
-  ),
-),
 
                 SizedBox(height: size.height * 30 / 100),
-              
+
                 // Verify Button
                 GestureDetector(
                   onTap: () {
-              Navigator.push(context, PageTransition(
-                            type: PageTransitionType.rightToLeftWithFade,
-                            child: ProfileDetailsScreen(),
-                            duration: const Duration(milliseconds: 600),
-                          ),);
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: ProfileDetailsScreen(
+                          screen: "refer",
+                        ),
+                        duration: const Duration(milliseconds: 600),
+                      ),
+                    );
                   },
                   child: Container(
                     width: size.width * 88 / 100,
@@ -257,13 +258,13 @@ Container(
                           fontSize: 16,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w600,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
                     ),
                   ),
                 ),
-              
+
                 SizedBox(height: size.height * 4 / 100),
               ],
             ),

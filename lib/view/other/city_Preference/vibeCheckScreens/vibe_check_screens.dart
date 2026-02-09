@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/city_Preference/stay_connected_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import '../../../../controller/vibe_check/vibe_check_controller.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';
@@ -10,9 +13,28 @@ import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 
 class VibeCheckScreen extends StatefulWidget {
+  final String? selectedGenres;
+  final String? customGenre;
+  final String? selectedEvents;
+  final String? customEvent;
+  final String? selectedVibes;
+  final String? sexuality;
+  final String? interestedIn;
+  final String? pronouns;
+  final List<Map<String, String>>? selectedMediaList;
   static String routeName = './VibeCheckScreen';
 
-  const VibeCheckScreen({super.key});
+  const VibeCheckScreen(
+      {super.key,
+      this.selectedGenres,
+      this.customGenre,
+      this.selectedEvents,
+      this.customEvent,
+      this.selectedVibes,
+      this.sexuality,
+      this.interestedIn,
+      this.pronouns,
+      this.selectedMediaList});
 
   @override
   State<VibeCheckScreen> createState() => _VibeCheckScreenState();
@@ -22,67 +44,25 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final PageController _pageController = PageController();
   int currentPage = 0;
 
-  // Define questions for each page separately
-  final List<List<Map<String, String>>> allQuestionsData = [
-    // Page 1 questions
-    [
-      {
-        "title": "What's your perfect night out?",
-        "subtitle": "Describe your ideal evening in a few words.",
-      },
-      {
-        "title": "Go–to drink?",
-        "subtitle": "What do you usually order at the bar?",
-      },
-      {
-        "title": "Something interesting about you?",
-        "subtitle": "Tell something interesting about yourself",
-      },
-    ],
-    // Page 2 questions
-    [
-      {
-        "title": "What's your vibe?",
-        "subtitle": "How would you describe your energy?",
-      },
-      {
-        "title": "Favorite music genre?",
-        "subtitle": "What gets you moving?",
-      },
-      {
-        "title": "Ideal crowd size?",
-        "subtitle": "Intimate gathering or big party?",
-      },
-    ],
-    // Page 3 questions
-    [
-      {
-        "title": "What time do you usually go out?",
-        "subtitle": "Are you an early bird or night owl?",
-      },
-      {
-        "title": "Dress code preference?",
-        "subtitle": "Casual or dressed up?",
-      },
-      {
-        "title": "Must-have at a venue?",
-        "subtitle": "What makes a place perfect for you?",
-      },
-    ],
-  ];
-
   final List<String> progressImages = [
     AppImage.frequencyOneicon,
-    AppImage.frequencyTwoicon, // Update with actual image path
-    AppImage.frequencyIncrementlast, // Update with actual image path
+    AppImage.frequencyTwoicon,
+    AppImage.frequencyIncrementlast,
   ];
 
-  // Store answers for each page
-  final Map<int, Map<int, String>> pageAnswers = {
-    0: {},
-    1: {},
-    2: {},
-  };
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _fetchVibeCheckData();
+    });
+  }
+
+  void _fetchVibeCheckData() {
+    final vibeCheckProvider =
+        Provider.of<VibeCheckController>(context, listen: false);
+    vibeCheckProvider.fetchVibeCheckData(context);
+  }
 
   @override
   void dispose() {
@@ -91,6 +71,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   void _nextPage() {
+    final vibeCheckProvider =
+        Provider.of<VibeCheckController>(context, listen: false);
+
     if (currentPage < 2) {
       setState(() {
         currentPage++;
@@ -101,15 +84,42 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
         curve: Curves.easeInOut,
       );
     } else {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const StayConnectedScreen(), // Always starts at index 0
-          duration: const Duration(milliseconds: 500),
-        ),
-      );
+      // On last page, prepare data and navigate
+      _submitAndNavigate();
     }
+  }
+
+  void _submitAndNavigate() {
+    final vibeCheckProvider =
+        Provider.of<VibeCheckController>(context, listen: false);
+
+    // Get formatted answers
+    List<Map<String, String>> formattedAnswers =
+        vibeCheckProvider.getFormattedAnswers();
+
+    // Print for debugging
+    print("Formatted Answers for API: $formattedAnswers");
+
+    // Navigate to next screen
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: StayConnectedScreen(
+          selectedGenres: widget.selectedGenres,
+          customGenre: widget.customGenre,
+          selectedEvents: widget.selectedEvents,
+          customEvent: widget.customEvent,
+          selectedVibes: widget.selectedVibes,
+          sexuality: widget.sexuality,
+          interestedIn: widget.interestedIn,
+          pronouns: widget.pronouns,
+          selectedMediaList: widget.selectedMediaList,
+          formattedAnswers: formattedAnswers,
+        ),
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
   }
 
   void _skipToNext() {
@@ -131,23 +141,17 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     }
   }
 
-  void _saveAnswer(int questionIndex, String answer) {
-    setState(() {
-      pageAnswers[currentPage]![questionIndex] = answer;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.statusbar,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: WillPopScope(
         onWillPop: () async {
@@ -186,104 +190,116 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
           body: Container(
             width: size.width,
             height: size.height,
-            decoration: const BoxDecoration(
-              gradient: AppColor.backgroundGradientcolor,
+            decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context),
             ),
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 4 / 100,
-                ),
-                // App Header
-                SizedBox(
-                  width: size.width * 0.9,
-                  height: size.height * 0.08,
-                  child: Row(
-                    children: [
-                      GestureDetector(
-                        onTap: _previousPage,
-                        child: SizedBox(
-                          width: size.width * 0.04,
-                          height: size.height * 0.05,
-                          child: Image.asset(
-                            AppImage.backArrowIcon,
-                            color: AppColor.secondryColor,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: size.width * 0.02),
-                      Expanded(
-                        child: Center(
-                          child: Text(
-                            AppLanguage.vibeCheck[language],
-                            style: const TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: AppColor.secondryColor,
+            child: Consumer<VibeCheckController>(
+              builder: (context, vibeCheckProvider, child) {
+                if (vibeCheckProvider.getIsLoading) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColor.pinkColor,
+                    ),
+                  );
+                }
+
+                List<List<dynamic>> distributedQuestions =
+                    vibeCheckProvider.distributeQuestionsToPages();
+
+                return Column(
+                  children: [
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 4 / 100,
+                    ),
+                    // App Header
+                    SizedBox(
+                      width: size.width * 0.9,
+                      height: size.height * 0.08,
+                      child: Row(
+                        children: [
+                          GestureDetector(
+                            onTap: _previousPage,
+                            child: SizedBox(
+                              width: size.width * 0.04,
+                              height: size.height * 0.05,
+                              child: Image.asset(
+                                AppImage.backArrowIcon,
+                                color: AppColor.secondryColor(context),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
-                      // Spacer to balance the layout
-                      SizedBox(width: size.width * 0.06),
-                    ],
-                  ),
-                ),
-                SizedBox(height: size.height * 0.02),
-
-                // Progress Indicator
-                SizedBox(
-                  width: size.width * 0.88,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      '${currentPage + 1}/3',
-                      style: const TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.secondryColor,
+                          SizedBox(width: size.width * 0.02),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                AppLanguage.vibeCheck[language],
+                                style: TextStyle(
+                                  fontFamily: AppFont.fontFamily,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w700,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: size.width * 0.06),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 0.9,
-                  child: Image.asset(
-                    progressImages[currentPage],
-                    width: size.width * 0.2,
-                    height: size.width * 0.1,
-                  ),
-                ),
-                SizedBox(height: size.height * 0.02),
+                    SizedBox(height: size.height * 0.02),
 
-                // PageView for all three screens
-                Expanded(
-                  child: PageView.builder(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    onPageChanged: (index) {
-                      setState(() {
-                        currentPage = index;
-                      });
-                    },
-                    itemCount: 3,
-                    itemBuilder: (context, index) {
-                      return VibeCheckPageContent(
-                        key: ValueKey(index),
-                        questionList: allQuestionsData[index],
-                        pageNumber: index + 1,
-                        currentPage: index,
-                        savedAnswers: pageAnswers[index] ?? {},
-                        onAnswerSaved: (questionIndex, answer) {
-                          _saveAnswer(questionIndex, answer);
+                    // Progress Indicator
+                    SizedBox(
+                      width: size.width * 0.88,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          '${currentPage + 1}/3',
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.secondryColor(context),
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.9,
+                      child: Image.asset(
+                        progressImages[currentPage],
+                        width: size.width * 0.2,
+                        height: size.width * 0.1,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.02),
+
+                    // PageView for all three screens
+                    Expanded(
+                      child: PageView.builder(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        onPageChanged: (index) {
+                          setState(() {
+                            currentPage = index;
+                          });
                         },
-                      );
-                    },
-                  ),
-                ),
-              ],
+                        itemCount: 3,
+                        itemBuilder: (context, pageIndex) {
+                          return VibeCheckPageContent(
+                            key: ValueKey(pageIndex),
+                            questionList:
+                                distributedQuestions.length > pageIndex
+                                    ? distributedQuestions[pageIndex]
+                                    : [],
+                            pageNumber: pageIndex + 1,
+                          );
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
             ),
           ),
         ),
@@ -293,19 +309,13 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 }
 
 class VibeCheckPageContent extends StatefulWidget {
-  final List<Map<String, String>> questionList;
+  final List<dynamic> questionList;
   final int pageNumber;
-  final int currentPage;
-  final Map<int, String> savedAnswers;
-  final Function(int, String) onAnswerSaved;
 
   const VibeCheckPageContent({
     super.key,
     required this.questionList,
     required this.pageNumber,
-    required this.currentPage,
-    required this.savedAnswers,
-    required this.onAnswerSaved,
   });
 
   @override
@@ -313,51 +323,41 @@ class VibeCheckPageContent extends StatefulWidget {
 }
 
 class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
-  bool isDropdownOpen = false;
-  int selectedQuestionIndex = 0;
-  final TextEditingController answerController = TextEditingController();
+  // Store controllers for each question
+  final Map<String, TextEditingController> _controllers = {};
+  // Track dropdown state for each question
+  final Map<int, bool> _dropdownStates = {};
 
   @override
   void initState() {
     super.initState();
-    // Set the default selected question to the first one
-    selectedQuestionIndex = 0;
-    // Load saved answer if exists
-    _loadSavedAnswer();
+    _initializeControllers();
   }
 
-  void _loadSavedAnswer() {
-    if (widget.savedAnswers.containsKey(selectedQuestionIndex)) {
-      answerController.text = widget.savedAnswers[selectedQuestionIndex]!;
+  void _initializeControllers() {
+    final vibeCheckProvider =
+        Provider.of<VibeCheckController>(context, listen: false);
+
+    for (int i = 0; i < widget.questionList.length; i++) {
+      final question = widget.questionList[i];
+      final questionId = question['_id'] ?? '';
+      final savedAnswer = vibeCheckProvider.getAnswer(questionId);
+
+      _controllers[questionId] = TextEditingController(text: savedAnswer);
+      _dropdownStates[i] = false;
     }
   }
 
   @override
   void dispose() {
-    // Save the current answer before disposing
-    if (answerController.text.isNotEmpty) {
-      widget.onAnswerSaved(selectedQuestionIndex, answerController.text);
-    }
-    answerController.dispose();
+    // Just dispose controllers, saving happens in onChanged
+    _controllers.forEach((_, controller) => controller.dispose());
     super.dispose();
   }
 
-  void _onQuestionChanged(int index) {
-    // Save current answer before switching
-    if (answerController.text.isNotEmpty) {
-      widget.onAnswerSaved(selectedQuestionIndex, answerController.text);
-    }
-
+  void _toggleDropdown(int index) {
     setState(() {
-      selectedQuestionIndex = index;
-      isDropdownOpen = false;
-
-      // Load the saved answer for the new question
-      if (widget.savedAnswers.containsKey(index)) {
-        answerController.text = widget.savedAnswers[index]!;
-      } else {
-        answerController.clear();
-      }
+      _dropdownStates[index] = !(_dropdownStates[index] ?? false);
     });
   }
 
@@ -365,211 +365,181 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: size.height * 0.15),
-        child: Column(
-          children: [
-            // Dropdown Question Selector
-            GestureDetector(
-              onTap: () {
-                setState(() {
-                  isDropdownOpen = !isDropdownOpen;
-                });
-              },
-              child: Container(
-                width: size.width * 0.9,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 15,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.primaryColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: const Radius.circular(50),
-                    topRight: const Radius.circular(50),
-                    bottomLeft: Radius.circular(isDropdownOpen ? 0 : 50),
-                    bottomRight: Radius.circular(isDropdownOpen ? 0 : 50),
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            widget.questionList[selectedQuestionIndex]
-                                ["title"]!,
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white,
-                              fontFamily: AppFont.plusJakartaSansFamily,
-                            ),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            widget.questionList[selectedQuestionIndex]
-                                ["subtitle"]!,
-                            style: const TextStyle(
-                              fontSize: 13,
-                              fontFamily: AppFont.plusJakartaSansFamily,
-                              fontWeight: FontWeight.w400,
-                              color: Color(0xffB7AFC9),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    AnimatedRotation(
-                      turns: isDropdownOpen ? 0.5 : 0,
-                      duration: const Duration(milliseconds: 200),
-                      child: const Icon(
-                        Icons.keyboard_arrow_down_rounded,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+    if (widget.questionList.isEmpty) {
+      return Center(
+        child: Text(
+          'No questions available',
+          style: TextStyle(
+            color: AppColor.secondryColor(context),
+            fontSize: 16,
+            fontFamily: AppFont.fontFamily,
+          ),
+        ),
+      );
+    }
 
-            // Dropdown List
-            if (isDropdownOpen)
-              const Divider(
-                height: 0.2,
-                thickness: 0.5,
-                color: AppColor.greyLightColor,
-                indent: 30,
-                endIndent: 30,
-              ),
-            if (isDropdownOpen)
-              Container(
-                width: size.width * 0.9,
-                padding: const EdgeInsets.symmetric(horizontal: 19),
-                decoration: const BoxDecoration(
-                  color: AppColor.primaryColor,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(50),
-                    bottomRight: Radius.circular(50),
-                  ),
-                ),
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: widget.questionList.length,
-                  itemBuilder: (context, index) {
-                    return GestureDetector(
-                      onTap: () => _onQuestionChanged(index),
-                      child: Container(
-                        color: Colors.transparent,
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: Text(
-                                    widget.questionList[index]["title"]!,
-                                    style: const TextStyle(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w600,
+    return Consumer<VibeCheckController>(
+      builder: (context, vibeCheckProvider, child) {
+        return SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.only(bottom: size.height * 0.15),
+            child: Column(
+              children: [
+                // Loop through all questions on this page
+                ...List.generate(widget.questionList.length, (index) {
+                  final question = widget.questionList[index];
+                  final questionId = question['_id'] ?? '';
+                  final controller = _controllers[questionId];
+                  final isDropdownOpen = _dropdownStates[index] ?? false;
+
+                  return Column(
+                    children: [
+                      // Question Dropdown
+                      GestureDetector(
+                        onTap: () => _toggleDropdown(index),
+                        child: Container(
+                          width: size.width * 0.9,
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 18,
+                            vertical: 15,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.circular(50),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      question['question'] ?? 'Question',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.white,
+                                        fontFamily:
+                                            AppFont.plusJakartaSansFamily,
+                                      ),
+                                      maxLines: isDropdownOpen ? null : 1,
+                                      overflow: isDropdownOpen
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                    const SizedBox(height: 4),
+                                    Text(
+                                      question['description'] ?? 'Description',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontFamily:
+                                            AppFont.plusJakartaSansFamily,
+                                        fontWeight: FontWeight.w400,
+                                        color: Color(0xffB7AFC9),
+                                      ),
+                                      maxLines: isDropdownOpen ? null : 1,
+                                      overflow: isDropdownOpen
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Row(
+                                children: [
+                                  // Show checkmark if answered
+                                  if (vibeCheckProvider
+                                      .isQuestionAnswered(questionId))
+                                    const Padding(
+                                      padding: EdgeInsets.only(right: 8),
+                                      child: Icon(
+                                        Icons.check_circle,
+                                        color: Colors.green,
+                                        size: 20,
+                                      ),
+                                    ),
+                                  AnimatedRotation(
+                                    turns: isDropdownOpen ? 0.5 : 0,
+                                    duration: const Duration(milliseconds: 200),
+                                    child: const Icon(
+                                      Icons.keyboard_arrow_down_rounded,
                                       color: Colors.white,
-                                      fontFamily: AppFont.plusJakartaSansFamily,
                                     ),
                                   ),
-                                ),
-                                // Show checkmark if this question has been answered
-                                if (widget.savedAnswers.containsKey(index))
-                                  const Icon(
-                                    Icons.check_circle,
-                                    color: Colors.green,
-                                    size: 20,
-                                  ),
-                              ],
-                            ),
-                            const SizedBox(height: 4),
-                            Text(
-                              widget.questionList[index]["subtitle"]!,
-                              style: const TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w400,
-                                color: Color(0xffB7AFC9),
-                                fontFamily: AppFont.plusJakartaSansFamily,
+                                ],
                               ),
-                            ),
-                            if (index < widget.questionList.length - 1)
-                              const Padding(
-                                padding: EdgeInsets.only(top: 8),
-                                child: Divider(
-                                  height: 0.2,
-                                  thickness: 0.5,
-                                  color: AppColor.greyLightColor,
-                                ),
-                              ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
-                    );
-                  },
-                ),
-              ),
 
-            SizedBox(height: size.height * 0.04),
+                      SizedBox(height: size.height * 0.015),
 
-            // Answer Input Field
-            Container(
-              width: size.width * 90 / 100,
-              height: size.height * 6 / 100,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(12),
-                color: AppColor.filledcolor,
-                boxShadow: [
-                  BoxShadow(
-                    offset: const Offset(0, 1),
-                    spreadRadius: 0,
-                    blurRadius: 0,
-                    color: AppColor.transparentColor.withOpacity(0.1),
-                  ),
-                ],
-              ),
-              child: TextFormField(
-                controller: answerController,
-                cursorColor: AppColor.secondryColor,
-                style: const TextStyle(color: AppColor.secondryColor),
-                textAlignVertical: TextAlignVertical.center,
-                onChanged: (value) {
-                  // Auto-save as user types
-                  widget.onAnswerSaved(selectedQuestionIndex, value);
-                },
-                decoration: InputDecoration(
-                  prefixIcon: Padding(
-                    padding: EdgeInsets.only(
-                      left: size.width * 4 / 100,
-                      right: size.width * 2 / 100,
-                    ),
-                  ),
-                  prefixIconConstraints: BoxConstraints(
-                    minWidth: size.width * 2 / 100,
-                    minHeight: size.height * 6 / 100,
-                  ),
-                  border: InputBorder.none,
-                  hintText: AppLanguage.myperfectNight[language],
-                  hintStyle: AppConstant.textFilledStyle1.copyWith(
-                    color: AppColor.hintPlaceHolderText,
-                  ),
-                  contentPadding: EdgeInsets.only(
-                    right: size.width * 4 / 100,
-                  ),
-                ),
-              ),
+                      // Answer Input Field
+                      Container(
+                        width: size.width * 90 / 100,
+                        height: size.height * 6 / 100,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(12),
+                          color: AppColor.filledcolor(context),
+                          border: Border.all(
+                            color: AppColor.pinkColor,
+                            width: 1,
+                          ),
+                          boxShadow: [
+                            BoxShadow(
+                              offset: const Offset(0, 1),
+                              spreadRadius: 0,
+                              blurRadius: 0,
+                              color: AppColor.transparentColor.withOpacity(0.1),
+                            ),
+                          ],
+                        ),
+                        child: TextFormField(
+                          controller: controller,
+                          cursorColor: AppColor.secondryColor(context),
+                          style:
+                              TextStyle(color: AppColor.secondryColor(context)),
+                          textAlignVertical: TextAlignVertical.center,
+                          onChanged: (value) {
+                            vibeCheckProvider.saveAnswer(questionId, value);
+                          },
+                          decoration: InputDecoration(
+                            border: InputBorder.none,
+                            prefixIcon: Padding(
+                              padding: EdgeInsets.only(
+                                left: size.width * 4 / 100,
+                                right: size.width * 2 / 100,
+                              ),
+                            ),
+                            prefixIconConstraints: BoxConstraints(
+                              minWidth: size.width * 2 / 100,
+                              minHeight: size.height * 6 / 100,
+                            ),
+                            hintText: AppLanguage.myperfectNight[language],
+                            hintStyle:
+                                AppConstant.textFilledStyle1(context).copyWith(
+                              color: AppColor.hintPlaceHolderText,
+                            ),
+                            contentPadding: EdgeInsets.only(
+                              right: size.width * 4 / 100,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // Add spacing between questions
+                      if (index < widget.questionList.length - 1)
+                        SizedBox(height: size.height * 0.025),
+                    ],
+                  );
+                }),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

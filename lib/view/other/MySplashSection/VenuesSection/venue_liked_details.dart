@@ -117,7 +117,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
           child: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
-            color: AppColor.secondryColor,
+            color: AppColor.secondryColor(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -152,7 +152,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                   },
                                   child: Image.asset(
                                     AppImage.backarrow,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                     fit: BoxFit.cover,
                                     height: size.width * 5 / 100,
                                   ),
@@ -179,12 +179,13 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                             Text(
                                               AppLanguage
                                                   .Brewbloomcafetext[language],
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                   fontSize: 24,
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.w700,
-                                                  color: AppColor.primaryColor),
+                                                  color: AppColor.primaryColor(
+                                                      context)),
                                             ),
                                             SizedBox(
                                               height: size.height * 2 / 100,
@@ -211,14 +212,15 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .cafe[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .primaryColor),
+                                                              .primaryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -245,14 +247,15 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .desert[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .primaryColor),
+                                                              .primaryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -279,14 +282,15 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .Coffee[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .primaryColor),
+                                                              .primaryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -333,11 +337,11 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                       ),
                                       Text(
                                         AppLanguage.datetimeText[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColor.primaryColor),
+                                            color: AppColor.primaryColor(context)),
                                       ),
                                     ],
                                   ),
@@ -364,11 +368,11 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                       ),
                                       Text(
                                         AppLanguage.time[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColor.primaryColor),
+                                            color: AppColor.primaryColor(context)),
                                       ),
                                     ],
                                   ),
@@ -402,13 +406,14 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                               child: Text(
                                                 AppLanguage.dummylocationText[
                                                     language],
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                     fontSize: 15,
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w500,
                                                     color:
-                                                        AppColor.primaryColor),
+                                                        AppColor.primaryColor(
+                                                            context)),
                                               ),
                                             ),
                                             Row(
@@ -459,8 +464,8 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                           gradient: AppColor.backgroundGradient,
                                           // shape: BoxShape.circle,
                                         ),
-                                        selectedTextStyle: const TextStyle(
-                                          color: AppColor.primaryColor,
+                                        selectedTextStyle:  TextStyle(
+                                          color: AppColor.primaryColor(context),
                                           fontWeight: FontWeight.w600,
                                         ),
                                         todayDecoration: BoxDecoration(
@@ -468,15 +473,15 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                           shape: BoxShape.circle,
                                         ),
                                     
-                                        disabledTextStyle: const TextStyle(
-                                          color: AppColor.primaryColor,
+                                        disabledTextStyle:  TextStyle(
+                                          color: AppColor.primaryColor(context),
                                         ),
-                                        defaultTextStyle: const TextStyle(
-                                            color: AppColor.primaryColor),
-                                        weekendTextStyle: const TextStyle(
-                                            color: AppColor.primaryColor),
-                                        outsideTextStyle: const TextStyle(
-                                            color: AppColor.primaryColor),
+                                        defaultTextStyle:  TextStyle(
+                                            color: AppColor.primaryColor(context)),
+                                        weekendTextStyle:  TextStyle(
+                                            color: AppColor.primaryColor(context)),
+                                        outsideTextStyle:  TextStyle(
+                                            color: AppColor.primaryColor(context)),
                                       ),
                                       daysOfWeekStyle: const DaysOfWeekStyle(
                                         weekdayStyle: TextStyle(
@@ -511,11 +516,11 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                   Container(
                                     child: Text(
                                       AppLanguage.aboutText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.primaryColor),
+                                          color: AppColor.primaryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -542,11 +547,12 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                       Container(
                                         child: Text(
                                           AppLanguage.GalleryText[language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.primaryColor),
+                                              color: AppColor.primaryColor(
+                                                  context)),
                                         ),
                                       ),
                                       Container(
@@ -619,11 +625,12 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                         child: Text(
                                           AppLanguage
                                               .upcomingEventstext[language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.primaryColor),
+                                              color: AppColor.primaryColor(
+                                                  context)),
                                         ),
                                       ),
                                       Container(
@@ -694,26 +701,28 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                   Text(
                                                     AppLanguage
                                                         .fromText[language],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 16,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                   Text(
                                                     AppLanguage.fourHundredruppeText[
                                                         language],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 22,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w500,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -721,7 +730,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                 width: size.width * 40 / 100,
                                                 decoration: BoxDecoration(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             40)),
@@ -772,11 +781,11 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                             AppLanguage
                                                     .secureYourspotText[
                                                 language],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w400,
-                                                color: AppColor.secondryColor),
+                                                color: AppColor.secondryColor(context)),
                                           ),
                                         ),
                                       ],

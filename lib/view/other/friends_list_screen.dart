@@ -108,7 +108,7 @@ class _FriendsListState extends State<FriendsList> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
+        backgroundColor: AppColor.secondryColor(context),
         body: SafeArea(
           child: Container(
             height: size.height * 100 / 100,
@@ -132,7 +132,7 @@ class _FriendsListState extends State<FriendsList> {
                                   MediaQuery.of(context).size.height * 15 / 100,
                               child: Image.asset(
                                 AppImage.hiilogo,
-                                color: AppColor.primaryColor,
+                                color: AppColor.primaryColor(context),
                               ),
                             ),
                           ),
@@ -154,7 +154,7 @@ class _FriendsListState extends State<FriendsList> {
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 12,
                                         fontWeight: FontWeight.w400,
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                       ),
                                     ),
                                     Text(
@@ -163,7 +163,7 @@ class _FriendsListState extends State<FriendsList> {
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 23,
                                         fontWeight: FontWeight.w600,
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                       ),
                                     ),
                                   ],
@@ -222,20 +222,20 @@ class _FriendsListState extends State<FriendsList> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(40), // pill shape
                     border: Border.all(color: AppColor.textfieldfillColor),
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                     boxShadow: [
                       BoxShadow(
                         offset: const Offset(0, 4),
                         spreadRadius: 0,
                         blurRadius: 4,
-                        color: AppColor.primaryColor.withOpacity(0.1),
+                        color: AppColor.primaryColor(context).withOpacity(0.1),
                       ),
                     ],
                   ),
                   child: TextFormField(
                     controller: searchController,
-                    cursorColor: AppColor.primaryColor,
-                    style: AppConstant.textFilledStyle,
+                    cursorColor: AppColor.primaryColor(context),
+                    style: AppConstant.textFilledStyle(context),
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Padding(
@@ -252,21 +252,21 @@ class _FriendsListState extends State<FriendsList> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
-                        borderSide: const BorderSide(
-                          color: AppColor.primaryColor,
+                        borderSide:  BorderSide(
+                          color: AppColor.primaryColor(context),
                           width: 1,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
-                        borderSide: const BorderSide(
-                          color: AppColor.primaryColor,
+                        borderSide:  BorderSide(
+                          color: AppColor.primaryColor(context),
                           width: 0,
                         ),
                       ),
                       border: InputBorder.none,
                       // hintText: AppLanguage.searchText[language],
-                      hintStyle: AppConstant.textFilledStyle,
+                      hintStyle: AppConstant.textFilledStyle(context),
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 10,
                         horizontal: size.width * 2 / 100,
@@ -306,8 +306,8 @@ class _FriendsListState extends State<FriendsList> {
                                 margin: EdgeInsets.symmetric(horizontal: 6),
                                 decoration: BoxDecoration(
                                     color: selectedId == Orders[index]['id']
-                                        ? AppColor.secondryColor
-                                        : AppColor.secondryColor,
+                                        ? AppColor.secondryColor(context)
+                                        : AppColor.secondryColor(context),
                                     borderRadius: BorderRadius.circular(50),
                                     border: Border.all(
                                         color: selectedId == Orders[index]['id']
@@ -442,7 +442,7 @@ class _FriendsListState extends State<FriendsList> {
                   child: SingleChildScrollView(
                     child: Container(
                       decoration: BoxDecoration(
-                        gradient: AppColor.chatContainerColor,
+                        gradient: AppColor.chatContainerColor(context),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(40),
                           topRight: Radius.circular(40),
@@ -478,14 +478,14 @@ class _FriendsListState extends State<FriendsList> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     subtitle: Text(
                                       chat['lastMessage'],
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
@@ -494,7 +494,7 @@ class _FriendsListState extends State<FriendsList> {
                                       padding: const EdgeInsets.symmetric(
                                           horizontal: 20, vertical: 8),
                                       decoration: BoxDecoration(
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                         borderRadius: BorderRadius.circular(10),
                                         // border: Border.all(
 

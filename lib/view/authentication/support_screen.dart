@@ -68,7 +68,7 @@ class _SupportScreenState extends State<SupportScreen> {
         body: Container(
           width: size.width,
           height: size.height,
-          color: AppColor.primaryColor,
+          color: AppColor.primaryColor(context),
           child: SingleChildScrollView(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,7 +89,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),
@@ -109,11 +109,11 @@ class _SupportScreenState extends State<SupportScreen> {
                         vertical: size.height * 1.8 / 100,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.notificationContainerColor,
+                        color: AppColor.notificationContainerColor(context),
                         borderRadius: BorderRadius.circular(12),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.primaryColor.withOpacity(0.6),
+                            color: AppColor.primaryColor(context).withOpacity(0.6),
                             blurRadius: 6,
                             offset: const Offset(0, 2),
                           ),
@@ -133,8 +133,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                 Expanded(
                                   child: Text(
                                     item["heading"],
-                                    style: const TextStyle(
-                                      color: AppColor.secondryColor,
+                                    style:  TextStyle(
+                                      color: AppColor.secondryColor(context),
                                       fontSize: 14,
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
@@ -157,8 +157,8 @@ class _SupportScreenState extends State<SupportScreen> {
                             Text(
                               item["message"],
                               textAlign: TextAlign.justify,
-                              style: const TextStyle(
-                                color: AppColor.notificationtextColor,
+                              style:  TextStyle(
+                                color: AppColor.notificationtextColor(context),
                                 fontSize: 14,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w400,
@@ -181,7 +181,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),
@@ -200,11 +200,11 @@ class _SupportScreenState extends State<SupportScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                     decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
+                      color: AppColor.notificationContainerColor(context),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: Offset(0, 1),
@@ -228,8 +228,8 @@ class _SupportScreenState extends State<SupportScreen> {
                             SizedBox(width: size.width * 2 / 100),
                             Text(
                               AppLanguage.chatWithus[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 14,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w600,
@@ -249,11 +249,11 @@ class _SupportScreenState extends State<SupportScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                     decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
+                      color: AppColor.notificationContainerColor(context),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: Offset(0, 1),
@@ -274,8 +274,8 @@ class _SupportScreenState extends State<SupportScreen> {
                         SizedBox(width: size.width * 2 / 100),
                         Text(
                           AppLanguage.liveSupport[language],
-                          style: const TextStyle(
-                            color: AppColor.secondryColor,
+                          style:  TextStyle(
+                            color: AppColor.secondryColor(context),
                             fontSize: 14,
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w600,
@@ -298,7 +298,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),
@@ -319,11 +319,11 @@ class _SupportScreenState extends State<SupportScreen> {
                     margin: const EdgeInsets.symmetric(
                         horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
+                      color: AppColor.notificationContainerColor(context),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: const Offset(0, 1),
@@ -348,8 +348,8 @@ class _SupportScreenState extends State<SupportScreen> {
                             SizedBox(width: size.width * 2 / 100),
                             Text(
                               AppLanguage.reportAproblemText[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 14,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w600,
@@ -372,7 +372,7 @@ class _SupportScreenState extends State<SupportScreen> {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 18,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                     ),
                   ),
                 ),
@@ -393,11 +393,11 @@ class _SupportScreenState extends State<SupportScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                     decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
+                      color: AppColor.notificationContainerColor(context),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: Offset(0, 1),
@@ -421,8 +421,8 @@ class _SupportScreenState extends State<SupportScreen> {
                             SizedBox(width: size.width * 2 / 100),
                             Text(
                               AppLanguage.termsConditionText[language],
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 14,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w600,
@@ -451,11 +451,11 @@ class _SupportScreenState extends State<SupportScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                     margin: EdgeInsets.symmetric(horizontal: 10, vertical: 1),
                     decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor,
+                      color: AppColor.notificationContainerColor(context),
                       borderRadius: BorderRadius.circular(8),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.primaryColor,
+                          color: AppColor.primaryColor(context),
                           spreadRadius: 3,
                           blurRadius: 7,
                           offset: Offset(0, 1),
@@ -476,8 +476,8 @@ class _SupportScreenState extends State<SupportScreen> {
                         SizedBox(width: size.width * 2 / 100),
                         Text(
                           AppLanguage.privacyPolicy[language],
-                          style: const TextStyle(
-                            color: AppColor.secondryColor,
+                          style:  TextStyle(
+                            color: AppColor.secondryColor(context),
                             fontSize: 14,
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w600,
@@ -520,8 +520,8 @@ class _SupportScreenState extends State<SupportScreen> {
                       Expanded(
                         flex: 1,
                         child: Container(
-                          decoration: const BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                          decoration:  BoxDecoration(
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(45),
                               topRight: Radius.circular(45),
@@ -553,8 +553,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                       child: Text(
                                         AppLanguage
                                             .contactSupportText[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 23,
@@ -569,8 +569,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                       child: Text(
                                         AppLanguage
                                             .contactSupportHintText[language],
-                                        style: const TextStyle(
-                                          color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                          color: AppColor.secondryColor(context),
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w400,
                                           fontSize: 12,
@@ -637,8 +637,8 @@ class _SupportScreenState extends State<SupportScreen> {
                                         child: Text(
                                           AppLanguage
                                               .contactSupportText[language],
-                                          style: const TextStyle(
-                                              color: AppColor.secondryColor,
+                                          style:  TextStyle(
+                                              color: AppColor.secondryColor(context),
                                               fontWeight: FontWeight.w600,
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 16),

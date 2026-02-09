@@ -111,7 +111,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
               body: Container(
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
             child: SingleChildScrollView(
@@ -137,7 +137,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                               child: Image.asset(
                                 AppImage.backarrow,
                                 fit: BoxFit.cover,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 height:
                                     MediaQuery.of(context).size.width * 5 / 100,
                                 width:
@@ -156,8 +156,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                               child: Text(
                                 AppLanguage.editSwipeprofileText[language],
                                 textAlign: TextAlign.left,
-                                style: const TextStyle(
-                                  color: AppColor.secondryColor,
+                                style:  TextStyle(
+                                  color: AppColor.secondryColor(context),
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: AppFont.fontFamily,
@@ -176,7 +176,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.primaryColor,
+                        color: AppColor.primaryColor(context),
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor.withOpacity(0.4),
@@ -199,8 +199,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   MediaQuery.of(context).size.width * 86 / 100,
                               child: Text(
                                   AppLanguage.basicdetailstext[language],
-                                  style: const TextStyle(
-                                      color: AppColor.hinttextcolor,
+                                  style:  TextStyle(
+                                      color: AppColor.hinttextcolor(context),
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 16,
                                       fontWeight: FontWeight.w600)),
@@ -218,8 +218,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(AppLanguage.ageText1[language],
-                                        style: const TextStyle(
-                                            color: AppColor.hinttextcolor,
+                                        style:  TextStyle(
+                                            color: AppColor.hinttextcolor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500)),
@@ -241,10 +241,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[4] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -262,8 +262,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                         AppLanguage.heightText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.hinttextcolor,
+                                        style:  TextStyle(
+                                            color: AppColor.hinttextcolor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500)),
@@ -285,10 +285,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[5] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -306,8 +306,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                         AppLanguage.pronouncsText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.hinttextcolor,
+                                        style:  TextStyle(
+                                            color: AppColor.hinttextcolor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500)),
@@ -329,10 +329,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[6] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -350,8 +350,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                         AppLanguage.hobbiesText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.hinttextcolor,
+                                        style:  TextStyle(
+                                            color: AppColor.hinttextcolor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500)),
@@ -373,10 +373,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[7] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -394,8 +394,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     padding: const EdgeInsets.all(8.0),
                                     child: Text(
                                         AppLanguage.nearbyLocation[language],
-                                        style: const TextStyle(
-                                            color: AppColor.hinttextcolor,
+                                        style:  TextStyle(
+                                            color: AppColor.hinttextcolor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500)),
@@ -417,10 +417,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[8] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -453,8 +453,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           /// ---- TITLE ----
                           Text(
                             AppLanguage.hobbiestext[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style:  TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontSize: 14,
                               fontWeight: FontWeight.w600,
                               fontFamily: AppFont.fontFamily,
@@ -492,7 +492,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             ),
                             child: TextField(
                               style: TextStyle(
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 fontFamily: AppFont.fontFamily,
                               ),
                               decoration: InputDecoration(
@@ -519,14 +519,14 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   5.5 /
                                   100,
                               decoration: BoxDecoration(
-                                color: AppColor.primaryColor,
+                                color: AppColor.primaryColor(context),
                                 borderRadius: BorderRadius.circular(50),
                               ),
                               alignment: Alignment.center,
-                              child: const Text(
+                              child:  Text(
                                 "Save",
                                 style: TextStyle(
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                   fontSize: 15,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: AppFont.fontFamily,
@@ -566,8 +566,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             child: Padding(
                               padding: const EdgeInsets.all(14.0),
                               child: Text(AppLanguage.vibesText[language],
-                                  style: const TextStyle(
-                                      color: AppColor.secondryColor,
+                                  style:  TextStyle(
+                                      color: AppColor.secondryColor(context),
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600)),
@@ -586,9 +586,9 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     switches[10] = value;
                                   });
                                 },
-                                activeColor: AppColor.secondryColor,
+                                activeColor: AppColor.secondryColor(context),
                                 activeTrackColor: AppColor.pinkColor,
-                                inactiveThumbColor: AppColor.secondryColor,
+                                inactiveThumbColor: AppColor.secondryColor(context),
                                 inactiveTrackColor: AppColor.greyLightColor,
                               ),
                             ),
@@ -629,8 +629,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                               child: Padding(
                                 padding: const EdgeInsets.all(8.0),
                                 child: Text(AppLanguage.GalleryText[language],
-                                    style: const TextStyle(
-                                        color: AppColor.secondryColor,
+                                    style:  TextStyle(
+                                        color: AppColor.secondryColor(context),
                                         fontFamily: AppFont.fontFamily,
                                         fontSize: 16,
                                         fontWeight: FontWeight.w600)),
@@ -704,11 +704,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                                   ),
                                                 ),
                                                 child: isSelected
-                                                    ? const Icon(
+                                                    ?  Icon(
                                                         Icons.check,
                                                         size: 12,
                                                         color: AppColor
-                                                            .primaryColor,
+                                                            .primaryColor(
+                                                                context),
                                                       )
                                                     : null,
                                               ),
@@ -776,11 +777,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                                   ),
                                                 ),
                                                 child: isSelected
-                                                    ? const Icon(
+                                                    ?  Icon(
                                                         Icons.check,
                                                         size: 12,
                                                         color: AppColor
-                                                            .primaryColor,
+                                                            .primaryColor(
+                                                                context),
                                                       )
                                                     : null,
                                               ),
@@ -851,7 +853,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                   //               padding: const EdgeInsets.all(10.0),
                   //               child: Text(AppLanguage.eventsText[language],
                   //                   style: const TextStyle(
-                  //                       color: AppColor.secondryColor,
+                  //                       color: AppColor.secondryColor(context),
                   //                       fontFamily: AppFont.fontFamily,
                   //                       fontSize: 16,
                   //                       fontWeight: FontWeight.w600)),
@@ -1052,7 +1054,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                   //           width: MediaQuery.of(context).size.width * 81 / 100,
                   //           child: Text(AppLanguage.eventsText[language],
                   //               style: const TextStyle(
-                  //                   color: AppColor.secondryColor,
+                  //                   color: AppColor.secondryColor(context),
                   //                   fontFamily: AppFont.fontFamily,
                   //                   fontSize: 16,
                   //                   fontWeight: FontWeight.w600)),
@@ -1124,8 +1126,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         right: 12, left: 12, top: 8),
                                     child: Text(
                                         AppLanguage.recentEventsText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                            color: AppColor.secondryColor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600)),
@@ -1149,10 +1151,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                             switches[5] = value;
                                           });
                                         },
-                                        activeColor: AppColor.secondryColor,
+                                        activeColor: AppColor.secondryColor(context),
                                         activeTrackColor: AppColor.pinkColor,
                                         inactiveThumbColor:
-                                            AppColor.secondryColor,
+                                            AppColor.secondryColor(context),
                                         inactiveTrackColor:
                                             AppColor.greyLightColor,
                                       ),
@@ -1239,8 +1241,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         right: 12, left: 12, top: 8),
                                     child: Text(
                                         AppLanguage.recentVenueText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                            color: AppColor.secondryColor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600)),
@@ -1264,10 +1266,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                             switches[6] = value;
                                           });
                                         },
-                                        activeColor: AppColor.secondryColor,
+                                        activeColor: AppColor.secondryColor(context),
                                         activeTrackColor: AppColor.pinkColor,
                                         inactiveThumbColor:
-                                            AppColor.secondryColor,
+                                            AppColor.secondryColor(context),
                                         inactiveTrackColor:
                                             AppColor.greyLightColor,
                                       ),
@@ -1353,8 +1355,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                     padding: const EdgeInsets.all(12.0),
                                     child: Text(
                                         AppLanguage.instagramText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                            color: AppColor.secondryColor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600)),
@@ -1376,10 +1378,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[3] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),
@@ -1448,8 +1450,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         horizontal: 12.0),
                                     child: Text(
                                         AppLanguage.spotifyText[language],
-                                        style: const TextStyle(
-                                            color: AppColor.secondryColor,
+                                        style:  TextStyle(
+                                            color: AppColor.secondryColor(context),
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600)),
@@ -1471,10 +1473,10 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           switches[4] = value;
                                         });
                                       },
-                                      activeColor: AppColor.secondryColor,
+                                      activeColor: AppColor.secondryColor(context),
                                       activeTrackColor: AppColor.pinkColor,
                                       inactiveThumbColor:
-                                          AppColor.secondryColor,
+                                          AppColor.secondryColor(context),
                                       inactiveTrackColor:
                                           AppColor.greyLightColor,
                                     ),

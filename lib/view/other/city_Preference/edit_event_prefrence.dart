@@ -89,7 +89,7 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
           width: MediaQuery.of(context).size.width * 100 / 100,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -117,7 +117,7 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                                     100,
                                 child: Image.asset(
                                   AppImage.backArrowIcon,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -128,11 +128,11 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                               child: Text(
                                 textAlign: TextAlign.center,
                                 AppLanguage.eventPreferencetext[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -152,11 +152,11 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                           child: Text(
                             textAlign: TextAlign.center,
                             AppLanguage.selectEventstatementText[language],
-                            style: const TextStyle(
+                            style:  TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontSize: 15,
                               fontWeight: FontWeight.w400,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
@@ -179,11 +179,11 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                     child: Text(
                       textAlign: TextAlign.center,
                       AppLanguage.eventTypetext[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                   ),
@@ -198,11 +198,11 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                     child: Text(
                       textAlign: TextAlign.center,
                       AppLanguage.select1to5Text[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,
                         fontWeight: FontWeight.w400,
-                        color: AppColor.filledText,
+                        color: AppColor.filledText(context),
                       ),
                     ),
                   ),
@@ -239,8 +239,8 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                                 horizontal: 20, vertical: 12),
                             decoration: BoxDecoration(
                               color: isSelected
-                                  ? AppColor.filledcolor
-                                  : AppColor.filledcolor,
+                                  ? AppColor.filledcolor(context)
+                                  : AppColor.filledcolor(context),
                               borderRadius: BorderRadius.circular(25),
                               border: Border.all(
                                 color: isSelected
@@ -252,11 +252,11 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                             child: Text(
                               Events[index]['title'],
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontFamily: AppFont.fontFamily,
                                 fontSize: 13,
                                 fontWeight: FontWeight.w500,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                           ),
@@ -291,7 +291,7 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                   height: size.height * 6 / 100,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(12),
-                    color: AppColor.filledcolor,
+                    color: AppColor.filledcolor(context),
                     boxShadow: [
                       BoxShadow(
                         offset: const Offset(0, 1),
@@ -303,8 +303,8 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                   ),
                   child: TextFormField(
                     controller: searchController,
-                    cursorColor: AppColor.secondryColor,
-                    style: const TextStyle(color: AppColor.secondryColor),
+                    cursorColor: AppColor.secondryColor(context),
+                    style:  TextStyle(color: AppColor.secondryColor(context)),
                     textAlignVertical: TextAlignVertical.center,
                     decoration: InputDecoration(
                       prefixIcon: Padding(
@@ -340,7 +340,7 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                       border: InputBorder.none,
                       hintText:
                           AppLanguage.typeYoureventpreferenceText[language],
-                      hintStyle: AppConstant.textFilledStyle1,
+                      hintStyle: AppConstant.textFilledStyle1(context),
                       contentPadding: EdgeInsets.only(
                         right: size.width * 4 / 100,
                       ),

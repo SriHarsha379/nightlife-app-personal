@@ -12,10 +12,11 @@ import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 
 class StayConnectedOTPVerify extends StatefulWidget {
+    final bool? isEmail;
+  final String? email;
   static String routeName = './StayConnectedOTPVerify';
-  const StayConnectedOTPVerify({super.key, this.isEmail = false});
+  const StayConnectedOTPVerify({super.key, this.isEmail, this.email,});
 
-  final bool isEmail;
 
   @override
   State<StayConnectedOTPVerify> createState() => _StayConnectedOTPVerifyState();
@@ -44,12 +45,12 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
+        backgroundColor: AppColor.secondryColor(context),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
@@ -70,7 +71,7 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                         height: MediaQuery.of(context).size.width * 5 / 100,
                         child: Image.asset(
                           AppImage.backarrow,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -81,8 +82,8 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                     Text(
                       AppLanguage.otpVerificationText[language],
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style: TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppFont.fontFamily,
@@ -119,16 +120,17 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                         height: MediaQuery.of(context).size.height * 1 / 100,
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 48 / 100,
+                        width: MediaQuery.of(context).size.width * 90 / 100,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              widget.isEmail
-                                  ? AppLanguage.xyzgmailText[language]
-                                  : AppLanguage.mobilenoText[language],
+                            
+                                   AppLanguage.xyzgmailText[language],
+                                
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: AppColor.secondryColor,
+                              style: TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontSize: 17,
                                 fontWeight: FontWeight.normal,
                                 fontFamily: AppFont.fontFamily,
@@ -138,42 +140,6 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                               width:
                                   MediaQuery.of(context).size.width * 1 / 100,
                             ),
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //             builder: (context) => SignUp()));
-                            //   },
-                            //   child: Row(
-                            //     children: [
-                            //         Text(
-                            //         AppLanguage.editText[language],
-                            //         textAlign: TextAlign.center,
-                            //         style: const TextStyle(
-                            //           color: AppColor.secondryColor,
-                            //           fontSize: 11,
-                            //           fontFamily: AppFont.fontFamily,
-                            //            decoration: TextDecoration.underline,
-                            //            decorationColor: AppColor.secondryColor,
-                            //             decorationThickness: 0.8,
-                            //             height: 2.8,
-                            //         ),
-                            //       ),
-                            //       SizedBox(
-                            //         width: MediaQuery.of(context).size.width *
-                            //             1 /
-                            //             100,
-                            //       ),
-                            //       Image.asset(
-                            //         AppImage.pencilIcon,
-                            //         height: size.height * 2 / 100,
-                            //         width: size.width * 2 / 100,
-                            //         color: AppColor.secondryColor,
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -190,19 +156,19 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
-                            color: AppColor.primaryColor,
+                            color: Colors.black,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColor.secondryColor,
+                            color: AppColor.otpboxColor(context),
                             border: Border.all(
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                             boxShadow: [
                               BoxShadow(
                                   // offset: const Offset(0, 4),
                                   blurRadius: 0,
-                                  color:
-                                      AppColor.primaryColor.withOpacity(0.25))
+                                  color: AppColor.primaryColor(context)
+                                      .withOpacity(0.25))
                             ],
                             borderRadius: BorderRadius.circular(13),
                           ),
@@ -233,8 +199,8 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                             ),
                             Text(
                               AppLanguage.requestAgaintext[language],
-                              style: const TextStyle(
-                                  color: AppColor.secondryColor,
+                              style: TextStyle(
+                                  color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w500,
                                   fontSize: 14),
                             ),

@@ -22,7 +22,7 @@ class AppHeader extends StatelessWidget {
       width: MediaQuery.of(context).size.width,
       height: MediaQuery.of(context).size.width * 14 / 100,
       decoration: BoxDecoration(
-        color: AppColor.primaryColor,
+        color: AppColor.primaryColor(context),
         boxShadow: [
           BoxShadow(
             color: AppColor.grayColor.withOpacity(0.4),
@@ -44,7 +44,7 @@ class AppHeader extends StatelessWidget {
                 padding: EdgeInsets.all(5),
                 child: Image.asset(
                   AppImage.backarrow,
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                   width:MediaQuery.of(context).size.width* 5/100,
                   height: MediaQuery.of(context).size.height* 6/100,
                 ),
@@ -58,7 +58,7 @@ class AppHeader extends StatelessWidget {
                   fontFamily: AppFont.fontFamily,
                   fontSize: 20,
                   fontWeight: FontWeight.w500,
-                  color: AppColor.secondryColor,
+                  color: AppColor.secondryColor(context),
                 ),
               ),
             ),
@@ -96,7 +96,7 @@ class AppHeader1 extends StatelessWidget {
               alignment: Alignment.center,
               decoration: BoxDecoration(
                
-                color: AppColor.secondryColor, // background color
+                color: AppColor.secondryColor(context), // background color
                 boxShadow: [
                   BoxShadow(
                     color: AppColor.grayColor.withOpacity(0.4), // shadow color
@@ -120,7 +120,7 @@ class AppHeader1 extends StatelessWidget {
                       height: MediaQuery.of(context).size.height * 5 / 100,
                       child: Image.asset(
                         AppImage.backarrow,
-                        color: AppColor.primaryColor,
+                        color: AppColor.primaryColor(context),
                       ),
                     ),
                   ),
@@ -133,7 +133,7 @@ class AppHeader1 extends StatelessWidget {
                       fontFamily: AppFont.fontFamily,
                       fontSize: 20,
                       fontWeight: FontWeight.w600,
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                     ),
                   ),
                 ],

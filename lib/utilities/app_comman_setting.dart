@@ -27,7 +27,7 @@ class SettingRow extends StatelessWidget {
         decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(15),
             // color: Color.fromARGB(255, 49, 51, 56),
-            color: AppColor.profilesettignrowColor),
+            color: AppColor.profilesettignrowColor(context)),
             
         alignment: Alignment.center,
         child: Row(
@@ -42,7 +42,7 @@ class SettingRow extends StatelessWidget {
                   child: Image.asset(
                     leadingIcon,
                     fit: BoxFit.cover,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
                 SizedBox(
@@ -50,8 +50,8 @@ class SettingRow extends StatelessWidget {
                 ),
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: AppColor.secondryColor,
+                  style:  TextStyle(
+                    color: AppColor.secondryColor(context),
                     fontFamily: AppFont.fontFamily,
                     fontWeight: FontWeight.w500,
                     fontSize: 15,

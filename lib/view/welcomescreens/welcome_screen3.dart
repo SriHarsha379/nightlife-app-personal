@@ -74,7 +74,7 @@ class _WelcomeScreen3State extends State<WelcomeScreen3>
             height: h,
             width: w,
             decoration: BoxDecoration(
-              gradient: AppColor.backgroundGradientcolor,
+              gradient: AppColor.welcomebackgroundGradientcolor(context),
             ),
           ),
 

@@ -43,8 +43,8 @@ class _ProfileState extends State<Profile> {
         body: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration: const BoxDecoration(
-            gradient: AppColor.backgroundGradientcolor,
+          decoration:  BoxDecoration(
+            gradient: AppColor.backgroundGradientcolor(context),
           ),
           child: Column(
             children: [
@@ -137,11 +137,11 @@ class _ProfileState extends State<Profile> {
                                               100),
                                   Text(
                                     AppLanguage.sanjanaText[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                   SizedBox(
@@ -175,11 +175,11 @@ class _ProfileState extends State<Profile> {
                           children: [
                             Text(
                               AppLanguage.profileCompleteText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                             SizedBox(
@@ -188,11 +188,11 @@ class _ProfileState extends State<Profile> {
                                     100),
                             Text(
                               AppLanguage.seventySevencompleteText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                           ],
@@ -208,11 +208,11 @@ class _ProfileState extends State<Profile> {
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: Text(
                               AppLanguage.settingsText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                               ),
                             ),
                           ),
@@ -375,7 +375,7 @@ class _ProfileState extends State<Profile> {
                                   horizontal: 10, vertical: 18),
                               decoration: BoxDecoration(
                                 borderRadius: BorderRadius.circular(36),
-                                color: AppColor.logoutContainerColor,
+                                color: AppColor.logoutContainerColor(context),
                               ),
                               child: Row(
                                 mainAxisAlignment: MainAxisAlignment
@@ -395,8 +395,8 @@ class _ProfileState extends State<Profile> {
                                   Text(
                                     AppLanguage.logoutText[language],
                                     textAlign: TextAlign.center,
-                                    style: const TextStyle(
-                                      color: AppColor.secondryColor,
+                                    style:  TextStyle(
+                                      color: AppColor.secondryColor(context),
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
@@ -431,10 +431,10 @@ class _ProfileState extends State<Profile> {
         Flexible(
           child: Text(
             text,
-            style: const TextStyle(
+            style:  TextStyle(
               fontSize: 14,
               fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
             ),
           ),
         ),

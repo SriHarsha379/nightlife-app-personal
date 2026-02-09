@@ -10,9 +10,11 @@ import 'package:http/http.dart' as http;
 
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
+import '../utilities/app_footer.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
 import '../view/authentication/otp_verify_screen.dart';
 import '../view/other/city_Preference/citypreference_screen.dart';
+import '../view/other/city_Preference/music_genres.dart';
 import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
@@ -106,8 +108,7 @@ class PostApiProvider with ChangeNotifier {
       'dob': dob.toString(),
       'gender': gender.toString(),
       'height': height.toString(),
-            'city_id': cityId.toString(),
-
+      'city_id': cityId.toString(),
       'player_id': AppConstant.playerID.toString(),
       "device_type": AppConstant.deviceType
     };
@@ -228,6 +229,230 @@ class PostApiProvider with ChangeNotifier {
     }
 
     setSecondaryLoading(false);
+  }
+
+  // ================Signup Api================//
+  signupStepTwoUserApi(
+      BuildContext context,
+      List<Map<String, dynamic>>? preferredCities,
+      String bio,
+      String instagramAccount,
+      String spotify,
+      String snapchat,
+      List<String> hobbies) async {
+    setLoading(true);
+
+    final Map<String, dynamic> fields = {
+      'preferred_cities': preferredCities ?? <Map<String, dynamic>>[],
+      'bio': bio.toString(),
+      'instagram_account': instagramAccount.toString(),
+      'spotify_account': spotify.toString(),
+      'snapchat_account': snapchat.toString(),
+      'hobbies': hobbies,
+    };
+
+    print("Line 105 $fields");
+
+    final res = await postJsonData(
+      'auth/signup_step_two',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    if (res != null) {
+      if (!context.mounted) return;
+
+      setLoading(false);
+
+      if (res['success'] == true) {
+        TopNotification.success(context, res['message'][language]);
+        // AppConstant.token = res['data']['token'] ?? '12345';
+        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        TopNotification.success(context, res['message'][language]);
+
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: const MusicGenresScreen(),
+            duration: const Duration(milliseconds: 400),
+          ),
+        );
+      }
+    }
+
+    setLoading(false);
+  }
+
+// ================Signup Step Three Api================//
+  signupStepThreeUserApi(
+    BuildContext context, {
+    required String musicGenre,
+    String? customMusicGenres,
+    required String eventPreferences,
+    String? customEventPreferences,
+    required String vibes,
+    String? customVibes,
+    required List<Map<String, String>> vibeChecks,
+    required String sexuality,
+    required String interestedIn,
+    required String pronouns,
+    String? anotherEmail,
+    required List<XFile> images,
+    required List<XFile> videos,
+    required List<XFile> thumbnails,
+  }) async {
+    setLoading(true);
+
+    try {
+      // Create multipart request
+      final Uri url =
+          Uri.parse("${AppConfigProvider.apiUrl}auth/signup_step_three");
+      print('Signup Step Three URL: $url');
+
+      var request = http.MultipartRequest('POST', url);
+
+      // Add headers
+      request.headers['authorization'] = 'Bearer ${AppConstant.token}';
+
+      // Add text fields
+      Map<String, String> fields = {
+        'music_genre': musicGenre,
+        'event_preferences': eventPreferences,
+        'vibes': vibes,
+        'sexuality': sexuality,
+        'interested_in': interestedIn,
+        'pronouns': pronouns,
+      };
+
+      // Add optional fields
+      if (customMusicGenres != null && customMusicGenres.isNotEmpty) {
+        fields['custom_music_genres'] = customMusicGenres;
+      }
+      if (customEventPreferences != null && customEventPreferences.isNotEmpty) {
+        fields['custom_event_preferences'] = customEventPreferences;
+      }
+      if (customVibes != null && customVibes.isNotEmpty) {
+        fields['custom_vibes'] = customVibes;
+      }
+      if (anotherEmail != null && anotherEmail.isNotEmpty) {
+        fields['another_email'] = anotherEmail;
+      }
+
+      // Add vibe_checks as JSON string
+      fields['vibe_checks'] = jsonEncode(vibeChecks);
+
+      request.fields.addAll(fields);
+      print("Signup Step Three Fields: $fields");
+
+      // Add images
+      for (int i = 0; i < images.length; i++) {
+        List<int> imageBytes = await images[i].readAsBytes();
+        String fileName = images[i].path.split('/').last;
+        http.MultipartFile imageFile = http.MultipartFile.fromBytes(
+          'images',
+          imageBytes,
+          filename: fileName,
+          contentType: http_parser.MediaType.parse('image/jpeg'),
+        );
+        request.files.add(imageFile);
+        print("Image ${i + 1} added: $fileName");
+      }
+
+      // Add videos and thumbnails
+      for (int i = 0; i < videos.length; i++) {
+        // Add video
+        List<int> videoBytes = await videos[i].readAsBytes();
+        String videoFileName = videos[i].path.split('/').last;
+
+        // Get proper MIME type based on file extension
+        String mimeType = 'video/mp4'; // default
+        if (videoFileName.toLowerCase().endsWith('.mov')) {
+          mimeType = 'video/quicktime';
+        } else if (videoFileName.toLowerCase().endsWith('.avi')) {
+          mimeType = 'video/x-msvideo';
+        } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
+          mimeType = 'video/x-matroska';
+        } else if (videoFileName.toLowerCase().endsWith('.webm')) {
+          mimeType = 'video/webm';
+        }
+
+        http.MultipartFile videoFile = http.MultipartFile.fromBytes(
+          'videos',
+          videoBytes,
+          filename: videoFileName,
+          contentType: http_parser.MediaType.parse(mimeType),
+        );
+        request.files.add(videoFile);
+        print("Video ${i + 1} added: $videoFileName (MIME: $mimeType)");
+
+        // Add corresponding thumbnail
+        if (i < thumbnails.length) {
+          List<int> thumbnailBytes = await thumbnails[i].readAsBytes();
+          String thumbnailFileName;
+
+          if (thumbnails[i].path.isNotEmpty &&
+              (thumbnails[i].path.endsWith('.jpg') ||
+                  thumbnails[i].path.endsWith('.jpeg') ||
+                  thumbnails[i].path.endsWith('.png'))) {
+            thumbnailFileName = thumbnails[i].path.split('/').last;
+          } else {
+            thumbnailFileName =
+                'thumbnail_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+          }
+
+          http.MultipartFile thumbnailFile = http.MultipartFile.fromBytes(
+            'thumbnails',
+            thumbnailBytes,
+            filename: thumbnailFileName,
+            contentType: http_parser.MediaType.parse('image/jpeg'),
+          );
+          request.files.add(thumbnailFile);
+          print("Thumbnail ${i + 1} added: $thumbnailFileName");
+        }
+      }
+
+      print("request.fields: ${request.fields}");
+      print(
+          "request.files: ${request.files.map((f) => '${f.field}: ${f.filename}')}");
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      print("Status Code: ${response.statusCode}");
+      print("Response Body: ${response.body}");
+
+      // Handle response
+      final result = _handleStatusCode(response, context);
+
+      if (result != null && result['success'] == true) {
+        await CacheHelper.save("user_details", jsonEncode(result['data']));
+        TopNotification.success(context, result['message'][language]);
+
+        setLoading(false);
+
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: const MyAppFooter(initialIndex: 0),
+          ),
+        );
+
+        return result;
+      }
+
+      setLoading(false);
+      return null;
+    } catch (e) {
+      print("Signup Step Three Error: $e");
+      TopNotification.error(context, "Failed to complete signup");
+      setLoading(false);
+      return null;
+    }
   }
 
   // ================setup profile Api================//

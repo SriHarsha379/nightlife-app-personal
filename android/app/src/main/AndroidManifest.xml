@@ -35,7 +35,7 @@
 
         <meta-data
              android:name="com.google.android.geo.API_KEY"
-             android:value="AIzaSyA9KLEgqdP1F3e_05PhAi8wPShd_dzxWQY"/>
+             android:value=" AIzaSyDJhue1svm88D2jAjwbEdj-zTFzQcdA9qU"/>
              
                 <!-- Set custom OneSignal notification icon -->
         <!-- <meta-data

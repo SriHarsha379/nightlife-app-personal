@@ -60,7 +60,7 @@ class _Profile1State extends State<Profile1> {
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
-            decoration: const BoxDecoration(color: AppColor.primaryColor),
+            decoration:  BoxDecoration(color: AppColor.primaryColor(context)),
             child: SingleChildScrollView(
               child: Column(
                 children: [
@@ -74,11 +74,11 @@ class _Profile1State extends State<Profile1> {
                       children: [
                         Text(
                           AppLanguage.yourProfileText[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.w700,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         GestureDetector(
@@ -94,7 +94,7 @@ class _Profile1State extends State<Profile1> {
                           },
                           child: Image.asset(
                             AppImage.settingIcon,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             width: MediaQuery.of(context).size.width * 5 / 100,
                             height:
                                 MediaQuery.of(context).size.height * 6 / 100,
@@ -146,11 +146,11 @@ class _Profile1State extends State<Profile1> {
                                       100),
                               Text(
                                 AppLanguage.sanjanaRoytext[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.w700,
                                   fontFamily: AppFont.fontFamily,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                               SizedBox(
@@ -174,11 +174,11 @@ class _Profile1State extends State<Profile1> {
                                 children: [
                                   Text(
                                     AppLanguage.onetwentyText[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                   SizedBox(
@@ -187,11 +187,11 @@ class _Profile1State extends State<Profile1> {
                                           100),
                                   Text(
                                     AppLanguage.friends[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w400,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],
@@ -204,20 +204,20 @@ class _Profile1State extends State<Profile1> {
                                 children: [
                                   Text(
                                     AppLanguage.fiveSixtyText[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                   Text(
                                     AppLanguage.likes[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],
@@ -272,18 +272,18 @@ class _Profile1State extends State<Profile1> {
                                   AppImage.editIcon,
                                   height: 20,
                                   width: 20,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                                 SizedBox(
                                   width: size.width * 1 / 100,
                                 ),
                                 Text(
                                   AppLanguage.editDetailsText[language],
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,
                                     fontFamily: AppFont.fontFamily,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               ],
@@ -316,11 +316,11 @@ class _Profile1State extends State<Profile1> {
                               ),
                               child: Text(
                                 AppLanguage.editSwipeprofileText[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w500,
                                   fontFamily: AppFont.fontFamily,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -354,11 +354,11 @@ class _Profile1State extends State<Profile1> {
                         ),
                         Text(
                           AppLanguage.basicdetailstext[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w600,
-                              color: AppColor.secondryColor),
+                              color: AppColor.secondryColor(context)),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
@@ -371,7 +371,7 @@ class _Profile1State extends State<Profile1> {
                           child: Image.asset(
                             AppImage.lineIcon,
                             fit: BoxFit.cover,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         SizedBox(
@@ -379,11 +379,11 @@ class _Profile1State extends State<Profile1> {
                         ),
                         Text(
                           AppLanguage.bioText[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w600,
-                              color: AppColor.secondryColor),
+                              color: AppColor.secondryColor(context)),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
@@ -406,7 +406,7 @@ class _Profile1State extends State<Profile1> {
                           ),
                           child: Image.asset(
                             AppImage.lineIcon,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             fit: BoxFit.cover,
                           ),
                         ),
@@ -415,11 +415,11 @@ class _Profile1State extends State<Profile1> {
                         ),
                         Text(
                           AppLanguage.eventPreferencetext[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 16,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w600,
-                              color: AppColor.secondryColor),
+                              color: AppColor.secondryColor(context)),
                         ),
                         SizedBox(
                           height: size.height * 1 / 100,
@@ -459,10 +459,11 @@ class _Profile1State extends State<Profile1> {
                                   decoration: BoxDecoration(
                                     color: isAll
                                         ? AppColor
-                                            .primaryColor // grey background for id=1
+                                            .primaryColor(
+                                            context) // grey background for id=1
                                         : (isSelected
-                                            ? AppColor.primaryColor
-                                            : AppColor.primaryColor),
+                                            ? AppColor.primaryColor(context)
+                                            : AppColor.primaryColor(context)),
                                     borderRadius: BorderRadius.circular(50),
                                     border: Border.all(
                                       color: isAll
@@ -503,7 +504,7 @@ class _Profile1State extends State<Profile1> {
                           child: Image.asset(
                             AppImage.lineIcon,
                             fit: BoxFit.cover,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         SizedBox(
@@ -514,11 +515,11 @@ class _Profile1State extends State<Profile1> {
                           children: [
                             Text(
                               AppLanguage.vibe[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                   fontSize: 16,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                           ],
                         ),
@@ -560,7 +561,7 @@ class _Profile1State extends State<Profile1> {
                           child: Image.asset(
                             AppImage.lineIcon,
                             fit: BoxFit.cover,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         SizedBox(
@@ -571,11 +572,11 @@ class _Profile1State extends State<Profile1> {
                           children: [
                             Text(
                               AppLanguage.GalleryText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                   fontSize: 18,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w500,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                             // Container(
                             //   child: Text(
@@ -642,7 +643,7 @@ class _Profile1State extends State<Profile1> {
                           height: MediaQuery.of(context).size.width * 12 / 100,
                           width: MediaQuery.of(context).size.width * 90 / 100,
                           decoration: BoxDecoration(
-                            color: AppColor.capsuleColor,
+                            color: AppColor.capsuleColor(context),
                             boxShadow: [
                               BoxShadow(
                                 color: AppColor.grayColor.withOpacity(0.4),
@@ -662,7 +663,7 @@ class _Profile1State extends State<Profile1> {
                               // Icon
                               Image.asset(
                                 AppImage.instagramIcon,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 width:
                                     MediaQuery.of(context).size.width * 5 / 100,
                                 height: MediaQuery.of(context).size.height *
@@ -683,11 +684,11 @@ class _Profile1State extends State<Profile1> {
                                   children: [
                                     Text(
                                       AppLanguage.instagramText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                         fontSize: 13,
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     Text(
@@ -714,11 +715,11 @@ class _Profile1State extends State<Profile1> {
                                 ),
                                 child: Text(
                                   AppLanguage.connectedText[language],
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 10,
                                     fontWeight: FontWeight.w600,
                                     fontFamily: AppFont.fontFamily,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               ),
@@ -738,11 +739,11 @@ class _Profile1State extends State<Profile1> {
                           children: [
                             Text(
                               AppLanguage.likedEvents[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                   fontSize: 16,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w600,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                             GestureDetector(
                               onTap: () {
@@ -845,11 +846,11 @@ class _Profile1State extends State<Profile1> {
                             Container(
                               child: Text(
                                 AppLanguage.followedVenuestext[language],
-                                style: const TextStyle(
+                                style:  TextStyle(
                                     fontSize: 18,
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColor.secondryColor),
+                                    color: AppColor.secondryColor(context)),
                               ),
                             ),
                             Container(
@@ -884,11 +885,11 @@ class _Profile1State extends State<Profile1> {
                         Container(
                           child: Text(
                             AppLanguage.mytopArtistonspotifyText[language],
-                            style: const TextStyle(
+                            style:  TextStyle(
                                 fontSize: 18,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w500,
-                                color: AppColor.secondryColor),
+                                color: AppColor.secondryColor(context)),
                           ),
                         ),
                         SizedBox(
@@ -968,10 +969,10 @@ class _Profile1State extends State<Profile1> {
           Flexible(
             child: Text(
               text,
-              style: const TextStyle(
+              style:  TextStyle(
                 fontSize: 14,
                 fontFamily: AppFont.fontFamily,
-                color: AppColor.primaryColor,
+                color: AppColor.primaryColor(context),
               ),
             ),
           ),

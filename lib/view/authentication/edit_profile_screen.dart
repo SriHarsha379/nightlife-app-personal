@@ -46,7 +46,7 @@ class _EditProfileState extends State<EditProfile> {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         body: SingleChildScrollView(
           child: Column(
             children: [
@@ -138,11 +138,11 @@ class _EditProfileState extends State<EditProfile> {
                               children: [
                                 Text(
                                   AppLanguage.edityourHobbiesText[language],
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w400,
                                     fontFamily: AppFont.fontFamily,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 SizedBox(
@@ -153,7 +153,7 @@ class _EditProfileState extends State<EditProfile> {
                                   AppImage.pencilIcon,
                                   height: size.height * 3 / 100,
                                   width: size.width * 3 / 100,
-                                  color: AppColor.secondryColor,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ],
                             ),
@@ -205,11 +205,13 @@ class _EditProfileState extends State<EditProfile> {
                 child: Container(
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 6 / 100,
-                  decoration: const BoxDecoration(
-                    color: AppColor.textfieldcontainercolor, // background color
+                  decoration:  BoxDecoration(
+                    color: AppColor.textfieldcontainercolor(
+                        context), // background color
                     boxShadow: [
                       BoxShadow(
-                        color: AppColor.textfieldcontainercolor, // shadow color
+                        color: AppColor.textfieldcontainercolor(
+                            context), // shadow color
                         // spreadRadius: 1,
                         blurRadius: 2, // blur effect
                         offset: Offset(1, 2),
@@ -225,7 +227,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxLength: AppConstant.mobileMaxLenth,
                     keyboardType: TextInputType.name,
                     controller: usernameController,
-                    fillColor: AppColor.textfieldcontainercolor,
+                    fillColor: AppColor.textfieldcontainercolor(context),
                   ),
                 ),
               ),
@@ -255,7 +257,7 @@ class _EditProfileState extends State<EditProfile> {
                   children: [
                     // Text(
                     //   AppLanguage.addAboutyourselfText[language],
-                    //   style: AppConstant.textFilledStyle,
+                    //   style: AppConstant.textFilledStyle(context),
                     // ),
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 1 / 100),
@@ -281,23 +283,23 @@ class _EditProfileState extends State<EditProfile> {
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
-                            borderSide: const BorderSide(
-                              color: AppColor.textfieldcontainercolor,
+                            borderSide:  BorderSide(
+                              color: AppColor.textfieldcontainercolor(context),
                               width: 1,
                             ),
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),
-                            borderSide: const BorderSide(
-                              color: AppColor.textfieldcontainercolor,
+                            borderSide:  BorderSide(
+                              color: AppColor.textfieldcontainercolor(context),
                               width: 1.5,
                             ),
                           ),
-                          fillColor: AppColor.textfieldcontainercolor,
+                          fillColor: AppColor.textfieldcontainercolor(context),
                           filled: true,
                           counterText: '',
                           hintText: 'Add about yourself..',
-                          hintStyle: AppConstant.textFilledStyle,
+                          hintStyle: AppConstant.textFilledStyle(context),
                           contentPadding: const EdgeInsets.symmetric(
                             vertical: 20,
                             horizontal: 15,
@@ -352,11 +354,11 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         Text(
                           AppLanguage.verifiedText[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         SizedBox(
@@ -380,7 +382,8 @@ class _EditProfileState extends State<EditProfile> {
                   width: MediaQuery.of(context).size.width * 90 / 100,
                   height: MediaQuery.of(context).size.height * 6 / 100,
                   decoration: BoxDecoration(
-                    color: AppColor.textfieldcontainercolor, // background color
+                    color: AppColor.textfieldcontainercolor(
+                        context), // background color
                     boxShadow: [
                       BoxShadow(
                         color:
@@ -400,7 +403,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxLength: AppConstant.mobileMaxLenth,
                     keyboardType: TextInputType.name,
                     controller: emailController,
-                    fillColor: AppColor.textfieldcontainercolor,
+                    fillColor: AppColor.textfieldcontainercolor(context),
                   ),
                 ),
               ),
@@ -430,11 +433,11 @@ class _EditProfileState extends State<EditProfile> {
                       children: [
                         Text(
                           AppLanguage.verifiedText[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                         SizedBox(

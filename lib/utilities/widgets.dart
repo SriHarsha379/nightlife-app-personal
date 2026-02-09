@@ -29,7 +29,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: const TextStyle(color: AppColor.secondryColor),
+      style: TextStyle(color: AppColor.secondryColor(context)),
       keyboardType: widget.keyboardType,
       controller: widget.controller,
       maxLength: widget.maxLength,
@@ -65,16 +65,17 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
-          borderSide: const BorderSide(
-            color: AppColor.textfieldcontainercolor,
-            width: 1, // Changed from 0 to 1 for consistency
+          borderSide: BorderSide(
+            color: AppColor.textfieldcontainercolor(context),
+            width: 1,
           ),
         ),
-        fillColor: widget.fillColor ?? AppColor.textfieldcontainercolor,
+        fillColor:
+            widget.fillColor ?? AppColor.textfieldcontainercolor(context),
         filled: true,
         counterText: '',
         hintText: widget.hintText,
-        hintStyle: AppConstant.textFilledStyle,
+        hintStyle: AppConstant.textFilledStyle(context),
       ),
     );
   }
@@ -97,7 +98,7 @@ class CustomDescriptionBox extends StatelessWidget {
     return TextFormField(
       controller: controller,
       maxLines: 5,
-      style: const TextStyle(color: AppColor.primaryColor),
+      style: TextStyle(color: AppColor.primaryColor(context)),
       decoration: InputDecoration(
         prefixIcon: prefixIcon != null
             ? Column(
@@ -128,7 +129,7 @@ class CustomDescriptionBox extends StatelessWidget {
         filled: true,
         fillColor: AppColor.textfieldfillColor,
         hintText: hintText,
-        hintStyle: AppConstant.textFilledStyle,
+        hintStyle: AppConstant.textFilledStyle(context),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(20),
           borderSide: const BorderSide(
@@ -153,8 +154,8 @@ class CustomTextField extends StatefulWidget {
   final String hintText;
   final int maxLength;
   final bool readOnly;
-  final bool isPassword; // Add this parameter
-  final Widget? prefixIcon; // Optional prefix icon
+  final bool isPassword;
+  final Widget? prefixIcon;
 
   const CustomTextField({
     Key? key,
@@ -162,7 +163,7 @@ class CustomTextField extends StatefulWidget {
     required this.hintText,
     required this.maxLength,
     this.readOnly = false,
-    this.isPassword = false, // Default to false
+    this.isPassword = false,
     this.prefixIcon,
   }) : super(key: key);
 
@@ -171,7 +172,7 @@ class CustomTextField extends StatefulWidget {
 }
 
 class _CustomTextFieldState extends State<CustomTextField> {
-  bool isPasswordVisible = false; // Changed to false (obscured by default)
+  bool isPasswordVisible = false;
   final FocusNode _focusNode = FocusNode();
   bool _isFocused = false;
 
@@ -179,9 +180,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
   void initState() {
     super.initState();
     _focusNode.addListener(() {
-      setState(() {
-        _isFocused = _focusNode.hasFocus;
-      });
+      setState(() => _isFocused = _focusNode.hasFocus);
     });
   }
 
@@ -193,43 +192,71 @@ class _CustomTextFieldState extends State<CustomTextField> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = Theme.of(context).brightness == Brightness.dark;
+
     return TextFormField(
-      style: const TextStyle(color: AppColor.secondryColor),
-      keyboardType: widget.isPassword
-          ? TextInputType.visiblePassword
-          : TextInputType.text,
       controller: widget.controller,
       focusNode: _focusNode,
       maxLength: widget.maxLength,
       readOnly: widget.readOnly,
-      obscureText: widget.isPassword &&
-          !isPasswordVisible, // Only obscure if it's a password field
+      obscureText: widget.isPassword && !isPasswordVisible,
+      keyboardType: widget.isPassword
+          ? TextInputType.visiblePassword
+          : TextInputType.text,
+      cursorColor: AppColor.secondryColor(context),
+      style: TextStyle(
+        color: AppColor.secondryColor(context),
+        fontSize: 14,
+      ),
       decoration: InputDecoration(
+        filled: true,
+
+        /// ✅ FIX: Theme aware fill color
+        fillColor: _isFocused
+            ? AppColor.whiteBlackcolor(context)
+            : AppColor.textFieldColor(context),
+
+        counterText: '',
+
+        hintText: widget.hintText,
+
+        /// ✅ FIX: Theme aware hint
+        hintStyle: TextStyle(
+          color: AppColor.hinttextcolor(context),
+          fontWeight: FontWeight.w400,
+          fontFamily: AppFont.fontFamily,
+          fontSize: 14,
+        ),
+
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 22,
+          vertical: 14,
+        ),
+
+        /// PREFIX ICON
         prefixIcon: widget.prefixIcon != null
             ? Padding(
-                padding: const EdgeInsets.only(left: 1, right: 5),
-                child: SizedBox(
-                  height: 24,
-                  width: 24,
-                  child: widget.prefixIcon,
+                padding: const EdgeInsets.only(left: 12, right: 8),
+                child: IconTheme(
+                  data: IconThemeData(
+                    color: AppColor.hinttextcolor(context),
+                  ),
+                  child: widget.prefixIcon!,
                 ),
               )
             : null,
-        prefixIconConstraints: widget.prefixIcon != null
-            ? const BoxConstraints(
-                minWidth: 30,
-                minHeight: 40,
-              )
-            : null,
-        fillColor: _isFocused ? Colors.black : AppColor.themeColor,
-        filled: true,
-        counterText: '',
-        suffixIcon: widget
-                .isPassword // Only show suffix icon if it's a password field
+
+        prefixIconConstraints: const BoxConstraints(
+          minWidth: 40,
+          minHeight: 40,
+        ),
+
+        /// PASSWORD ICON
+        suffixIcon: widget.isPassword
             ? IconButton(
                 icon: Icon(
                   isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                  color: AppColor.secondryColor,
+                  color: AppColor.hinttextcolor(context),
                   size: 20,
                 ),
                 onPressed: () {
@@ -239,27 +266,21 @@ class _CustomTextFieldState extends State<CustomTextField> {
                 },
               )
             : null,
+
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
-          borderSide: const BorderSide(
-            color: AppColor.buttonColor,
-            width: 0,
+          borderSide: BorderSide(
+            color: isDark ? AppColor.buttonColor : AppColor.greyLightColor,
+            width: 1,
           ),
         ),
+
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
           borderSide: const BorderSide(
             color: AppColor.buttonColor,
             width: 1.5,
           ),
-        ),
-        hintText: widget.hintText,
-        hintStyle: AppConstant.textFilledStyle,
-        contentPadding: const EdgeInsets.only(
-          left: 25,
-          right: 20,
-          top: 15,
-          bottom: 15,
         ),
       ),
     );
@@ -304,8 +325,8 @@ class _AppIconButtonState extends State<AppIconButton> {
               SizedBox(width: MediaQuery.of(context).size.width * 0.1 / 100),
               Text(
                 widget.text!,
-                style: const TextStyle(
-                    color: AppColor.secondryColor,
+                style: TextStyle(
+                    color: AppColor.secondryColor(context),
                     fontWeight: FontWeight.w600,
                     fontSize: 18,
                     fontFamily: AppFont.lexendFontFamily),
@@ -345,7 +366,7 @@ class _AppButtonwithoutcolourState extends State<AppButtonwithoutcolour> {
         height: MediaQuery.of(context).size.height * 7 / 100,
         decoration: BoxDecoration(
           border: Border.all(color: AppColor.themeColor),
-          color: AppColor.secondryColor,
+          color: AppColor.secondryColor(context),
           borderRadius: BorderRadius.all(Radius.circular(40)),
         ),
         alignment: Alignment.center,
@@ -387,10 +408,12 @@ class CustomTextAreaField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      style: const TextStyle(color: AppColor.primaryColor),
+      style: TextStyle(
+        color: Colors.black,
+      ),
       keyboardType: keyboardtype,
       controller: controller,
-      cursorColor: AppColor.primaryColor,
+      cursorColor: Colors.black,
       maxLength: maxLength,
       decoration: InputDecoration(
         prefixIcon: prefixText != null || prefixIcon != null
@@ -407,8 +430,8 @@ class CustomTextAreaField extends StatelessWidget {
                   if (prefixText != null) ...[
                     Text(
                       prefixText!,
-                      style: const TextStyle(
-                        color: AppColor.primaryColor,
+                      style: TextStyle(
+                        color: Colors.black,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -438,7 +461,12 @@ class CustomTextAreaField extends StatelessWidget {
         filled: true,
         counterText: '',
         hintText: hintText,
-        hintStyle: AppConstant.textFilledStyle,
+        hintStyle: TextStyle(
+          color: Colors.black,
+          fontWeight: FontWeight.w400,
+          fontFamily: AppFont.fontFamily,
+          fontSize: 14,
+        ),
       ),
     );
   }
@@ -528,12 +556,12 @@ class CustomLoginTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return TextFormField(
       style: TextStyle(
-        color: textColor ?? AppColor.primaryColor,
+        color: textColor ?? AppColor.primaryColor(context),
         fontFamily: AppFont.fontFamily,
       ),
       keyboardType: keyboardType,
       controller: controller,
-      cursorColor: cursorColor ?? textColor ?? AppColor.primaryColor,
+      cursorColor: cursorColor ?? textColor ?? AppColor.primaryColor(context),
       maxLength: maxLength,
       maxLines: maxLines ?? 1,
       readOnly: readOnly,
@@ -557,7 +585,7 @@ class CustomLoginTextField extends StatelessWidget {
                     Text(
                       prefixText!,
                       style: TextStyle(
-                        color: textColor ?? AppColor.primaryColor,
+                        color: textColor ?? AppColor.primaryColor(context),
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                         fontSize: 16,
@@ -623,7 +651,12 @@ class CustomLoginTextField extends StatelessWidget {
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
               )
-            : AppConstant.textFilledStyle,
+            : TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w400,
+                fontFamily: AppFont.fontFamily,
+                fontSize: 14,
+              ),
         contentPadding: contentPadding ??
             const EdgeInsets.symmetric(
               horizontal: 30,

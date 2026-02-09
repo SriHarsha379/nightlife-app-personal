@@ -98,9 +98,6 @@ class _LoginScreenState extends State<LoginScreen>
     // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);
   }
 
-
-
-
   @override
   void dispose() {
     _bottomSheetController.dispose();
@@ -148,8 +145,8 @@ class _LoginScreenState extends State<LoginScreen>
                   alignment: Alignment.bottomCenter,
                   child: SingleChildScrollView(
                     child: Container(
-                      decoration: const BoxDecoration(
-                        gradient: AppColor.backgroundGradientcolor,
+                      decoration: BoxDecoration(
+                        gradient: AppColor.backgroundGradientcolor(context),
                         borderRadius: BorderRadius.only(
                           topLeft: Radius.circular(46),
                           topRight: Radius.circular(46),
@@ -168,8 +165,8 @@ class _LoginScreenState extends State<LoginScreen>
 
                           Text(
                             AppLanguage.loginText[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style: TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontWeight: FontWeight.w700,
                               fontFamily: AppFont.fontFamily,
                               fontSize: 16,
@@ -188,8 +185,8 @@ class _LoginScreenState extends State<LoginScreen>
                               hintText: AppLanguage
                                   .usernameAndemailIdPhonenumberText[language],
                               maxLength: 50,
-                              fillColor: AppColor.secondryColor,
-                              textColor: AppColor.primaryColor,
+                              fillColor: AppColor.otpboxColor(context),
+                              textColor: Colors.black,
                               borderColor: AppColor.transparentColor,
                               // iconColor: AppColor.primaryColor,
                             ),
@@ -205,7 +202,7 @@ class _LoginScreenState extends State<LoginScreen>
                           //     hintText: AppLanguage.enterpassword[language],
                           //     maxLength: AppConstant.mobileMaxLenth,
                           //     controller: passwordController,
-                          //     fillColor: AppColor.secondryColor,
+                          //     fillColor: AppColor.secondryColor(context),
                           //     keyboardType: TextInputType.text,
                           //   ),
                           // ),
@@ -217,10 +214,10 @@ class _LoginScreenState extends State<LoginScreen>
                               controller: passwordController,
                               hintText: "Create Password",
                               maxLength: 20,
-                              fillColor: AppColor.secondryColor,
-                              textColor: AppColor.primaryColor,
+                              fillColor: AppColor.otpboxColor(context),
+                              textColor: Colors.black,
                               borderColor: AppColor.transparentColor,
-                              iconColor: AppColor.primaryColor,
+                              iconColor: AppColor.primaryColor(context),
                             ),
                           ),
 
@@ -295,8 +292,8 @@ class _LoginScreenState extends State<LoginScreen>
                               children: [
                                 Text(
                                   AppLanguage.venueEventText[language],
-                                  style: const TextStyle(
-                                      color: AppColor.secondryColor,
+                                  style: TextStyle(
+                                      color: AppColor.secondryColor(context),
                                       fontWeight: FontWeight.w400,
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 12),
@@ -330,10 +327,10 @@ class _LoginScreenState extends State<LoginScreen>
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                const Text(
+                                Text(
                                   "New to the app ?",
                                   style: TextStyle(
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                       fontWeight: FontWeight.w400,
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 12),
@@ -413,8 +410,9 @@ class _LoginScreenState extends State<LoginScreen>
                                                     .bySigningupStatementText[
                                                 language],
                                             textAlign: TextAlign.center,
-                                            style: const TextStyle(
-                                              color: AppColor.secondryColor,
+                                            style: TextStyle(
+                                              color: AppColor.secondryColor(
+                                                  context),
                                               fontWeight: FontWeight.w400,
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 11,
@@ -438,8 +436,9 @@ class _LoginScreenState extends State<LoginScreen>
                                                         .userAgreementStatementText[
                                                     language],
                                                 textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: AppColor.secondryColor,
+                                                style: TextStyle(
+                                                  color: AppColor.secondryColor(
+                                                      context),
                                                   fontWeight: FontWeight.w400,
                                                   fontFamily:
                                                       AppFont.fontFamily,

@@ -39,16 +39,16 @@ class _CompletePaymentState extends State<CompletePayment> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 40),
@@ -77,7 +77,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                           Navigator.pop(context);
                         },
                         child: Image.asset(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             height: size.width * 5 / 100,
                             width: size.width * 5 / 100,
                             AppImage.backArrowIcon),
@@ -88,7 +88,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
-                            color: AppColor.secondryColor),
+                            color: AppColor.secondryColor(context)),
                       ),
                       Container(
                         height: size.width * 5 / 100,
@@ -132,7 +132,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                             SizedBox(height: size.height *0.1/100),
                                   Text(
@@ -165,7 +165,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 18,
-                                color: AppColor.secondryColor),
+                                color: AppColor.secondryColor(context)),
                           ),
                           SizedBox(
                             height: size.height * 2 / 100,
@@ -175,7 +175,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                             children: [
                               Divider(
                                   thickness: 0.3,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                               SizedBox(height: size.height * 0.02),
 
                               // Total charges
@@ -198,7 +198,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],
@@ -207,7 +207,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                               SizedBox(height: size.height * 0.02),
                               Divider(
                                   thickness: 0.2,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                               SizedBox(height: size.height * 0.01),
 
                               Row(
@@ -229,7 +229,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],
@@ -238,7 +238,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                               SizedBox(height: size.height * 0.02),
                               Divider(
                                   thickness: 0.2,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
 
                               // Booking fee
                               Row(
@@ -269,7 +269,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],
@@ -288,7 +288,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,
-                                        color: AppColor.lightGreyColor,
+                                        color: AppColor.lightGreyColor(context),
                                       ),
                                     ),
                                     Text(
@@ -297,7 +297,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ],
@@ -317,7 +317,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 14,
-                                        color: AppColor.lightGreyColor,
+                                        color: AppColor.lightGreyColor(context),
                                       ),
                                     ),
                                     Text(
@@ -326,7 +326,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ],
@@ -447,7 +447,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ],
@@ -455,7 +455,7 @@ class _CompletePaymentState extends State<CompletePayment> {
 
                               Divider(
                                   thickness: 0.2,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
 
                               Row(
                                 mainAxisAlignment:
@@ -476,7 +476,7 @@ class _CompletePaymentState extends State<CompletePayment> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ],

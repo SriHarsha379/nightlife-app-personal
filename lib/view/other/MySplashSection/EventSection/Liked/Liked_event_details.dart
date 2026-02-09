@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_color.dart';
@@ -257,8 +259,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value:  SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -271,7 +273,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
-              color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
+              color: AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
               borderRadius: BorderRadius.circular(25),
             ),
             width: size.width * 85 / 100,
@@ -317,10 +319,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     width: size.width * 30 / 100,
                     height: size.height * 4.6 / 100,
                     decoration: BoxDecoration(
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                       borderRadius: BorderRadius.circular(50),
                       border: Border.all(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                     child: Center(
@@ -363,7 +365,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                           AppImage.heartImg,
                           height: 20,
                           width: 20,
-                          color: AppColor.secondryColor, // optional tint color
+                          color: AppColor.secondryColor(context), // optional tint color
                         ),
                         Text(
                           AppLanguage.likeText[language],
@@ -371,7 +373,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ],
@@ -384,7 +386,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
           body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -417,7 +419,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     },
                                     child: Image.asset(
                                       AppImage.backarrow,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                       fit: BoxFit.cover,
                                       height: size.width * 5 / 100,
                                     ),
@@ -445,13 +447,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                             Text(
                                               AppLanguage
                                                   .BassDropFridaytext[language],
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                   fontSize: 24,
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.w700,
                                                   color:
-                                                      AppColor.secondryColor),
+                                                      AppColor.secondryColor(context)),
                                             ),
                                             SizedBox(
                                               height: size.height * 2 / 100,
@@ -478,14 +480,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .technoText[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .secondryColor),
+                                                              .secondryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -512,14 +515,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     child: Text(
                                                       AppLanguage.wishkeyText[
                                                           language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .secondryColor),
+                                                              .secondryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -546,14 +550,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .EDMText[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.normal,
                                                           color: AppColor
-                                                              .secondryColor),
+                                                              .secondryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                 ),
@@ -599,11 +604,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       ),
                                       Text(
                                         AppLanguage.datydateText[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(context)),
                                       ),
                                     ],
                                   ),
@@ -630,11 +635,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       ),
                                       Text(
                                         AppLanguage.time[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(context)),
                                       ),
                                     ],
                                   ),
@@ -668,13 +673,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               child: Text(
                                                 AppLanguage.dummylocationText[
                                                     language],
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                     fontSize: 15,
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w500,
                                                     color:
-                                                        AppColor.secondryColor),
+                                                        AppColor.secondryColor(context)),
                                               ),
                                             ),
                                             Row(
@@ -708,11 +713,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       Container(
                                         child: Text(
                                           AppLanguage.GalleryText[language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 18,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(context)),
                                         ),
                                       ),
                                       GestureDetector(
@@ -780,11 +785,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   Container(
                                     child: Text(
                                       AppLanguage.aboutText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -839,11 +844,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       Container(
                                         child: Text(
                                           AppLanguage.LineupText[language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(context)),
                                         ),
                                       ),
                                       Container(
@@ -920,9 +925,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 Text(
                                                   storyImages[index]["name"] ??
                                                       "No Name",
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 12,
                                                   ),
@@ -934,9 +939,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   storyImages[index]
                                                           ["subname"] ??
                                                       "No Name",
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                     fontWeight: FontWeight.w300,
                                                     fontSize: 12,
                                                   ),
@@ -960,11 +965,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         Container(
                                           child: Text(
                                             AppLanguage.TicketText[language],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                                 fontSize: 16,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColor.secondryColor),
+                                                color: AppColor.secondryColor(context)),
                                           ),
                                         ),
                                         Container(
@@ -1018,27 +1023,29 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     child: Text(
                                                       AppLanguage
                                                           .fromText[language],
-                                                      style: const TextStyle(
+                                                      style:  TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
                                                               FontWeight.w400,
                                                           color: AppColor
-                                                              .secondryColor),
+                                                              .secondryColor(
+                                                                  context)),
                                                     ),
                                                   ),
                                                   Text(
                                                     AppLanguage.ruppesruppeText[
                                                         language],
-                                                    style: const TextStyle(
+                                                    style:  TextStyle(
                                                         fontSize: 24,
                                                         fontFamily:
                                                             AppFont.fontFamily,
                                                         fontWeight:
                                                             FontWeight.w700,
                                                         color: AppColor
-                                                            .secondryColor),
+                                                            .secondryColor(
+                                                                context)),
                                                   ),
                                                 ],
                                               ),
@@ -1054,7 +1061,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   width: size.width * 45 / 100,
                                                   decoration: BoxDecoration(
                                                       color: AppColor
-                                                          .secondryColor,
+                                                          .secondryColor(
+                                                              context),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               40)),
@@ -1110,13 +1118,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               textAlign: TextAlign.center,
                                               AppLanguage
                                                   .secureYourspotText[language],
-                                              style: const TextStyle(
+                                              style:  TextStyle(
                                                   fontSize: 14,
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.w400,
                                                   color:
-                                                      AppColor.secondryColor),
+                                                      AppColor.secondryColor(context)),
                                             ),
                                           ),
                                         ),
@@ -1180,7 +1188,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(46),
                               topRight: Radius.circular(46),
@@ -1225,7 +1233,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               Divider(
                                 height: 0.2,
                                 thickness: 0.5,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 indent: 28,
                                 endIndent: 28,
                               ),
@@ -1266,7 +1274,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                 ),
                                                 subtitle: Text(
@@ -1274,7 +1282,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                   maxLines: 1,
                                                   overflow:
@@ -1318,9 +1326,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     decoration: BoxDecoration(
                                                       color: isSend
                                                           ? AppColor
-                                                              .logoutContainerColor
+                                                              .logoutContainerColor(
+                                                                  context)
                                                           : AppColor
-                                                              .secondryColor,
+                                                              .secondryColor(
+                                                                  context),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
@@ -1349,9 +1359,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                             AppFont.fontFamily,
                                                         color: isSend
                                                             ? AppColor
-                                                                .secondryColor
+                                                                .secondryColor(
+                                                                    context)
                                                             : AppColor
-                                                                .primaryColor,
+                                                                .primaryColor(
+                                                                    context),
                                                       ),
                                                     ),
                                                   ),
@@ -1422,7 +1434,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -1454,7 +1466,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               border: Border.all(
                                 color: isSelected
                                     ? AppColor.pinkColor
-                                    : AppColor.textTapColor,
+                                    : AppColor.textTapColor(context),
                                 width: 1,
                               ),
                               color: isSelected
@@ -1470,7 +1482,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   fontSize: 14,
                                   color: isSelected
                                       ? AppColor.pinkColor
-                                      : AppColor.secondryColor,
+                                      : AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
@@ -1498,7 +1510,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                       width: size.width * 75 / 100,
                       height: size.height * 6 / 100,
                       decoration: BoxDecoration(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                         borderRadius: BorderRadius.circular(30),
                       ),
                       alignment: Alignment.center,
@@ -1572,7 +1584,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                             ),
                             child: Icon(
                               Icons.close,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                               size: 20,
                             ),
                           ),

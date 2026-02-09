@@ -75,6 +75,8 @@ dependencies:
   geolocator: ^9.0.2
   geocoding: ^2.0.5
   permission_handler: ^10.4.4
+  video_thumbnail: ^0.5.3
+  http_parser:
   # For GeoLocation
   # geolocator: ^9.0.2
   # geocoding: ^2.0.5

@@ -44,7 +44,7 @@ class AppPopup extends StatelessWidget {
             padding: EdgeInsets.all(size.width * 4 / 100),
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(18),
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
@@ -61,8 +61,8 @@ class AppPopup extends StatelessWidget {
                 SizedBox(height: size.height * 1 / 100),
                 Text(
                   dialogSubHeading,
-                  style: const TextStyle(
-                    color: AppColor.primaryColor,
+                  style:  TextStyle(
+                    color: AppColor.primaryColor(context),
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
@@ -114,8 +114,8 @@ class AppPopup extends StatelessWidget {
                   top: -(size.height * 4 / 100),
                   child: Container(
                     padding: EdgeInsets.all(size.width * 1 / 100),
-                    decoration: const BoxDecoration(
-                        shape: BoxShape.circle, color: AppColor.secondryColor),
+                    decoration:  BoxDecoration(
+                        shape: BoxShape.circle, color: AppColor.secondryColor(context)),
                     child: Image.asset(
                       icon!,
                       width: size.width * 18 / 100,

@@ -66,22 +66,22 @@ class _BlockUserScreenState extends State<BlockUserScreen> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     final size = MediaQuery.of(context).size;
 
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
           body: SafeArea(
             child: Container(
               height: MediaQuery.of(context).size.height * 100 / 100,
               width: MediaQuery.of(context).size.width * 100 / 100,
-              color: AppColor.primaryColor,
+              color: AppColor.primaryColor(context),
               child: Column(children: [
                 AppHeader(
                     text: "Blocked Users",
@@ -128,14 +128,14 @@ class _BlockUserScreenState extends State<BlockUserScreen> {
                                       style: TextStyle(
                                         fontWeight: FontWeight.w600,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     subtitle: Text(
                                       chat['lastMessage'],
                                       style: TextStyle(
                                           fontSize: 14,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                     ),

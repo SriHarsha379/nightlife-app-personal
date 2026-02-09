@@ -148,8 +148,8 @@ class _VenuePagesState extends State<VenuePages> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value:  SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -162,7 +162,7 @@ class _VenuePagesState extends State<VenuePages> {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
-              color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
+              color: AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
               borderRadius: BorderRadius.circular(25),
             ),
             width: size.width * 85 / 100,
@@ -208,10 +208,10 @@ class _VenuePagesState extends State<VenuePages> {
                     width: size.width * 30 / 100,
                     height: size.height * 4.6 / 100,
                     decoration: BoxDecoration(
-                      color: AppColor.secondryColor,
+                      color: AppColor.secondryColor(context),
                       borderRadius: BorderRadius.circular(50),
                       border: Border.all(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                       ),
                     ),
                     child: Center(
@@ -254,7 +254,7 @@ class _VenuePagesState extends State<VenuePages> {
                           AppImage.heartImg,
                           height: 20,
                           width: 20,
-                          color: AppColor.secondryColor, // optional tint color
+                          color: AppColor.secondryColor(context), // optional tint color
                         ),
                         Text(
                           AppLanguage.likeText[language],
@@ -262,7 +262,7 @@ class _VenuePagesState extends State<VenuePages> {
                             fontSize: 14,
                             fontWeight: FontWeight.w500,
                             fontFamily: AppFont.fontFamily,
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ],
@@ -272,7 +272,7 @@ class _VenuePagesState extends State<VenuePages> {
               ],
             ),
           ),
-          backgroundColor: AppColor.primaryColor,
+          backgroundColor: AppColor.primaryColor(context),
           body: Container(
             height: size.height * 100 / 100,
             width: size.width * 100 / 100,
@@ -303,7 +303,7 @@ class _VenuePagesState extends State<VenuePages> {
                         },
                         child: Image.asset(
                           AppImage.backarrow,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           fit: BoxFit.cover,
                           height: size.width * 5 / 100,
                         ),
@@ -326,11 +326,11 @@ class _VenuePagesState extends State<VenuePages> {
                                 children: [
                                   Text(
                                     AppLanguage.Brewbloomcafetext[language],
-                                    style: const TextStyle(
+                                    style:  TextStyle(
                                         fontSize: 24,
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w700,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                   SizedBox(
                                     height: size.height * 2 / 100,
@@ -352,11 +352,11 @@ class _VenuePagesState extends State<VenuePages> {
                                           ),
                                           child: Text(
                                             AppLanguage.cafe[language],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
-                                                color: AppColor.secondryColor),
+                                                color: AppColor.secondryColor(context)),
                                           ),
                                         ),
                                       ),
@@ -378,11 +378,11 @@ class _VenuePagesState extends State<VenuePages> {
                                           ),
                                           child: Text(
                                             AppLanguage.desert[language],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
-                                                color: AppColor.secondryColor),
+                                                color: AppColor.secondryColor(context)),
                                           ),
                                         ),
                                       ),
@@ -404,11 +404,11 @@ class _VenuePagesState extends State<VenuePages> {
                                           ),
                                           child: Text(
                                             AppLanguage.Coffee[language],
-                                            style: const TextStyle(
+                                            style:  TextStyle(
                                                 fontSize: 14,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
-                                                color: AppColor.secondryColor),
+                                                color: AppColor.secondryColor(context)),
                                           ),
                                         ),
                                       ),
@@ -456,11 +456,11 @@ class _VenuePagesState extends State<VenuePages> {
                         ),
                         Text(
                           AppLanguage.OpenhourText[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 15,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
-                              color: AppColor.secondryColor),
+                              color: AppColor.secondryColor(context)),
                         ),
                       ],
                     ),
@@ -487,11 +487,11 @@ class _VenuePagesState extends State<VenuePages> {
                         ),
                         Text(
                           AppLanguage.time[language],
-                          style: const TextStyle(
+                          style:  TextStyle(
                               fontSize: 15,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
-                              color: AppColor.secondryColor),
+                              color: AppColor.secondryColor(context)),
                         ),
                       ],
                     ),
@@ -523,11 +523,11 @@ class _VenuePagesState extends State<VenuePages> {
                               Container(
                                 child: Text(
                                   AppLanguage.koregaonParkText[language],
-                                  style: const TextStyle(
+                                  style:  TextStyle(
                                       fontSize: 15,
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
-                                      color: AppColor.secondryColor),
+                                      color: AppColor.secondryColor(context)),
                                 ),
                               ),
                               Row(
@@ -555,11 +555,11 @@ class _VenuePagesState extends State<VenuePages> {
                     width: size.width * 90 / 100,
                     child: Text(
                       AppLanguage.GalleryText[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontSize: 18,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w500,
-                          color: AppColor.secondryColor),
+                          color: AppColor.secondryColor(context)),
                     ),
                   ),
 
@@ -605,8 +605,8 @@ class _VenuePagesState extends State<VenuePages> {
                     width: MediaQuery.of(context).size.width * 0.90,
                     child: Text(
                       AppLanguage.aboutText[language],
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                         fontSize: 14,
@@ -651,11 +651,11 @@ class _VenuePagesState extends State<VenuePages> {
                     width: size.width * 92 / 100,
                     child: Text(
                       AppLanguage.upcomingEventstext[language],
-                      style: const TextStyle(
+                      style:  TextStyle(
                           fontSize: 18,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w600,
-                          color: AppColor.secondryColor),
+                          color: AppColor.secondryColor(context)),
                     ),
                   ),
 
@@ -716,11 +716,11 @@ class _VenuePagesState extends State<VenuePages> {
                         Container(
                           child: Text(
                             AppLanguage.TicketText[language],
-                            style: const TextStyle(
+                            style:  TextStyle(
                                 fontSize: 16,
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w600,
-                                color: AppColor.secondryColor),
+                                color: AppColor.secondryColor(context)),
                           ),
                         ),
                         Container(
@@ -766,11 +766,11 @@ class _VenuePagesState extends State<VenuePages> {
                                     width: size.width * 25 / 100,
                                     child: Text(
                                       AppLanguage.reservationsText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 13,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -778,11 +778,11 @@ class _VenuePagesState extends State<VenuePages> {
                                     child: Text(
                                       AppLanguage
                                           .fourHundredruppeText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 24,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                 ],
@@ -797,7 +797,7 @@ class _VenuePagesState extends State<VenuePages> {
                                 child: Container(
                                   width: size.width * 45 / 100,
                                   decoration: BoxDecoration(
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                       borderRadius: BorderRadius.circular(40)),
                                   child: Center(
                                     child: Padding(
@@ -836,11 +836,11 @@ class _VenuePagesState extends State<VenuePages> {
                             child: Text(
                               textAlign: TextAlign.center,
                               AppLanguage.secureYourspotText[language],
-                              style: const TextStyle(
+                              style:  TextStyle(
                                   fontSize: 14,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColor.secondryColor),
+                                  color: AppColor.secondryColor(context)),
                             ),
                           ),
                         ),
@@ -894,7 +894,7 @@ class _VenuePagesState extends State<VenuePages> {
                         flex: 1,
                         child: Container(
                           decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor,
+                            gradient: AppColor.backgroundGradientcolor(context),
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(46),
                               topRight: Radius.circular(46),
@@ -951,7 +951,7 @@ class _VenuePagesState extends State<VenuePages> {
                               Divider(
                                 height: 0.2,
                                 thickness: 0.5,
-                                color: AppColor.secondryColor,
+                                color: AppColor.secondryColor(context),
                                 indent: 28,
                                 endIndent: 28,
                               ),
@@ -995,7 +995,7 @@ class _VenuePagesState extends State<VenuePages> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 16,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                 ),
                                                 subtitle: Text(
@@ -1003,7 +1003,7 @@ class _VenuePagesState extends State<VenuePages> {
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(context),
                                                   ),
                                                   maxLines: 1,
                                                   overflow:
@@ -1047,9 +1047,11 @@ class _VenuePagesState extends State<VenuePages> {
                                                     decoration: BoxDecoration(
                                                       color: isSend
                                                           ? AppColor
-                                                              .logoutContainerColor
+                                                              .logoutContainerColor(
+                                                                  context)
                                                           : AppColor
-                                                              .secondryColor,
+                                                              .secondryColor(
+                                                                  context),
                                                       borderRadius:
                                                           BorderRadius.circular(
                                                               10),
@@ -1078,9 +1080,11 @@ class _VenuePagesState extends State<VenuePages> {
                                                             AppFont.fontFamily,
                                                         color: isSend
                                                             ? AppColor
-                                                                .secondryColor
+                                                                .secondryColor(
+                                                                    context)
                                                             : AppColor
-                                                                .primaryColor,
+                                                                .primaryColor(
+                                                                    context),
                                                       ),
                                                     ),
                                                   ),

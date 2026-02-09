@@ -195,8 +195,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value:  SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -209,7 +209,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Container(
             decoration: BoxDecoration(
-              color: AppColor.sendinvitecontainercolor.withOpacity(0.9),
+              color: AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
               borderRadius: BorderRadius.circular(25),
             ),
             width: size.width * 85 / 100,
@@ -254,10 +254,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       width: size.width * 30 / 100,
                       height: size.height * 4.6 / 100,
                       decoration: BoxDecoration(
-                        color: AppColor.secondryColor,
+                        color: AppColor.secondryColor(context),
                         borderRadius: BorderRadius.circular(50),
                         border: Border.all(
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
                       child: Center(
@@ -306,7 +306,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                             height: 20,
                             width: 20,
                             color:
-                                AppColor.secondryColor, // optional tint color
+                                AppColor.secondryColor(context), // optional tint color
                           ),
                           Text(
                             AppLanguage.likeText[language],
@@ -314,7 +314,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                               fontSize: 14,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ],
@@ -328,7 +328,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
           body: Container(
             width: size.width * 100 / 100,
             height: size.height * 100 / 100,
-            color: AppColor.primaryColor,
+            color: AppColor.primaryColor(context),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -426,7 +426,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   },
                                   child: Image.asset(
                                     AppImage.backarrow,
-                                    color: AppColor.primaryColor,
+                                    color: AppColor.primaryColor(context),
                                     fit: BoxFit.cover,
                                     height: size.width * 5 / 100,
                                   ),
@@ -471,11 +471,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   Container(
                                     child: Text(
                                       AppLanguage.basicdetailstext[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 16,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -501,11 +501,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                       Text(
                                         AppLanguage.agefiftytwo[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 14,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(context)),
                                       ),
                                       SizedBox(
                                         width:
@@ -531,11 +531,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                       Text(
                                         AppLanguage.heightSize[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 14,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(context)),
                                       ),
                                       Container(
                                         child: Text(
@@ -555,11 +555,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       ),
                                       Text(
                                         AppLanguage.hehimText[language],
-                                        style: const TextStyle(
+                                        style:  TextStyle(
                                             fontSize: 14,
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(context)),
                                       ),
                                     ],
                                   ),
@@ -644,11 +644,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   Container(
                                     child: Text(
                                       AppLanguage.bioText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 16,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -677,11 +677,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       Container(
                                         child: Text(
                                           AppLanguage.GalleryText[language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(context)),
                                         ),
                                       ),
                                       InkWell(
@@ -826,11 +826,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                   Container(
                                     child: Text(
                                       AppLanguage.interestText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 16,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -863,8 +863,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             decoration: BoxDecoration(
                                               color: selectedId ==
                                                       Interest[index]['id']
-                                                  ? AppColor.primaryColor
-                                                  : AppColor.primaryColor,
+                                                  ? AppColor.primaryColor(
+                                                      context)
+                                                  : AppColor.primaryColor(
+                                                      context),
                                               borderRadius:
                                                   BorderRadius.circular(50),
                                               border: Border.all(
@@ -906,7 +908,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(context)),
                                         ),
                                       ),
                                     ],
@@ -937,7 +939,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         90 /
                                         100,
                                     decoration: BoxDecoration(
-                                      color: AppColor.capsuleColor,
+                                      color: AppColor.capsuleColor(context),
                                       boxShadow: [
                                         BoxShadow(
                                           color: AppColor.grayColor
@@ -960,7 +962,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         // Icon
                                         Image.asset(
                                           AppImage.instagramIcon,
-                                          color: AppColor.secondryColor,
+                                          color: AppColor.secondryColor(context),
                                           width: MediaQuery.of(context)
                                                   .size
                                                   .width *
@@ -991,12 +993,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               Text(
                                                 AppLanguage
                                                     .instagramText[language],
-                                                style: const TextStyle(
+                                                style:  TextStyle(
                                                   fontSize: 13,
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.w500,
-                                                  color: AppColor.secondryColor,
+                                                  color: AppColor.secondryColor(context),
                                                 ),
                                               ),
                                               Text(
@@ -1039,7 +1041,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               fontSize: 10,
                                               fontWeight: FontWeight.w600,
                                               fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(context),
                                             ),
                                           ),
                                         ),
@@ -1067,11 +1069,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         child: Text(
                                           AppLanguage.recentlyLikedeventsText[
                                               language],
-                                          style: const TextStyle(
+                                          style:  TextStyle(
                                               fontSize: 16,
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(context)),
                                         ),
                                       ),
                                     ],
@@ -1579,11 +1581,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     width: size.width * 80 / 100,
                                     child: Text(
                                       AppLanguage.followedVenuestext[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -1607,11 +1609,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     child: Text(
                                       AppLanguage
                                           .mytopArtistonspotifyText[language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor),
+                                          color: AppColor.secondryColor(context)),
                                     ),
                                   ),
                                   SizedBox(
@@ -1802,7 +1804,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                           flex: 1,
                           child: Container(
                             decoration: BoxDecoration(
-                              gradient: AppColor.backgroundGradientcolor,
+                              gradient: AppColor.backgroundGradientcolor(context),
                               borderRadius: BorderRadius.only(
                                 topLeft: Radius.circular(46),
                                 topRight: Radius.circular(46),
@@ -1890,7 +1892,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                       ? FontWeight.w600
                                                       : FontWeight.w500,
                                                   color: selectedIndex == 0
-                                                      ? AppColor.secondryColor
+                                                      ? AppColor.secondryColor(context)
                                                       : AppColor.greyLightColor,
                                                   fontSize: selectedIndex == 0
                                                       ? 16
@@ -1932,7 +1934,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                       ? FontWeight.w600
                                                       : FontWeight.w500,
                                                   color: selectedIndex == 1
-                                                      ? AppColor.secondryColor
+                                                      ? AppColor.secondryColor(context)
                                                       : AppColor.greyLightColor,
                                                   fontSize: selectedIndex == 1
                                                       ? 16
@@ -1987,12 +1989,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               0.45,
                                           height: 3,
                                           decoration: BoxDecoration(
-                                            color: AppColor.secondryColor,
+                                            color: AppColor.secondryColor(context),
                                             borderRadius:
                                                 BorderRadius.circular(2),
                                             boxShadow: [
                                               BoxShadow(
-                                                color: AppColor.secondryColor
+                                                color: AppColor.secondryColor(context)
                                                     .withOpacity(0.4),
                                                 blurRadius: 8,
                                                 spreadRadius: 1,
@@ -2107,7 +2109,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                                         .w600,
                                                                 fontSize: 16,
                                                                 color: AppColor
-                                                                    .secondryColor,
+                                                                    .secondryColor(
+                                                                        context),
                                                               ),
                                                             ),
                                                             SizedBox(
@@ -2157,7 +2160,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                                       AppFont
                                                                           .fontFamily,
                                                                   color: AppColor
-                                                                      .secondryColor,
+                                                                      .secondryColor(
+                                                                          context),
                                                                 ),
                                                               ),
                                                             ),
@@ -2169,7 +2173,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                           style: TextStyle(
                                                             fontSize: 14,
                                                             color: AppColor
-                                                                .secondryColor,
+                                                                .secondryColor(
+                                                                    context),
                                                           ),
                                                           maxLines: 1,
                                                           overflow: TextOverflow
@@ -2233,9 +2238,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                                 BoxDecoration(
                                                               color: isSend
                                                                   ? AppColor
-                                                                      .logoutContainerColor
+                                                                      .logoutContainerColor(
+                                                                          context)
                                                                   : AppColor
-                                                                      .secondryColor,
+                                                                      .secondryColor(
+                                                                          context),
                                                               borderRadius:
                                                                   BorderRadius
                                                                       .circular(
@@ -2264,9 +2271,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                                     .fontFamily,
                                                                 color: isSend
                                                                     ? AppColor
-                                                                        .secondryColor
+                                                                        .secondryColor(
+                                                                            context)
                                                                     : AppColor
-                                                                        .primaryColor,
+                                                                        .primaryColor(
+                                                                            context),
                                                               ),
                                                             ),
                                                           ),
@@ -2326,7 +2335,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             height: size.height * 0.50,
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: AppColor.popupColor,
+              color: AppColor.popupColor(context),
               borderRadius: BorderRadius.circular(25),
             ),
             child: Column(

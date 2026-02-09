@@ -83,7 +83,9 @@ class AppLanguage {
 
   static const searchText = ["Search"];
   static const searchForaCityText = ["Search for a city"];
-  static const myperfectNight = ["My perfect night..."];
+  // static const myperfectNight = ["My perfect night..."];
+  static const myperfectNight = ["My vibe check..."];
+
   static const demographicSurveyText = ["Demographic Survey"];
   static const settingsText = ["Settings"];
   static const aboutUsText = ["About Us"];
@@ -406,7 +408,7 @@ class AppLanguage {
   static const earningHistorytext = ["Earning History"];
   static const nextText = ["Next"];
   static const resendOtp = ["Resend Otp"];
-    static const resend = ["Resend"];
+  static const resend = ["Resend"];
 
 //parinay 07/10
 
@@ -636,7 +638,7 @@ class AppLanguage {
   static const NightLifeAppText = ["NightLifeApp"];
   static const idProoftext = ["ID Proof"];
   static const selectGendertext = ["Select Gender"];
-    static const gendertext = ["Gender"];
+  static const gendertext = ["Gender"];
 
   static const undoText = ["Undo"];
   static const activeTwominuteAgotext = ["Active 2m ago"];
@@ -669,7 +671,7 @@ class AppLanguage {
   static const usernameemailIdPhonenumberText = [
     "Username or Email Id or Phone Number"
   ];
-    static const passwordtext = ['Password'];
+  static const passwordtext = ['Password'];
 
 //////////////Pritam- 31-10-2025///////////////////////
   static const reviewBookingDetailsText = ["Review booking details"];
@@ -785,7 +787,7 @@ class AppLanguage {
   static const setupYourPrefText = ["Set up your Preferences"];
   static const yourProfileText = ["Your Profile"];
   static const uploadPhotosstatementText = [
-    "Upload 3 to 9 photos to complete your profile and make it stand out."
+    "Upload 1 to 9 photos/Videos to complete your profile and make it stand out."
   ];
 
   //10/11
@@ -828,13 +830,18 @@ class AppLanguage {
   ];
 
   //=================validation=============//
-    static const validPhoneNumberMsgText = [
+  static const validPhoneNumberMsgText = [
     "Enter valid phone number",
   ];
   static const pleaseEnterText = ["Please Enter"];
   static const pleaseSelectText = ["Please Select"];
-    static const validEmailText = ["Please Enter valid Email"];
+  static const validEmailText = ["Please Enter valid Email"];
   static const passwordNotMatchText = [
     "Password and confirm password fields must be equal"
   ];
+  static const cameraSelectText = ["Image from camera"];
+  static const videoSelectText = ["Video from camera"];
+
+  static const gallerySelectText = ["Media from gallery"];
+  static const selectoptionText = ["Select option"];
 }

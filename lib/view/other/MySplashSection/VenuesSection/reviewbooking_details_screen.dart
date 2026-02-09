@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_button.dart';
@@ -46,16 +45,16 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
     final size = MediaQuery.of(context).size;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(bottom: 20), // adjust as needed
@@ -96,7 +95,6 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                         ),
                       ),
                     ),
-                    
                   ),
                   SizedBox(width: size.width * 1 / 100),
                   Text(
@@ -105,25 +103,23 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                       fontFamily: AppFont.fontFamily,
                       fontWeight: FontWeight.w400,
                       fontSize: 12,
-                      color: AppColor.lightGreyColor,
+                      color: AppColor.lightGreyColor(context),
                     ),
                   ),
                 ],
               ),
-              SizedBox(height: size.height *1/100),
+              SizedBox(height: size.height * 1 / 100),
               AppButton(
                 text: AppLanguage.continueText[language],
                 onPress: () {
-            
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: CompletePayment(),
-                        duration: Duration(milliseconds: 500),
-                      ),
-                    );
-             
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: CompletePayment(),
+                      duration: Duration(milliseconds: 500),
+                    ),
+                  );
                 },
               ),
             ],
@@ -148,7 +144,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                           Navigator.pop(context);
                         },
                         child: Image.asset(
-                            color: AppColor.secondryColor,
+                            color: AppColor.secondryColor(context),
                             height: size.width * 5 / 100,
                             width: size.width * 5 / 100,
                             AppImage.backArrowIcon),
@@ -159,7 +155,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
                             fontSize: 18,
-                            color: AppColor.secondryColor),
+                            color: AppColor.secondryColor(context)),
                       ),
                       Container(
                         height: size.width * 5 / 100,
@@ -198,7 +194,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 16,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               )
@@ -230,7 +226,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w700,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                   SizedBox(
                                     height: size.height * 0.1 / 100,
@@ -259,7 +255,6 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                           SizedBox(
                             height: size.height * 3 / 100,
                           ),
-                       
                           SizedBox(
                             height: size.height * 2 / 100,
                           ),
@@ -269,7 +264,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                 fontFamily: AppFont.fontFamily,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 18,
-                                color: AppColor.secondryColor),
+                                color: AppColor.secondryColor(context)),
                           ),
                           SizedBox(
                             height: size.height * 2 / 100,
@@ -290,7 +285,8 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Text(
@@ -311,7 +307,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -334,7 +330,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                   Padding(
                                     padding: EdgeInsets.only(right: 14.0),
@@ -357,7 +353,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor),
+                                      color: AppColor.secondryColor(context)),
                                 ),
                               ),
                             ],
@@ -380,7 +376,8 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Text(
@@ -401,7 +398,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -426,7 +423,8 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 16,
-                                            color: AppColor.secondryColor),
+                                            color: AppColor.secondryColor(
+                                                context)),
                                       ),
                                     ),
                                     Padding(
@@ -451,7 +449,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 16,
-                                        color: AppColor.secondryColor),
+                                        color: AppColor.secondryColor(context)),
                                   ),
                                 ),
                               ],
@@ -475,7 +473,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w700,
                                     fontSize: 18,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 Transform.rotate(
@@ -508,13 +506,12 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
                                       fontSize: 16,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 );
                               },
                             ),
-
                           SizedBox(
                             height: size.height * 15 / 100,
                           ),

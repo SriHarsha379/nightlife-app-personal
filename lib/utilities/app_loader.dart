@@ -22,8 +22,8 @@ class ProgressHUD extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.secondryColor,
+       SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.secondryColor(context),
         systemNavigationBarIconBrightness: Brightness.dark,
         statusBarColor: AppColor.transparentColor,
         statusBarIconBrightness: Brightness.light,

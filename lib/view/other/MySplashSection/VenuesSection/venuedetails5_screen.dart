@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_constant.dart';
@@ -67,7 +66,7 @@ class _BookTableState extends State<BookTable> {
 
   int selectedIndex = 0; // by default, first selected
   int dateindex = 0; // by default, first selected
-  int select = 0; 
+  int select = 0;
 
   final List<Map<String, String>> dates = [
     {'day': 'Today', 'date': '24 Oct'},
@@ -86,11 +85,10 @@ class _BookTableState extends State<BookTable> {
 
   @override
   Widget build(BuildContext context) {
-    
     final size = MediaQuery.of(context).size;
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value: SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
         systemNavigationBarColor: Colors.transparent,
@@ -99,7 +97,7 @@ class _BookTableState extends State<BookTable> {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-              backgroundColor: AppColor.primaryColor,
+              backgroundColor: AppColor.primaryColor(context),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
@@ -141,7 +139,6 @@ class _BookTableState extends State<BookTable> {
                               child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
-                       
                                 child: GestureDetector(
                                   onTap: () => Navigator.pop(context),
                                   child: Center(
@@ -149,7 +146,7 @@ class _BookTableState extends State<BookTable> {
                                       AppImage.backarrow,
                                       width: size.width * 5 / 100,
                                       height: size.width * 5 / 100,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
@@ -177,12 +174,14 @@ class _BookTableState extends State<BookTable> {
                                           child: Align(
                                             alignment: Alignment.centerLeft,
                                             child: Text(
-                                              AppLanguage.bookTableText[language],
+                                              AppLanguage
+                                                  .bookTableText[language],
                                               style: TextStyle(
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 24,
-                                                color: AppColor.secondryColor,
+                                                color: AppColor.secondryColor(
+                                                    context),
                                               ),
                                             ),
                                           ),
@@ -199,7 +198,8 @@ class _BookTableState extends State<BookTable> {
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
                                               fontSize: 12,
-                                              color: AppColor.secondryColor,
+                                              color: AppColor.secondryColor(
+                                                  context),
                                             ),
                                           ),
                                         ),
@@ -227,7 +227,6 @@ class _BookTableState extends State<BookTable> {
                                     ),
                                   ],
                                 ),
-      
                                 SizedBox(
                                   height: size.height * 2.5 / 100,
                                 ),
@@ -235,10 +234,10 @@ class _BookTableState extends State<BookTable> {
                                   height: size.height * 7.5 / 100,
                                   width: size.width * 90 / 100,
                                   decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       boxShadow: [
                                         BoxShadow(
-                                          color: AppColor.secondryColor
+                                          color: AppColor.secondryColor(context)
                                               .withOpacity(0.1),
                                           spreadRadius: 2,
                                           blurRadius: 8,
@@ -247,7 +246,8 @@ class _BookTableState extends State<BookTable> {
                                       ],
                                       borderRadius: BorderRadius.circular(30),
                                       border: Border.all(
-                                          color: AppColor.pinkColor, width: 0.5)),
+                                          color: AppColor.pinkColor,
+                                          width: 0.5)),
                                   child: Center(
                                     child: Row(
                                       mainAxisAlignment:
@@ -260,13 +260,15 @@ class _BookTableState extends State<BookTable> {
                                           AppLanguage
                                               .selectNumberGiText[language],
                                           style: TextStyle(
-                                              color: AppColor.secondryColor),
+                                              color: AppColor.secondryColor(
+                                                  context)),
                                         ),
                                         Container(
                                           height: size.height * 4.5 / 100,
                                           width: size.width * 18 / 100,
                                           decoration: BoxDecoration(
-                                              color: AppColor.primaryColor,
+                                              color: AppColor.primaryColor(
+                                                  context),
                                               borderRadius:
                                                   BorderRadius.circular(30),
                                               border: Border.all(
@@ -280,14 +282,16 @@ class _BookTableState extends State<BookTable> {
                                                 Text(
                                                   '2',
                                                   style: TextStyle(
-                                                      color:
-                                                          AppColor.secondryColor),
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                              context)),
                                                 ),
                                                 SizedBox(
                                                   width: size.width * 3 / 100,
                                                 ),
                                                 Image.asset(
-                                                    height: size.width * 3 / 100,
+                                                    height:
+                                                        size.width * 3 / 100,
                                                     width: size.width * 3 / 100,
                                                     AppImage.downArrow),
                                               ],
@@ -301,7 +305,6 @@ class _BookTableState extends State<BookTable> {
                                     ),
                                   ),
                                 ),
-      
                                 SizedBox(
                                   height: size.height * 4 / 100,
                                 ),
@@ -328,7 +331,8 @@ class _BookTableState extends State<BookTable> {
                                           fontFamily: AppFont.fontFamily1,
                                           fontWeight: FontWeight.w600,
                                           fontSize: 16,
-                                          color: AppColor.secondryColor,
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ],
@@ -340,7 +344,8 @@ class _BookTableState extends State<BookTable> {
                                 Wrap(
                                   spacing: 10,
                                   runSpacing: 10,
-                                  children: List.generate(dates.length, (index) {
+                                  children:
+                                      List.generate(dates.length, (index) {
                                     final isSelect = dateindex == index;
                                     return GestureDetector(
                                       onTap: () {
@@ -352,17 +357,17 @@ class _BookTableState extends State<BookTable> {
                                         height: size.height * 7 / 100,
                                         width: size.width * 28 / 100,
                                         decoration: BoxDecoration(
-                                          color: AppColor.primaryColor,
-                                          borderRadius: BorderRadius.circular(40),
+                                          color: AppColor.primaryColor(context),
+                                          borderRadius:
+                                              BorderRadius.circular(40),
                                           border: Border.all(
                                             color: isSelect
                                                 ? AppColor.pinkColor
-                                                : AppColor.secondryColor,
+                                                : AppColor.secondryColor(
+                                                    context),
                                             width: 0.8,
                                           ),
-                                          boxShadow: [
-                                    
-                                          ],
+                                          boxShadow: [],
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
@@ -376,11 +381,13 @@ class _BookTableState extends State<BookTable> {
                                                 fontSize: 14,
                                                 color: isSelect
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor.secondryColor(
+                                                        context),
                                               ),
                                             ),
                                             SizedBox(
-                                                height: size.height * 0.5 / 100),
+                                                height:
+                                                    size.height * 0.5 / 100),
                                             Text(
                                               dates[index]['date']!,
                                               style: TextStyle(
@@ -389,7 +396,8 @@ class _BookTableState extends State<BookTable> {
                                                 fontSize: 12,
                                                 color: isSelect
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor.secondryColor(
+                                                        context),
                                               ),
                                             ),
                                           ],
@@ -398,7 +406,6 @@ class _BookTableState extends State<BookTable> {
                                     );
                                   }),
                                 ),
-                               
                                 SizedBox(
                                   height: size.height * 3 / 100,
                                 ),
@@ -408,7 +415,7 @@ class _BookTableState extends State<BookTable> {
                                     fontFamily: AppFont.fontFamily1,
                                     fontWeight: FontWeight.w600,
                                     fontSize: 16,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 SizedBox(
@@ -430,15 +437,16 @@ class _BookTableState extends State<BookTable> {
                                         height: size.height * 8.5 / 100,
                                         width: size.width * 28 / 100,
                                         decoration: BoxDecoration(
-                                          color: AppColor.primaryColor,
-                                          borderRadius: BorderRadius.circular(15),
+                                          color: AppColor.primaryColor(context),
+                                          borderRadius:
+                                              BorderRadius.circular(15),
                                           border: Border.all(
                                             color: isSelected
                                                 ? AppColor.pinkColor
-                                                : AppColor.secondryColor,
+                                                : AppColor.secondryColor(
+                                                    context),
                                             width: 0.8,
                                           ),
-                                         
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
@@ -452,11 +460,13 @@ class _BookTableState extends State<BookTable> {
                                                 fontSize: 14,
                                                 color: isSelected
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor.secondryColor(
+                                                        context),
                                               ),
                                             ),
                                             SizedBox(
-                                                height: size.height * 0.5 / 100),
+                                                height:
+                                                    size.height * 0.5 / 100),
                                             Text(
                                               '${timeSlots[index]['discount']!}',
                                               style: TextStyle(
@@ -465,7 +475,8 @@ class _BookTableState extends State<BookTable> {
                                                 fontSize: 12,
                                                 color: isSelected
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor.secondryColor(
+                                                        context),
                                               ),
                                             ),
                                           ],
@@ -474,7 +485,7 @@ class _BookTableState extends State<BookTable> {
                                     );
                                   }),
                                 ),
-                                      SizedBox(
+                                SizedBox(
                                   height: size.height * 2 / 100,
                                 ),
                                 Row(
@@ -486,7 +497,7 @@ class _BookTableState extends State<BookTable> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     SizedBox(
@@ -498,7 +509,6 @@ class _BookTableState extends State<BookTable> {
                                         AppImage.downArrow),
                                   ],
                                 ),
-      
                                 SizedBox(
                                   height: size.height * 6 / 100,
                                 ),
@@ -506,11 +516,12 @@ class _BookTableState extends State<BookTable> {
                                     height: size.height * 22 / 100,
                                     width: size.width * 90 / 100,
                                     decoration: BoxDecoration(
-                                        color: AppColor.primaryColor,
+                                        color: AppColor.primaryColor(context),
                                         boxShadow: [
                                           BoxShadow(
-                                            color: AppColor.secondryColor
-                                                .withOpacity(0.1),
+                                            color:
+                                                AppColor.secondryColor(context)
+                                                    .withOpacity(0.1),
                                             spreadRadius: 2,
                                             blurRadius: 8,
                                             offset: const Offset(0, 4),
@@ -553,16 +564,19 @@ class _BookTableState extends State<BookTable> {
                                                   ),
                                                   child: Center(
                                                     child: Container(
-                                                      height:
-                                                          size.height * 1.5 / 100,
-                                                      width:
-                                                          size.height * 1.5 / 100,
+                                                      height: size.height *
+                                                          1.5 /
+                                                          100,
+                                                      width: size.height *
+                                                          1.5 /
+                                                          100,
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         color: select == 0
                                                             ? AppColor
                                                                 .darkPurpleColor
-                                                            : Colors.transparent,
+                                                            : Colors
+                                                                .transparent,
                                                       ),
                                                     ),
                                                   ),
@@ -580,10 +594,12 @@ class _BookTableState extends State<BookTable> {
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily1,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       fontSize: 14,
-                                                      color:
-                                                          AppColor.secondryColor,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                              context),
                                                     ),
                                                   ),
                                                   Text(
@@ -591,7 +607,8 @@ class _BookTableState extends State<BookTable> {
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily1,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       fontSize: 14,
                                                       color: AppColor
                                                           .darkPurpleColor,
@@ -634,16 +651,19 @@ class _BookTableState extends State<BookTable> {
                                                   ),
                                                   child: Center(
                                                     child: Container(
-                                                      height:
-                                                          size.height * 1.5 / 100,
-                                                      width:
-                                                          size.height * 1.5 / 100,
+                                                      height: size.height *
+                                                          1.5 /
+                                                          100,
+                                                      width: size.height *
+                                                          1.5 /
+                                                          100,
                                                       decoration: BoxDecoration(
                                                         shape: BoxShape.circle,
                                                         color: select == 1
                                                             ? AppColor
                                                                 .darkPurpleColor
-                                                            : Colors.transparent,
+                                                            : Colors
+                                                                .transparent,
                                                       ),
                                                     ),
                                                   ),
@@ -661,10 +681,12 @@ class _BookTableState extends State<BookTable> {
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily1,
-                                                      fontWeight: FontWeight.w500,
+                                                      fontWeight:
+                                                          FontWeight.w500,
                                                       fontSize: 14,
-                                                      color:
-                                                          AppColor.secondryColor,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                              context),
                                                     ),
                                                   ),
                                                   Text(
@@ -672,7 +694,8 @@ class _BookTableState extends State<BookTable> {
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily1,
-                                                      fontWeight: FontWeight.w400,
+                                                      fontWeight:
+                                                          FontWeight.w400,
                                                       fontSize: 14,
                                                       color: AppColor
                                                           .darkPurpleColor,

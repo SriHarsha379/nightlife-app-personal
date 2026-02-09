@@ -51,8 +51,8 @@ class _BookEventState extends State<BookEvent> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor,
+      value: SystemUiOverlayStyle(
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
@@ -61,7 +61,7 @@ class _BookEventState extends State<BookEvent> {
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
-              backgroundColor: AppColor.primaryColor,
+              backgroundColor: AppColor.primaryColor(context),
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
@@ -109,7 +109,7 @@ class _BookEventState extends State<BookEvent> {
                                       AppImage.backarrow,
                                       width: size.width * 5 / 100,
                                       height: size.width * 5 / 100,
-                                      color: AppColor.secondryColor,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
                                 ),
@@ -137,7 +137,8 @@ class _BookEventState extends State<BookEvent> {
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 24,
-                                          color: AppColor.secondryColor,
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),
@@ -153,7 +154,7 @@ class _BookEventState extends State<BookEvent> {
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 12,
-                                        color: AppColor.secondryColor,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ),
@@ -189,11 +190,11 @@ class _BookEventState extends State<BookEvent> {
                           height: size.height * 7.5 / 100,
                           width: size.width * 90 / 100,
                           decoration: BoxDecoration(
-                              color: AppColor.primaryColor,
+                              color: AppColor.primaryColor(context),
                               boxShadow: [
                                 BoxShadow(
-                                  color:
-                                      AppColor.secondryColor.withOpacity(0.1),
+                                  color: AppColor.secondryColor(context)
+                                      .withOpacity(0.1),
                                   spreadRadius: 2,
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
@@ -215,14 +216,14 @@ class _BookEventState extends State<BookEvent> {
                                     fontFamily: AppFont.fontFamily,
                                     fontWeight: FontWeight.w400,
                                     fontSize: 14,
-                                    color: AppColor.secondryColor,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 Container(
                                   height: size.height * 4.5 / 100,
                                   width: size.width * 18 / 100,
                                   decoration: BoxDecoration(
-                                      color: AppColor.primaryColor,
+                                      color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(30),
                                       border: Border.all(
                                           color: AppColor.pinkColor,
@@ -238,7 +239,8 @@ class _BookEventState extends State<BookEvent> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 14,
-                                            color: AppColor.secondryColor,
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
                                         SizedBox(
@@ -288,7 +290,7 @@ class _BookEventState extends State<BookEvent> {
                                       height: size.height * 4.2 / 100,
                                       decoration: BoxDecoration(
                                         color: selectedPassIndex == 0
-                                            ? AppColor.secondryColor
+                                            ? AppColor.secondryColor(context)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(44),
                                       ),
@@ -305,8 +307,10 @@ class _BookEventState extends State<BookEvent> {
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
                                               color: selectedPassIndex == 0
-                                                  ? AppColor.primaryColor
-                                                  : AppColor.secondryColor,
+                                                  ? AppColor.primaryColor(
+                                                      context)
+                                                  : AppColor.secondryColor(
+                                                      context),
                                             ),
                                           ),
                                         ),
@@ -328,7 +332,7 @@ class _BookEventState extends State<BookEvent> {
                                       height: size.height * 4.2 / 100,
                                       decoration: BoxDecoration(
                                         color: selectedPassIndex == 1
-                                            ? AppColor.secondryColor
+                                            ? AppColor.secondryColor(context)
                                             : Colors.transparent,
                                         borderRadius: BorderRadius.circular(44),
                                       ),
@@ -340,8 +344,9 @@ class _BookEventState extends State<BookEvent> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             color: selectedPassIndex == 1
-                                                ? AppColor.primaryColor
-                                                : AppColor.secondryColor,
+                                                ? AppColor.primaryColor(context)
+                                                : AppColor.secondryColor(
+                                                    context),
                                           ),
                                         ),
                                       ),
@@ -374,7 +379,8 @@ class _BookEventState extends State<BookEvent> {
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w600,
                                                 fontSize: 14,
-                                                color: AppColor.listTextColor,
+                                                color: AppColor.listTextColor(
+                                                    context),
                                               ),
                                             ),
                                             SizedBox(
@@ -390,7 +396,8 @@ class _BookEventState extends State<BookEvent> {
                                                     fontWeight: FontWeight.w700,
                                                     fontSize: 16,
                                                     color:
-                                                        AppColor.secondryColor,
+                                                        AppColor.secondryColor(
+                                                            context),
                                                   ),
                                                 ),
                                                 SizedBox(
@@ -404,7 +411,8 @@ class _BookEventState extends State<BookEvent> {
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 14,
                                                     color:
-                                                        AppColor.listTextColor,
+                                                        AppColor.listTextColor(
+                                                            context),
                                                   ),
                                                 ),
                                               ],
@@ -432,14 +440,17 @@ class _BookEventState extends State<BookEvent> {
                                               color: selectedIndexes
                                                       .contains(index)
                                                   ? AppColor
-                                                      .logoutContainerColor
-                                                  : AppColor.secondryColor,
+                                                      .logoutContainerColor(
+                                                          context)
+                                                  : AppColor.secondryColor(
+                                                      context),
                                               border: Border.all(
                                                 width: 1,
                                                 color: selectedIndexes
                                                         .contains(index)
                                                     ? AppColor.pinkColor
-                                                    : AppColor.secondryColor,
+                                                    : AppColor.secondryColor(
+                                                        context),
                                               ),
                                               borderRadius:
                                                   BorderRadius.circular(10),
@@ -457,8 +468,10 @@ class _BookEventState extends State<BookEvent> {
                                                   fontWeight: FontWeight.w500,
                                                   color: selectedIndexes
                                                           .contains(index)
-                                                      ? Colors.white
-                                                      : AppColor.primaryColor,
+                                                      ? AppColor.secondryColor(
+                                                          context)
+                                                      : AppColor.primaryColor(
+                                                          context),
                                                 ),
                                               ),
                                             ),
@@ -769,7 +782,7 @@ class _BookEventState extends State<BookEvent> {
           Text(
             "• ",
             style: TextStyle(
-              color: AppColor.secondryColor,
+              color: AppColor.secondryColor(context),
               fontSize: 14,
             ),
           ),
@@ -777,7 +790,7 @@ class _BookEventState extends State<BookEvent> {
             child: Text(
               text,
               style: TextStyle(
-                color: AppColor.secondryColor,
+                color: AppColor.secondryColor(context),
                 fontSize: 13,
               ),
             ),
@@ -794,7 +807,7 @@ class _BookEventState extends State<BookEvent> {
         Text(
           question,
           style: TextStyle(
-            color: AppColor.secondryColor,
+            color: AppColor.secondryColor(context),
             fontSize: 13,
             fontWeight: FontWeight.w600,
           ),

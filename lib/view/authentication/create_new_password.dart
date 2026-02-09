@@ -50,7 +50,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration:
-              const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
@@ -71,7 +71,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         height: MediaQuery.of(context).size.width * 5 / 100,
                         child: Image.asset(
                           AppImage.backarrow,
-                          color: AppColor.secondryColor,
+                          color: AppColor.secondryColor(context),
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -82,8 +82,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                     Text(
                       AppLanguage.createNewPassText[language],
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
                         fontFamily: AppFont.fontFamily,
@@ -106,8 +106,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         child: Text(
                           AppLanguage.createNewPassHeader[language],
                           textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: AppColor.lightGreyColor,
+                          style:  TextStyle(
+                            color: AppColor.lightGreyColor(context),
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
                             fontFamily: AppFont.fontFamily,
@@ -126,7 +126,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                             maxLength: AppConstant.mobileMaxLenth,
                             keyboardType: TextInputType.name,
                             controller: newPasswordTextController,
-                            fillColor: AppColor.secondryColor,
+                            fillColor: AppColor.secondryColor(context),
                           ),
                         ),
                       ),
@@ -142,7 +142,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                             maxLength: AppConstant.mobileMaxLenth,
                             keyboardType: TextInputType.name,
                             controller: confirmPasswordTextEditingController,
-                            fillColor: AppColor.secondryColor,
+                            fillColor: AppColor.secondryColor(context),
                           ),
                         ),
                       ),

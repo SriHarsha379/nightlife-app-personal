@@ -30,11 +30,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   bool mileageSwitch = false;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor,
+    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+        systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
-        statusBarColor: AppColor.primaryColor,
+        statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
 
     final size = MediaQuery.of(context).size;
@@ -43,7 +43,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
       body: Container(
         width: size.width,
         height: size.height,
-        color: AppColor.primaryColor,
+        color: AppColor.primaryColor(context),
         child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -61,11 +61,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 child: Text(
                   AppLanguage.visibilityText[language],
                   textAlign: TextAlign.left,
-                  style:const TextStyle(
+                  style: TextStyle(
                     fontFamily: AppFont.fontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
               ),
@@ -75,11 +75,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
                 margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor,
+                  color: AppColor.notificationContainerColor(context),
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       spreadRadius: 3,
                       blurRadius: 7,
                       offset: Offset(0, 1),
@@ -96,8 +96,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                       children: [
                         Text(
                           AppLanguage.showMeonText[language],
-                          style: const TextStyle(
-                            color: AppColor.secondryColor,
+                          style:  TextStyle(
+                            color: AppColor.secondryColor(context),
                             fontSize: 15,
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w500,
@@ -115,15 +115,15 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                             },
                             activeColor: AppColor.pinkColor,
                             thumbColor: Colors.white,
-                            trackColor: AppColor.toggleColor,
+                            trackColor: AppColor.toggleColor(context),
                           ),
                         ),
                       ],
                     ),
                     Text(
                       AppLanguage.allowOthersText[language],
-                      style: const TextStyle(
-                        color: AppColor.notificationtextColor,
+                      style:  TextStyle(
+                        color: AppColor.notificationtextColor(context),
                         fontSize: 14,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w400,
@@ -144,7 +144,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     fontFamily: AppFont.fontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
               ),
@@ -165,11 +165,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   margin:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                   decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor,
+                    color: AppColor.notificationContainerColor(context),
                     borderRadius: BorderRadius.circular(8),
                     boxShadow: [
                       BoxShadow(
-                        color: AppColor.primaryColor,
+                        color: AppColor.primaryColor(context),
                         spreadRadius: 3,
                         blurRadius: 7,
                         offset: const Offset(0, 1),
@@ -185,8 +185,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                         children: [
                           Text(
                             AppLanguage.blockedUsersText[language],
-                            style: const TextStyle(
-                              color: AppColor.secondryColor,
+                            style:  TextStyle(
+                              color: AppColor.secondryColor(context),
                               fontSize: 16,
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w400,
@@ -217,7 +217,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     fontFamily: AppFont.fontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
               ),
@@ -228,11 +228,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
                 margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
                 decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor,
+                  color: AppColor.notificationContainerColor(context),
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       spreadRadius: 3,
                       blurRadius: 7,
                       offset: const Offset(0, 1),
@@ -244,8 +244,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   children: [
                     Text(
                       AppLanguage.managePermissionsText[language],
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w400,
@@ -272,7 +272,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     fontFamily: AppFont.fontFamily,
                     fontSize: 18,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor,
+                    color: AppColor.secondryColor(context),
                   ),
                 ),
               ),
@@ -285,11 +285,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   horizontal: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor,
+                  color: AppColor.notificationContainerColor(context),
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       spreadRadius: 3,
                       blurRadius: 7,
                       offset: const Offset(0, 1),
@@ -301,8 +301,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   children: [
                     Text(
                       AppLanguage.downloadDatatext[language],
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w400,
@@ -328,11 +328,11 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   horizontal: 10,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor,
+                  color: AppColor.notificationContainerColor(context),
                   borderRadius: BorderRadius.circular(8),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColor.primaryColor,
+                      color: AppColor.primaryColor(context),
                       spreadRadius: 3,
                       blurRadius: 7,
                       offset: const Offset(0, 1),
@@ -344,8 +344,8 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   children: [
                     Text(
                       AppLanguage.deleteAccount[language],
-                      style: const TextStyle(
-                        color: AppColor.secondryColor,
+                      style:  TextStyle(
+                        color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w400,

@@ -30,11 +30,11 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
         statusBarBrightness: Brightness.dark,
       ),
       child: Scaffold(
-        backgroundColor: AppColor.primaryColor,
+        backgroundColor: AppColor.primaryColor(context),
         body: Container(
           width: size.width,
           height: size.height,
-          color: AppColor.primaryColor,
+          color: AppColor.primaryColor(context),
           child: Column(
             children: [
               SizedBox(height: size.height * 5 / 100),
@@ -56,8 +56,8 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                         width: size.width * 90 / 100,
                         child: Text(
                           AppLanguage.descriptionText[language],
-                          style: const TextStyle(
-                            color: AppColor.secondryColor,
+                          style:  TextStyle(
+                            color: AppColor.secondryColor(context),
                             fontSize: 18,
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w700,
@@ -88,8 +88,8 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                           decoration: InputDecoration(
                             hintText:
                                 AppLanguage.describeYourIssueText[language],
-                            hintStyle: const TextStyle(
-                                color: AppColor.filledText,
+                            hintStyle:  TextStyle(
+                                color: AppColor.filledText(context),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400),
                             border: InputBorder.none,
@@ -102,8 +102,8 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       /// Add Screenshots
                       Text(
                         AppLanguage.addScreenshotsText[language],
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
+                        style:  TextStyle(
+                          color: AppColor.secondryColor(context),
                           fontSize: 17,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w600,
@@ -144,18 +144,18 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                               color: Colors.white.withOpacity(0.5),
                               fontWeight: FontWeight.w400,
                             ),
-                            children: const [
+                            children:  [
                               TextSpan(
                                 text: "By submitting, you allow ",
                                 style: TextStyle(
-                                    color: AppColor.spancolor,
+                                    color: AppColor.spancolor(context),
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12),
                               ),
                               TextSpan(
                                 text: "Hii App",
                                 style: TextStyle(
-                                    color: AppColor.spancolor,
+                                    color: AppColor.spancolor(context),
                                     fontWeight: FontWeight.w700,
                                     fontSize: 12),
                               ),
@@ -163,7 +163,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                                 text:
                                     " to preview related technical info to help address your feedback",
                                 style: TextStyle(
-                                    color: AppColor.spancolor,
+                                    color: AppColor.spancolor(context),
                                     fontWeight: FontWeight.w400,
                                     fontSize: 12),
                               ),
@@ -228,7 +228,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
         // color: const Color(0xff2C1B3A),
         borderRadius: BorderRadius.circular(15),
         border: Border.all(
-          color: AppColor.textTapColor,
+          color: AppColor.textTapColor(context),
           width: .7,
         ),
       ),

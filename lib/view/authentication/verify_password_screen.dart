@@ -42,11 +42,11 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
-        backgroundColor: AppColor.secondryColor,
+        backgroundColor: AppColor.secondryColor(context),
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:  const BoxDecoration(gradient: AppColor.backgroundGradientcolor),
+          decoration:   BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -71,8 +71,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                       child: Text(
                         AppLanguage.forgotPasswordText[language],
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColor.secondryColor,
+                        style:  TextStyle(
+                          color: AppColor.secondryColor(context),
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
                           fontFamily: AppFont.fontFamily,
@@ -88,8 +88,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                       child: Text(
                         AppLanguage.pleaseEnteryourAccountText[language],
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColor.lightGreyColor,
+                        style:  TextStyle(
+                          color: AppColor.lightGreyColor(context),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           fontFamily: AppFont.fontFamily,
@@ -127,8 +127,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                       child: Text(
                         AppLanguage.weHavesharedLinktoresetText[language],
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColor.lightGreyColor,
+                        style:  TextStyle(
+                          color: AppColor.lightGreyColor(context),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           fontFamily: AppFont.fontFamily,
@@ -142,8 +142,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                       child: Text(
                         AppLanguage.passwordOnyourEmailText[language],
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: AppColor.lightGreyColor,
+                        style:  TextStyle(
+                          color: AppColor.lightGreyColor(context),
                           fontSize: 16,
                           fontWeight: FontWeight.w400,
                           fontFamily: AppFont.fontFamily,
@@ -169,8 +169,8 @@ class _VerifyPasswordScreenState extends State<VerifyPasswordScreen> {
                         children: [
                           Text(
                             AppLanguage.didnotRecievetheLinkText[language],
-                            style: const TextStyle(
-                                color: AppColor.secondryColor,
+                            style:  TextStyle(
+                                color: AppColor.secondryColor(context),
                                 fontWeight: FontWeight.w400,
                                 fontSize: 12),
                           ),
