@@ -1,14 +1,18 @@
 // ignore_for_file: non_constant_identifier_names
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/other/city_Preference/music_genres.dart';
+import 'package:night_life/utilities/app_footer.dart';
+import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../provider/post_api_provider.dart';
+import '../../provider/user_controller.dart';
 
 class EditHobbiesScreen extends StatefulWidget {
   const EditHobbiesScreen({super.key});
@@ -18,12 +22,9 @@ class EditHobbiesScreen extends StatefulWidget {
 }
 
 class EditHobbiesScreenState extends State<EditHobbiesScreen> {
-  List<Map<String, dynamic>> hobbies = [
-    {"id": 1, "hobby": "Singing"},
-    {"id": 2, "hobby": "Music"},
-  ];
+  List<Map<String, dynamic>> hobbies = [];
 
-  int _nextId = 3; // Track next available ID
+  int _nextId = 1;
 
   TextEditingController hobbiesTextController = TextEditingController();
   TextEditingController hobbyInputController = TextEditingController();
@@ -33,15 +34,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
   @override
   void initState() {
     super.initState();
-    _updateHobbiesDisplay();
-
-    // Find the highest ID to continue incrementing
-    if (hobbies.isNotEmpty) {
-      _nextId =
-          hobbies.map((h) => h['id'] as int).reduce((a, b) => a > b ? a : b) +
-              1;
-    }
-
+    _loadLocalHobbies();
     _hobbiesFocusNode = FocusNode();
     _hobbiesFocusNode.addListener(() {
       setState(() {
@@ -66,16 +59,44 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     }
   }
 
+  Future<void> _loadLocalHobbies() async {
+    final userController = Provider.of<UserController>(context, listen: false);
+    await userController.getUserDetails();
+
+    final List<String> hobbyNames = userController.getHobbies
+        .map((hobby) {
+          if (hobby is Map) {
+            return (hobby['name'] ?? hobby['title'] ?? hobby['hobby'] ?? '')
+                .toString()
+                .trim();
+          }
+          return hobby.toString().trim();
+        })
+        .where((name) => name.isNotEmpty)
+        .toList();
+
+    if (!mounted) return;
+
+    setState(() {
+      if (hobbyNames.isNotEmpty) {
+        hobbies = List<Map<String, dynamic>>.generate(hobbyNames.length,
+            (index) => {"id": index + 1, "hobby": hobbyNames[index]});
+      }
+      _updateHobbiesDisplay();
+      _nextId = hobbies.isNotEmpty ? hobbies.length + 1 : 1;
+    });
+  }
+
   void _addHobby(String hobby) {
     if (hobby.trim().isEmpty) {
-      _showSnackBar("Please enter a hobby");
+      SnackBarToastMessage.error(context, "Please enter a hobby");
       return;
     }
 
     // Check if hobby name already exists
     if (hobbies.any((h) =>
         h['hobby'].toString().toLowerCase() == hobby.trim().toLowerCase())) {
-      _showSnackBar("This hobby already exists");
+      SnackBarToastMessage.info(context, "This hobby already exists");
       return;
     }
 
@@ -92,7 +113,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
 
   void _editHobby(int id, String newHobby) {
     if (newHobby.trim().isEmpty) {
-      _showSnackBar("Please enter a hobby");
+      SnackBarToastMessage.error(context, "Please enter a hobby");
       return;
     }
 
@@ -100,7 +121,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     if (hobbies.any((h) =>
         h['id'] != id &&
         h['hobby'].toString().toLowerCase() == newHobby.trim().toLowerCase())) {
-      _showSnackBar("This hobby already exists");
+      SnackBarToastMessage.info(context, "This hobby already exists");
       return;
     }
 
@@ -121,16 +142,6 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     });
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColor.pinkColor,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -147,8 +158,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
           body: Container(
             width: MediaQuery.of(context).size.width,
             height: MediaQuery.of(context).size.height,
-            decoration:
-                 BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
+            decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor(context)),
             child: Column(
               children: [
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
@@ -178,7 +189,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                 child: Center(
                                   child: Text(
                                     AppLanguage.editHobbiesText[language],
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
@@ -201,8 +212,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
 
                           // Hobbies Input Field
                           TextFormField(
-                            style:
-                                 TextStyle(color: AppColor.secondryColor(context)),
+                            style: TextStyle(
+                                color: AppColor.secondryColor(context)),
                             controller: hobbiesTextController,
                             focusNode: _hobbiesFocusNode,
                             readOnly: true,
@@ -301,11 +312,12 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                         ),
                                         child: Text(
                                           '#$id',
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor(context),
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
                                       ),
@@ -313,11 +325,12 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       Expanded(
                                         child: Text(
                                           hobbyName,
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                             fontFamily: AppFont.fontFamily,
-                                            color: AppColor.secondryColor(context),
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
                                       ),
@@ -325,9 +338,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       GestureDetector(
                                         onTap: () => _showEditHobbyBottomSheet(
                                             id, hobbyName),
-                                        child:  Icon(
+                                        child: Icon(
                                           Icons.edit_outlined,
-                                          color: AppColor.secondryColor(context),
+                                          color:
+                                              AppColor.secondryColor(context),
                                           size: 20,
                                         ),
                                       ),
@@ -360,23 +374,35 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                 // Continue Button
                 AppButton(
                     text: AppLanguage.continueText[language],
-                    onPress: () {
+                    onPress: () async {
                       if (hobbies.isEmpty) {
-                        _showSnackBar("Please add at least one hobby");
+                        SnackBarToastMessage.info(
+                            context, "Please add at least one hobby");
                         return;
                       }
 
-                      // Print hobbies data for verification
-                      print("Hobbies Data: $hobbies");
+                      final List<String> hobbyNames = hobbies
+                          .map((h) => h['hobby'].toString().trim())
+                          .where((name) => name.isNotEmpty)
+                          .toList();
 
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: const MusicGenresScreen(),
-                          duration: const Duration(milliseconds: 400),
-                        ),
-                      );
+                      final res = await Provider.of<PostApiProvider>(context,
+                              listen: false)
+                          .updateHobbiesApi(context, hobbyNames);
+
+                      if (res != null) {
+                        if (!mounted) return;
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: const MyAppFooter(
+                              initialIndex: 4,
+                            ),
+                            duration: const Duration(milliseconds: 400),
+                          ),
+                        );
+                      }
                     }),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.04),
               ],
@@ -412,7 +438,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                 Text(
+                Text(
                   "Add a hobby",
                   style: TextStyle(
                     fontSize: 18,
@@ -440,7 +466,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child:  Text(
+                          child: Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
@@ -466,7 +492,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child:  Text(
+                          child: Text(
                             "Add",
                             style: TextStyle(
                               fontSize: 16,
@@ -515,7 +541,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               children: [
                 Row(
                   children: [
-                     Text(
+                    Text(
                       "Edit hobby",
                       style: TextStyle(
                         fontSize: 18,
@@ -536,7 +562,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                       ),
                       child: Text(
                         'ID: $id',
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
@@ -565,7 +591,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child:  Text(
+                          child: Text(
                             "Cancel",
                             style: TextStyle(
                               fontSize: 16,
@@ -591,7 +617,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
-                          child:  Text(
+                          child: Text(
                             "Update",
                             style: TextStyle(
                               fontSize: 16,
@@ -623,7 +649,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          title:  Text(
+          title: Text(
             "Delete Hobby",
             style: TextStyle(
               fontSize: 18,
@@ -636,7 +662,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-               Text(
+              Text(
                 "Are you sure you want to delete this hobby?",
                 style: TextStyle(
                   fontSize: 14,
@@ -664,7 +690,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                       ),
                       child: Text(
                         '#$id',
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           fontFamily: AppFont.fontFamily,
@@ -676,7 +702,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                     Expanded(
                       child: Text(
                         hobbyName,
-                        style:  TextStyle(
+                        style: TextStyle(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
@@ -692,7 +718,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
-              child:  Text(
+              child: Text(
                 "Cancel",
                 style: TextStyle(
                   color: AppColor.secondryColor(context),
@@ -727,12 +753,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     List<TextInputFormatter>? inputFormatters,
   }) {
     return TextField(
-      style:  TextStyle(
+      style: TextStyle(
         color: AppColor.secondryColor(context),
         fontFamily: AppFont.fontFamily,
       ),
       controller: controller,
       inputFormatters: inputFormatters,
+      maxLength: 30,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.white54),

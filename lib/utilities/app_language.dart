@@ -844,4 +844,6 @@ class AppLanguage {
 
   static const gallerySelectText = ["Media from gallery"];
   static const selectoptionText = ["Select option"];
+    static const uploadPhotoText = ['Upload Photo'];
+
 }

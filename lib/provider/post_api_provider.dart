@@ -8,10 +8,12 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 
+import '../animation/purple_screen.dart';
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_footer.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
+import '../view/authentication/login_screen.dart';
 import '../view/authentication/otp_verify_screen.dart';
 import '../view/other/city_Preference/citypreference_screen.dart';
 import '../view/other/city_Preference/music_genres.dart';
@@ -52,31 +54,82 @@ class PostApiProvider with ChangeNotifier {
 
     if (res != null) {
       if (res['success'] == true) {
-        AppConstant.token = res['data']['token'] ?? '12345';
-        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        final data = res['data'] ?? <String, dynamic>{};
+        AppConstant.token = data['token'] ?? '12345';
+        await CacheHelper.save("user_details", jsonEncode(data));
         TopNotification.success(context, res['message'][language]);
 
-        // Extract user data
-        final userData = res['data']['user'];
-        bool isEmailVerified = userData['isEmailVerified'] ?? false;
-        bool isProfileCompleted = userData['isProfileCompleted'] ?? false;
+        // Extract user data (new response is flat; older response may wrap in "user")
+        final dynamic userData =
+            (data is Map && data['user'] is Map) ? data['user'] : data;
 
-        // Navigation logic
-        if (isProfileCompleted) {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => WoroAppFooter(),
-          //   ),
-          // );
-        } else if (isEmailVerified && !isProfileCompleted) {
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => const ProfileSetupScreen(),
-          //   ),
-          // );
-        } else {}
+        if (userData is! Map) {
+          setLoading(false);
+          return;
+        }
+
+        final bool isVerified =
+            userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
+        final bool isProfileCompleted = userData['is_profile_completed'] ??
+            userData['isProfileCompleted'] ??
+            false;
+
+        int signupStep = 0;
+        final dynamic stepValue = userData['signup_step'];
+        if (stepValue is int) {
+          signupStep = stepValue;
+        } else if (stepValue is String) {
+          signupStep = int.tryParse(stepValue) ?? 0;
+        }
+
+        if (!context.mounted) {
+          setLoading(false);
+          return;
+        }
+
+        Provider.of<UserController>(context, listen: false)
+            .setUserFromMap(Map<String, dynamic>.from(userData));
+
+        // Navigation logic based on signup_step
+        if (isProfileCompleted || signupStep >= 3) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: const MyAppFooter(initialIndex: 0),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        } else if (signupStep == 1 && isVerified) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: CityPreference(),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        } else if (signupStep == 2) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: const MusicGenresScreen(),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        } else if (signupStep == 1 && !isVerified) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: OtpVerify(
+                mobile: userData['phone_number']?.toString() ?? '',
+              ),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        }
       }
     }
     setLoading(false);
@@ -95,6 +148,7 @@ class PostApiProvider with ChangeNotifier {
     String gender,
     String height,
     String cityId,
+    XFile? profileImage,
   ) async {
     setLoading(true);
 
@@ -115,13 +169,19 @@ class PostApiProvider with ChangeNotifier {
 
     print("Line 105 $fields");
 
-    final res = await postJsonData(
+    Map<String, XFile>? files;
+    if (profileImage != null) {
+      files = {'profile_image': profileImage};
+    }
+
+    final res = await postMultipartData(
       'auth/signup_step_one',
       fields,
       context,
       headers: {
         'authorization': 'Bearer ${AppConstant.token}',
       },
+      files: files,
     );
 
     if (res != null) {
@@ -429,6 +489,7 @@ class PostApiProvider with ChangeNotifier {
       final result = _handleStatusCode(response, context);
 
       if (result != null && result['success'] == true) {
+        AppConstant.token = result['data']['token'] ?? '12345';
         await CacheHelper.save("user_details", jsonEncode(result['data']));
         TopNotification.success(context, result['message'][language]);
 
@@ -686,31 +747,34 @@ class PostApiProvider with ChangeNotifier {
   // ================Edit profile Api================//
   editProfileApi(
     BuildContext context,
-    String fullName,
+    String firstName,
+    String lastName,
+    String userName,
+    String bio,
     String email,
     String mobile,
-    String bio,
+    String gender,
     XFile? profileImage,
   ) async {
     setLoading(true);
 
-    String clubIdsString = favouriteClub.join(',');
-
     Map<String, String> fields = {
-      'fullName': fullName,
+      'first_name': firstName,
+      'last_name': lastName,
+      'username': userName,
+      'gender': gender,
       'email': email,
       'bio': bio,
       'mobile': mobile,
-      'favourite_clubs': clubIdsString,
     };
 
     Map<String, XFile>? files;
     if (profileImage != null) {
-      files = {'profileImage': profileImage};
+      files = {'profile_image': profileImage};
     }
 
     final res = await postMultipartData(
-      'auth/update_profile',
+      'user/edit_profile',
       fields,
       context,
       headers: {
@@ -720,21 +784,185 @@ class PostApiProvider with ChangeNotifier {
     );
 
     log("token: ${AppConstant.token}");
-    log("favourite_clubs: $clubIdsString");
 
     if (res != null && res['success'] == true) {
       await CacheHelper.save("user_details", jsonEncode(res['data']));
+      AppConstant.token = res['data']['token'] ?? "123456";
       TopNotification.success(context, res['message'][language]);
-      // Navigator.pushAndRemoveUntil(
-      //   context,
-      //   MaterialPageRoute(
-      //       builder: (context) => const WoroAppFooter(
-      //             initialIndex: 4,
-      //           )),
-      //   (route) => false,
-      // );
+      Navigator.pushAndRemoveUntil(
+        context,
+        MaterialPageRoute(
+            builder: (context) => const MyAppFooter(
+                  initialIndex: 4,
+                )),
+        (route) => false,
+      );
     }
     setLoading(false);
+  }
+
+  // ================ Add Event Preferences Api ================//
+  Future<bool> addEventPreferencesApi(
+    BuildContext context, {
+    String? eventPreferencesCsv,
+    List<String>? eventPreferenceIds,
+    List<String>? customEventPreferences,
+  }) async {
+    setLoading(true);
+
+    final List<String> ids = (eventPreferenceIds ??
+            (eventPreferencesCsv ?? '')
+                .split(',')
+                .map((id) => id.trim())
+                .where((id) => id.isNotEmpty)
+                .toList())
+        .toSet()
+        .toList();
+
+    final Map<String, dynamic> fields = {
+      'event_preferences': ids,
+    };
+    final List<String> custom = (customEventPreferences ?? [])
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toSet()
+        .toList();
+    if (custom.isNotEmpty) {
+      fields['custom_event_preferences'] = custom;
+    }
+    print("addEventPreferences payload: $fields");
+
+    final res = await postJsonData(
+      'user/add_event_preferences',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    setLoading(false);
+
+    if (res != null && res['success'] == true) {
+      TopNotification.success(context, "Event Preferenece Updated");
+      return true;
+    }
+
+    return false;
+  }
+
+  // ================ Add Vibes Api ================//
+  Future<bool> addVibesApi(
+    BuildContext context, {
+    String? vibesCsv,
+    List<String>? vibeIds,
+  }) async {
+    setLoading(true);
+
+    final List<String> ids = (vibeIds ??
+            (vibesCsv ?? '')
+                .split(',')
+                .map((id) => id.trim())
+                .where((id) => id.isNotEmpty)
+                .toList())
+        .toSet()
+        .toList();
+
+    final Map<String, dynamic> fields = {
+      'vibes': ids,
+    };
+    print("addVibes payload: $fields");
+
+    final res = await postJsonData(
+      'user/add_vibes',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    setLoading(false);
+
+    if (res != null && res['success'] == true) {
+      TopNotification.success(context, res['message'][language]);
+      return true;
+    }
+
+    return false;
+  }
+
+  // ================ Update Hobbies Api ================//
+  Future<Map<String, dynamic>?> updateHobbiesApi(
+    BuildContext context,
+    List<String> hobbies,
+  ) async {
+    setLoading(true);
+
+    final Map<String, dynamic> fields = {
+      'hobbies': hobbies,
+    };
+    print("updateHobbies payload: $fields");
+
+    final res = await postJsonData(
+      'user/update_hobbies',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    setLoading(false);
+
+    if (res != null && res['success'] == true) {
+      if (context.mounted) {
+        TopNotification.success(context, res['message'][language]);
+      }
+      if (res['data'] is Map) {
+        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        AppConstant.token = res['data']['token'] ?? "123456";
+        TopNotification.success(context, res['message'][language]);
+        if (context.mounted) {
+          Provider.of<UserController>(context, listen: false)
+              .setUserFromMap(Map<String, dynamic>.from(res['data']));
+        }
+      }
+    }
+
+    return res;
+  }
+
+  // ================ Delete Gallery Item Api ================//
+  Future<Map<String, dynamic>?> deleteGalleryItemApi(
+    BuildContext context,
+    String url,
+  ) async {
+    setLoading(true);
+
+    final Map<String, dynamic> fields = {
+      'url': url,
+    };
+    print("deleteGalleryItem payload: $fields");
+
+    final res = await postJsonData(
+      'user/delete_gallery_item',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    setLoading(false);
+
+    if (res != null && res['success'] == true) {
+      if (context.mounted) {
+        TopNotification.success(context, res['message']);
+      }
+    }
+
+    return res;
   }
 
 // ====================log out API=============//
@@ -757,17 +985,13 @@ class PostApiProvider with ChangeNotifier {
     AppContentCache().clear();
 
     AppConstant.token = '';
+    AppConstant.selectFooterIndex = 0;
+    await CacheHelper.clearAll();
     setSecondaryLoading(false);
 
     if (res != null && res['success'] == true) {
-      TopNotification.success(context, res['message'][language]);
+      // TopNotification.success(context, res['message'][language]);
     }
-
-    // Navigator.pushAndRemoveUntil(
-    //   context,
-    //   MaterialPageRoute(builder: (_) => const Login()),
-    //   (_) => false,
-    // );
   }
 
 // ================Create Post Api================//

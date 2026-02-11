@@ -9,7 +9,9 @@ import 'package:night_life/view/authentication/support_screen.dart';
 import 'package:night_life/view/other/about/aboutscreen.dart';
 import 'package:night_life/view/other/referafriend_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import '../../animation/purple_screen.dart';
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_comman_setting.dart';
 import '../../utilities/app_constant.dart';
@@ -17,6 +19,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_loader.dart';
 import 'edit_profile_screen.dart';
 
 class Profile extends StatefulWidget {
@@ -30,6 +33,7 @@ class Profile extends StatefulWidget {
 class _ProfileState extends State<Profile> {
   @override
   Widget build(BuildContext context) {
+    final isLoggingOut = context.watch<PostApiProvider>().secondaryLoading;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: const SystemUiOverlayStyle(
         statusBarColor: Colors.black,
@@ -38,12 +42,13 @@ class _ProfileState extends State<Profile> {
         systemNavigationBarColor: Colors.black,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
-      child: Scaffold(
-        // backgroundColor: AppColor.purpleColor,
-        body: Container(
+      child: ProgressHUD(
+        isLoading: isLoggingOut,
+        loadingText: "Logging out...",
+        child: Container(
           width: double.infinity,
           height: double.infinity,
-          decoration:  BoxDecoration(
+          decoration: BoxDecoration(
             gradient: AppColor.backgroundGradientcolor(context),
           ),
           child: Column(
@@ -137,7 +142,7 @@ class _ProfileState extends State<Profile> {
                                               100),
                                   Text(
                                     AppLanguage.sanjanaText[language],
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontSize: 24,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
@@ -175,7 +180,7 @@ class _ProfileState extends State<Profile> {
                           children: [
                             Text(
                               AppLanguage.profileCompleteText[language],
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w700,
                                 fontFamily: AppFont.fontFamily,
@@ -188,7 +193,7 @@ class _ProfileState extends State<Profile> {
                                     100),
                             Text(
                               AppLanguage.seventySevencompleteText[language],
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
@@ -208,7 +213,7 @@ class _ProfileState extends State<Profile> {
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: Text(
                               AppLanguage.settingsText[language],
-                              style:  TextStyle(
+                              style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w600,
                                 fontFamily: AppFont.fontFamily,
@@ -356,8 +361,14 @@ class _ProfileState extends State<Profile> {
                               height:
                                   MediaQuery.of(context).size.height * 3 / 100),
                           GestureDetector(
-                            onTap: () {
-                              Navigator.push(
+                            onTap: () async {
+                              final apiProvider = Provider.of<PostApiProvider>(
+                                context,
+                                listen: false,
+                              );
+                              await apiProvider.logOutApiCalling(context);
+                              if (!mounted) return;
+                              Navigator.pushAndRemoveUntil(
                                 context,
                                 PageTransition(
                                   type: PageTransitionType.bottomToTop,
@@ -366,6 +377,7 @@ class _ProfileState extends State<Profile> {
                                   ),
                                   duration: const Duration(milliseconds: 400),
                                 ),
+                                (route) => false,
                               );
                             },
                             child: Container(
@@ -395,7 +407,7 @@ class _ProfileState extends State<Profile> {
                                   Text(
                                     AppLanguage.logoutText[language],
                                     textAlign: TextAlign.center,
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       color: AppColor.secondryColor(context),
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
@@ -431,7 +443,7 @@ class _ProfileState extends State<Profile> {
         Flexible(
           child: Text(
             text,
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontFamily: AppFont.fontFamily,
               color: AppColor.secondryColor(context),

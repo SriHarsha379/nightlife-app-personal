@@ -5,10 +5,14 @@ import 'package:provider/provider.dart';
 import 'controller/city/city_preference.dart';
 import 'controller/event_preference/event_preference_controller.dart';
 import 'controller/genres/music_genres_controller.dart';
+import 'controller/home/home_controller.dart';
+import 'controller/my_profile/get_my_profile.dart';
+import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/vibe_check/vibe_check_controller.dart';
 import 'controller/vibe_preference/vibe_prefernce_controller.dart';
 import 'provider/darkmode_provider.dart';
 import 'provider/post_api_provider.dart';
+import 'provider/user_controller.dart';
 import 'utilities/app_color.dart';
 import 'utilities/app_font.dart';
 
@@ -29,11 +33,16 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PostApiProvider()),
+        ChangeNotifierProvider(create: (_) => VibeCheckController()),
+        ChangeNotifierProvider(create: (_) => UserController()),
         ChangeNotifierProvider(create: (_) => CityPreferenceController()),
         ChangeNotifierProvider(create: (_) => MusicGenresController()),
         ChangeNotifierProvider(create: (_) => EventPreferenceController()),
         ChangeNotifierProvider(create: (_) => VibePreferenceController()),
         ChangeNotifierProvider(create: (_) => VibeCheckController()),
+        ChangeNotifierProvider(create: (_) => HomeController()),
+        ChangeNotifierProvider(create: (_) => ProfileController()),
+        ChangeNotifierProvider(create: (_) => GetMySwipeProfileController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

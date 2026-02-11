@@ -1,142 +1,81 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
+
+import '../../../controller/my_profile/get_my_profile.dart';
+import '../../../controller/vibe_preference/vibe_prefernce_controller.dart';
+import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_snack_bar_toast_message.dart';
 
 class EditVibePreference extends StatefulWidget {
   static String routeName = './EditVibePreference';
+  final Set<String> initialSelectedVibeIds;
 
-  const EditVibePreference({super.key});
+  const EditVibePreference({
+    super.key,
+    Set<String>? initialSelectedVibeIds,
+  }) : initialSelectedVibeIds = initialSelectedVibeIds ?? const {};
 
   @override
   State<EditVibePreference> createState() => _EditVibePreferenceState();
 }
 
 class _EditVibePreferenceState extends State<EditVibePreference> {
-  // File? _imageSelect;
-  // ignore: prefer_typing_uninitialized_variables
-  var fileName;
+  bool _initialSelectionApplied = false;
+  Set<String> _selectedVibeIds = {};
+
+  String _vibeIdFrom(dynamic vibe) {
+    if (vibe is Map) {
+      return (vibe['_id'] ?? vibe['vibe_id'] ?? vibe['id'] ?? '').toString();
+    }
+    return '';
+  }
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final controller =
+          Provider.of<VibePreferenceController>(context, listen: false);
+      await controller.fetchVibesData(context);
+
+      if (_initialSelectionApplied) return;
+
+      final Set<String> initialIds =
+          Set<String>.from(widget.initialSelectedVibeIds);
+      final Set<String> normalizedSelectedIds = controller.getVibesList
+          .map((vibe) {
+            if (vibe is! Map) return '';
+            final String normalizedId = _vibeIdFrom(vibe);
+            final String vibeId = (vibe['vibe_id'] ?? '').toString();
+            final String rawId = (vibe['_id'] ?? vibe['id'] ?? '').toString();
+            if (normalizedId.isEmpty) return '';
+            if (initialIds.contains(normalizedId) ||
+                (vibeId.isNotEmpty && initialIds.contains(vibeId)) ||
+                (rawId.isNotEmpty && initialIds.contains(rawId))) {
+              return normalizedId;
+            }
+            return '';
+          })
+          .where((id) => id.isNotEmpty)
+          .toSet();
+
+      if (mounted) {
+        setState(() {
+          _selectedVibeIds = normalizedSelectedIds;
+        });
+      } else {
+        _selectedVibeIds = normalizedSelectedIds;
+      }
+      _initialSelectionApplied = true;
+    });
   }
-
-  int reportId = 0;
-
-  int? selectedId;
-  Set<int> selectedIds = {};
-  Set<int> selectedIds1 = {};
-  List<int> selectedMusicIds = [];
-  List<int> selectedVibeIds = [];
-  List<int> selectedList = [];
-
-  List Orders = [
-    {
-      'id': 1,
-      'emoji': '💥',
-      'title': 'High Energy',
-      'title1': 'Dance, EDM, full party mode',
-      'emoji2': '😎',
-      "music": "Chill & Easy",
-      "music1": "Lounge, acoustic, sundowner"
-    },
-    {
-      'id': 2,
-      'emoji': '😍',
-      'title': 'Romantic',
-      'title1': 'Candlelight, date-friendly',
-      'emoji2': '🤗',
-      "music": "Social & Fun",
-      "music1": "Meet new people, mixers"
-    },
-    {
-      'id': 3,
-      'emoji': '👑',
-      'title': 'Exclusive',
-      'title1': 'VIP, invite-only, high-end',
-      'emoji2': '😈',
-      "music": "Wild & Crazy",
-      "music1": "Anything goes, unpredictable"
-    },
-    {
-      'id': 4,
-      'emoji': '✨',
-      'title': 'Trendy & Stylish',
-      'title1': 'Influencer spots, new openings',
-      'emoji2': '💎',
-      "music": "Luxury",
-      "music1": "Premium crowd, craft cocktails"
-    },
-    {
-      'id': 5,
-      'emoji': '📼',
-      'title': 'Retro & Nostalgic',
-      'title1': '80s/90s/2000s theme',
-      'emoji2': '🎸',
-      "music": "Live & Loud",
-      "music1": "Bands, concerts, performances"
-    },
-    {
-      'id': 6,
-      'emoji': '🌆',
-      'title': 'Rooftop & Views',
-      'title1': 'Skyline bars, scenic venues',
-      'emoji2': '🌅',
-      "music": "Beach & Sundowner",
-      "music1": "Sunset vibes, golden hour"
-    },
-    {
-      'id': 7,
-      'emoji': '🎨',
-      'title': 'Creative & Artsy',
-      'title1': 'Art, fashion, concept parties',
-      'emoji2': '💕',
-      "music": "Flirty & Playful",
-      "music1": "Dating, singles nights"
-    },
-    {
-      'id': 8,
-      'emoji': '🤝',
-      'title': 'Community & Warm',
-      'title1': 'Familiar faces, regulars',
-      'emoji2': '🎊',
-      "music": "Festive & Themed",
-      "music1": "Halloween, Holi, NYE"
-    },
-    {
-      'id': 9,
-      'emoji': '🌙',
-      'title': 'Late & Loose',
-      'title1': 'Afterparties, unplanned',
-      'emoji2': '🔬',
-      "music": "Experimental",
-      "music1": "Fusion, cross-genre, surprise"
-    },
-    {
-      'id': 10,
-      'emoji': '🕳️',
-      'title': 'Underground',
-      'title1': 'Hidden venues, techno, secret-',
-      'emoji2': '🌍',
-      "music": "Cultural & Local",
-      "music1": "Themed or regional nights"
-    },
-  ];
-
-  TextEditingController searchController = TextEditingController();
-
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
-  List<int> leftSelected = [];
-  List<int> rightSelected = [];
 
   @override
   Widget build(BuildContext context) {
@@ -146,51 +85,72 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
       value: const SystemUiOverlayStyle(
         statusBarColor: AppColor.statusbar,
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 40),
-          child: AppButton(
-            text: AppLanguage.continueText[language],
-            onPress: () {
-              Navigator.pop(context);
-            },
-          ),
+        floatingActionButton: Consumer<VibePreferenceController>(
+          builder: (context, controller, child) {
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 40),
+              child: AppButton(
+                text: AppLanguage.continueText[language],
+                onPress: () async {
+                  final List<String> selectedVibeIds =
+                      _selectedVibeIds.toSet().toList();
+
+                  if (selectedVibeIds.isEmpty) {
+                    SnackBarToastMessage.info(
+                        context, "Please select at least one vibe");
+                    return;
+                  }
+
+                  final postProvider =
+                      Provider.of<PostApiProvider>(context, listen: false);
+                  final profileController =
+                      Provider.of<ProfileController>(context, listen: false);
+                  final isSuccess = await postProvider.addVibesApi(
+                    context,
+                    vibeIds: selectedVibeIds,
+                  );
+
+                  if (!isSuccess || !mounted) return;
+
+                  await profileController.fetchProfileData(context);
+                  if (!mounted) return;
+
+                  Navigator.pop(context, {
+                    'selectedVibes': selectedVibeIds.join(','),
+                  });
+                },
+              ),
+            );
+          },
         ),
         body: Container(
-          width: MediaQuery.of(context).size.width * 100 / 100,
-          height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:
-               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 3 / 100,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 90 / 100,
-                  height: MediaQuery.of(context).size.height * 8 / 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      Row(
+          width: size.width,
+          height: size.height,
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
+          child: Consumer<VibePreferenceController>(
+            builder: (context, controller, child) {
+              return SingleChildScrollView(
+                child: Column(
+                  children: [
+                    SizedBox(height: size.height * 3 / 100),
+                    SizedBox(
+                      width: size.width * 90 / 100,
+                      height: size.height * 8 / 100,
+                      child: Row(
                         children: [
                           GestureDetector(
-                            onTap: () {
-                              Navigator.pop(context);
-                            },
+                            onTap: () => Navigator.pop(context),
                             child: SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 4 / 100,
+                              width: size.width * 4 / 100,
                               child: SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    5 /
-                                    100,
+                                height: size.height * 5 / 100,
                                 child: Image.asset(
                                   AppImage.backArrowIcon,
                                   color: AppColor.secondryColor(context),
@@ -199,12 +159,12 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                             ),
                           ),
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 80 / 100,
+                            width: size.width * 80 / 100,
                             child: Center(
                               child: Text(
                                 textAlign: TextAlign.center,
                                 AppLanguage.vibePreferenceText[language],
-                                style:  TextStyle(
+                                style: TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 18,
                                   fontWeight: FontWeight.w700,
@@ -215,285 +175,235 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 1 / 100,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 92 / 100,
-                  child: Center(
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLanguage.whatKindofVibeText[language],
-                      style:  TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 16,
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.secondryColor(context),
+                    ),
+                    SizedBox(
+                      width: size.width * 92 / 100,
+                      child: Center(
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          AppLanguage.whatKindofVibeText[language],
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.secondryColor(context),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 1 / 100,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 90 / 100,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLanguage.vibeTypetext[language],
-                      style:  TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 22,
-                        fontWeight: FontWeight.w600,
-                        color: AppColor.secondryColor(context),
+                    SizedBox(height: size.height * 1 / 100),
+                    SizedBox(
+                      width: size.width * 90 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLanguage.vibeTypetext[language],
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.secondryColor(context),
+                            ),
+                          ),
+                          Text(
+                            '${_selectedVibeIds.length}/${controller.maxSelection}',
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.buttonColor,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 1 / 100,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 90 / 100,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLanguage.select1to5Text[language],
-                      style:  TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w400,
-                        color: AppColor.filledText(context),
+                    SizedBox(height: size.height * 1 / 100),
+                    SizedBox(
+                      width: size.width * 90 / 100,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppLanguage.select1to5Text[language],
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.filledText(context),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 2 / 100,
-                ),
-                SingleChildScrollView(
-                  scrollDirection: Axis.vertical,
-                  child: Wrap(
-                    // spacing: 9,
-                    runSpacing: 12,
-                    children: List.generate(
-                      Orders.length,
-                      (index) {
-                        int baseId = Orders[index]['id'];
-
-                        int leftId = baseId * 2;
-                        int rightId = baseId * 2 + 1;
-
-                        bool isLeftSelected = selectedList.contains(leftId);
-                        bool isRightSelected = selectedList.contains(rightId);
-
-                        return Row(
-                          // mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 2 / 100,
+                    SizedBox(height: size.height * 2 / 100),
+                    if (controller.getIsLoading)
+                      SizedBox(
+                        height: size.height * 40 / 100,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: AppColor.buttonColor,
+                          ),
+                        ),
+                      )
+                    else if (controller.getVibesList.isEmpty)
+                      SizedBox(
+                        height: size.height * 40 / 100,
+                        child: Center(
+                          child: Text(
+                            'No vibes available',
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 16,
+                              color: AppColor.secondryColor(context),
                             ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (isLeftSelected) {
-                                    selectedList.remove(leftId);
-                                  } else {
-                                    if (selectedList.length < 5) {
-                                      selectedList.add(leftId);
-                                    } else {}
-                                  }
-                                });
-                              },
-                              child: IntrinsicWidth(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.032,
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            0.012,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColor.filledcolor(context),
-                                    borderRadius: BorderRadius.circular(11),
-                                    border: Border.all(
-                                      color: isLeftSelected
-                                          ? AppColor.buttonColor
-                                          : AppColor.borderColor,
-                                      width: 1,
-                                    ),
-                                    boxShadow: isLeftSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: AppColor.buttonColor
-                                                  .withOpacity(0.35),
-                                              blurRadius: 8,
-                                              spreadRadius: 1,
-                                            )
-                                          ]
-                                        : [],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '${Orders[index]['emoji']} ',
-                                        style:  TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 13.2,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor(context),
-                                        ),
-                                      ),
-                                      Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            Orders[index]['title'],
-                                            style:  TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 13.2,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor(context),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              height: size.height * 0.1 / 100),
-                                          Text(
-                                            Orders[index]['title1'],
-                                            style:  TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColor.lightGreyColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: size.width * 4 / 100),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  if (isRightSelected) {
-                                    selectedList.remove(rightId);
-                                  } else {
-                                    if (selectedList.length < 5) {
-                                      selectedList.add(rightId);
-                                    } else {}
-                                  }
-                                });
-                              },
-                              child: IntrinsicWidth(
-                                child: Container(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal:
-                                        MediaQuery.of(context).size.width *
-                                            0.011,
-                                    vertical:
-                                        MediaQuery.of(context).size.height *
-                                            0.012,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    color: AppColor.filledcolor(context),
-                                    borderRadius: BorderRadius.circular(11),
-                                    border: Border.all(
-                                      color: isRightSelected
-                                          ? AppColor.buttonColor
-                                          : AppColor.borderColor,
-                                      width: 1,
-                                    ),
-                                    boxShadow: isRightSelected
-                                        ? [
-                                            BoxShadow(
-                                              color: AppColor.buttonColor
-                                                  .withOpacity(0.35),
-                                              blurRadius: 8,
-                                              spreadRadius: 1,
-                                            )
-                                          ]
-                                        : [],
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        '${Orders[index]['emoji2']} ',
-                                        style:  TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 13.2,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor(context),
-                                        ),
-                                      ),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Text(
-                                            Orders[index]['music'],
-                                            style:  TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 13.2,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor(context),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                              height: size.height * 0.1 / 100),
-                                          Text(
-                                            Orders[index]['music1'],
-                                            style:  TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 9,
-                                              fontWeight: FontWeight.w400,
-                                              color: AppColor.lightGreyColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
+                          ),
+                        ),
+                      )
+                    else
+                      _buildVibesFromAPI(controller, size),
+                    SizedBox(height: size.height * 20 / 100),
+                  ],
                 ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 16 / 100,
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 4 / 100,
-                ),
-              ],
-            ),
+              );
+            },
           ),
         ),
-        // bottomNavigationBar: const AppFooter(
-        //     selectedMenu: BottomMenus.home, notificationCount: 0),
+      ),
+    );
+  }
+
+  Widget _buildVibesFromAPI(VibePreferenceController controller, Size size) {
+    final apiVibes = controller.getVibesList;
+
+    return Wrap(
+      runSpacing: 12,
+      spacing: size.width * 4 / 100,
+      children: List.generate(
+        apiVibes.length,
+        (index) {
+          final vibe = apiVibes[index];
+          final String vibeId = _vibeIdFrom(vibe);
+          final String vibeName =
+              (vibe['vibe'] ?? vibe['name'] ?? 'Unknown').toString();
+          final String vibeDescription =
+              (vibe['description'] ?? vibe['subtitle'] ?? '').toString();
+          final String imagePath = (vibe['image'] ?? '').toString();
+          final bool isSelected = _selectedVibeIds.contains(vibeId);
+
+          return GestureDetector(
+            onTap: () {
+              if (vibeId.isEmpty) return;
+              if (!isSelected &&
+                  _selectedVibeIds.length >= controller.maxSelection) {
+                SnackBarToastMessage.info(context,
+                    "Max ${controller.maxSelection} selections allowed");
+                return;
+              }
+
+              setState(() {
+                if (isSelected) {
+                  _selectedVibeIds.remove(vibeId);
+                } else {
+                  _selectedVibeIds.add(vibeId);
+                }
+              });
+            },
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.032,
+                vertical: size.height * 0.012,
+              ),
+              width: size.width * 43 / 100,
+              decoration: BoxDecoration(
+                color: AppColor.filledcolor(context),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                  color:
+                      isSelected ? AppColor.buttonColor : AppColor.borderColor,
+                  width: 1,
+                ),
+                boxShadow: isSelected
+                    ? [
+                        BoxShadow(
+                          color: AppColor.buttonColor.withOpacity(0.35),
+                          blurRadius: 8,
+                          spreadRadius: 1,
+                        )
+                      ]
+                    : [],
+              ),
+              child: Row(
+                children: [
+                  Container(
+                    width: size.width * 8 / 100,
+                    height: size.width * 8 / 100,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      border: Border.all(
+                        color: AppColor.borderColor,
+                        width: .5,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: imagePath.isNotEmpty
+                          ? Image.network(
+                              controller.getVibeImageUrl(imagePath),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return _buildPlaceholder();
+                              },
+                            )
+                          : _buildPlaceholder(),
+                    ),
+                  ),
+                  SizedBox(width: size.width * 2 / 100),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          vibeName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 13.2,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.secondryColor(context),
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.1 / 100),
+                        Text(
+                          vibeDescription,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 9,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.lightGreyColor(context),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildPlaceholder() {
+    return Container(
+      color: AppColor.filledcolor(context),
+      child: Center(
+        child: Icon(
+          Icons.music_note,
+          size: 15,
+          color: AppColor.secondryColor(context).withOpacity(0.3),
+        ),
       ),
     );
   }

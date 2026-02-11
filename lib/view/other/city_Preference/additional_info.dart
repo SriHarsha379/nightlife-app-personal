@@ -807,13 +807,17 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 //! Skip Button
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                    final apiProvider =
+                        Provider.of<PostApiProvider>(context, listen: false);
+                    if (apiProvider.loading) return;
+                    apiProvider.signupStepTwoUserApi(
                       context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: const MusicGenresScreen(),
-                        duration: const Duration(milliseconds: 400),
-                      ),
+                      widget.preferredCities,
+                      "",
+                      "",
+                      "",
+                      "",
+                      <String>[],
                     );
                   },
                   child: SizedBox(

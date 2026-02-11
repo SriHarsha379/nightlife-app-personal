@@ -10,6 +10,7 @@ class CustomTextFieldInput extends StatefulWidget {
   final TextInputType keyboardType;
   final String? prefixIcon;
   final Color? fillColor;
+  final bool readOnly;
 
   const CustomTextFieldInput({
     Key? key,
@@ -19,6 +20,7 @@ class CustomTextFieldInput extends StatefulWidget {
     required this.keyboardType,
     this.fillColor,
     this.prefixIcon,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
@@ -33,6 +35,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
       keyboardType: widget.keyboardType,
       controller: widget.controller,
       maxLength: widget.maxLength,
+      readOnly: widget.readOnly,
       decoration: InputDecoration(
         contentPadding: const EdgeInsets.symmetric(
           horizontal: 20,

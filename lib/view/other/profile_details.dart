@@ -1,9 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
 import '../../commonWidget/city_bottomsheet.dart';
 import '../../controller/city/city_preference.dart';
 import '../../provider/darkmode_provider.dart';
@@ -14,6 +17,7 @@ import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
 
@@ -31,6 +35,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   int reportId = 0;
   String location = "";
   String locationDetails = "NA";
+  XFile? profilePhoto;
 
   String imageController = "NA";
 
@@ -84,6 +89,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   //============profile details===========//
   void profileDetailsValidation() {
+    if (profilePhoto == null) {
+      SnackBarToastMessage.info(context, "Please upload a photo");
+      return;
+    }
     if (Validation.isFieldEmpty(context,
         value: NameTextEditingController.text,
         fieldName: AppLanguage.nameText[language])) return;
@@ -152,7 +161,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         dobtexteditingController.text,
         selectedGender.toString(),
         heightTextEditingController.text,
-        selectedCityId.toString()); // Pass city ID to API
+        selectedCityId.toString(),
+        profilePhoto); // Pass city ID to API
   }
 
   @override
@@ -269,6 +279,57 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     ),
                                   ),
                                 ],
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
+
+                              GestureDetector(
+                                onTap: () {
+                                  _showImagePickerSheet();
+                                },
+                                child: Center(
+                                  child: Column(
+                                    children: [
+                                      Container(
+                                        height: 110,
+                                        width: 110,
+                                        decoration: BoxDecoration(
+                                          color: AppColor.themeColor,
+                                          border: Border.all(
+                                              color: AppColor.buttonColor),
+                                          shape: BoxShape.circle,
+                                          image: profilePhoto != null
+                                              ? DecorationImage(
+                                                  image: FileImage(
+                                                      File(profilePhoto!.path)),
+                                                  fit: BoxFit.cover,
+                                                )
+                                              : null,
+                                        ),
+                                        child: profilePhoto == null
+                                            ? Icon(Icons.add,
+                                                size: 40, color: Colors.grey)
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        AppLanguage.uploadPhotoText[language],
+                                        style: const TextStyle(
+                                          fontSize: 14,
+                                          decoration: TextDecoration.underline,
+                                          decorationColor:
+                                              AppColor.appHeadTextColor,
+                                          color: AppColor.appHeadTextColor,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
@@ -871,6 +932,61 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ),
               ),
             ],
+          ),
+        );
+      },
+    );
+  }
+
+  void _showImagePickerSheet() {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: AppColor.themeColor,
+      builder: (sheetContext) {
+        return SafeArea(
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColor.themeColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(16),
+                topRight: Radius.circular(16),
+              ),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.photo_camera_outlined),
+                  title: const Text('Camera'),
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final pickedFile = await ImagePicker().pickImage(
+                      source: ImageSource.camera,
+                      imageQuality: 90,
+                    );
+                    if (pickedFile == null || !mounted) return;
+                    setState(() {
+                      profilePhoto = pickedFile;
+                    });
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.photo_library_outlined),
+                  title: const Text('Gallery'),
+                  onTap: () async {
+                    Navigator.pop(sheetContext);
+                    final pickedFile = await ImagePicker().pickImage(
+                      source: ImageSource.gallery,
+                      imageQuality: 90,
+                    );
+                    if (pickedFile == null || !mounted) return;
+                    setState(() {
+                      profilePhoto = pickedFile;
+                    });
+                  },
+                ),
+              ],
+            ),
           ),
         );
       },

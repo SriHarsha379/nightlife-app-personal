@@ -20,6 +20,9 @@ class HomeWidget {
     required String? lastSwipeType,
     required Function() onMessageTap,
     required Function() onHeartTap,
+    String? bio,
+    List<String>? vibes,
+    String? distance,
   }) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -89,10 +92,22 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: Image.asset(
-                                image,
-                                fit: BoxFit.cover,
-                              ),
+                              child: image.startsWith('http')
+                                  ? Image.network(
+                                      image,
+                                      fit: BoxFit.cover,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          AppImage.userImage1,
+                                          fit: BoxFit.cover,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      image,
+                                      fit: BoxFit.cover,
+                                    ),
                             ),
                             // Shadow overlay that blends into the info section
                             Positioned(
@@ -148,25 +163,32 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                'Weekend explorer who loves live gigs, latte art, and late-night jam sessions.',
+                                bio ??
+                                    'Weekend explorer who loves live gigs, latte art, and late-night jam sessions.',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
                                   height: 1.4,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     .5 /
                                     100,
                               ),
-                              const Text(
-                                'Foodie · Explorer · Creative',
-                                style: TextStyle(
+                              Text(
+                                vibes != null && vibes.isNotEmpty
+                                    ? vibes.join(' · ')
+                                    : 'Foodie · Explorer · Creative',
+                                style: const TextStyle(
                                   color: AppColor.pinkColor,
                                   fontSize: 16,
                                   fontWeight: FontWeight.w500,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
@@ -181,11 +203,15 @@ class HomeWidget {
                                     size: 18,
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    'Lane 7, Koregaon Park • 1.8 km',
-                                    style: TextStyle(
-                                      color: Colors.grey[500],
-                                      fontSize: 14,
+                                  Expanded(
+                                    child: Text(
+                                      distance ?? 'Distance unavailable',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -290,82 +316,6 @@ class HomeWidget {
                   ),
                 ),
 
-              //! Profile Avatars at Top Right (Overlapping)
-              // Positioned(
-              //   top: 12,
-              //   right: 0,
-              //   child: SizedBox(
-              //     width: 105,
-              //     height: 41,
-              //     child: Stack(
-              //       children: [
-              //         //! First Avatar
-              //         Positioned(
-              //           left: 0,
-              //           child: Container(
-              //             width: 38,
-              //             height: 38,
-              //             decoration: BoxDecoration(
-              //               shape: BoxShape.circle,
-              //               border: Border.all(
-              //                   color: const Color(0xFF9C27B0), width: 3),
-              //               image: const DecorationImage(
-              //                 image: NetworkImage(
-              //                     'https://i.pravatar.cc/150?img=1'),
-              //                 fit: BoxFit.cover,
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-
-              //         //! Second Avatar
-              //         // Positioned(
-              //         //   left: 27,
-              //         //   child: Container(
-              //         //     width: 38,
-              //         //     height: 38,
-              //         //     decoration: BoxDecoration(
-              //         //       shape: BoxShape.circle,
-              //         //       border: Border.all(
-              //         //           color: const Color(0xFF9C27B0), width: 3),
-              //         //       image: const DecorationImage(
-              //         //         image: NetworkImage(
-              //         //             'https://i.pravatar.cc/150?img=5'),
-              //         //         fit: BoxFit.cover,
-              //         //       ),
-              //         //     ),
-              //         //   ),
-              //         // ),
-
-              //         //! +2 Badge
-              //         // Positioned(
-              //         //   left: 56,
-              //         //   child: Container(
-              //         //     width: 38,
-              //         //     height: 38,
-              //         //     decoration: BoxDecoration(
-              //         //       shape: BoxShape.circle,
-              //         //       color: const Color(0xFF7B1FA2),
-              //         //       border: Border.all(
-              //         //           color: const Color(0xFF9C27B0), width: 3),
-              //         //     ),
-              //         //     child: const Center(
-              //         //       child: Text(
-              //         //         '+2',
-              //         //         style: TextStyle(
-              //         //           color: Colors.white,
-              //         //           fontSize: 16,
-              //         //           fontWeight: FontWeight.bold,
-              //         //         ),
-              //         //       ),
-              //         //     ),
-              //         //   ),
-              //         // ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-
               //! Heart Button on Right Side
               Positioned(
                 right: 0,
@@ -426,6 +376,12 @@ class HomeWidget {
     required String? lastSwipeType,
     required Function() onShareTap,
     required Function() onHeartTap,
+    String? about,
+    List<String>? categories,
+    String? date,
+    String? venueName,
+    String? address,
+    String? distance,
   }) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -482,12 +438,24 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: Image.asset(
-                                image,
-                                fit: BoxFit.fitHeight,
-                              ),
+                              child: image.startsWith('http')
+                                  ? Image.network(
+                                      image,
+                                      fit: BoxFit.fitHeight,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          AppImage.eventimg,
+                                          fit: BoxFit.fitHeight,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      image,
+                                      fit: BoxFit.fitHeight,
+                                    ),
                             ),
-                            // Shadow overlay that blends into the info section
+                            // Shadow overlay
                             Positioned(
                               bottom: 0,
                               left: 0,
@@ -534,6 +502,8 @@ class HomeWidget {
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
@@ -541,32 +511,39 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                'Bass-heavy techno night with DJ Armin, drink specials till midnight',
+                                about ??
+                                    'Bass-heavy techno night with DJ Armin, drink specials till midnight',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
                                   height: 1.4,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100,
                               ),
-                              const Row(
+                              Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.access_time_rounded,
                                     color: AppColor.pinkColor,
                                     size: 18,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    'Fri, 10 PM – 4 AM',
-                                    style: TextStyle(
-                                      color: AppColor.pinkColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      date ?? 'Fri, 10 PM – 4 AM',
+                                      style: const TextStyle(
+                                        color: AppColor.pinkColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -584,11 +561,15 @@ class HomeWidget {
                                     size: 18,
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    'Club Neon, Downtown • 2.3 km',
-                                    style: TextStyle(
-                                      color: Colors.grey[500],
-                                      fontSize: 14,
+                                  Expanded(
+                                    child: Text(
+                                      '${venueName ?? 'Club Neon'}, ${address ?? 'Downtown'}${distance != null && distance.isNotEmpty ? ' • $distance' : ''}',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -607,158 +588,48 @@ class HomeWidget {
                 ),
               ),
 
-              //! Profile Avatars at Top Right (Overlapping)
-              // Positioned(
-              //   top: 12,
-              //   right: 0,
-              //   child: SizedBox(
-              //     width: 105,
-              //     height: 100,
-              //     child: Stack(
-              //       children: [
-              //         //! First Avatar
-              //         Positioned(
-              //           left: 0,
-              //           child: Container(
-              //             width: 38,
-              //             height: 38,
-              //             decoration: BoxDecoration(
-              //               shape: BoxShape.circle,
-              //               border: Border.all(
-              //                   color: const Color(0xFF9C27B0), width: 3),
-              //               image: const DecorationImage(
-              //                 image: NetworkImage(
-              //                     'https://i.pravatar.cc/150?img=1'),
-              //                 fit: BoxFit.cover,
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-
-              //         //! Second Avatar
-              //         Positioned(
-              //           left: 27,
-              //           child: Container(
-              //             width: 38,
-              //             height: 38,
-              //             decoration: BoxDecoration(
-              //               shape: BoxShape.circle,
-              //               border: Border.all(
-              //                   color: const Color(0xFF9C27B0), width: 3),
-              //               image: const DecorationImage(
-              //                 image: NetworkImage(
-              //                     'https://i.pravatar.cc/150?img=5'),
-              //                 fit: BoxFit.cover,
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-
-              //         //! +2 Badge
-              //         Positioned(
-              //           left: 56,
-              //           child: Container(
-              //             width: 38,
-              //             height: 38,
-              //             decoration: BoxDecoration(
-              //               shape: BoxShape.circle,
-              //               color: const Color(0xFF7B1FA2),
-              //               border: Border.all(
-              //                   color: const Color(0xFF9C27B0), width: 3),
-              //             ),
-              //             child: const Center(
-              //               child: Text(
-              //                 '+2',
-              //                 style: TextStyle(
-              //                   color: Colors.white,
-              //                   fontSize: 16,
-              //                   fontWeight: FontWeight.bold,
-              //                 ),
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-
-              //         //! Likes Count
-              //         const Positioned(
-              //           top: 42,
-              //           right: 19,
-              //           child: SizedBox(
-              //             child: Text(
-              //               "17.6K Likes",
-              //               style: TextStyle(
-              //                 fontFamily: AppFont.fontFamily,
-              //                 fontSize: 12,
-              //                 fontWeight: FontWeight.w600,
-              //                 color: AppColor.textcolor,
-              //               ),
-              //             ),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ),
-              // ),
-
-              //! Beverages on Left Side
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  height: 41,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 5 / 100,
-                      ),
-                      //! Cafe Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Techno",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
+              //! Categories on Left Side
+              if (categories != null && categories.isNotEmpty)
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: SizedBox(
+                    height: 41,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
-                        ),
+                          ...categories.take(2).map((category) => Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: AppColor.themeColor.withOpacity(.7),
+                                    border: Border.all(
+                                        color: const Color(0xFF9C27B0),
+                                        width: 3),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 2.0, horizontal: 10),
+                                    child: Text(
+                                      category,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 2 / 100,
-                      ),
-
-                      //! Coffee Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Whiskey",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
 
               //! Heart Button on Right Side
               Positioned(
@@ -914,6 +785,11 @@ class HomeWidget {
     required String? lastSwipeType,
     required Function() onShareTap,
     required Function() onHeartTap,
+    String? about,
+    List<String>? categories,
+    String? timing,
+    String? address,
+    String? distance,
   }) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -970,12 +846,24 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: Image.asset(
-                                image,
-                                fit: BoxFit.fitHeight,
-                              ),
+                              child: image.startsWith('http')
+                                  ? Image.network(
+                                      image,
+                                      fit: BoxFit.fitHeight,
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                        return Image.asset(
+                                          AppImage.venu1,
+                                          fit: BoxFit.fitHeight,
+                                        );
+                                      },
+                                    )
+                                  : Image.asset(
+                                      image,
+                                      fit: BoxFit.fitHeight,
+                                    ),
                             ),
-                            // Shadow overlay that blends into the info section
+                            // Shadow overlay
                             Positioned(
                               bottom: 0,
                               left: 0,
@@ -1022,6 +910,8 @@ class HomeWidget {
                                   fontSize: 22,
                                   fontWeight: FontWeight.bold,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
@@ -1029,32 +919,39 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                'Cozy café with coffee, desserts, events—perfect for work, conversations, meetups.',
+                                about ??
+                                    'Cozy café with coffee, desserts, events—perfect for work, conversations, meetups.',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
                                   height: 1.4,
                                 ),
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100,
                               ),
-                              const Row(
+                              Row(
                                 children: [
-                                  Icon(
+                                  const Icon(
                                     Icons.access_time_rounded,
                                     color: AppColor.pinkColor,
                                     size: 18,
                                   ),
-                                  SizedBox(width: 4),
-                                  Text(
-                                    '8 AM – 11 PM',
-                                    style: TextStyle(
-                                      color: AppColor.pinkColor,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14,
+                                  const SizedBox(width: 4),
+                                  Expanded(
+                                    child: Text(
+                                      timing ?? '8 AM – 11 PM',
+                                      style: const TextStyle(
+                                        color: AppColor.pinkColor,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -1072,11 +969,15 @@ class HomeWidget {
                                     size: 18,
                                   ),
                                   const SizedBox(width: 4),
-                                  Text(
-                                    'Lane 7, Koregaon Park • 1.8 km',
-                                    style: TextStyle(
-                                      color: Colors.grey[500],
-                                      fontSize: 14,
+                                  Expanded(
+                                    child: Text(
+                                      '${address ?? 'Lane 7, Koregaon Park'}${distance != null && distance.isNotEmpty ? ' • $distance' : ''}',
+                                      style: TextStyle(
+                                        color: Colors.grey[500],
+                                        fontSize: 14,
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
                                   ),
                                 ],
@@ -1095,64 +996,48 @@ class HomeWidget {
                 ),
               ),
 
-              //! Beverages on Left Side
-              Positioned(
-                top: 10,
-                left: 0,
-                child: SizedBox(
-                  height: 41,
-                  child: Row(
-                    children: [
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 5 / 100,
-                      ),
-                      //! Cafe Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Cafe",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
+              //! Categories on Left Side
+              if (categories != null && categories.isNotEmpty)
+                Positioned(
+                  top: 10,
+                  left: 0,
+                  child: SizedBox(
+                    height: 41,
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: [
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
-                        ),
+                          ...categories.take(2).map((category) => Padding(
+                                padding: const EdgeInsets.only(right: 8.0),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: AppColor.themeColor.withOpacity(.7),
+                                    border: Border.all(
+                                        color: const Color(0xFF9C27B0),
+                                        width: 3),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 2.0, horizontal: 10),
+                                    child: Text(
+                                      category,
+                                      style: const TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              )),
+                        ],
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 2 / 100,
-                      ),
-                      //! Coffee Text
-                      Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: AppColor.themeColor.withOpacity(.7),
-                          border: Border.all(
-                              color: const Color(0xFF9C27B0), width: 3),
-                        ),
-                        child: const Padding(
-                          padding: EdgeInsets.symmetric(
-                              vertical: 2.0, horizontal: 10),
-                          child: Text(
-                            "Coffee",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
-              ),
 
               //! Heart Button on Right Side
               Positioned(

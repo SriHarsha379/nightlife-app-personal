@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import '../../provider/content_service.dart';
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_button.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
-import '../../utilities/app_footer.dart';
+import '../../utilities/app_loader.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_validation.dart';
@@ -35,10 +38,12 @@ class _LoginScreenState extends State<LoginScreen>
 
   late AnimationController _overlayController;
   late Animation<Offset> _overlaySlideAnimation;
-
+  String privacypolicytype = '';
+  String termsandconditionstype = '';
   @override
   void initState() {
     super.initState();
+    loadContentData();
 
     /// Bottom login container animation
     _bottomSheetController = AnimationController(
@@ -87,15 +92,11 @@ class _LoginScreenState extends State<LoginScreen>
         value: passwordController.text,
         fieldName: AppLanguage.passwordtext[language])) return;
     if (!Validation.isPasswordLength(context, passwordController.text)) return;
-    // // Add numeric-only validation
-    // if (!Validation.isMobileNumericOnly(
-    //     context, mobileNumberTextEditingController.text)) return;
-
-    // if (!Validation.isMobilValid(
-    //     context, mobileNumberTextEditingController.text)) return;
-
-    // final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    apiProvider.loginUserApiCall(
+        context, emailController.text, passwordController.text);
+    emailController.clear();
+    passwordController.clear();
   }
 
   @override
@@ -105,23 +106,45 @@ class _LoginScreenState extends State<LoginScreen>
     super.dispose();
   }
 
+  loadContentData() {
+    fetchAllContent((List data) {
+      for (var item in data) {
+        // Privacy Policy (content_type: 1)
+        if (item['content_type'] == 1) {
+          setState(() {
+            privacypolicytype = item['content_url'];
+          });
+        }
+
+        // Terms and Conditions (content_type: 2)
+        if (item['content_type'] == 2) {
+          setState(() {
+            termsandconditionstype = item['content_url'];
+          });
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final isLoading = context.watch<PostApiProvider>().loading;
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-      child: PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) {},
-        child: Scaffold(
-          body: Stack(
+    return ProgressHUD(
+      isLoading: isLoading,
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: const SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: Brightness.light,
+          statusBarBrightness: Brightness.light,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness: Brightness.light,
+        ),
+        child: PopScope(
+          canPop: false,
+          onPopInvoked: (didPop) {},
+          child: Stack(
             children: [
               /// Background image
               GestureDetector(
@@ -212,7 +235,7 @@ class _LoginScreenState extends State<LoginScreen>
                             height: size.height * 0.066,
                             child: CustomPasswordField(
                               controller: passwordController,
-                              hintText: "Create Password",
+                              hintText: "Enter Password",
                               maxLength: 20,
                               fillColor: AppColor.otpboxColor(context),
                               textColor: Colors.black,
@@ -271,13 +294,6 @@ class _LoginScreenState extends State<LoginScreen>
                             text: AppLanguage.continueText[language],
                             onPress: () {
                               LoginValidation();
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: const MyAppFooter(initialIndex: 0),
-                                ),
-                              );
                             },
                           ),
                           SizedBox(
@@ -375,7 +391,7 @@ class _LoginScreenState extends State<LoginScreen>
                                 context,
                                 MaterialPageRoute(
                                   builder: (_) => ContentScreen(
-                                    contenttype: "privacypolicy",
+                                    contenttype: privacypolicytype,
                                     header: AppLanguage
                                         .privacypoliciesText[language],
                                   ),
