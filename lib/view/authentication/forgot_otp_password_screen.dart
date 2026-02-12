@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_image.dart';
+import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
 import 'forgot_otp_verify_screen.dart';
 
@@ -36,6 +38,49 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     focusNode.requestFocus();
   }
 
+  bool _isEmailInput(String value) {
+    return value.contains('@');
+  }
+
+  Future<void> forgotPasswordValidation() async {
+    final input = mobileNumberTextEditingController.text.trim();
+    if (Validation.isFieldEmpty(
+      context,
+      value: input,
+      fieldName: AppLanguage.usernameemailIdPhonenumberText[language],
+    )) {
+      return;
+    }
+
+    final isEmail = _isEmailInput(input);
+    if (isEmail) {
+      if (!Validation.isEmailValid(context, input)) return;
+    } else {
+      if (!Validation.isMobileNumericOnly(context, input)) return;
+      if (!Validation.isMobilValid(context, input)) return;
+    }
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    final res = await apiProvider.forgotPasswordApiCalling(
+      context,
+      email: isEmail ? input : null,
+      phoneNumber: isEmail ? null : input,
+    );
+
+    if (!mounted) return;
+    if (res != null && res['success'] == true) {
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (_) => ForgotOtpverify(
+            isEmail: isEmail,
+            identifier: input,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -44,8 +89,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration:
-               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
@@ -72,7 +117,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     Text(
                       AppLanguage.forgotPasswordText[language],
                       textAlign: TextAlign.center,
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -96,7 +141,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         child: Text(
                           AppLanguage.forgotPasswordHeader[language],
                           textAlign: TextAlign.center,
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: AppColor.lightGreyColor(context),
                             fontSize: 16,
                             fontWeight: FontWeight.w400,
@@ -107,18 +152,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 10 / 100,
                       ),
-                      Center(
-                        child: SizedBox(
-                          width: MediaQuery.of(context).size.width * 85 / 100,
-                          height: MediaQuery.of(context).size.height * 6 / 100,
-                          child: CustomTextFieldInput(
-                            hintText: AppLanguage
-                                .enterPhonenoAndenteremailidText[language],
-                            maxLength: AppConstant.mobileMaxLenth,
-                            keyboardType: TextInputType.name,
-                            controller: mobileNumberTextEditingController,
-                            fillColor: AppColor.secondryColor(context),
-                          ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 85 / 100,
+                        height: MediaQuery.of(context).size.height * 6 / 100,
+                        child: CustomLoginTextField(
+                          controller: mobileNumberTextEditingController,
+                          hintText: AppLanguage
+                              .enterPhonenoAndenteremailidText[language],
+                          maxLength: 50,
+                          fillColor: AppColor.otpboxColor(context),
+                          textColor: Colors.black,
+                          borderColor: AppColor.transparentColor,
+                          // iconColor: AppColor.primaryColor,
                         ),
                       ),
                       SizedBox(
@@ -128,17 +173,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                 ),
               ),
-              AppButton(
-                text: AppLanguage.continueText[language],
-                onPress: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeftWithFade,
-                      child: const ForgotOtpverify(),
-                      duration: const Duration(milliseconds: 600),
-                    ),
-                  );
+              Consumer<PostApiProvider>(
+                builder: (context, apiProvider, child) {
+                  return apiProvider.loading
+                      ? const CircularProgressIndicator(
+                          color: AppColor.pinkColor,
+                        )
+                      : AppButton(
+                          text: AppLanguage.continueText[language],
+                          onPress: () {
+                            forgotPasswordValidation();
+                          },
+                        );
                 },
               ),
               SizedBox(

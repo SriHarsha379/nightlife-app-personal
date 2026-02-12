@@ -452,88 +452,88 @@ class _AppPreferencesState extends State<AppPreferences> {
                         const SizedBox(height: 15),
 
                         // Preferences Section
-                        SizedBox(
-                          width: size.width * 90 / 100,
-                          child: Text(
-                            AppLanguage.preferencesText[language],
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
-                        ),
+                        // SizedBox(
+                        //   width: size.width * 90 / 100,
+                        //   child: Text(
+                        //     AppLanguage.preferencesText[language],
+                        //     style: TextStyle(
+                        //       fontFamily: AppFont.fontFamily,
+                        //       fontSize: 18,
+                        //       fontWeight: FontWeight.w700,
+                        //       color: AppColor.secondryColor(context),
+                        //     ),
+                        //   ),
+                        // ),
                       ],
                     );
                   },
                 ),
 
                 // Setup Your Preference Button
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.bottomToTop,
-                        child: MusicGenresScreen(),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                    margin:
-                        const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColor.notificationContainerColor(context),
-                      boxShadow: [
-                        BoxShadow(
-                          color:
-                              AppColor.primaryColor(context).withOpacity(0.3),
-                          spreadRadius: 3,
-                          blurRadius: 7,
-                          offset: const Offset(0, 1),
-                        ),
-                      ],
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(left: size.width * 3 / 100),
-                              child: Text(
-                                AppLanguage.setupYourPrefText[language],
-                                style: TextStyle(
-                                  color: AppColor.secondryColor(context),
-                                  fontSize: 16,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                ),
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  EdgeInsets.only(right: size.width * 3 / 100),
-                              child: Icon(
-                                Icons.arrow_forward_ios,
-                                color: AppColor.secondryColor(context),
-                                size: 20,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+                // GestureDetector(
+                //   onTap: () {
+                //     Navigator.push(
+                //       context,
+                //       PageTransition(
+                //         type: PageTransitionType.bottomToTop,
+                //         child: MusicGenresScreen(),
+                //         duration: const Duration(milliseconds: 500),
+                //       ),
+                //     );
+                //   },
+                //   child: Container(
+                //     padding:
+                //         const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+                //     margin:
+                //         const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+                //     decoration: BoxDecoration(
+                //       color: AppColor.notificationContainerColor(context),
+                //       boxShadow: [
+                //         BoxShadow(
+                //           color:
+                //               AppColor.primaryColor(context).withOpacity(0.3),
+                //           spreadRadius: 3,
+                //           blurRadius: 7,
+                //           offset: const Offset(0, 1),
+                //         ),
+                //       ],
+                //     ),
+                //     child: Column(
+                //       crossAxisAlignment: CrossAxisAlignment.start,
+                //       children: [
+                //         Row(
+                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //           children: [
+                //             Padding(
+                //               padding:
+                //                   EdgeInsets.only(left: size.width * 3 / 100),
+                //               child: Text(
+                //                 AppLanguage.setupYourPrefText[language],
+                //                 style: TextStyle(
+                //                   color: AppColor.secondryColor(context),
+                //                   fontSize: 16,
+                //                   fontFamily: AppFont.fontFamily,
+                //                   fontWeight: FontWeight.w400,
+                //                 ),
+                //               ),
+                //             ),
+                //             Padding(
+                //               padding:
+                //                   EdgeInsets.only(right: size.width * 3 / 100),
+                //               child: Icon(
+                //                 Icons.arrow_forward_ios,
+                //                 color: AppColor.secondryColor(context),
+                //                 size: 20,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ],
+                //     ),
+                //   ),
+                // ),
 
-                SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
+                // SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
               ],
             ),
           ),

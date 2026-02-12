@@ -198,7 +198,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       value: SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
+        statusBarBrightness: Brightness.dark,
         systemNavigationBarColor: Colors.transparent,
         systemNavigationBarIconBrightness: Brightness.light,
       ),

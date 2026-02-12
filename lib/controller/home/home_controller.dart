@@ -245,15 +245,58 @@ class HomeController with ChangeNotifier {
   }
 
   // Like/Unlike actions (you can implement API calls here)
+  Future<bool> swipeUserAction(
+    BuildContext context, {
+    required String targetUserId,
+    required String action, // right | left
+  }) async {
+    final token = AppConstant.token;
+    if (token.isEmpty) {
+      return false;
+    }
+
+    final res = await postJsonData(
+      'feed/swipe_user',
+      {
+        'target_user_id': targetUserId,
+        'action': action,
+      },
+      context,
+      headers: {
+        'authorization': 'Bearer $token',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      return true;
+    }
+    if (res != null) {
+      CommonHelper.handleInactiveUserRedirect(context, res);
+    }
+    return false;
+  }
+
   Future<void> likeItem(BuildContext context, String id, String type) async {
-    // Implement like API call
+    if (type == 'member') {
+      await swipeUserAction(
+        context,
+        targetUserId: id,
+        action: 'right',
+      );
+      return;
+    }
     print("Liked $type with id: $id");
-    // TODO: Add API call for like action
   }
 
   Future<void> dislikeItem(BuildContext context, String id, String type) async {
-    // Implement dislike API call
+    if (type == 'member') {
+      await swipeUserAction(
+        context,
+        targetUserId: id,
+        action: 'left',
+      );
+      return;
+    }
     print("Disliked $type with id: $id");
-    // TODO: Add API call for dislike action
   }
 }

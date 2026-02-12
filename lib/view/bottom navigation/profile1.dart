@@ -316,18 +316,20 @@ class _Profile1State extends State<Profile1> {
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                       SizedBox(height: size.height * 0.002),
-                                      Text(
-                                        profileController
-                                            .getHobbiesDisplayText(),
-                                        style: const TextStyle(
-                                          fontSize: 13.5,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
-                                          color: AppColor.buttonColor,
-                                        ),
-                                        maxLines: 2,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                                      profileController.hobbies.isNotEmpty
+                                          ? Text(
+                                              profileController
+                                                  .getHobbiesDisplayText(),
+                                              style: const TextStyle(
+                                                fontSize: 13.5,
+                                                fontWeight: FontWeight.w500,
+                                                fontFamily: AppFont.fontFamily,
+                                                color: AppColor.buttonColor,
+                                              ),
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                            )
+                                          : SizedBox(),
                                       SizedBox(height: size.height * 0.01),
                                       Row(
                                         children: [

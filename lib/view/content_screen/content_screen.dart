@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
@@ -52,6 +54,8 @@ class _ContentScreenState extends State<ContentScreen>
       duration: const Duration(seconds: 2),
       vsync: this,
     )..repeat();
+
+    log("++++++++++++++++++++++++${widget.contenttype}");
   }
 
   @override

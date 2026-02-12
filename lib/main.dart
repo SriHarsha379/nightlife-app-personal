@@ -8,6 +8,7 @@ import 'controller/genres/music_genres_controller.dart';
 import 'controller/home/home_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
+import 'controller/support/faq_controller.dart';
 import 'controller/vibe_check/vibe_check_controller.dart';
 import 'controller/vibe_preference/vibe_prefernce_controller.dart';
 import 'provider/darkmode_provider.dart';
@@ -43,6 +44,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => HomeController()),
         ChangeNotifierProvider(create: (_) => ProfileController()),
         ChangeNotifierProvider(create: (_) => GetMySwipeProfileController()),
+        ChangeNotifierProvider(create: (_) => FaqController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

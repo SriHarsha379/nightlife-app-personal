@@ -13,17 +13,16 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_validation.dart';
 import '../../utilities/custom_password.dart';
 
-class CreateNewPasswordScreen extends StatefulWidget {
-  static String routeName = './CreateNewPasswordScreen';
-  const CreateNewPasswordScreen({super.key});
+class ChangePasswordScreen extends StatefulWidget {
+  static String routeName = './ChangePasswordScreen';
+  const ChangePasswordScreen({super.key});
 
   @override
-  State<CreateNewPasswordScreen> createState() =>
-      _CreateNewPasswordScreenState();
+  State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
 
-class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
-  TextEditingController pinputInputController = TextEditingController();
+class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
+  TextEditingController currentController = TextEditingController();
   TextEditingController newPasswordTextController = TextEditingController();
   TextEditingController confirmPasswordTextEditingController =
       TextEditingController();
@@ -43,55 +42,50 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
     focusNode.requestFocus();
   }
 
-  Future<void> _submitNewPassword() async {
-    final newPassword = newPasswordTextController.text.trim();
-    final confirmPassword = confirmPasswordTextEditingController.text.trim();
+  //===============change password==============//
+
+  void changePasswordValidation() {
+    if (Validation.isFieldEmpty(
+      context,
+      value: currentController.text,
+      fieldName: "Current Password",
+    )) return;
+
+    if (!Validation.isPasswordLength(context, currentController.text)) return;
 
     if (Validation.isFieldEmpty(
       context,
-      value: newPassword,
-      fieldName: AppLanguage.enterpassword[language],
-    )) {
-      return;
-    }
+      value: newPasswordTextController.text,
+      fieldName: AppLanguage.newPasswordText[language],
+    )) return;
 
-    if (!Validation.isPasswordLength(context, newPassword, minLength: 6)) {
+    if (!Validation.isPasswordLength(context, newPasswordTextController.text))
       return;
-    }
+
+    // if (!Validation.isChangePasswordMatch(
+    //   context,
+    //   currentController.text,
+    //   newPasswordTextController.text,
+    // )) return;
 
     if (Validation.isFieldEmpty(
       context,
-      value: confirmPassword,
-      fieldName: AppLanguage.confirmPassword[language],
-    )) {
-      return;
-    }
+      value: confirmPasswordTextEditingController.text,
+      fieldName: "Confirm New Password",
+    )) return;
 
-    if (!Validation.isPasswordMatch(context, newPassword, confirmPassword)) {
-      return;
-    }
+    if (!Validation.isPasswordLength(
+        context, confirmPasswordTextEditingController.text)) return;
+
+    if (!Validation.isChangePasswordMatch(
+      context,
+      newPasswordTextController.text,
+      confirmPasswordTextEditingController.text,
+    )) return;
 
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    final res = await apiProvider.confirmPasswordApiCalling(
-      context,
-      newPassword: newPassword,
-    );
-
-    if (!mounted) return;
-    if (res != null && res['success'] == true) {
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.bottomToTop,
-          child: const PurpleScreen(
-            nextScreen: LoginScreen(
-              doAnimate: true,
-            ),
-          ),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
-    }
+    apiProvider.chnagePasswordApiCalling(
+        context, currentController.text, newPasswordTextController.text);
   }
 
   @override
@@ -133,7 +127,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       width: MediaQuery.of(context).size.width * 2 / 100,
                     ),
                     Text(
-                      AppLanguage.createNewPassText[language],
+                      AppLanguage.changePasswordText[language],
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         color: AppColor.secondryColor(context),
@@ -145,44 +139,12 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                   ],
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 10 / 100,
-              ),
+
               Expanded(
                 child: SingleChildScrollView(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        alignment: Alignment.center,
-                        width: MediaQuery.of(context).size.width * 90 / 100,
-                        child: Text(
-                          AppLanguage.createNewPassHeader[language],
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: AppColor.lightGreyColor(context),
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            fontFamily: AppFont.fontFamily,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 5 / 100,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 85 / 100,
-                        height: MediaQuery.of(context).size.height * 6 / 100,
-                        child: CustomPasswordField(
-                          controller: newPasswordTextController,
-                          hintText: AppLanguage.enterpassword[language],
-                          maxLength: 20,
-                          fillColor: AppColor.otpboxColor(context),
-                          textColor: Colors.black,
-                          borderColor: AppColor.transparentColor,
-                          iconColor: AppColor.primaryColor(context),
-                        ),
-                      ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 4 / 100,
                       ),
@@ -190,8 +152,8 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         width: MediaQuery.of(context).size.width * 85 / 100,
                         height: MediaQuery.of(context).size.height * 6 / 100,
                         child: CustomPasswordField(
-                          controller: confirmPasswordTextEditingController,
-                          hintText: AppLanguage.confirmPassword[language],
+                          controller: currentController,
+                          hintText: "Current Password",
                           maxLength: 20,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
@@ -200,7 +162,36 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         ),
                       ),
                       SizedBox(
-                        height: MediaQuery.of(context).size.height * 3 / 100,
+                        height: MediaQuery.of(context).size.height * 2 / 100,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 85 / 100,
+                        height: MediaQuery.of(context).size.height * 6 / 100,
+                        child: CustomPasswordField(
+                          controller: newPasswordTextController,
+                          hintText: "New Password",
+                          maxLength: 20,
+                          fillColor: AppColor.otpboxColor(context),
+                          textColor: Colors.black,
+                          borderColor: AppColor.transparentColor,
+                          iconColor: AppColor.primaryColor(context),
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 2 / 100,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 85 / 100,
+                        height: MediaQuery.of(context).size.height * 6 / 100,
+                        child: CustomPasswordField(
+                          controller: confirmPasswordTextEditingController,
+                          hintText: "Confirm New Password",
+                          maxLength: 20,
+                          fillColor: AppColor.otpboxColor(context),
+                          textColor: Colors.black,
+                          borderColor: AppColor.transparentColor,
+                          iconColor: AppColor.primaryColor(context),
+                        ),
                       ),
                     ],
                   ),
@@ -215,13 +206,13 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                       : AppButton(
                           text: AppLanguage.continueText[language],
                           onPress: () {
-                            _submitNewPassword();
+                            changePasswordValidation();
                           },
                         );
                 },
               ),
               SizedBox(
-                height: MediaQuery.of(context).size.height * 3 / 100,
+                height: MediaQuery.of(context).size.height * 5 / 100,
               ),
             ],
           ),

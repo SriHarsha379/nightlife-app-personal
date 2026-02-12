@@ -105,6 +105,18 @@ class Validation {
     return true;
   }
 
+  static bool isChangePasswordMatch(
+      BuildContext context, String password, String confirmPassword) {
+    if (!context.mounted) return false;
+
+    if (password != confirmPassword) {
+      _showError(context,
+          "New password and confirm new password fields must be equal");
+      return false;
+    }
+    return true;
+  }
+
   // PASSWORD MATCH
 
   static bool isPasswordMatch(

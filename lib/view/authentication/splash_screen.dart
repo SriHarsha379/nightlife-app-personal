@@ -15,6 +15,9 @@ import '../../utilities/app_footer.dart';
 import '../../utilities/app_image.dart';
 import '../../provider/common_sharedpreferences.dart';
 import '../../provider/user_controller.dart';
+import '../../controller/home/home_controller.dart';
+import '../../controller/my_profile/get_my_profile.dart';
+import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
 
 class Splash extends StatefulWidget {
   static String routeName = './Splash';
@@ -36,6 +39,12 @@ class _SplashState extends State<Splash> {
     await Future.delayed(const Duration(seconds: 2));
 
     if (!mounted) return;
+    final userController = Provider.of<UserController>(context, listen: false);
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
+    final swipeProfileController =
+        Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
       final userDetails = await CacheHelper.get('user_details');
@@ -47,7 +56,10 @@ class _SplashState extends State<Splash> {
           final token = (data['token'] ?? '').toString().trim();
           if (token.isEmpty) {
             AppConstant.token = '';
-            Provider.of<UserController>(context, listen: false).reset();
+            userController.reset();
+            homeController.clearAllData();
+            profileController.clearProfileData();
+            swipeProfileController.resetState();
             await CacheHelper.remove('user_details');
             _navigateToWelcome();
             return;
@@ -75,8 +87,7 @@ class _SplashState extends State<Splash> {
 
           if (!mounted) return;
 
-          Provider.of<UserController>(context, listen: false)
-              .setUserFromMap(data);
+          userController.setUserFromMap(data);
 
           if (isProfileCompleted || signupStep >= 3) {
             Navigator.pushReplacement(
@@ -125,6 +136,13 @@ class _SplashState extends State<Splash> {
       }
     } catch (e) {
       print("Error checking login status: $e");
+    }
+
+    if (mounted) {
+      userController.reset();
+      homeController.clearAllData();
+      profileController.clearProfileData();
+      swipeProfileController.resetState();
     }
 
     _navigateToWelcome();

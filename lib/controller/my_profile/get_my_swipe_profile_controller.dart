@@ -22,6 +22,24 @@ class GetMySwipeProfileController with ChangeNotifier {
 
   Map<String, bool> get visibility => Map<String, bool>.from(_visibility);
 
+  void resetState() {
+    _isLoading = false;
+    _visibility = {
+      'age': true,
+      'height': true,
+      'pronouns': true,
+      'location': true,
+      'hobbies': true,
+      'vibes': true,
+      'gallery': true,
+      'recent_events': true,
+      'recent_venues': true,
+      'instagram': true,
+      'spotify': true,
+    };
+    notifyListeners();
+  }
+
   Future<void> fetchProfileVisibility(BuildContext context) async {
     final token = AppConstant.token;
     if (token.isEmpty) {

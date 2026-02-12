@@ -11,6 +11,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import 'change_password_screen.dart';
 
 class PrivacySecurityScreen extends StatefulWidget {
   const PrivacySecurityScreen({Key? key}) : super(key: key);
@@ -30,7 +31,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   bool mileageSwitch = false;
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
@@ -96,7 +97,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                       children: [
                         Text(
                           AppLanguage.showMeonText[language],
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: AppColor.secondryColor(context),
                             fontSize: 15,
                             fontFamily: AppFont.fontFamily,
@@ -122,7 +123,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                     ),
                     Text(
                       AppLanguage.allowOthersText[language],
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.notificationtextColor(context),
                         fontSize: 14,
                         fontFamily: AppFont.fontFamily,
@@ -185,7 +186,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                         children: [
                           Text(
                             AppLanguage.blockedUsersText[language],
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: AppColor.secondryColor(context),
                               fontSize: 16,
                               fontFamily: AppFont.fontFamily,
@@ -244,7 +245,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   children: [
                     Text(
                       AppLanguage.managePermissionsText[language],
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
@@ -301,7 +302,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                   children: [
                     Text(
                       AppLanguage.downloadDatatext[language],
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
@@ -320,46 +321,59 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 ),
               ),
 
-              Container(
-                height: size.height * 7 / 100,
-                width: size.width * 94 / 100,
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor(context),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.primaryColor(context),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: const Offset(0, 1),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    PageTransition(
+                      type: PageTransitionType.rightToLeftWithFade,
+                      child: ChangePasswordScreen(),
+                      duration: const Duration(milliseconds: 500),
                     ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLanguage.deleteAccount[language],
-                      style:  TextStyle(
-                        color: AppColor.secondryColor(context),
-                        fontSize: 16,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w400,
+                  );
+                },
+                child: Container(
+                  height: size.height * 7 / 100,
+                  width: size.width * 94 / 100,
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                  margin: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColor.notificationContainerColor(context),
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColor.primaryColor(context),
+                        spreadRadius: 3,
+                        blurRadius: 7,
+                        offset: const Offset(0, 1),
                       ),
-                    ),
-                    SizedBox(
-                      height: size.width * 8 / 100,
-                      width: size.width * 9 / 100,
-                      child: Image.asset(
-                        AppImage.frontArrowIcon,
-                        fit: BoxFit.contain,
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        AppLanguage.changePasswordText[language],
+                        style: TextStyle(
+                          color: AppColor.secondryColor(context),
+                          fontSize: 16,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w400,
+                        ),
                       ),
-                    ),
-                  ],
+                      SizedBox(
+                        height: size.width * 8 / 100,
+                        width: size.width * 9 / 100,
+                        child: Image.asset(
+                          AppImage.frontArrowIcon,
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
 

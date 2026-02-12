@@ -1,12 +1,18 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/utilities/app_button.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:night_life/utilities/app_language.dart';
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
+import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
+import '../../utilities/media_picker_helper.dart';
 
 class ReportProblemScreen extends StatefulWidget {
   static String routeName = './ReportProblemScreen';
@@ -18,6 +24,114 @@ class ReportProblemScreen extends StatefulWidget {
 
 class _ReportProblemScreenState extends State<ReportProblemScreen> {
   TextEditingController messageTextEditingController = TextEditingController();
+  final List<Map<String, String>> selectedMediaList = [];
+
+  @override
+  void dispose() {
+    messageTextEditingController.dispose();
+    super.dispose();
+  }
+
+  void _openMediaPicker() {
+    if (selectedMediaList.length >= MediaPickerHelper.maxMediaItems) {
+      SnackBarToastMessage.error(context,
+          "Maximum ${MediaPickerHelper.maxMediaItems} items can be selected");
+      return;
+    }
+
+    MediaPickerHelper.showMediaPickerBottomSheet(
+      context,
+      currentMediaCount: selectedMediaList.length,
+      selectOptionText: "Select Option",
+      galleryText: "Media from Gallery",
+      cameraText: AppLanguage.cameraSelectText[language],
+      videoText: AppLanguage.videoSelectText[language],
+      cancelText: AppLanguage.cancelText[language],
+      onImageFromCamera: (media) {
+        if (!mounted) return;
+        setState(() {
+          selectedMediaList.add(media);
+        });
+      },
+      onVideoFromCamera: (media) {
+        if (!mounted) return;
+        setState(() {
+          selectedMediaList.add(media);
+        });
+      },
+      onMediaFromGallery: (mediaFromGallery) {
+        if (!mounted) return;
+        setState(() {
+          final remainingSlots =
+              MediaPickerHelper.maxMediaItems - selectedMediaList.length;
+          final itemsToAdd = mediaFromGallery.length > remainingSlots
+              ? remainingSlots
+              : mediaFromGallery.length;
+          selectedMediaList.addAll(mediaFromGallery.take(itemsToAdd));
+
+          if (mediaFromGallery.length > remainingSlots) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text(
+                  "Only $itemsToAdd items added. Maximum ${MediaPickerHelper.maxMediaItems} items allowed.",
+                ),
+                backgroundColor: AppColor.pinkColor,
+              ),
+            );
+          }
+        });
+      },
+    );
+  }
+
+  void _removeMediaItem(int index) {
+    setState(() {
+      selectedMediaList.removeAt(index);
+    });
+  }
+
+  Future<void> _submitProblem() async {
+    final description = messageTextEditingController.text.trim();
+    if (description.isEmpty) {
+      SnackBarToastMessage.info(context, "Please enter description");
+      return;
+    }
+
+    final List<XFile> images = [];
+    final List<XFile> videos = [];
+    final List<XFile> thumbnails = [];
+
+    for (final media in selectedMediaList) {
+      final type = (media['type'] ?? '').toLowerCase();
+      final filePath = media['file'] ?? '';
+      final thumbPath = media['thumbnail'] ?? '';
+
+      if (filePath.isEmpty) continue;
+
+      if (type == 'image') {
+        images.add(XFile(filePath));
+      } else if (type == 'video') {
+        videos.add(XFile(filePath));
+        if (thumbPath.isNotEmpty) {
+          thumbnails.add(XFile(thumbPath));
+        }
+      }
+    }
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    final res = await apiProvider.reportProblemApi(
+      context,
+      description: description,
+      images: images,
+      videos: videos,
+      thumbnails: thumbnails,
+    );
+
+    if (!mounted) return;
+    if (res != null && res['success'] == true) {
+      Navigator.pop(context);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -56,7 +170,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                         width: size.width * 90 / 100,
                         child: Text(
                           AppLanguage.descriptionText[language],
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: AppColor.secondryColor(context),
                             fontSize: 18,
                             fontFamily: AppFont.fontFamily,
@@ -69,14 +183,11 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
 
                       /// Description Field
                       Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 4 / 100,
-                          vertical: size.height * .5 / 100,
-                        ),
+                        padding: EdgeInsets.symmetric(),
                         decoration: BoxDecoration(
-                          color: const Color(0xff36214A),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
+                            color: const Color(0xff36214A),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(color: AppColor.appButtonColor)),
                         child: TextField(
                           controller: messageTextEditingController,
                           maxLines: 5,
@@ -88,7 +199,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                           decoration: InputDecoration(
                             hintText:
                                 AppLanguage.describeYourIssueText[language],
-                            hintStyle:  TextStyle(
+                            hintStyle: TextStyle(
                                 color: AppColor.filledText(context),
                                 fontSize: 15,
                                 fontWeight: FontWeight.w400),
@@ -102,7 +213,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       /// Add Screenshots
                       Text(
                         AppLanguage.addScreenshotsText[language],
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: AppColor.secondryColor(context),
                           fontSize: 17,
                           fontFamily: AppFont.fontFamily,
@@ -124,13 +235,34 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
 
                       SizedBox(height: size.height * 1.5 / 100),
 
-                      /// Screenshot Boxes
-                      Row(
-                        children: [
-                          _uploadBox(size, isAdd: true),
-                          SizedBox(width: size.width * 3 / 100),
-                          _uploadSecondBox(size),
-                        ],
+                      Wrap(
+                        spacing: size.width * 3 / 100,
+                        runSpacing: size.height * 1.6 / 100,
+                        children: List.generate(
+                          selectedMediaList.length <
+                                  MediaPickerHelper.maxMediaItems
+                              ? selectedMediaList.length + 1
+                              : selectedMediaList.length,
+                          (index) {
+                            if (index < selectedMediaList.length) {
+                              return _buildMediaItem(
+                                size,
+                                selectedMediaList[index],
+                                index,
+                              );
+                            }
+                            return _uploadBox(size, isAdd: true);
+                          },
+                        ),
+                      ),
+                      SizedBox(height: size.height * 1 / 100),
+                      Text(
+                        "${selectedMediaList.length} media selected",
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontFamily: AppFont.fontFamily,
+                        ),
                       ),
                       SizedBox(height: size.height * 15 / 100),
 
@@ -144,7 +276,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                               color: Colors.white.withOpacity(0.5),
                               fontWeight: FontWeight.w400,
                             ),
-                            children:  [
+                            children: [
                               TextSpan(
                                 text: "By submitting, you allow ",
                                 style: TextStyle(
@@ -175,12 +307,75 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       SizedBox(height: size.height * 3 / 100),
 
                       Center(
-                        child: AppButton(
-                            text: AppLanguage.submitText[language],
-                            onPress: () {
-                              Navigator.pop(context);
-                            }),
+                        child: Consumer<PostApiProvider>(
+                          builder: (context, apiprovider, child) {
+                            if (apiprovider.loading) {
+                              return const CircularProgressIndicator(
+                                color: AppColor.pinkColor,
+                              );
+                            }
+                            return GestureDetector(
+                              onTap: _submitProblem,
+                              child: Container(
+                                width: MediaQuery.of(context).size.width *
+                                    80 /
+                                    100,
+                                height: MediaQuery.of(context).size.height *
+                                    7 /
+                                    100,
+                                decoration: const BoxDecoration(
+                                  color: AppColor.buttonColor,
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(40)),
+                                ),
+                                alignment: Alignment.center,
+                                child: Text(
+                                  AppLanguage.submitText[language],
+                                  style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w600,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 16),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
                       ),
+
+                      // Center(
+                      //   child: GestureDetector(
+                      //     onTap: isLoading ? null : _submitProblem,
+                      //     child: Container(
+                      //       width: MediaQuery.of(context).size.width * 80 / 100,
+                      //       height:
+                      //           MediaQuery.of(context).size.height * 7 / 100,
+                      //       decoration: const BoxDecoration(
+                      //         color: AppColor.buttonColor,
+                      //         borderRadius:
+                      //             BorderRadius.all(Radius.circular(40)),
+                      //       ),
+                      //       alignment: Alignment.center,
+                      //       child: isLoading
+                      //           ? const SizedBox(
+                      //               width: 22,
+                      //               height: 22,
+                      //               child: CircularProgressIndicator(
+                      //                 strokeWidth: 2.4,
+                      //                 color: Colors.white,
+                      //               ),
+                      //             )
+                      //           : Text(
+                      //               AppLanguage.submitText[language],
+                      //               style: const TextStyle(
+                      //                   color: Colors.white,
+                      //                   fontWeight: FontWeight.w600,
+                      //                   fontFamily: AppFont.fontFamily,
+                      //                   fontSize: 16),
+                      //             ),
+                      //     ),
+                      //   ),
+                      // ),
 
                       SizedBox(height: size.height * 2 / 100),
 
@@ -196,51 +391,96 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
     );
   }
 
-  Widget _uploadBox(Size size, {bool isAdd = false}) {
-    return Container(
-      height: size.width * 32 / 100,
-      width: size.width * 27 / 100,
-      decoration: BoxDecoration(
-        // color: const Color(0xff2C1B3A),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: AppColor.buttonColor,
-          width: .7,
+  Widget _buildMediaItem(Size size, Map<String, String> mediaData, int index) {
+    final isVideo = mediaData['type'] == 'video';
+    final filePath = mediaData['file'] ?? '';
+    final thumbnailPath = mediaData['thumbnail'] ?? '';
+
+    return Stack(
+      children: [
+        Container(
+          width: size.width * 26 / 100,
+          height: size.width * 32 / 100,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(15),
+            border: Border.all(
+              color: AppColor.buttonColor,
+              width: .7,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(15),
+            child: isVideo
+                ? (thumbnailPath.isNotEmpty && File(thumbnailPath).existsSync()
+                    ? Image.file(File(thumbnailPath), fit: BoxFit.fill)
+                    : Container(
+                        color: Colors.black45,
+                        child: const Icon(Icons.videocam, color: Colors.white),
+                      ))
+                : (filePath.isNotEmpty && File(filePath).existsSync()
+                    ? Image.file(File(filePath), fit: BoxFit.fill)
+                    : Container(
+                        color: Colors.black45,
+                        child: const Icon(
+                          Icons.image_not_supported,
+                          color: Colors.white,
+                        ),
+                      )),
+          ),
         ),
-      ),
-      child: isAdd
-          ? Center(
+        if (isVideo)
+          const Positioned.fill(
+            child: Center(
               child: Icon(
-                Icons.add,
+                Icons.play_circle_fill,
                 color: Colors.white,
-                size: size.width * 6 / 100,
+                size: 30,
               ),
-            )
-          : null,
+            ),
+          ),
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () => _removeMediaItem(index),
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: const BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(Icons.close, color: Colors.white, size: 12),
+            ),
+          ),
+        ),
+      ],
     );
   }
 
-  Widget _uploadSecondBox(Size size, {bool isAdd = false}) {
-    return Container(
-      height: size.width * 32 / 100,
-      width: size.width * 27 / 100,
-      decoration: BoxDecoration(
-        // color: const Color(0xff2C1B3A),
-        borderRadius: BorderRadius.circular(15),
-        border: Border.all(
-          color: AppColor.textTapColor(context),
-          width: .7,
+  Widget _uploadBox(Size size, {bool isAdd = false}) {
+    return GestureDetector(
+      onTap: _openMediaPicker,
+      child: Container(
+        height: size.width * 32 / 100,
+        width: size.width * 26 / 100,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(
+            // color: AppColor.buttonColor,
+            width: .4,
+          ),
         ),
+        child: isAdd
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(15),
+                child: Image.asset(
+                  AppImage.rectanglePlusicon,
+                  fit: BoxFit.fill,
+                  color: AppColor.buttonColor,
+                ),
+              )
+            : null,
       ),
-      // child: isAdd
-      //     ? Center(
-      //         child: Icon(
-      //           Icons.add,
-      //           color: Colors.white,
-      //           size: size.width * 6 / 100,
-      //         ),
-      //       )
-      //     : null,
     );
   }
 }

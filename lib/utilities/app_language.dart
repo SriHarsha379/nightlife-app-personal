@@ -358,6 +358,9 @@ class AppLanguage {
   static const washandpresspluspress = ["Wash & Press + Press"];
   static const reportforrejectText = ["Report for Rejection"];
   static const descriptionText = ["Description"];
+   static const deleteAccountDescriptionText = [
+    "You are about to send a request to the admin to delete your account. Once approved by the admin, your account and all data will be permanently deleted."
+  ];
   static const deleteaccountdescriptionText = [
     "You are about to send a request to the admin to delete your account. Once approved by the admin, your account and all data will be permanently deleted."
   ];
@@ -816,6 +819,8 @@ class AppLanguage {
   static const describeYourIssueText = [
     "Describe your issue",
   ];
+    static const deleteAccountHintText = ["Reason for delete account"];
+
 
   static const addScreenshotsText = [
     "Add Screenshots",

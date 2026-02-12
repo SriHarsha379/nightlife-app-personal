@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -188,6 +189,66 @@ class _HomeState extends State<Home> {
   bool isYes = false;
   bool isNope = false;
   double swipeProgress = 0.0;
+  Timer? _memberSwipeCommitTimer;
+  String? _pendingMemberUserId;
+  String? _pendingMemberAction;
+  bool _showMemberUndo = false;
+
+  void _queueMemberSwipeAction({
+    required String targetUserId,
+    required String action,
+  }) {
+    _commitPendingMemberSwipe();
+
+    _memberSwipeCommitTimer?.cancel();
+    _pendingMemberUserId = targetUserId;
+    _pendingMemberAction = action;
+    if (mounted) {
+      setState(() {
+        _showMemberUndo = true;
+      });
+    }
+
+    _memberSwipeCommitTimer = Timer(const Duration(seconds: 30), () {
+      _commitPendingMemberSwipe();
+    });
+  }
+
+  Future<void> _commitPendingMemberSwipe() async {
+    final targetUserId = _pendingMemberUserId;
+    final action = _pendingMemberAction;
+    if (targetUserId == null || action == null) return;
+
+    _memberSwipeCommitTimer?.cancel();
+    _pendingMemberUserId = null;
+    _pendingMemberAction = null;
+    if (mounted) {
+      setState(() {
+        _showMemberUndo = false;
+      });
+    }
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    await homeController.swipeUserAction(
+      context,
+      targetUserId: targetUserId,
+      action: action,
+    );
+  }
+
+  void _undoPendingMemberSwipe() {
+    if (_pendingMemberUserId == null) return;
+
+    _memberSwipeCommitTimer?.cancel();
+    _pendingMemberUserId = null;
+    _pendingMemberAction = null;
+    if (mounted) {
+      setState(() {
+        _showMemberUndo = false;
+      });
+    }
+    membersSwiperController.undo();
+  }
 
   bool _onSwipeMembers(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
@@ -203,8 +264,14 @@ class _HomeState extends State<Home> {
       });
 
       if (previousIndex < membersList.length) {
-        homeController.likeItem(
-            context, membersList[previousIndex]['_id'], 'member');
+        final targetUserId =
+            (membersList[previousIndex]['_id'] ?? '').toString();
+        if (targetUserId.isNotEmpty) {
+          _queueMemberSwipeAction(
+            targetUserId: targetUserId,
+            action: 'right',
+          );
+        }
       }
 
       Future.delayed(const Duration(milliseconds: 450), () {
@@ -224,8 +291,14 @@ class _HomeState extends State<Home> {
       });
 
       if (previousIndex < membersList.length) {
-        homeController.dislikeItem(
-            context, membersList[previousIndex]['_id'], 'member');
+        final targetUserId =
+            (membersList[previousIndex]['_id'] ?? '').toString();
+        if (targetUserId.isNotEmpty) {
+          _queueMemberSwipeAction(
+            targetUserId: targetUserId,
+            action: 'left',
+          );
+        }
       }
 
       Future.delayed(const Duration(milliseconds: 450), () {
@@ -356,6 +429,7 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
+    _memberSwipeCommitTimer?.cancel();
     membersSwiperController.dispose();
     eventsSwiperController.dispose();
     venuesSwiperController.dispose();
@@ -696,75 +770,74 @@ class _HomeState extends State<Home> {
                                             bio: member['bio'] ?? '',
                                             vibes: List<String>.from(
                                                 member['vibes'] ?? []),
-                                            distance: member['distance_km'] !=
-                                                    null
-                                                ? '${member['distance_km']} km'
-                                                : 'Distance unavailable',
+                                            distance:
+                                                member['distance_km'] != null
+                                                    ? '${member['distance_km']}'
+                                                    : '',
                                           ),
                                           SizedBox(
                                               height: MediaQuery.of(context)
                                                       .size
                                                       .height *
                                                   0.015),
-
-                                          //! Undo Button
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04,
-                                              vertical: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.008,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColor.themeColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                membersSwiperController.undo();
-                                              },
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    AppLanguage
-                                                        .undoText[language],
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                          if (_showMemberUndo)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.04,
+                                                vertical: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.008,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.themeColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: _undoPendingMemberSwipe,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      AppLanguage
+                                                          .undoText[language],
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.01),
+                                                    Image.asset(
+                                                      AppImage.arrow,
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.01),
-                                                  Image.asset(
-                                                    AppImage.arrow,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.04,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.02,
-                                                    color: Colors.white,
-                                                  ),
-                                                ],
+                                                              0.04,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                     );

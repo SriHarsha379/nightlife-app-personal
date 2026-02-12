@@ -1,40 +1,121 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
+
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_validation.dart';
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_image.dart';
 import 'create_new_password.dart';
 
 class ForgotOtpverify extends StatefulWidget {
   static String routeName = './OtpVerify';
-  const ForgotOtpverify({super.key, this.isEmail = false});
+  const ForgotOtpverify({
+    super.key,
+    required this.isEmail,
+    required this.identifier,
+  });
 
   final bool isEmail;
+  final String identifier;
 
   @override
   State<ForgotOtpverify> createState() => _ForgotOtpverifyState();
 }
 
 class _ForgotOtpverifyState extends State<ForgotOtpverify> {
-  TextEditingController pinputInputController = TextEditingController();
+  final TextEditingController pinputInputController = TextEditingController();
+  Timer? _timer;
+  int _remainingSeconds = 30;
+  bool _canResend = false;
 
   @override
   void initState() {
     super.initState();
+    _startTimer();
   }
 
-  void nextField(String value, FocusNode focusNode) {
-    if (value.length == 1) {
-      focusNode.requestFocus();
+  @override
+  void dispose() {
+    _timer?.cancel();
+    pinputInputController.dispose();
+    super.dispose();
+  }
+
+  void _startTimer() {
+    setState(() {
+      _remainingSeconds = 30;
+      _canResend = false;
+    });
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        setState(() {
+          _canResend = true;
+        });
+        timer.cancel();
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> _verifyForgotOtp() async {
+    final otp = pinputInputController.text.trim();
+    if (Validation.isFieldEmpty(context, value: otp, fieldName: "OTP")) return;
+    if (!Validation.isOtpLength(context, otp, minLength: 4)) return;
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    final res = await apiProvider.forgotOtpVerificationApiCalling(
+      context,
+      otp: otp,
+      email: widget.isEmail ? widget.identifier : null,
+      phoneNumber: widget.isEmail ? null : widget.identifier,
+    );
+
+    if (!mounted) return;
+    if (res != null && res['success'] == true) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const CreateNewPasswordScreen(),
+          duration: const Duration(milliseconds: 600),
+        ),
+      );
     }
   }
 
-  void previousField(String value, FocusNode focusNode) {
-    focusNode.requestFocus();
+  Future<void> _resendForgotOtp() async {
+    if (!_canResend) return;
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    final res = await apiProvider.forgotResendotpApiCalling(
+      context,
+      email: widget.isEmail ? widget.identifier : null,
+      phoneNumber: widget.isEmail ? null : widget.identifier,
+    );
+
+    if (!mounted) return;
+    if (res != null && res['success'] == true) {
+      _startTimer();
+    }
   }
 
   @override
@@ -47,14 +128,12 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
           decoration:
-               BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
+              BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
           child: Column(
             children: [
               SizedBox(
                 height: MediaQuery.of(context).size.height * 6 / 100,
               ),
-
-              //! App Header
               SizedBox(
                 width: MediaQuery.of(context).size.width * 90 / 100,
                 child: Row(
@@ -79,7 +158,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                     Text(
                       AppLanguage.otpVerificationText[language],
                       textAlign: TextAlign.center,
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontSize: 20,
                         fontWeight: FontWeight.w500,
@@ -92,7 +171,6 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
               SizedBox(
                 height: MediaQuery.of(context).size.height * 10 / 100,
               ),
-
               Expanded(
                 flex: 1,
                 child: SingleChildScrollView(
@@ -117,61 +195,24 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                         height: MediaQuery.of(context).size.height * 1 / 100,
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * 48 / 100,
+                        width: MediaQuery.of(context).size.width * 80 / 100,
                         child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Text(
-                              widget.isEmail
-                                  ? AppLanguage.xyzgmailText[language]
-                                  : AppLanguage.mobilenoText[language],
-                              textAlign: TextAlign.center,
-                              style:  TextStyle(
-                                color: AppColor.secondryColor(context),
-                                fontSize: 17,
-                                fontWeight: FontWeight.normal,
-                                fontFamily: AppFont.fontFamily,
+                            Flexible(
+                              child: Text(
+                                widget.identifier,
+                                textAlign: TextAlign.center,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: AppColor.secondryColor(context),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.normal,
+                                  fontFamily: AppFont.fontFamily,
+                                ),
                               ),
                             ),
-                            SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 1 / 100,
-                            ),
-                            // GestureDetector(
-                            //   onTap: () {
-                            //     Navigator.push(
-                            //         context,
-                            //         MaterialPageRoute(
-                            //             builder: (context) => SignUp()));
-                            //   },
-                            //   child: Row(
-                            //     children: [
-                            //         Text(
-                            //         AppLanguage.editText[language],
-                            //         textAlign: TextAlign.center,
-                            //         style: const TextStyle(
-                            //           color: AppColor.secondryColor(context),
-                            //           fontSize: 11,
-                            //           fontFamily: AppFont.fontFamily,
-                            //            decoration: TextDecoration.underline,
-                            //            decorationColor: AppColor.secondryColor(context),
-                            //             decorationThickness: 0.8,
-                            //             height: 2.8,
-                            //         ),
-                            //       ),
-                            //       SizedBox(
-                            //         width: MediaQuery.of(context).size.width *
-                            //             1 /
-                            //             100,
-                            //       ),
-                            //       Image.asset(
-                            //         AppImage.pencilIcon,
-                            //         height: size.height * 2 / 100,
-                            //         width: size.width * 2 / 100,
-                            //         color: AppColor.secondryColor(context),
-                            //       ),
-                            //     ],
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -184,7 +225,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                         defaultPinTheme: PinTheme(
                           width: MediaQuery.of(context).size.width * 15.8 / 100,
                           height: MediaQuery.of(context).size.width * 14 / 100,
-                          textStyle:  TextStyle(
+                          textStyle: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
@@ -197,17 +238,16 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                             ),
                             boxShadow: [
                               BoxShadow(
-                                  // offset: const Offset(0, 4),
-                                  blurRadius: 0,
-                                  color:
-                                      AppColor.primaryColor(context)
-                                      .withOpacity(0.25))
+                                blurRadius: 0,
+                                color:
+                                    AppColor.primaryColor(context).withOpacity(0.25),
+                              )
                             ],
                             borderRadius: BorderRadius.circular(13),
                           ),
                           margin: EdgeInsets.symmetric(
-                              horizontal:
-                                  MediaQuery.of(context).size.width * 1 / 100),
+                            horizontal: MediaQuery.of(context).size.width * 1 / 100,
+                          ),
                         ),
                       ),
                       SizedBox(
@@ -222,42 +262,73 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                             Text(
                               AppLanguage.didntOtpText[language],
                               style: const TextStyle(
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 12),
+                                color: Colors.grey,
+                                fontWeight: FontWeight.w500,
+                                fontSize: 12,
+                              ),
                             ),
                             SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 1 / 100,
+                              width: MediaQuery.of(context).size.width * 1 / 100,
                             ),
-                            Text(
-                              AppLanguage.requestAgaintext[language],
-                              style:  TextStyle(
-                                  color: AppColor.secondryColor(context),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14),
-                            ),
+                            if (!_canResend) ...[
+                              Text(
+                                _formatTime(_remainingSeconds),
+                                style: const TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ] else ...[
+                              Consumer<PostApiProvider>(
+                                builder: (context, apiProvider, child) {
+                                  if (apiProvider.secondaryLoading) {
+                                    return const SizedBox(
+                                      width: 16,
+                                      height: 16,
+                                      child: CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        color: AppColor.buttonColor,
+                                      ),
+                                    );
+                                  }
+                                  return GestureDetector(
+                                    onTap: _resendForgotOtp,
+                                    child: Text(
+                                      AppLanguage.resend[language],
+                                      style: const TextStyle(
+                                        color: AppColor.buttonColor,
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 14,
+                                        decoration: TextDecoration.underline,
+                                        decorationColor: AppColor.buttonColor,
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ],
                           ],
                         ),
                       ),
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 39 / 100,
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 4 / 100,
-                      ),
-                      AppButton(
-                          text: AppLanguage.verifyButtonText[language],
-                          onPress: () {
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: const CreateNewPasswordScreen(),
-                                duration: const Duration(milliseconds: 600),
-                              ),
+                      Consumer<PostApiProvider>(
+                        builder: (context, apiProvider, child) {
+                          if (apiProvider.loading) {
+                            return const CircularProgressIndicator(
+                              color: AppColor.pinkColor,
                             );
-                          }),
+                          }
+                          return AppButton(
+                            text: AppLanguage.verifyButtonText[language],
+                            onPress: () {
+                              _verifyForgotOtp();
+                            },
+                          );
+                        },
+                      ),
                     ],
                   ),
                 ),

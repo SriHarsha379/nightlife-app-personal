@@ -9,6 +9,9 @@ import 'package:share_plus/share_plus.dart';
 import 'package:http/http.dart' as http;
 
 import '../animation/purple_screen.dart';
+import '../controller/home/home_controller.dart';
+import '../controller/my_profile/get_my_profile.dart';
+import '../controller/my_profile/get_my_swipe_profile_controller.dart';
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_footer.dart';
@@ -39,6 +42,16 @@ class PostApiProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void _clearSessionState(BuildContext context) {
+    Provider.of<UserController>(context, listen: false).reset();
+    Provider.of<HomeController>(context, listen: false).clearAllData();
+    Provider.of<ProfileController>(context, listen: false).clearProfileData();
+    Provider.of<GetMySwipeProfileController>(context, listen: false)
+        .resetState();
+    AppContentCache().clear();
+    AppConstant.selectFooterIndex = 0;
+  }
+
   // =============Login Api=================//
   loginUserApiCall(BuildContext context, String email, String password) async {
     setLoading(true);
@@ -59,7 +72,6 @@ class PostApiProvider with ChangeNotifier {
         await CacheHelper.save("user_details", jsonEncode(data));
         TopNotification.success(context, res['message'][language]);
 
-        // Extract user data (new response is flat; older response may wrap in "user")
         final dynamic userData =
             (data is Map && data['user'] is Map) ? data['user'] : data;
 
@@ -87,6 +99,8 @@ class PostApiProvider with ChangeNotifier {
           return;
         }
 
+        // Ensure old user's in-memory state never flashes for the new session.
+        _clearSessionState(context);
         Provider.of<UserController>(context, listen: false)
             .setUserFromMap(Map<String, dynamic>.from(userData));
 
@@ -560,20 +574,27 @@ class PostApiProvider with ChangeNotifier {
 
 //======================forgot password===============//
 
-  forgotPasswordApiCalling(
-    BuildContext context,
-    String email,
-  ) async {
+  Future<Map<String, dynamic>?> forgotPasswordApiCalling(
+    BuildContext context, {
+    String? email,
+    String? phoneNumber,
+  }) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      'email': email.toString(),
-    };
+    final Map<String, String> fields = {};
+    if (email != null && email.trim().isNotEmpty) {
+      fields['email'] = email.trim();
+    } else if (phoneNumber != null && phoneNumber.trim().isNotEmpty) {
+      fields['phone_number'] = phoneNumber.trim();
+    } else {
+      setLoading(false);
+      return null;
+    }
 
     print("Line 105 $fields");
 
     final res = await postJsonData(
-      'auth/forgot_send_otp',
+      'auth/forgot_password',
       fields,
       context,
       headers: {
@@ -582,7 +603,7 @@ class PostApiProvider with ChangeNotifier {
     );
 
     if (res != null) {
-      if (!context.mounted) return;
+      if (!context.mounted) return res;
 
       setLoading(false);
 
@@ -590,28 +611,35 @@ class PostApiProvider with ChangeNotifier {
         TopNotification.success(context, res['message'][language]);
       }
 
-      // Get.to(() => ForgotOtpScreen(email: email));
+      return res;
     }
     setLoading(false);
+    return null;
   }
 
   // ---------------forgot Otp Verification -----------
-  forgotOtpVerificationApiCalling(
-    BuildContext context,
-    String otp,
-    String email,
-  ) async {
+  Future<Map<String, dynamic>?> forgotOtpVerificationApiCalling(
+    BuildContext context, {
+    required String otp,
+    String? email,
+    String? phoneNumber,
+  }) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      'otp': otp.toString(),
-      'email': email.toString(),
-    };
+    final Map<String, String> fields = {'otp': otp.toString()};
+    if (email != null && email.trim().isNotEmpty) {
+      fields['email'] = email.trim();
+    } else if (phoneNumber != null && phoneNumber.trim().isNotEmpty) {
+      fields['phone_number'] = phoneNumber.trim();
+    } else {
+      setLoading(false);
+      return null;
+    }
 
     print("Line 105 $fields");
 
     final res = await postJsonData(
-      'auth/forgot_verify_otp',
+      'auth/verify_forgot_otp',
       fields,
       context,
       headers: {
@@ -622,36 +650,43 @@ class PostApiProvider with ChangeNotifier {
     print("Line 105 $fields");
 
     if (res != null) {
-      if (res['success'] == true && res['data'] != "NA") {
+      if (res['success'] == true) {
         setLoading(false);
 
-        TopNotification.success(context, res['message'][language]);
+        AppConstant.token = res['data']['token'] ?? '12345';
         await CacheHelper.save("user_details", jsonEncode(res['data']));
-        // Get.to(() => CreateNewPasswordScreen(
-        //       email: email,
-        //     ));
+        TopNotification.success(context, res['message'][language]);
+        return res;
       }
     }
 
     setLoading(false);
+    return null;
   }
 
 //=============== Resend FORGOT Otp Api=================//
 
-  forgotResendotpApiCalling(
-    BuildContext context,
-    String email,
-  ) async {
+  Future<Map<String, dynamic>?> forgotResendotpApiCalling(
+    BuildContext context, {
+    String? email,
+    String? phoneNumber,
+  }) async {
     setSecondaryLoading(true);
 
-    final Map<String, String> fields = {
-      'email': email.toString(),
-    };
+    final Map<String, String> fields = {};
+    if (email != null && email.trim().isNotEmpty) {
+      fields['email'] = email.trim();
+    } else if (phoneNumber != null && phoneNumber.trim().isNotEmpty) {
+      fields['phone_number'] = phoneNumber.trim();
+    } else {
+      setSecondaryLoading(false);
+      return null;
+    }
 
     print("Line 105 $fields");
 
     final res = await postJsonData(
-      'auth/forgot_pass_resend_otp',
+      'auth/resend_forgot_otp',
       fields,
       context,
       headers: {
@@ -660,13 +695,15 @@ class PostApiProvider with ChangeNotifier {
     );
 
     if (res != null) {
-      if (res['success'] == true && res['data'] != "NA") {
+      if (res['success'] == true) {
         setSecondaryLoading(false);
         TopNotification.success(context, res['message'][language]);
+        return res;
       }
     }
 
     setSecondaryLoading(false);
+    return null;
   }
 
   // ---------------reset password api -----------
@@ -705,25 +742,53 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
+  // ---------------confirm forgot password api -----------
+  Future<Map<String, dynamic>?> confirmPasswordApiCalling(
+    BuildContext context, {
+    required String newPassword,
+  }) async {
+    setLoading(true);
+
+    final Map<String, String> fields = {
+      'new_password': newPassword.trim(),
+    };
+
+    final res = await postJsonData(
+      'auth/confirm_password',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      TopNotification.success(context, res['message'][language]);
+      setLoading(false);
+      return res;
+    }
+
+    setLoading(false);
+    return null;
+  }
+
   // ---------------chnage password api -----------
   chnagePasswordApiCalling(
     BuildContext context,
     String currentPassword,
     String newPassword,
-    String confirmPassword,
   ) async {
     setLoading(true);
 
     final Map<String, String> fields = {
-      "currentPassword": currentPassword.toString(),
-      "newPassword": newPassword.toString(),
-      "confirmPassword": confirmPassword.toString()
+      "old_password": currentPassword.toString(),
+      "new_password": newPassword.toString(),
     };
 
     print("Line 105 $fields");
 
     final res = await postJsonData(
-      'auth/change_password',
+      'user/change_password',
       fields,
       context,
       headers: {
@@ -980,12 +1045,8 @@ class PostApiProvider with ChangeNotifier {
       },
     );
 
-    Provider.of<UserController>(context, listen: false).reset();
-
-    AppContentCache().clear();
-
+    _clearSessionState(context);
     AppConstant.token = '';
-    AppConstant.selectFooterIndex = 0;
     await CacheHelper.clearAll();
     setSecondaryLoading(false);
 
@@ -994,339 +1055,86 @@ class PostApiProvider with ChangeNotifier {
     }
   }
 
-// ================Create Post Api================//
-  createPostApi(
+// ================Report Problem Api================//
+  Future<Map<String, dynamic>?> reportProblemApi(
     BuildContext context, {
-    required bool isPop,
-    required String postType, // 'text' | 'image' | 'video' | 'poll'
     required String description,
-    String? clubId,
-    XFile? image,
-    XFile? video,
-    XFile? videoThumbnail,
-    String? pollQuestion,
-    List<String>? pollOptions,
-    bool allowMultiple = false,
+    required List<XFile> images,
+    required List<XFile> videos,
+    required List<XFile> thumbnails,
   }) async {
     setLoading(true);
 
     try {
-      // Determine postFor and clubId based on isPop
-      String postFor = isPop ? 'club' : 'user';
-
-      // Validation: clubId is required when posting for club
-      if (isPop && (clubId == null || clubId.isEmpty)) {
-        TopNotification.error(context, "Club ID is required for club posts");
-        setLoading(false);
-        return null;
-      }
-
-      // Create multipart request
       final Uri url =
-          Uri.parse("${AppConfigProvider.apiUrl}service/create_post");
-      print('Create Post URL: $url');
-
+          Uri.parse("${AppConfigProvider.apiUrl}user/report_problem");
       var request = http.MultipartRequest('POST', url);
-
-      // Add headers
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
+      request.fields['description'] = description;
 
-      // Add fields
-      Map<String, String> fields = {
-        'postFor': postFor,
-        'postType': postType.toLowerCase(),
-      };
-
-      // Add clubId only if posting for club
-      if (isPop && clubId != null) {
-        fields['clubId'] = clubId;
-      }
-
-      // Add description for text, image, and video posts
-      if (postType.toLowerCase() != 'poll') {
-        fields['description'] = description;
-      }
-
-      // Add poll-specific fields
-      if (postType.toLowerCase() == 'poll') {
-        if (pollQuestion != null) {
-          fields['question'] = pollQuestion;
-        }
-        if (pollOptions != null && pollOptions.isNotEmpty) {
-          fields['options'] = jsonEncode(pollOptions);
-        }
-        fields['allowMultiple'] = allowMultiple.toString();
-      }
-
-      request.fields.addAll(fields);
-      print("Create Post Fields: $fields");
-
-      // Handle image upload
-      if (postType.toLowerCase() == 'image' && image != null) {
-        List<int> imageBytes = await image.readAsBytes();
-        String fileName = image.path.split('/').last;
-        http.MultipartFile imageFile = http.MultipartFile.fromBytes(
-          'image',
-          imageBytes,
-          filename: fileName,
+      for (final image in images) {
+        final imageBytes = await image.readAsBytes();
+        final fileName = image.path.split('/').last;
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'images',
+            imageBytes,
+            filename: fileName,
+            contentType: http_parser.MediaType.parse('image/jpeg'),
+          ),
         );
-        request.files.add(imageFile);
-        print("Image file added: $fileName");
       }
 
-      // Handle video and thumbnail upload with correct MIME type
-      if (postType.toLowerCase() == 'video') {
-        if (video != null) {
-          List<int> videoBytes = await video.readAsBytes();
-          String videoFileName = video.path.split('/').last;
+      for (final video in videos) {
+        final videoBytes = await video.readAsBytes();
+        final videoFileName = video.path.split('/').last;
+        String mimeType = 'video/mp4';
+        if (videoFileName.toLowerCase().endsWith('.mov')) {
+          mimeType = 'video/quicktime';
+        } else if (videoFileName.toLowerCase().endsWith('.avi')) {
+          mimeType = 'video/x-msvideo';
+        } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
+          mimeType = 'video/x-matroska';
+        } else if (videoFileName.toLowerCase().endsWith('.webm')) {
+          mimeType = 'video/webm';
+        }
 
-          // Get proper MIME type based on file extension
-          String mimeType = 'video/mp4'; // default
-          if (videoFileName.toLowerCase().endsWith('.mov')) {
-            mimeType = 'video/quicktime';
-          } else if (videoFileName.toLowerCase().endsWith('.avi')) {
-            mimeType = 'video/x-msvideo';
-          } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
-            mimeType = 'video/x-matroska';
-          } else if (videoFileName.toLowerCase().endsWith('.webm')) {
-            mimeType = 'video/webm';
-          }
-
-          http.MultipartFile videoFile = http.MultipartFile.fromBytes(
-            'video',
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'videos',
             videoBytes,
             filename: videoFileName,
             contentType: http_parser.MediaType.parse(mimeType),
-          );
-          request.files.add(videoFile);
-          print("Video file added: $videoFileName (MIME: $mimeType)");
-        }
+          ),
+        );
+      }
 
-        if (videoThumbnail != null) {
-          List<int> thumbnailBytes = await videoThumbnail.readAsBytes();
-          String thumbnailFileName = videoThumbnail.path.split('/').last;
-          http.MultipartFile thumbnailFile = http.MultipartFile.fromBytes(
-            'video_thumbnail',
+      for (final thumbnail in thumbnails) {
+        final thumbnailBytes = await thumbnail.readAsBytes();
+        final thumbName = thumbnail.path.split('/').last;
+        request.files.add(
+          http.MultipartFile.fromBytes(
+            'thumbnails',
             thumbnailBytes,
-            filename: thumbnailFileName,
-            contentType: http_parser.MediaType.parse('image/png'),
-          );
-          request.files.add(thumbnailFile);
-          print("Thumbnail file added: $thumbnailFileName");
-        }
-      }
-
-      print("request.fields: ${request.fields}");
-      print(
-          "request.files: ${request.files.map((f) => '${f.field}: ${f.filename}')}");
-
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
-
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
-      // Handle response
-      final result = _handleStatusCode(response, context);
-
-      // if (result != null && result['success'] == true) {
-      //   TopNotification.success(context, result['message'][language]);
-      //   if (!isPop) {
-      //     Provider.of<HomeController>(context, listen: false)
-      //         .getHomePosts(refresh: true);
-
-      //     Provider.of<GetMyProfileController>(context, listen: false).reset();
-      //     setLoading(false);
-
-      //     Get.offAll(() => const WoroAppFooter(initialIndex: 0));
-      //     return result;
-      //   } else {
-      //     setLoading(false);
-      //     Get.off(() => ClubDetails(
-      //           clubId: clubId!,
-      //         ));
-      //     return result;
-      //   }
-      // }
-
-      setLoading(false);
-      return null;
-    } catch (e) {
-      print("Create Post Error: $e");
-      TopNotification.error(context, "Failed to create post");
-      setLoading(false);
-      return null;
-    }
-  }
-
-// ================Edit Post Api================//
-  editPostApi(
-    BuildContext context, {
-    required String postId,
-    required String postType, // 'text' | 'image' | 'video' | 'poll'
-    required String description,
-    XFile? image,
-    XFile? video,
-    XFile? videoThumbnail,
-    String? pollQuestion,
-    List<String>? pollOptions,
-    bool allowMultiple = false,
-    bool removeImage = false,
-    bool removeVideo = false,
-    bool? isPop,
-    String? clubid,
-    String? type,
-  }) async {
-    setLoading(true);
-
-    try {
-      // Create multipart request
-      final Uri url = Uri.parse("${AppConfigProvider.apiUrl}service/edit_post");
-      print('Edit Post URL: $url');
-
-      var request = http.MultipartRequest('POST', url);
-
-      // Add headers
-      request.headers['authorization'] = 'Bearer ${AppConstant.token}';
-
-      // Add fields
-      Map<String, String> fields = {
-        'postId': postId,
-      };
-
-      // Add description for text, image, and video posts
-      if (postType.toLowerCase() != 'poll') {
-        fields['description'] = description;
-      }
-
-      // Add poll-specific fields
-      if (postType.toLowerCase() == 'poll') {
-        if (pollQuestion != null) {
-          fields['question'] = pollQuestion;
-        }
-        if (pollOptions != null && pollOptions.isNotEmpty) {
-          fields['options'] = jsonEncode(pollOptions);
-        }
-        fields['allowMultiple'] = allowMultiple.toString();
-      }
-
-      request.fields.addAll(fields);
-      print("Edit Post Fields: $fields");
-
-      // Handle NEW image upload
-      if (postType.toLowerCase() == 'image' && image != null) {
-        List<int> imageBytes = await image.readAsBytes();
-        String fileName = image.path.split('/').last;
-        http.MultipartFile imageFile = http.MultipartFile.fromBytes(
-          'image',
-          imageBytes,
-          filename: fileName,
+            filename: thumbName,
+            contentType: http_parser.MediaType.parse('image/jpeg'),
+          ),
         );
-        request.files.add(imageFile);
-        print("New image file added: $fileName");
       }
-
-      // Handle NEW video and thumbnail upload
-      if (postType.toLowerCase() == 'video') {
-        if (video != null) {
-          List<int> videoBytes = await video.readAsBytes();
-          String videoFileName = video.path.split('/').last;
-
-          // Get proper MIME type based on file extension
-          String mimeType = 'video/mp4'; // default
-          if (videoFileName.toLowerCase().endsWith('.mov')) {
-            mimeType = 'video/quicktime';
-          } else if (videoFileName.toLowerCase().endsWith('.avi')) {
-            mimeType = 'video/x-msvideo';
-          } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
-            mimeType = 'video/x-matroska';
-          } else if (videoFileName.toLowerCase().endsWith('.webm')) {
-            mimeType = 'video/webm';
-          }
-
-          http.MultipartFile videoFile = http.MultipartFile.fromBytes(
-            'video',
-            videoBytes,
-            filename: videoFileName,
-            contentType: http_parser.MediaType.parse(mimeType),
-          );
-          request.files.add(videoFile);
-          print("New video file added: $videoFileName (MIME: $mimeType)");
-        }
-
-        if (videoThumbnail != null) {
-          try {
-            List<int> thumbnailBytes = await videoThumbnail.readAsBytes();
-            String thumbnailFileName;
-
-            // Check if thumbnail has a path (from gallery) or is created from bytes
-            if (videoThumbnail.path.isNotEmpty &&
-                (videoThumbnail.path.endsWith('.jpg') ||
-                    videoThumbnail.path.endsWith('.jpeg') ||
-                    videoThumbnail.path.endsWith('.png'))) {
-              thumbnailFileName = videoThumbnail.path.split('/').last;
-            } else {
-              // If it's created from bytes, give it a proper name
-              thumbnailFileName =
-                  'thumbnail_${DateTime.now().millisecondsSinceEpoch}.jpg';
-            }
-
-            http.MultipartFile thumbnailFile = http.MultipartFile.fromBytes(
-              'video_thumbnail',
-              thumbnailBytes,
-              filename: thumbnailFileName,
-              contentType: http_parser.MediaType.parse('image/jpeg'),
-            );
-            request.files.add(thumbnailFile);
-            print(
-                "New thumbnail file added: $thumbnailFileName (${thumbnailBytes.length} bytes)");
-          } catch (e) {
-            print("Error adding thumbnail file: $e");
-          }
-        }
-      }
-
-      print("request.fields: ${request.fields}");
-      print(
-          "request.files: ${request.files.map((f) => '${f.field}: ${f.filename}')}");
 
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
-      // Handle response
       final result = _handleStatusCode(response, context);
 
-      // if (result != null && result['success'] == true) {
-      //   TopNotification.success(context, result['message'][language]);
-
-      //   Provider.of<HomeController>(context, listen: false)
-      //       .getHomePosts(refresh: true);
-
-      //   Provider.of<GetMyProfileController>(context, listen: false)
-      //       .getMyProfilePosts(refresh: true);
-      //   setLoading(false);
-      //   if (type == "Home") {
-      //     Get.offAll(() => const WoroAppFooter(initialIndex: 0));
-      //   } else {
-      //     isPop == true
-      //         ? Get.off(() => ClubDetails(
-      //               clubId: clubid!,
-      //             ))
-      //         : Get.offAll(() => const WoroAppFooter(initialIndex: 4));
-      //     setLoading(false);
-
-      //     return result;
-      //   }
-      // }
-
+      if (result != null && result['success'] == true) {
+        TopNotification.success(context,
+            "Report submitted successfully.Our team will review it soon");
+      }
       setLoading(false);
-      return null;
+      return result;
     } catch (e) {
-      print("Edit Post Error: $e");
-      TopNotification.error(context, "Failed to edit post");
+      print("Report Problem Error: $e");
+      TopNotification.error(context, "Failed to submit problem report");
       setLoading(false);
       return null;
     }
@@ -1447,13 +1255,13 @@ class PostApiProvider with ChangeNotifier {
     setLoading(true);
 
     final Map<String, String> fields = {
-      'deleteReason': message.toString(),
+      'reason': message.toString(),
     };
 
     print("Line 105 $fields");
 
     final res = await postJsonData(
-      'auth/delete_account',
+      'user/delete_account',
       fields,
       context,
       headers: {
@@ -1462,11 +1270,9 @@ class PostApiProvider with ChangeNotifier {
     );
 
     if (res != null) {
-      await CacheHelper.clearAll();
+      _clearSessionState(context);
       AppConstant.token = '';
-      AppConstant.selectFooterIndex = 0;
-      AppContentCache().clear();
-
+      await CacheHelper.clearAll();
       if (!context.mounted) return;
 
       setLoading(false);
@@ -1475,11 +1281,17 @@ class PostApiProvider with ChangeNotifier {
         TopNotification.success(context, res['message'][language]);
       }
 
-      // Navigator.pushAndRemoveUntil(
-      //   context,
-      //   MaterialPageRoute(builder: (context) => const Login()),
-      //   (route) => false,
-      // );
+      Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+          type: PageTransitionType.bottomToTop,
+          child: const PurpleScreen(
+            nextScreen: LoginScreen(),
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+        (route) => false,
+      );
     }
 
     setLoading(false);
