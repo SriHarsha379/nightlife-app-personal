@@ -13,6 +13,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_footer.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_snack_bar_toast_message.dart';
 import 'stay_connected_otp_verification.dart';
 
 class StayConnectedScreen extends StatefulWidget {
@@ -122,12 +123,12 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
     return true;
   }
 
-  Future<bool> _submitSignupStepThree({String? email}) async {
+  Future<Map<String, dynamic>?> _submitSignupStepThree({String? email}) async {
     final postApiProvider =
         Provider.of<PostApiProvider>(context, listen: false);
 
     if (!await _validateMediaSizes()) {
-      return false;
+      return null;
     }
 
     // Prepare images and videos from selectedMediaList
@@ -157,7 +158,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
     }
 
     // Call API
-    final result = await postApiProvider.signupStepThreeUserApi(
+    return await postApiProvider.signupStepThreeUserApi(
       context,
       musicGenre: widget.selectedGenres ?? '',
       customMusicGenres: widget.customGenre,
@@ -174,8 +175,6 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
       videos: videos,
       thumbnails: thumbnails,
     );
-
-    return result != null && result['success'] == true;
   }
 
   // Continue with email
@@ -194,8 +193,8 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
     }
 
     // Submit and navigate to OTP screen
-    _submitSignupStepThree(email: email).then((success) {
-      if (!success) return;
+    _submitSignupStepThree(email: email).then((result) {
+      if (result == null) return;
       Navigator.push(
         context,
         PageTransition(
@@ -213,15 +212,56 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
   // Skip email and submit
   void _skipAndSubmit() async {
     // Submit without email
-    final success = await _submitSignupStepThree();
-    if (!success) return;
+    final result = await _submitSignupStepThree();
+    if (result == null) return;
 
-    Navigator.push(
+    final dynamic data = result['data'];
+    final Map<String, dynamic> userData =
+        (data is Map<String, dynamic>) ? data : <String, dynamic>{};
+    final bool isProfileCompleted = userData['is_profile_completed'] == true;
+    final bool isAnotherEmailVerify =
+        userData['is_another_email_verify'] == true;
+    final String anotherEmail = (userData['another_email'] ?? '').toString();
+    int signupStep = 0;
+    final dynamic stepValue = userData['signup_step'];
+    if (stepValue is int) {
+      signupStep = stepValue;
+    } else if (stepValue is String) {
+      signupStep = int.tryParse(stepValue) ?? 0;
+    }
+
+    if (!mounted) return;
+    if (isProfileCompleted) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MyAppFooter(initialIndex: 0),
+        ),
+      );
+      return;
+    }
+
+    if (signupStep >= 3 &&
+        anotherEmail.trim().isNotEmpty &&
+        !isAnotherEmailVerify) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: StayConnectedOTPVerify(
+            isEmail: true,
+            email: anotherEmail,
+          ),
+          duration: const Duration(milliseconds: 600),
+        ),
+      );
+      return;
+    }
+
+    TopNotification.error(
       context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: const MyAppFooter(initialIndex: 0),
-      ),
+      "Profile is incomplete. Please complete stay connected verification.",
     );
   }
 

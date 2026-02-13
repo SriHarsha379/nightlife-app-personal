@@ -582,7 +582,7 @@ class _EditProfileState extends State<EditProfile> {
                         controller: bioController,
                         maxLines: 2,
                         minLines: 2,
-                        maxLength: AppConstant.fullNameText,
+                        maxLength: AppConstant.describeLength,
                         decoration: InputDecoration(
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(24),

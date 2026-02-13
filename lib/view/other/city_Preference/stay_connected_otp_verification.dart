@@ -1,22 +1,27 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:night_life/animation/purple_screen.dart';
 import 'package:night_life/utilities/app_footer.dart';
-import 'package:night_life/view/bottom%20navigation/home_Screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pinput/pinput.dart';
+import 'package:provider/provider.dart';
+import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_validation.dart';
 
 class StayConnectedOTPVerify extends StatefulWidget {
-    final bool? isEmail;
+  final bool? isEmail;
   final String? email;
   static String routeName = './StayConnectedOTPVerify';
-  const StayConnectedOTPVerify({super.key, this.isEmail, this.email,});
-
+  const StayConnectedOTPVerify({
+    super.key,
+    this.isEmail,
+    this.email,
+  });
 
   @override
   State<StayConnectedOTPVerify> createState() => _StayConnectedOTPVerifyState();
@@ -24,10 +29,21 @@ class StayConnectedOTPVerify extends StatefulWidget {
 
 class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
   TextEditingController pinputInputController = TextEditingController();
+  Timer? _timer;
+  int _remainingSeconds = 30;
+  bool _canResend = false;
 
   @override
   void initState() {
     super.initState();
+    _startTimer();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    pinputInputController.dispose();
+    super.dispose();
   }
 
   void nextField(String value, FocusNode focusNode) {
@@ -40,8 +56,76 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
     focusNode.requestFocus();
   }
 
+  void _startTimer() {
+    setState(() {
+      _remainingSeconds = 30;
+      _canResend = false;
+    });
+
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_remainingSeconds > 0) {
+        setState(() {
+          _remainingSeconds--;
+        });
+      } else {
+        setState(() {
+          _canResend = true;
+        });
+        timer.cancel();
+      }
+    });
+  }
+
+  String _formatTime(int seconds) {
+    final minutes = seconds ~/ 60;
+    final remainingSeconds = seconds % 60;
+    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  }
+
+  Future<void> otpValidation(BuildContext context) async {
+    final otp = pinputInputController.text.trim();
+
+    if (Validation.isFieldEmpty(
+      context,
+      value: otp,
+      fieldName: "OTP",
+    )) {
+      return;
+    }
+
+    if (!Validation.isOtpLength(
+      context,
+      otp,
+      minLength: 4,
+    )) {
+      return;
+    }
+
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    final res = await apiProvider.verifyEmailOtpApiCalling(
+      context,
+      otp: otp,
+      email: widget.email,
+    );
+    if (res == null || !context.mounted) return;
+
+    AppConstant.selectFooterIndex = 0;
+    Navigator.pushAndRemoveUntil(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: const MyAppFooter(initialIndex: 0),
+        duration: const Duration(milliseconds: 500),
+      ),
+      (route) => false,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final apiProvider = Provider.of<PostApiProvider>(context);
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -125,9 +209,10 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                            
-                                   AppLanguage.xyzgmailText[language],
-                                
+                              (widget.email != null &&
+                                      widget.email!.trim().isNotEmpty)
+                                  ? widget.email!
+                                  : AppLanguage.xyzgmailText[language],
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 color: AppColor.secondryColor(context),
@@ -197,13 +282,43 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                               width:
                                   MediaQuery.of(context).size.width * 1 / 100,
                             ),
-                            Text(
-                              AppLanguage.requestAgaintext[language],
-                              style: TextStyle(
-                                  color: AppColor.secondryColor(context),
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14),
-                            ),
+                            if (!_canResend) ...[
+                              Text(
+                                _formatTime(_remainingSeconds),
+                                style: const TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontWeight: FontWeight.w600,
+                                  fontSize: 14,
+                                ),
+                              ),
+                            ] else ...[
+                              GestureDetector(
+                                onTap: apiProvider.secondaryLoading
+                                    ? null
+                                    : () async {
+                                        final res = await apiProvider
+                                            .resendEmailOtpApiCalling(
+                                          context,
+                                          email: widget.email,
+                                        );
+                                        if (res != null) {
+                                          _startTimer();
+                                        }
+                                      },
+                                child: Text(
+                                  apiProvider.secondaryLoading
+                                      ? "Sending..."
+                                      : AppLanguage.resend[language],
+                                  style: const TextStyle(
+                                    color: AppColor.buttonColor,
+                                    fontWeight: FontWeight.w600,
+                                    fontSize: 14,
+                                    decoration: TextDecoration.underline,
+                                    decorationColor: AppColor.buttonColor,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ],
                         ),
                       ),
@@ -215,28 +330,8 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                       ),
                       AppButton(
                           text: AppLanguage.verifyButtonText[language],
-                          onPress: () {
-                            AppConstant.selectFooterIndex = 0;
-                            Navigator.pushReplacement(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.bottomToTop,
-                                child: const PurpleScreen(
-                                  nextScreen: MyAppFooter(
-                                    initialIndex: 0,
-                                  ),
-                                ),
-                                duration: const Duration(milliseconds: 600),
-                              ),
-                            );
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: const Home(),
-                                duration: const Duration(milliseconds: 600),
-                              ),
-                            );
+                          onPress: () async {
+                            await otpValidation(context);
                           }),
                     ],
                   ),

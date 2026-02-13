@@ -2,9 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/otp_verify_screen.dart';
-import 'package:night_life/view/other/city_Preference/citypreference_screen.dart';
-import 'package:night_life/view/other/city_Preference/music_genres.dart';
+import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/welcomescreens/welcome_screen1.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -71,25 +69,20 @@ class _SplashState extends State<Splash> {
             AppConstant.playerID = data['player_id'].toString();
           }
 
-          final bool isVerified =
-              data['is_verified'] ?? data['isEmailVerified'] ?? false;
-          final bool isProfileCompleted = data['is_profile_completed'] ??
-              data['isProfileCompleted'] ??
-              false;
+          final Map<String, dynamic> userData =
+              (data['user'] is Map<String, dynamic>)
+                  ? Map<String, dynamic>.from(data['user'])
+                  : data;
 
-          int signupStep = 0;
-          final dynamic stepValue = data['signup_step'];
-          if (stepValue is int) {
-            signupStep = stepValue;
-          } else if (stepValue is String) {
-            signupStep = int.tryParse(stepValue) ?? 0;
-          }
+          final bool isProfileCompleted = userData['is_profile_completed'] ??
+              userData['isProfileCompleted'] ??
+              false;
 
           if (!mounted) return;
 
-          userController.setUserFromMap(data);
+          userController.setUserFromMap(userData);
 
-          if (isProfileCompleted || signupStep >= 3) {
+          if (isProfileCompleted) {
             Navigator.pushReplacement(
               context,
               PageTransition(
@@ -100,38 +93,13 @@ class _SplashState extends State<Splash> {
             );
             return;
           }
-
-          if (signupStep == 1 && isVerified) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => CityPreference(),
-              ),
-            );
-            return;
-          }
-
-          if (signupStep == 2) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const MusicGenresScreen(),
-              ),
-            );
-            return;
-          }
-
-          if (signupStep == 1 && !isVerified) {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(
-                builder: (context) => OtpVerify(
-                  mobile: data['phone_number']?.toString() ?? '',
-                ),
-              ),
-            );
-            return;
-          }
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => LoginScreen(),
+            ),
+          );
+          return;
         }
       }
     } catch (e) {

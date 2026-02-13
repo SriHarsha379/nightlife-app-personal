@@ -99,7 +99,7 @@ class HomeWidget {
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return Image.asset(
-                                          AppImage.userImage1,
+                                          AppImage.placeHolder2Icon,
                                           fit: BoxFit.cover,
                                         );
                                       },
@@ -163,8 +163,7 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                bio ??
-                                    'Weekend explorer who loves live gigs, latte art, and late-night jam sessions.',
+                                bio ?? '',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
@@ -181,7 +180,7 @@ class HomeWidget {
                               Text(
                                 vibes != null && vibes.isNotEmpty
                                     ? vibes.join(' · ')
-                                    : 'Foodie · Explorer · Creative',
+                                    : "",
                                 style: const TextStyle(
                                   color: AppColor.pinkColor,
                                   fontSize: 16,
@@ -205,7 +204,7 @@ class HomeWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      distance ?? 'Distance unavailable',
+                                      distance ?? '',
                                       style: TextStyle(
                                         color: Colors.grey[500],
                                         fontSize: 14,
@@ -511,8 +510,7 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                about ??
-                                    'Bass-heavy techno night with DJ Armin, drink specials till midnight',
+                                about ?? '',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
@@ -536,7 +534,7 @@ class HomeWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      date ?? 'Fri, 10 PM – 4 AM',
+                                      date ?? '',
                                       style: const TextStyle(
                                         color: AppColor.pinkColor,
                                         fontWeight: FontWeight.w500,
@@ -676,7 +674,7 @@ class HomeWidget {
               //! Yes - with fade animation
               if (showHeart && lastSwipeType == 'cross')
                 Positioned(
-                  left: 30,
+                  right: 30,
                   top: 80,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -723,7 +721,7 @@ class HomeWidget {
               //! Nope - with fade animation
               if (showCross && lastSwipeType == 'heart')
                 Positioned(
-                  right: 30,
+                  left: 30,
                   top: 80,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -919,8 +917,7 @@ class HomeWidget {
                                     100,
                               ),
                               Text(
-                                about ??
-                                    'Cozy café with coffee, desserts, events—perfect for work, conversations, meetups.',
+                                about ?? '',
                                 style: TextStyle(
                                   color: Colors.white.withOpacity(0.9),
                                   fontSize: 13,
@@ -944,7 +941,7 @@ class HomeWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      timing ?? '8 AM – 11 PM',
+                                      timing ?? '',
                                       style: const TextStyle(
                                         color: AppColor.pinkColor,
                                         fontWeight: FontWeight.w500,
@@ -971,7 +968,7 @@ class HomeWidget {
                                   const SizedBox(width: 4),
                                   Expanded(
                                     child: Text(
-                                      '${address ?? 'Lane 7, Koregaon Park'}${distance != null && distance.isNotEmpty ? ' • $distance' : ''}',
+                                      '${address ?? ''}${distance != null && distance.isNotEmpty ? ' • $distance' : ''}',
                                       style: TextStyle(
                                         color: Colors.grey[500],
                                         fontSize: 14,
@@ -1084,7 +1081,7 @@ class HomeWidget {
               //! Yes - with fade animation
               if (showHeart && lastSwipeType == 'cross')
                 Positioned(
-                  left: 30,
+                  right: 30,
                   top: 80,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),
@@ -1131,7 +1128,7 @@ class HomeWidget {
               //! Nope - with fade animation
               if (showCross && lastSwipeType == 'heart')
                 Positioned(
-                  right: 30,
+                  left: 30,
                   top: 80,
                   child: TweenAnimationBuilder<double>(
                     tween: Tween(begin: 0.0, end: 1.0),

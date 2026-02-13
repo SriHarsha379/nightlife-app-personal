@@ -376,6 +376,6 @@ class AppImage {
   static const queens = "./assets/icons/queens.png";
   static const email = "./assets/icons/email.png";
   static const placeHolderIcon = "./assets/icons/Icon_placeholder.png";
-  static const placeHolder1Icon = "./assets/icons/Profile_2.png";
+  // static const placeHolder1Icon = "./assets/icons/Profile_2.png";
   static const placeHolder2Icon = "./assets/icons/icon_placeHolder1.jpg";
 }

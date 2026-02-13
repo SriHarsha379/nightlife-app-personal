@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
@@ -13,6 +14,7 @@ import 'package:provider/provider.dart';
 import '../../commonWidget/home_widget.dart';
 import '../../controller/home/home_controller.dart';
 import '../../provider/darkmode_provider.dart';
+import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -190,9 +192,20 @@ class _HomeState extends State<Home> {
   bool isNope = false;
   double swipeProgress = 0.0;
   Timer? _memberSwipeCommitTimer;
+  Timer? _eventSwipeCommitTimer;
+  Timer? _venueSwipeCommitTimer;
   String? _pendingMemberUserId;
   String? _pendingMemberAction;
+  String? _pendingEventId;
+  String? _pendingEventAction;
+  String? _pendingVenueId;
+  String? _pendingVenueAction;
   bool _showMemberUndo = false;
+  bool _showEventUndo = false;
+  bool _showVenueUndo = false;
+  bool _isCommittingMemberSwipe = false;
+  bool _isCommittingEventSwipe = false;
+  bool _isCommittingVenueSwipe = false;
 
   void _queueMemberSwipeAction({
     required String targetUserId,
@@ -209,16 +222,18 @@ class _HomeState extends State<Home> {
       });
     }
 
-    _memberSwipeCommitTimer = Timer(const Duration(seconds: 30), () {
+    _memberSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
       _commitPendingMemberSwipe();
     });
   }
 
   Future<void> _commitPendingMemberSwipe() async {
+    if (_isCommittingMemberSwipe) return;
     final targetUserId = _pendingMemberUserId;
     final action = _pendingMemberAction;
     if (targetUserId == null || action == null) return;
 
+    _isCommittingMemberSwipe = true;
     _memberSwipeCommitTimer?.cancel();
     _pendingMemberUserId = null;
     _pendingMemberAction = null;
@@ -229,11 +244,16 @@ class _HomeState extends State<Home> {
     }
 
     final homeController = Provider.of<HomeController>(context, listen: false);
-    await homeController.swipeUserAction(
-      context,
-      targetUserId: targetUserId,
-      action: action,
-    );
+    try {
+      await homeController.swipeUserAction(
+        context,
+        targetUserId: targetUserId,
+        action: action,
+        allowRedirectOnFailure: false,
+      );
+    } finally {
+      _isCommittingMemberSwipe = false;
+    }
   }
 
   void _undoPendingMemberSwipe() {
@@ -248,6 +268,132 @@ class _HomeState extends State<Home> {
       });
     }
     membersSwiperController.undo();
+  }
+
+  void _queueEventSwipeAction({
+    required String eventId,
+    required String action,
+  }) {
+    _commitPendingEventSwipe();
+
+    _eventSwipeCommitTimer?.cancel();
+    _pendingEventId = eventId;
+    _pendingEventAction = action;
+    if (mounted) {
+      setState(() {
+        _showEventUndo = true;
+      });
+    }
+
+    _eventSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
+      _commitPendingEventSwipe();
+    });
+  }
+
+  Future<void> _commitPendingEventSwipe() async {
+    if (_isCommittingEventSwipe) return;
+    final eventId = _pendingEventId;
+    final action = _pendingEventAction;
+    if (eventId == null || action == null) return;
+
+    _isCommittingEventSwipe = true;
+    _eventSwipeCommitTimer?.cancel();
+    _pendingEventId = null;
+    _pendingEventAction = null;
+    if (mounted) {
+      setState(() {
+        _showEventUndo = false;
+      });
+    }
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    try {
+      await homeController.eventLikeDislikeAction(
+        context,
+        eventId: eventId,
+        action: action,
+        allowRedirectOnFailure: false,
+      );
+    } finally {
+      _isCommittingEventSwipe = false;
+    }
+  }
+
+  void _undoPendingEventSwipe() {
+    if (_pendingEventId == null) return;
+
+    _eventSwipeCommitTimer?.cancel();
+    _pendingEventId = null;
+    _pendingEventAction = null;
+    if (mounted) {
+      setState(() {
+        _showEventUndo = false;
+      });
+    }
+    eventsSwiperController.undo();
+  }
+
+  void _queueVenueSwipeAction({
+    required String venueId,
+    required String action,
+  }) {
+    _commitPendingVenueSwipe();
+
+    _venueSwipeCommitTimer?.cancel();
+    _pendingVenueId = venueId;
+    _pendingVenueAction = action;
+    if (mounted) {
+      setState(() {
+        _showVenueUndo = true;
+      });
+    }
+
+    _venueSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
+      _commitPendingVenueSwipe();
+    });
+  }
+
+  Future<void> _commitPendingVenueSwipe() async {
+    if (_isCommittingVenueSwipe) return;
+    final venueId = _pendingVenueId;
+    final action = _pendingVenueAction;
+    if (venueId == null || action == null) return;
+
+    _isCommittingVenueSwipe = true;
+    _venueSwipeCommitTimer?.cancel();
+    _pendingVenueId = null;
+    _pendingVenueAction = null;
+    if (mounted) {
+      setState(() {
+        _showVenueUndo = false;
+      });
+    }
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    try {
+      await homeController.venueLikeDislikeAction(
+        context,
+        venueId: venueId,
+        action: action,
+        allowRedirectOnFailure: false,
+      );
+    } finally {
+      _isCommittingVenueSwipe = false;
+    }
+  }
+
+  void _undoPendingVenueSwipe() {
+    if (_pendingVenueId == null) return;
+
+    _venueSwipeCommitTimer?.cancel();
+    _pendingVenueId = null;
+    _pendingVenueAction = null;
+    if (mounted) {
+      setState(() {
+        _showVenueUndo = false;
+      });
+    }
+    venuesSwiperController.undo();
   }
 
   bool _onSwipeMembers(
@@ -323,27 +469,6 @@ class _HomeState extends State<Home> {
     final eventsList = homeController.getEventsList;
 
     if (direction == CardSwiperDirection.right) {
-      print('Liked event: ${eventsList[previousIndex]['_id']}');
-      setState(() {
-        showCross = true;
-        showHeart = false;
-        lastSwipeType = 'heart';
-      });
-
-      if (previousIndex < eventsList.length) {
-        homeController.likeItem(
-            context, eventsList[previousIndex]['_id'], 'event');
-      }
-
-      Future.delayed(const Duration(milliseconds: 450), () {
-        if (mounted) {
-          setState(() {
-            showCross = false;
-            lastSwipeType = null;
-          });
-        }
-      });
-    } else if (direction == CardSwiperDirection.left) {
       setState(() {
         showHeart = true;
         showCross = false;
@@ -351,14 +476,44 @@ class _HomeState extends State<Home> {
       });
 
       if (previousIndex < eventsList.length) {
-        homeController.dislikeItem(
-            context, eventsList[previousIndex]['_id'], 'event');
+        final eventId = (eventsList[previousIndex]['_id'] ?? '').toString();
+        if (eventId.isNotEmpty) {
+          _queueEventSwipeAction(
+            eventId: eventId,
+            action: 'like',
+          );
+        }
       }
 
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
             showHeart = false;
+            lastSwipeType = null;
+          });
+        }
+      });
+    } else if (direction == CardSwiperDirection.left) {
+      setState(() {
+        showCross = true;
+        showHeart = false;
+        lastSwipeType = 'heart';
+      });
+
+      if (previousIndex < eventsList.length) {
+        final eventId = (eventsList[previousIndex]['_id'] ?? '').toString();
+        if (eventId.isNotEmpty) {
+          _queueEventSwipeAction(
+            eventId: eventId,
+            action: 'dislike',
+          );
+        }
+      }
+
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            showCross = false;
             lastSwipeType = null;
           });
         }
@@ -379,27 +534,6 @@ class _HomeState extends State<Home> {
     final venuesList = homeController.getVenuesList;
 
     if (direction == CardSwiperDirection.right) {
-      print('Liked venue: ${venuesList[previousIndex]['_id']}');
-      setState(() {
-        showCross = true;
-        showHeart = false;
-        lastSwipeType = 'heart';
-      });
-
-      if (previousIndex < venuesList.length) {
-        homeController.likeItem(
-            context, venuesList[previousIndex]['_id'], 'venue');
-      }
-
-      Future.delayed(const Duration(milliseconds: 450), () {
-        if (mounted) {
-          setState(() {
-            showCross = false;
-            lastSwipeType = null;
-          });
-        }
-      });
-    } else if (direction == CardSwiperDirection.left) {
       setState(() {
         showHeart = true;
         showCross = false;
@@ -407,14 +541,44 @@ class _HomeState extends State<Home> {
       });
 
       if (previousIndex < venuesList.length) {
-        homeController.dislikeItem(
-            context, venuesList[previousIndex]['_id'], 'venue');
+        final venueId = (venuesList[previousIndex]['_id'] ?? '').toString();
+        if (venueId.isNotEmpty) {
+          _queueVenueSwipeAction(
+            venueId: venueId,
+            action: 'like',
+          );
+        }
       }
 
       Future.delayed(const Duration(milliseconds: 450), () {
         if (mounted) {
           setState(() {
             showHeart = false;
+            lastSwipeType = null;
+          });
+        }
+      });
+    } else if (direction == CardSwiperDirection.left) {
+      setState(() {
+        showCross = true;
+        showHeart = false;
+        lastSwipeType = 'heart';
+      });
+
+      if (previousIndex < venuesList.length) {
+        final venueId = (venuesList[previousIndex]['_id'] ?? '').toString();
+        if (venueId.isNotEmpty) {
+          _queueVenueSwipeAction(
+            venueId: venueId,
+            action: 'dislike',
+          );
+        }
+      }
+
+      Future.delayed(const Duration(milliseconds: 450), () {
+        if (mounted) {
+          setState(() {
+            showCross = false;
             lastSwipeType = null;
           });
         }
@@ -429,7 +593,66 @@ class _HomeState extends State<Home> {
 
   @override
   void dispose() {
+    final pendingTargetUserId = _pendingMemberUserId;
+    final pendingAction = _pendingMemberAction;
+    final pendingEventId = _pendingEventId;
+    final pendingEventAction = _pendingEventAction;
+    final pendingVenueId = _pendingVenueId;
+    final pendingVenueAction = _pendingVenueAction;
     _memberSwipeCommitTimer?.cancel();
+    _eventSwipeCommitTimer?.cancel();
+    _venueSwipeCommitTimer?.cancel();
+    _pendingMemberUserId = null;
+    _pendingMemberAction = null;
+    _pendingEventId = null;
+    _pendingEventAction = null;
+    _pendingVenueId = null;
+    _pendingVenueAction = null;
+    _showMemberUndo = false;
+    _showEventUndo = false;
+    _showVenueUndo = false;
+    if (!_isCommittingMemberSwipe &&
+        pendingTargetUserId != null &&
+        pendingAction != null) {
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      unawaited(
+        homeController.swipeUserAction(
+          context,
+          targetUserId: pendingTargetUserId,
+          action: pendingAction,
+          allowRedirectOnFailure: false,
+        ),
+      );
+    }
+    if (!_isCommittingEventSwipe &&
+        pendingEventId != null &&
+        pendingEventAction != null) {
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      unawaited(
+        homeController.eventLikeDislikeAction(
+          context,
+          eventId: pendingEventId,
+          action: pendingEventAction,
+          allowRedirectOnFailure: false,
+        ),
+      );
+    }
+    if (!_isCommittingVenueSwipe &&
+        pendingVenueId != null &&
+        pendingVenueAction != null) {
+      final homeController =
+          Provider.of<HomeController>(context, listen: false);
+      unawaited(
+        homeController.venueLikeDislikeAction(
+          context,
+          venueId: pendingVenueId,
+          action: pendingVenueAction,
+          allowRedirectOnFailure: false,
+        ),
+      );
+    }
     membersSwiperController.dispose();
     eventsSwiperController.dispose();
     venuesSwiperController.dispose();
@@ -449,12 +672,43 @@ class _HomeState extends State<Home> {
 
   int selectedTab = 0; // 0=Members, 1=Events, 2=Venues
 
+  String _getHeaderUserName(UserController userController) {
+    final localName = userController.getUserName.trim();
+    if (localName.isNotEmpty) return localName;
+    return "Guest";
+  }
+
+  ImageProvider _getHeaderUserImage(UserController userController) {
+    final rawImage = userController.getUserImage.trim();
+    if (rawImage.isEmpty) {
+      return const AssetImage(AppImage.placeHolder2Icon);
+    }
+
+    try {
+      if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+        return NetworkImage(rawImage);
+      }
+      if (rawImage.startsWith('file://')) {
+        return FileImage(File(Uri.parse(rawImage).toFilePath()));
+      }
+      if (rawImage.startsWith('/') || rawImage.contains(r':\')) {
+        return FileImage(File(rawImage));
+      }
+      return NetworkImage('${AppConfigProvider.imageUrl}$rawImage');
+    } catch (_) {
+      return const AssetImage(AppImage.placeHolder2Icon);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final homeController = Provider.of<HomeController>(context);
+    final userController = Provider.of<UserController>(context);
     final isDark = themeProvider.isDarkMode;
+    final headerUserName = _getHeaderUserName(userController);
+    final headerUserImage = _getHeaderUserImage(userController);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -506,6 +760,7 @@ class _HomeState extends State<Home> {
                                     100,
                               ),
                             ),
+                            SizedBox(width: size.width * 2 / 100),
                             Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
@@ -526,7 +781,7 @@ class _HomeState extends State<Home> {
                                   ),
                                 ),
                                 Text(
-                                  AppLanguage.sanjanaText[language],
+                                  headerUserName,
                                   style: TextStyle(
                                     fontFamily: AppFont.fontFamily,
                                     fontSize: 21,
@@ -578,11 +833,11 @@ class _HomeState extends State<Home> {
                                 );
                               },
                               child: SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    5 /
-                                    100,
-                                child: Image.asset(
-                                  AppImage.userimage,
+                                width: 38,
+                                height: 38,
+                                child: CircleAvatar(
+                                  backgroundImage: headerUserImage,
+                                  backgroundColor: Colors.transparent,
                                 ),
                               ),
                             ),
@@ -765,7 +1020,8 @@ class _HomeState extends State<Home> {
                                               documenttypebottomsheet(context);
                                             },
                                             onHeartTap: () {
-                                              // Handle heart tap for members
+                                              membersSwiperController.swipe(
+                                                  CardSwiperDirection.right);
                                             },
                                             bio: member['bio'] ?? '',
                                             vibes: List<String>.from(
@@ -926,7 +1182,8 @@ class _HomeState extends State<Home> {
                                               eventstypebottomsheet(context);
                                             },
                                             onHeartTap: () {
-                                              // Handle heart tap for events
+                                              eventsSwiperController.swipe(
+                                                  CardSwiperDirection.right);
                                             },
                                             about: event['about'] ?? '',
                                             categories: List<String>.from(
@@ -945,65 +1202,64 @@ class _HomeState extends State<Home> {
                                                       .size
                                                       .height *
                                                   0.015),
-
-                                          //! Undo Button
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04,
-                                              vertical: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.008,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColor.themeColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                eventsSwiperController.undo();
-                                              },
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    AppLanguage
-                                                        .undoText[language],
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                          if (_showEventUndo)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.04,
+                                                vertical: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.008,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.themeColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: _undoPendingEventSwipe,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      AppLanguage
+                                                          .undoText[language],
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.01),
+                                                    Image.asset(
+                                                      AppImage.arrow,
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.01),
-                                                  Image.asset(
-                                                    AppImage.arrow,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.04,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.02,
-                                                    color: Colors.white,
-                                                  ),
-                                                ],
+                                                              0.04,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                     );
@@ -1091,7 +1347,8 @@ class _HomeState extends State<Home> {
                                               eventstypebottomsheet(context);
                                             },
                                             onHeartTap: () {
-                                              // Handle heart tap for venues
+                                              venuesSwiperController.swipe(
+                                                  CardSwiperDirection.right);
                                             },
                                             about: venue['about'] ?? '',
                                             categories: List<String>.from(
@@ -1108,65 +1365,64 @@ class _HomeState extends State<Home> {
                                                       .size
                                                       .height *
                                                   0.015),
-
-                                          //! Undo Button
-                                          Container(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  0.04,
-                                              vertical: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
-                                                  0.008,
-                                            ),
-                                            decoration: BoxDecoration(
-                                              color: AppColor.themeColor,
-                                              borderRadius:
-                                                  BorderRadius.circular(20),
-                                            ),
-                                            child: GestureDetector(
-                                              onTap: () {
-                                                venuesSwiperController.undo();
-                                              },
-                                              child: Row(
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  Text(
-                                                    AppLanguage
-                                                        .undoText[language],
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w500,
+                                          if (_showVenueUndo)
+                                            Container(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                    MediaQuery.of(context)
+                                                            .size
+                                                            .width *
+                                                        0.04,
+                                                vertical: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.008,
+                                              ),
+                                              decoration: BoxDecoration(
+                                                color: AppColor.themeColor,
+                                                borderRadius:
+                                                    BorderRadius.circular(20),
+                                              ),
+                                              child: GestureDetector(
+                                                onTap: _undoPendingVenueSwipe,
+                                                child: Row(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    Text(
+                                                      AppLanguage
+                                                          .undoText[language],
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                      ),
                                                     ),
-                                                  ),
-                                                  SizedBox(
+                                                    SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            0.01),
+                                                    Image.asset(
+                                                      AppImage.arrow,
                                                       width:
                                                           MediaQuery.of(context)
                                                                   .size
                                                                   .width *
-                                                              0.01),
-                                                  Image.asset(
-                                                    AppImage.arrow,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            0.04,
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .height *
-                                                            0.02,
-                                                    color: Colors.white,
-                                                  ),
-                                                ],
+                                                              0.04,
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height *
+                                                              0.02,
+                                                      color: Colors.white,
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
                                             ),
-                                          ),
                                         ],
                                       ),
                                     );

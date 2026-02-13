@@ -60,89 +60,89 @@ class _AppPreferencesState extends State<AppPreferences> {
                   onPress: () => Navigator.pop(context),
                   text: AppLanguage.appPreferences[language],
                 ),
-                SizedBox(height: size.height * 2 / 100),
+                // SizedBox(height: size.height * 2 / 100),
 
-                // Media Visibility Section
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: Text(
-                    AppLanguage.mediaVisibilityText[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.secondryColor(context),
-                    ),
-                  ),
-                ),
-                Container(
-                  height: size.height * 0.09,
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor(context),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor(context).withOpacity(0.3),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              AppLanguage.autoDownloadMediaText[language],
-                              textHeightBehavior: const TextHeightBehavior(
-                                applyHeightToFirstAscent: false,
-                              ),
-                              style: TextStyle(
-                                color: AppColor.secondryColor(context),
-                                fontSize: 16,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                                height: 1.1,
-                              ),
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              AppLanguage.mediVisiibilityMsgText[language],
-                              style: TextStyle(
-                                color: AppColor.notificationtextColor(context),
-                                fontSize: 13,
-                                height: 1.2,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w400,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      Transform.scale(
-                        scale: 0.80,
-                        child: CupertinoSwitch(
-                          value: mileageSwitch,
-                          onChanged: (value) {
-                            setState(() {
-                              mileageSwitch = value;
-                            });
-                          },
-                          activeColor: AppColor.pinkColor,
-                          thumbColor: Colors.white,
-                          trackColor: AppColor.toggleColor(context),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                // // Media Visibility Section
+                // Padding(
+                //   padding: const EdgeInsets.symmetric(horizontal: 17.0),
+                //   child: Text(
+                //     AppLanguage.mediaVisibilityText[language],
+                //     textAlign: TextAlign.left,
+                //     style: TextStyle(
+                //       fontFamily: AppFont.fontFamily,
+                //       fontSize: 18,
+                //       fontWeight: FontWeight.w700,
+                //       color: AppColor.secondryColor(context),
+                //     ),
+                //   ),
+                // ),
+                // Container(
+                //   height: size.height * 0.09,
+                //   width: double.infinity,
+                //   padding: const EdgeInsets.symmetric(horizontal: 16),
+                //   decoration: BoxDecoration(
+                //     color: AppColor.notificationContainerColor(context),
+                //     boxShadow: [
+                //       BoxShadow(
+                //         color: AppColor.primaryColor(context).withOpacity(0.3),
+                //         spreadRadius: 3,
+                //         blurRadius: 7,
+                //         offset: const Offset(0, 1),
+                //       ),
+                //     ],
+                //   ),
+                //   child: Row(
+                //     crossAxisAlignment: CrossAxisAlignment.center,
+                //     children: [
+                //       Expanded(
+                //         child: Column(
+                //           mainAxisAlignment: MainAxisAlignment.center,
+                //           crossAxisAlignment: CrossAxisAlignment.start,
+                //           children: [
+                //             Text(
+                //               AppLanguage.autoDownloadMediaText[language],
+                //               textHeightBehavior: const TextHeightBehavior(
+                //                 applyHeightToFirstAscent: false,
+                //               ),
+                //               style: TextStyle(
+                //                 color: AppColor.secondryColor(context),
+                //                 fontSize: 16,
+                //                 fontFamily: AppFont.fontFamily,
+                //                 fontWeight: FontWeight.w600,
+                //                 height: 1.1,
+                //               ),
+                //             ),
+                //             const SizedBox(height: 6),
+                //             Text(
+                //               AppLanguage.mediVisiibilityMsgText[language],
+                //               style: TextStyle(
+                //                 color: AppColor.notificationtextColor(context),
+                //                 fontSize: 13,
+                //                 height: 1.2,
+                //                 fontFamily: AppFont.fontFamily,
+                //                 fontWeight: FontWeight.w400,
+                //               ),
+                //             ),
+                //           ],
+                //         ),
+                //       ),
+                //       Transform.scale(
+                //         scale: 0.80,
+                //         child: CupertinoSwitch(
+                //           value: mileageSwitch,
+                //           onChanged: (value) {
+                //             setState(() {
+                //               mileageSwitch = value;
+                //             });
+                //           },
+                //           activeColor: AppColor.pinkColor,
+                //           thumbColor: Colors.white,
+                //           trackColor: AppColor.toggleColor(context),
+                //         ),
+                //       ),
+                //     ],
+                //   ),
+                // ),
 
                 // Themes Section
                 Padding(

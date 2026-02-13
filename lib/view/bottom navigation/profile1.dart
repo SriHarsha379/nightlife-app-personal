@@ -280,6 +280,42 @@ class _Profile1State extends State<Profile1> {
                                             profileController
                                                 .getProfileImageUrl()!,
                                             fit: BoxFit.cover,
+                                            loadingBuilder: (context, child,
+                                                loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              final expectedBytes =
+                                                  loadingProgress
+                                                      .expectedTotalBytes;
+                                              final loadedBytes =
+                                                  loadingProgress
+                                                      .cumulativeBytesLoaded;
+                                              final progress = expectedBytes !=
+                                                      null
+                                                  ? loadedBytes / expectedBytes
+                                                  : null;
+                                              return Container(
+                                                color: AppColor.statusbar,
+                                                child: Center(
+                                                  child: SizedBox(
+                                                    width: 34,
+                                                    height: 34,
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                      strokeWidth: 3,
+                                                      value: progress,
+                                                      color:
+                                                          AppColor.buttonColor,
+                                                      backgroundColor: AppColor
+                                                              .secondryColor(
+                                                                  context)
+                                                          .withOpacity(0.2),
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
                                             errorBuilder:
                                                 (context, error, stackTrace) {
                                               return Image.asset(

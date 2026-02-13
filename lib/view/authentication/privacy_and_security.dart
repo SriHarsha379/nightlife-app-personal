@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:night_life/view/other/block_user_screen.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../controller/my_profile/my_visibility_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -28,9 +30,19 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   ];
   int selectedRadioIndex = -1;
   bool broadenedSwitch = false;
-  bool mileageSwitch = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<MyVisibilityController>(context, listen: false)
+          .fetchMyVisibility(context);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final visibilityController = Provider.of<MyVisibilityController>(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
@@ -108,12 +120,16 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                         Transform.scale(
                           scale: 0.80,
                           child: CupertinoSwitch(
-                            value: mileageSwitch,
-                            onChanged: (value) {
-                              setState(() {
-                                mileageSwitch = value;
-                              });
-                            },
+                            value: visibilityController.myVisibility,
+                            onChanged: visibilityController.isUpdating
+                                ? null
+                                : (value) async {
+                                    await visibilityController
+                                        .updateMyVisibility(
+                                      context,
+                                      value: value,
+                                    );
+                                  },
                             activeColor: AppColor.pinkColor,
                             thumbColor: Colors.white,
                             trackColor: AppColor.toggleColor(context),
@@ -278,48 +294,48 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 ),
               ),
 
-              Container(
-                height: size.height * 7 / 100,
-                width: size.width * 94 / 100,
-                padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor(context),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.primaryColor(context),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLanguage.downloadDatatext[language],
-                      style: TextStyle(
-                        color: AppColor.secondryColor(context),
-                        fontSize: 16,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(
-                      height: size.width * 8 / 100,
-                      width: size.width * 9 / 100,
-                      child: Image.asset(
-                        AppImage.frontArrowIcon,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   height: size.height * 7 / 100,
+              //   width: size.width * 94 / 100,
+              //   padding: const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+              //   margin: const EdgeInsets.symmetric(
+              //     horizontal: 10,
+              //   ),
+              //   decoration: BoxDecoration(
+              //     color: AppColor.notificationContainerColor(context),
+              //     borderRadius: BorderRadius.circular(8),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: AppColor.primaryColor(context),
+              //         spreadRadius: 3,
+              //         blurRadius: 7,
+              //         offset: const Offset(0, 1),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         AppLanguage.downloadDatatext[language],
+              //         style: TextStyle(
+              //           color: AppColor.secondryColor(context),
+              //           fontSize: 16,
+              //           fontFamily: AppFont.fontFamily,
+              //           fontWeight: FontWeight.w400,
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: size.width * 8 / 100,
+              //         width: size.width * 9 / 100,
+              //         child: Image.asset(
+              //           AppImage.frontArrowIcon,
+              //           fit: BoxFit.contain,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               GestureDetector(
                 onTap: () {

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
@@ -40,7 +42,7 @@ class HomeController with ChangeNotifier {
     BuildContext context, {
     required String type,
     int page = 1,
-    int limit = 5,
+    int limit = 10,
   }) async {
     String token = AppConstant.token;
 
@@ -249,6 +251,7 @@ class HomeController with ChangeNotifier {
     BuildContext context, {
     required String targetUserId,
     required String action, // right | left
+    bool allowRedirectOnFailure = true,
   }) async {
     final token = AppConstant.token;
     if (token.isEmpty) {
@@ -270,7 +273,73 @@ class HomeController with ChangeNotifier {
     if (res != null && res['success'] == true) {
       return true;
     }
-    if (res != null) {
+    if (res != null && allowRedirectOnFailure) {
+      CommonHelper.handleInactiveUserRedirect(context, res);
+    }
+    return false;
+  }
+
+  Future<bool> eventLikeDislikeAction(
+    BuildContext context, {
+    required String eventId,
+    required String action, // like | dislike
+    bool allowRedirectOnFailure = true,
+  }) async {
+    final token = AppConstant.token;
+    if (token.isEmpty) {
+      return false;
+    }
+
+    final res = await postJsonData(
+      'event/like_dislike',
+      {
+        'event_id': eventId,
+        'action': action,
+      },
+      context,
+      headers: {
+        'authorization': 'Bearer $token',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      log("show action after 15 second ============>>>>$res");
+
+      return true;
+    }
+    if (res != null && allowRedirectOnFailure) {
+      CommonHelper.handleInactiveUserRedirect(context, res);
+    }
+    return false;
+  }
+
+  Future<bool> venueLikeDislikeAction(
+    BuildContext context, {
+    required String venueId,
+    required String action, // like | dislike
+    bool allowRedirectOnFailure = true,
+  }) async {
+    final token = AppConstant.token;
+    if (token.isEmpty) {
+      return false;
+    }
+
+    final res = await postJsonData(
+      'venue/like_dislike',
+      {
+        'venue_id': venueId,
+        'action': action,
+      },
+      context,
+      headers: {
+        'authorization': 'Bearer $token',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      return true;
+    }
+    if (res != null && allowRedirectOnFailure) {
       CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
@@ -285,7 +354,22 @@ class HomeController with ChangeNotifier {
       );
       return;
     }
-    print("Liked $type with id: $id");
+    if (type == 'event') {
+      await eventLikeDislikeAction(
+        context,
+        eventId: id,
+        action: 'like',
+      );
+      return;
+    }
+    if (type == 'venue') {
+      await venueLikeDislikeAction(
+        context,
+        venueId: id,
+        action: 'like',
+      );
+      return;
+    }
   }
 
   Future<void> dislikeItem(BuildContext context, String id, String type) async {
@@ -297,6 +381,21 @@ class HomeController with ChangeNotifier {
       );
       return;
     }
-    print("Disliked $type with id: $id");
+    if (type == 'event') {
+      await eventLikeDislikeAction(
+        context,
+        eventId: id,
+        action: 'dislike',
+      );
+      return;
+    }
+    if (type == 'venue') {
+      await venueLikeDislikeAction(
+        context,
+        venueId: id,
+        action: 'dislike',
+      );
+      return;
+    }
   }
 }

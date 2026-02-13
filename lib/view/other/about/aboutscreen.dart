@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../provider/content_service.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_header.dart';
@@ -16,9 +20,88 @@ class AboutScreen extends StatefulWidget {
 }
 
 class _AboutScreenState extends State<AboutScreen> {
+  String rateappurl = '';
+  String appVersion = _fallbackAppVersion();
+
+  static String _fallbackAppVersion() {
+    const buildName = String.fromEnvironment('FLUTTER_BUILD_NAME');
+    if (buildName.isEmpty) return '1.0.0';
+    return buildName;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadContentData();
+    loadAppVersion();
+  }
+
+  loadContentData() {
+    fetchAllContent((List data) {
+      for (var item in data) {
+        // iOS App Store Link (content_type: 3)
+        if (item['content_type'] == 3) {
+          var iosurl = item['content'];
+          setState(() {
+            if (AppConstant.deviceType == 'ios') {
+              rateappurl = iosurl;
+            }
+          });
+        }
+
+        // Android Play Store Link (content_type: 4)
+        if (item['content_type'] == 4) {
+          var androidurl = item['content'];
+          setState(() {
+            if (AppConstant.deviceType == 'android') {
+              rateappurl = androidurl;
+            }
+          });
+        }
+      }
+    });
+  }
+
+  Future<void> loadAppVersion() async {
+    try {
+      final packageInfo = await PackageInfo.fromPlatform();
+      final version = packageInfo.version.trim();
+      if (!mounted) return;
+      setState(() {
+        appVersion = version.isNotEmpty ? version : _fallbackAppVersion();
+      });
+    } catch (_) {
+      if (!mounted) return;
+      setState(() {
+        appVersion = _fallbackAppVersion();
+      });
+    }
+  }
+
+  Future openUrl({
+    required String url,
+    bool inApp = false,
+  }) async {
+    print('Opening URL: $url');
+
+    // Check if the URL starts with http:// or https://
+    if (!url.startsWith('http://') && !url.startsWith('https://')) {
+      url = 'https://$url';
+    }
+
+    if (await canLaunch(url)) {
+      await launch(
+        url,
+        forceSafariVC: inApp,
+        forceWebView: inApp,
+        enableJavaScript: true,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       systemNavigationBarColor: AppColor.primaryColor(context),
       systemNavigationBarIconBrightness: Brightness.light,
       statusBarColor: AppColor.primaryColor(context),
@@ -43,9 +126,7 @@ class _AboutScreenState extends State<AboutScreen> {
                   text: AppLanguage.aboutText[language],
                   onPress: () => Navigator.pop(context),
                 ),
-
                 SizedBox(height: h * 0.04),
-
                 Column(
                   children: [
                     /// Logo
@@ -94,7 +175,7 @@ class _AboutScreenState extends State<AboutScreen> {
                             ),
                           ),
                           Text(
-                            "Version 1.021",
+                            "Version $appVersion",
                             style: TextStyle(
                               color: AppColor.secondryColor(context),
                               fontSize: w * 0.038,
@@ -109,46 +190,51 @@ class _AboutScreenState extends State<AboutScreen> {
                     SizedBox(height: h * 0.015),
 
                     /// SECOND CARD (Check for Updates)
-                    Container(
-                      height: h * 0.06,
-                      width: w * 0.94,
-                      padding: EdgeInsets.symmetric(
-                        vertical: h * 0.01,
-                        horizontal: w * 0.03,
-                      ),
-                      margin: EdgeInsets.symmetric(
-                        horizontal: w * 0.02,
-                        vertical: h * 0.005,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColor.notificationContainerColor(context),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.primaryColor(context),
-                            spreadRadius: 3,
-                            blurRadius: 7,
-                            offset: const Offset(0, 1),
-                          ),
-                        ],
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Check for Updates",
-                            style: TextStyle(
-                              color: AppColor.secondryColor(context),
-                              fontSize: w * 0.042,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
+                    GestureDetector(
+                      onTap: () {
+                        openUrl(url: rateappurl);
+                      },
+                      child: Container(
+                        height: h * 0.06,
+                        width: w * 0.94,
+                        padding: EdgeInsets.symmetric(
+                          vertical: h * 0.01,
+                          horizontal: w * 0.03,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          horizontal: w * 0.02,
+                          vertical: h * 0.005,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColor.notificationContainerColor(context),
+                          borderRadius: BorderRadius.circular(8),
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColor.primaryColor(context),
+                              spreadRadius: 3,
+                              blurRadius: 7,
+                              offset: const Offset(0, 1),
                             ),
-                          ),
-                          SizedBox(
-                            width: w * 0.08,
-                            child: Image.asset(AppImage.frontArrowIcon),
-                          ),
-                        ],
+                          ],
+                        ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Check for Updates",
+                              style: TextStyle(
+                                color: AppColor.secondryColor(context),
+                                fontSize: w * 0.042,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(
+                              width: w * 0.08,
+                              child: Image.asset(AppImage.frontArrowIcon),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
 

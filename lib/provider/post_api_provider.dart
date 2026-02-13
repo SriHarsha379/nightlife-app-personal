@@ -20,6 +20,8 @@ import '../view/authentication/login_screen.dart';
 import '../view/authentication/otp_verify_screen.dart';
 import '../view/other/city_Preference/citypreference_screen.dart';
 import '../view/other/city_Preference/music_genres.dart';
+import '../view/other/city_Preference/stay_connected_otp_verification.dart';
+import '../view/other/city_Preference/stay_connected_screen.dart';
 import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
@@ -85,6 +87,10 @@ class PostApiProvider with ChangeNotifier {
         final bool isProfileCompleted = userData['is_profile_completed'] ??
             userData['isProfileCompleted'] ??
             false;
+        final bool isAnotherEmailVerify =
+            userData['is_another_email_verify'] == true;
+        final String anotherEmail =
+            (userData['another_email'] ?? '').toString();
 
         int signupStep = 0;
         final dynamic stepValue = userData['signup_step'];
@@ -104,13 +110,36 @@ class PostApiProvider with ChangeNotifier {
         Provider.of<UserController>(context, listen: false)
             .setUserFromMap(Map<String, dynamic>.from(userData));
 
-        // Navigation logic based on signup_step
-        if (isProfileCompleted || signupStep >= 3) {
+        // If additional email OTP is pending after step 3, go to stay-connected OTP.
+        if (signupStep >= 3 &&
+            anotherEmail.trim().isNotEmpty &&
+            !isAnotherEmailVerify) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: StayConnectedOTPVerify(
+                isEmail: true,
+                email: anotherEmail,
+              ),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        } else if (isProfileCompleted) {
           Navigator.push(
             context,
             PageTransition(
               type: PageTransitionType.rightToLeftWithFade,
               child: const MyAppFooter(initialIndex: 0),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
+        } else if (signupStep >= 3) {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: StayConnectedScreen(),
               duration: const Duration(milliseconds: 400),
             ),
           );
@@ -343,7 +372,7 @@ class PostApiProvider with ChangeNotifier {
 
       if (res['success'] == true) {
         TopNotification.success(context, res['message'][language]);
-        // AppConstant.token = res['data']['token'] ?? '12345';
+        AppConstant.token = res['data']['token'] ?? '12345';
         await CacheHelper.save("user_details", jsonEncode(res['data']));
         TopNotification.success(context, res['message'][language]);
 
@@ -509,14 +538,6 @@ class PostApiProvider with ChangeNotifier {
 
         setLoading(false);
 
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: const MyAppFooter(initialIndex: 0),
-          ),
-        );
-
         return result;
       }
 
@@ -528,6 +549,83 @@ class PostApiProvider with ChangeNotifier {
       setLoading(false);
       return null;
     }
+  }
+
+  Future<Map<String, dynamic>?> verifyEmailOtpApiCalling(
+    BuildContext context, {
+    required String otp,
+    String? email,
+  }) async {
+    setLoading(true);
+
+    final Map<String, String> fields = {
+      'otp': otp.trim(),
+    };
+    if (email != null && email.trim().isNotEmpty) {
+      fields['another_email'] = email.trim();
+    }
+
+    final res = await postJsonData(
+      'auth/verify_email_otp',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      final dynamic data = res['data'];
+      if (data is Map) {
+        final mapData = Map<String, dynamic>.from(data);
+        AppConstant.token = mapData['token'] ?? AppConstant.token;
+        await CacheHelper.save("user_details", jsonEncode(mapData));
+        if (context.mounted) {
+          Provider.of<UserController>(context, listen: false)
+              .setUserFromMap(mapData);
+        }
+      }
+      if (context.mounted) {
+        TopNotification.success(context, res['message'][language]);
+      }
+      setLoading(false);
+      return res;
+    }
+
+    setLoading(false);
+    return null;
+  }
+
+  Future<Map<String, dynamic>?> resendEmailOtpApiCalling(
+    BuildContext context, {
+    String? email,
+  }) async {
+    setSecondaryLoading(true);
+
+    final Map<String, String> fields = {};
+    if (email != null && email.trim().isNotEmpty) {
+      fields['another_email'] = email.trim();
+    }
+
+    final res = await postJsonData(
+      'auth/resend_email_otp',
+      fields,
+      context,
+      headers: {
+        'authorization': 'Bearer ${AppConstant.token}',
+      },
+    );
+
+    if (res != null && res['success'] == true) {
+      if (context.mounted) {
+        TopNotification.success(context, res['message'][language]);
+      }
+      setSecondaryLoading(false);
+      return res;
+    }
+
+    setSecondaryLoading(false);
+    return null;
   }
 
   // ================setup profile Api================//
