@@ -378,4 +378,6 @@ class AppImage {
   static const placeHolderIcon = "./assets/icons/Icon_placeholder.png";
   // static const placeHolder1Icon = "./assets/icons/Profile_2.png";
   static const placeHolder2Icon = "./assets/icons/icon_placeHolder1.jpg";
+    static const dummyImageIcon = "./assets/icons/dummy_image.jpg";
+
 }

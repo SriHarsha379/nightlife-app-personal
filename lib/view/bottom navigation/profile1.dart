@@ -749,11 +749,11 @@ class _Profile1State extends State<Profile1> {
                                   ),
                                 ],
                               ),
-                              SizedBox(height: size.height * 0.002),
+                              SizedBox(height: size.height * 0.015),
                               _buildFollowedVenuesSection(
                                   context, profileController),
                             ],
-
+                            SizedBox(height: size.height * 0.02),
                             //! Top Artist Section
                             if (profileController.hasTopArtist) ...[
                               Text(
@@ -1012,6 +1012,9 @@ class _Profile1State extends State<Profile1> {
       ),
     );
   }
+
+
+
 
   Widget _buildGallerySection(
       BuildContext context, ProfileController controller) {
@@ -1442,6 +1445,8 @@ class _Profile1State extends State<Profile1> {
   Widget _buildFollowedVenuesSection(
       BuildContext context, ProfileController controller) {
     final size = MediaQuery.of(context).size;
+    final double cardWidth = 105 * size.width / 375;
+    final double cardHeight = 105 * size.width / 375;
 
     if (!controller.hasFollowedVenues) {
       return const SizedBox.shrink();
@@ -1452,24 +1457,35 @@ class _Profile1State extends State<Profile1> {
     final imageUrl =
         venueImage.isNotEmpty ? '${AppConfigProvider.imageUrl}$venueImage' : '';
 
-    return SizedBox(
-      width: double.infinity,
-      height: size.height * 0.17,
+    return Container(
+      width: cardWidth,
+      height: cardHeight,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(14),
+        boxShadow: [
+          BoxShadow(
+            color: AppColor.cardFillColor,
+            blurRadius: 12,
+            spreadRadius: 0.1,
+            offset: const Offset(0, 3),
+          ),
+        ],
+      ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(15),
+        borderRadius: BorderRadius.circular(14),
         child: imageUrl.isNotEmpty
             ? Image.network(
                 imageUrl,
                 fit: BoxFit.cover,
                 errorBuilder: (context, error, stackTrace) {
                   return Image.asset(
-                    AppImage.followedVenueIcon,
+                    AppImage.dummyImageIcon,
                     fit: BoxFit.cover,
                   );
                 },
               )
             : Image.asset(
-                AppImage.followedVenueIcon,
+                AppImage.dummyImageIcon,
                 fit: BoxFit.cover,
               ),
       ),
@@ -1548,4 +1564,7 @@ class _Profile1State extends State<Profile1> {
       ),
     );
   }
+
+
+
 }

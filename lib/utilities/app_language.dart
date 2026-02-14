@@ -531,6 +531,7 @@ class AppLanguage {
 
   static const likedEvents = ["Liked Events"];
   static const followedVenuestext = ["Followed Venues"];
+  static const likedVenuestext = ["Recently Liked Venues"];
 
   static const mytopArtistonspotifyText = ["My Top Artist on Spotify"];
   static const likeText = [" Like"];

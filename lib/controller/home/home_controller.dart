@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter/material.dart';
+import 'member_details_model.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
 
@@ -22,6 +23,12 @@ class HomeController with ChangeNotifier {
   // Loading states
   bool _isLoading = false;
   bool get getIsLoading => _isLoading;
+  bool _isMemberDetailLoading = false;
+  bool get getIsMemberDetailLoading => _isMemberDetailLoading;
+  Map<String, dynamic>? _memberDetail;
+  Map<String, dynamic>? get getMemberDetail => _memberDetail;
+  MemberDetailsModel? _memberDetailsModel;
+  MemberDetailsModel? get getMemberDetailsModel => _memberDetailsModel;
 
   // Get current active list based on type
   List<dynamic> getCurrentList() {
@@ -187,6 +194,53 @@ class HomeController with ChangeNotifier {
     } catch (e) {
       return null;
     }
+  }
+
+  Future<Map<String, dynamic>?> fetchMemberDetail(
+    BuildContext context, {
+    required String memberId,
+  }) async {
+    final token = AppConstant.token;
+    if (token.isEmpty || memberId.isEmpty) {
+      return null;
+    }
+
+    _isMemberDetailLoading = true;
+    notifyListeners();
+
+    try {
+      final response = await getData(
+        'feed/member_detail/$memberId',
+        context,
+        headers: {
+          'authorization': 'Bearer $token',
+        },
+      );
+
+      if (response != null && response['success'] == true) {
+        final data = response['data'];
+        if (data is Map<String, dynamic>) {
+          _memberDetail = data;
+          _memberDetailsModel = MemberDetailsModel.fromJson(data);
+          notifyListeners();
+          return _memberDetail;
+        }
+        _memberDetail = null;
+        _memberDetailsModel = null;
+        notifyListeners();
+      } else if (response != null) {
+        CommonHelper.handleInactiveUserRedirect(context, response);
+      }
+    } catch (e) {
+      log("fetchMemberDetail error: $e");
+      _memberDetail = null;
+      _memberDetailsModel = null;
+      notifyListeners();
+    } finally {
+      _isMemberDetailLoading = false;
+      notifyListeners();
+    }
+    return null;
   }
 
   // Get event by ID

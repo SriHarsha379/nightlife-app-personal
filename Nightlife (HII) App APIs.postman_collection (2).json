@@ -1,0 +1,1898 @@
+{
+  "info": {
+    "_postman_id": "182ef51b-fdec-4bba-a7b7-3ce5ec72d19d",
+    "name": "Nightlife (HII) App APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "48813807",
+    "_collection_link": "https://go.postman.co/collection/48813807-182ef51b-fdec-4bba-a7b7-3ce5ec72d19d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Signup Step 1",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "phone_number",
+                  "value": "8520852123",
+                  "type": "text"
+                },
+                {
+                  "key": "first_name",
+                  "value": "testingBuddy",
+                  "type": "text"
+                },
+                {
+                  "key": "last_name",
+                  "value": "okay",
+                  "type": "text"
+                },
+                {
+                  "key": "username",
+                  "value": "testing_buddy",
+                  "type": "text"
+                },
+                {
+                  "key": "password",
+                  "value": "123456",
+                  "type": "text"
+                },
+                {
+                  "key": "email",
+                  "value": "testingbuddy@yopmail.com",
+                  "type": "text"
+                },
+                {
+                  "key": "dob",
+                  "value": "2000-01-01",
+                  "type": "text"
+                },
+                {
+                  "key": "gender",
+                  "value": "Male",
+                  "type": "text"
+                },
+                {
+                  "key": "player_id",
+                  "value": "PLAYERID",
+                  "type": "text"
+                },
+                {
+                  "key": "device_type",
+                  "value": "android",
+                  "type": "text"
+                },
+                {
+                  "key": "city_id",
+                  "value": "6916be84cddd2057bc81bfae",
+                  "type": "text"
+                },
+                {
+                  "key": "referral_code",
+                  "value": "MYREFFERALS",
+                  "type": "text"
+                },
+                {
+                  "key": "profile_image",
+                  "type": "file",
+                  "uuid": "fdcfe2cc-a8d3-47d7-bf67-ef7259a3aae7",
+                  "src": "postman-cloud:///1f0bee24-45b3-4600-aff3-5f157253ef2b"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/signup_step_one",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "signup_step_one"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Otp Verify",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"phone_number\":\"8520852123\",\r\n    \"otp\":\"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/otp_verify",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "otp_verify"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Resend Otp",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"phone_number\":\"9911991199\",\r\n    \"otp\":\"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/resend_otp",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "resend_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Popular Cities",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}auth/popular_cities",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "popular_cities"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Signup Step 2",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0Mzk0MSwiZXhwIjoxNzczMDM1OTQxfQ.I8Mp7ZfJPYMCyQDriTXC4mR2Qb91CEbqHCpCs1juas8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"preferred_cities\": [\r\n        {\r\n            \"city_id\": \"698316101c70a8697332bfb9\",\r\n            \"latitude\": 22.7196,\r\n            \"longitude\": 75.8577,\r\n            \"radius\": 20\r\n        },\r\n        {\r\n            \"city_id\": \"698318f9797442061ef7a69c\",\r\n            \"latitude\": 26.9124,\r\n            \"longitude\": 75.7873,\r\n            \"radius\": 15\r\n        }\r\n    ],\r\n    \"bio\": \"Love music & travel\",\r\n    \"instagram_account\": \"https://instagram.com/test\",\r\n    \"spotify_account\": \"https://spotify.com/Channnnn@spotify\",\r\n    \"snapchat_account\": \"https://snapchat.com/Channnnn@snap\",\r\n    \"hobbies\": [\r\n        \"dance\",\r\n        \"singing\"\r\n    ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/signup_step_two",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "signup_step_two"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Music Genres",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODQ2MmRiMTNlM2IwYWYwNzY1ZTAyZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDI4ODE4NSwiZXhwIjoxNzcyODgwMTg1fQ.6vD-e2AuBIgwBRrzxfIcOyGFkmn3PKine6LpSOgMUjU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_live}}auth/music-genres",
+              "host": [
+                "{{hii_live}}auth"
+              ],
+              "path": [
+                "music-genres"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event Preferences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ2NzM2MCwiZXhwIjoxNzczMDU5MzYwfQ.FW4dzJR6P5jX2QDF8fKWCEHvKLJ3C0hnTE-nc40pazw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}auth/event-preferences",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "event-preferences"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Vibe",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDc5NDQyNywiZXhwIjoxNzczMzg2NDI3fQ.Ffd4_pQAShYtwUYL9JcI1go0vxMNybOXNhnR_3ctLHw",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_live}}auth/vibes",
+              "host": [
+                "{{hii_live}}auth"
+              ],
+              "path": [
+                "vibes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Vibe Checks",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODQ2MmRiMTNlM2IwYWYwNzY1ZTAyZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDI4ODE4NSwiZXhwIjoxNzcyODgwMTg1fQ.6vD-e2AuBIgwBRrzxfIcOyGFkmn3PKine6LpSOgMUjU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}auth/get_vibe_checks",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "get_vibe_checks"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Signup Step 3",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0Mzk0MSwiZXhwIjoxNzczMDM1OTQxfQ.I8Mp7ZfJPYMCyQDriTXC4mR2Qb91CEbqHCpCs1juas8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "music_genre",
+                  "value": "691aa1ebc9734b38d6200f66,693a68efd164eb005759db68",
+                  "type": "text"
+                },
+                {
+                  "key": "custom_music_genres",
+                  "value": "Indie Pop",
+                  "type": "text"
+                },
+                {
+                  "key": "event_preferences",
+                  "value": "691464186ce8d4cb5895d388,6921a029c85e6ee5619b2182",
+                  "type": "text"
+                },
+                {
+                  "key": "custom_event_preferences",
+                  "value": "Tech Meetups",
+                  "type": "text"
+                },
+                {
+                  "key": "vibes",
+                  "value": "6916bf8ecddd2057bc81bfbf",
+                  "type": "text"
+                },
+                {
+                  "key": "custom_vibes",
+                  "value": "Chill & Deep Talks",
+                  "type": "text"
+                },
+                {
+                  "key": "vibe_checks",
+                  "value": "[{\"question_id\":\"69848d00b2921475a8bd6506\",\"answer\":\"Chill but ambitious\"},{\"question_id\":\"69848d00b2921475a8bd6507\",\"answer\":\"Coffee over clubbing\"}]",
+                  "type": "text"
+                },
+                {
+                  "key": "sexuality",
+                  "value": "Straight",
+                  "type": "text"
+                },
+                {
+                  "key": "interested_in",
+                  "value": "Female",
+                  "type": "text"
+                },
+                {
+                  "key": "pronouns",
+                  "value": "He/Him",
+                  "type": "text"
+                },
+                {
+                  "key": "another_email",
+                  "value": "chandan@mailinator.com",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "uuid": "3f5347e3-eb27-47e9-8681-08d1cd04a526",
+                  "src": "postman-cloud:///1f0d73e4-161d-4480-820f-a74285ad3c80"
+                },
+                {
+                  "key": "videos",
+                  "type": "file",
+                  "uuid": "54b91577-5e21-43a5-a160-f51165598ea2",
+                  "src": "postman-cloud:///1f0a36b3-700c-41b0-b6b7-3823c3b2a054",
+                  "disabled": true
+                },
+                {
+                  "key": "thumbnails",
+                  "type": "file",
+                  "uuid": "dc7604ab-9161-4f63-a8b8-a2b2450f7c78",
+                  "src": "postman-cloud:///1f0dca56-207a-4c70-8899-5dcb0c9e71e1",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/signup_step_three",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "signup_step_three"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Email Otp verify",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"another_email\":\"jerrydummy@mailinator.com\",\r\n    \"otp\":\"5678\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/verify_email_otp",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "verify_email_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    // \"email\":\"chandan@youngdecade.com\",\r\n    \"email\":\"8520852123\",\r\n    \"password\":\"123456\",\r\n    \"device_type\":\"android\",\r\n    \"player_id\":\"12345@\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/login",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"5566556600\",\r\n    \"password\":\"123456\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/login",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Forgot otp verify",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"chandan@youngdecade.com\",\r\n    \"otp\":\"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/verify_forgot_otp",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "verify_forgot_otp"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzlkNThlMGMyMzg2YjhhMTE0ZGEyNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTU5NjM0NiwiZXhwIjoxNzcyMTg4MzQ2fQ.-OJfIRXmN3B6_UU1YLedzPTCcIEccbDSAfIPVEla3Ug",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"new_password\":\"@12345\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/confirm_password",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "confirm_password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Social Login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"socialType\":\"google\",\r\n    \"social_id\":\"1234\",\r\n    \"email\":\"newuser@mailinator.com\",\r\n    \"fullName\":\"Shetty Thomas\",\r\n    \"device_type\":\"android\",\r\n    \"player_id\":\"1234\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}auth/social_login",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "social_login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}auth/logout",
+              "host": [
+                "{{hii_local}}auth"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Profile Section",
+      "item": [
+        {
+          "name": "Edit Profile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGM0YzUxZTllMjcyOGE5NWYyMTNjYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDgwMjUzNSwiZXhwIjoxNzczMzk0NTM1fQ.Ubd2qKuV3TaZKSiT0t-tkwIh-i6bm3Futys_-mpwmD8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "first_name",
+                  "value": "Chandan",
+                  "type": "text"
+                },
+                {
+                  "key": "last_name",
+                  "value": "RJK.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "name",
+                  "value": "Chandan R.",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "username",
+                  "value": "chandan001",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "birthdate",
+                  "value": "10/01/2000",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "gender",
+                  "value": "Male",
+                  "type": "text",
+                  "disabled": true
+                },
+                {
+                  "key": "profile_image",
+                  "type": "file",
+                  "uuid": "989cea53-8566-4c67-8fef-5b3f7be2b341",
+                  "src": "postman-cloud:///1f0bee24-45b3-4600-aff3-5f157253ef2b",
+                  "disabled": true
+                },
+                {
+                  "key": "bio",
+                  "value": "My Bio",
+                  "type": "text",
+                  "uuid": "438502b8-eb31-454c-94a1-2071e3d551c1",
+                  "disabled": true
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{hii_local}}user/edit_profile",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "edit_profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Profile Visibility",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTYwMTYxMywiZXhwIjoxNzcyMTkzNjEzfQ.nBZOcV7iSgeqoGaaLNKh3kQjIlcz6Ykg_sOdV1Uxkx0",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}user/get_profile_visibility",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "get_profile_visibility"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update Profile Visibility",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \r\n    \"value\":false, //false \r\n    \"key\": \"age\" \r\n    // \"height\",\"pronouns\",\"location\",\"hobbies\",\"vibes\",\"recent_events\",\"recent_venues\",\"instagram\",\"spotify\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_profile_visibility",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_profile_visibility"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update Gallery Visibility",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \r\n    \"is_visible\":false, //false \r\n    \"url\": \"images-1770444193745-621846103.jpg\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_gallery_visibility",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_gallery_visibility"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update My Visibility",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTY3OTY3MSwiZXhwIjoxNzcyMjcxNjcxfQ.JjnKv_wMg4HRnlrZuRYX73aCzUliXTPztaBUYrVJ3Ac",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"my_visibility\":true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_my_visibility",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_my_visibility"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Account",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5Nzg3ZGMxM2M4ODNlNTUzMjc0MzMwNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTY3OTk4NiwiZXhwIjoxNzcyMjcxOTg2fQ.BucW1M2527KSWTR8IespOJwLMnjFoCBblle4XX1G8OY",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"reason\":\"I dont want this now\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/delete_account",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "delete_account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Faqs",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTY4MDY3NCwiZXhwIjoxNzcyMjcyNjc0fQ.mbGlm-LzOLscPpPmXEBJCzWaj-Zjx0vFsyeGsROxJXg",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}user/get_faq",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "get_faq"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Report Reason",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTY4NjYxNCwiZXhwIjoxNzcyMjc4NjE0fQ.MruDUaIWDjIELz24mUVbLGmz3bMVcp2Nmc3DkD49Dm4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "description",
+                  "value": "I am facing an issue",
+                  "type": "text",
+                  "uuid": "c31766e7-d760-41e4-9612-bc5012bee8d4"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "uuid": "e5288ca5-0d4a-44d5-a406-7d1260c4e277",
+                  "src": "postman-cloud:///1f09b9f6-8384-4970-b9d5-687c4cc3c3bc"
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "uuid": "a0cfa0a5-f6bb-4dad-9f03-e7b1f6b1ddee",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "videos",
+                  "type": "file",
+                  "uuid": "e7030ec0-5397-4cd3-a86e-c76710c96836",
+                  "src": "postman-cloud:///1f0a36b3-700c-41b0-b6b7-3823c3b2a054"
+                },
+                {
+                  "key": "thumbnails",
+                  "type": "file",
+                  "uuid": "42419471-a6af-4747-b2fe-6de17dff7ebe",
+                  "src": "postman-cloud:///1f0d972e-6c7a-4c70-b68e-26e8cd140a1c"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{hii_local}}user/report_problem",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "report_problem"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Support Email",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTY4NjYxNCwiZXhwIjoxNzcyMjc4NjE0fQ.MruDUaIWDjIELz24mUVbLGmz3bMVcp2Nmc3DkD49Dm4",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}user/get_support_email",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "get_support_email"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Interests",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"interests\":[\"Photography\" , \"Music\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_interests",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_interests"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Profile Data",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}user/my_profile_data",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "my_profile_data"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Upload Gallery Media",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "uuid": "c8f82f3c-4fdb-4783-aafd-4cfb688afa39",
+                  "value": null,
+                  "disabled": true
+                },
+                {
+                  "key": "videos",
+                  "type": "file",
+                  "uuid": "fb034985-d298-402c-9deb-66200eb2922e",
+                  "src": "postman-cloud:///1f0a36b3-700c-41b0-b6b7-3823c3b2a054"
+                },
+                {
+                  "key": "thumbnails",
+                  "type": "file",
+                  "uuid": "c887d32d-52a1-40ae-98bb-0f2ed6fdd292",
+                  "src": "postman-cloud:///1f0dca56-207a-4c70-8899-5dcb0c9e71e1"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{hii_local}}user/upload_gallery",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "upload_gallery"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Hobbies",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"hobbies\":[\"Dance\" ]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_hobbies",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_hobbies"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Recently Liked Venues/Events",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}user/recently_liked_items?type=venue",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "recently_liked_items"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "venue",
+                  "description": "event,venue"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Social Accounts",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"type\":\"instagram\", // \"spotify\"\r\n    \"url\":\"https://instagram.com/chanduuuuu\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/update_social_account",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "update_social_account"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Vibes",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxNzYwMCwiZXhwIjoxNzczMzA5NjAwfQ.Bkvm_64bECvqJz1ZLBikfRW1cUYYThQUmqd7qGMaRWU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"vibes\":[\"6933c7492ee8e3a9dcc42ec2\",\"6933c7222ee8e3a9dcc42ebe\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/add_vibes",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "add_vibes"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Event Preferences",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxNzYwMCwiZXhwIjoxNzczMzA5NjAwfQ.Bkvm_64bECvqJz1ZLBikfRW1cUYYThQUmqd7qGMaRWU",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"event_preferences\":[\"69216231afd7e2bf880b85f5\",\"692162bfafd7e2bf880b8609\"],\r\n    \"custom_event_preferences\":[\"Party\"]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/add_event_preferences",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "add_event_preferences"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User Gallery",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"url\":\"images-1770792386086-822467135.png\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}user/delete_gallery_item",
+              "host": [
+                "{{hii_local}}user"
+              ],
+              "path": [
+                "delete_gallery_item"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Home",
+      "item": [
+        {
+          "name": "Get Home Data",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGM0YzUxZTllMjcyOGE5NWYyMTNjYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDgwMjUzNSwiZXhwIjoxNzczMzk0NTM1fQ.Ubd2qKuV3TaZKSiT0t-tkwIh-i6bm3Futys_-mpwmD8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}feed/home_data?type=venue&page=1&limit=5",
+              "host": [
+                "{{hii_local}}feed"
+              ],
+              "path": [
+                "home_data"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "venue",
+                  "description": "member , event, venue"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "5"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Member Detail",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTc1MjUwOCwiZXhwIjoxNzcyMzQ0NTA4fQ.bupy1kG_H3goU3kjtDEZhfasiOarCyYT7JHO67JC66g",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}feed/member_detail/69787dc13c883e5532743304",
+              "host": [
+                "{{hii_local}}feed"
+              ],
+              "path": [
+                "member_detail",
+                "69787dc13c883e5532743304"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event Detail",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}event/event_detail/6985b925f7da0815b2061316",
+              "host": [
+                "{{hii_local}}event"
+              ],
+              "path": [
+                "event_detail",
+                "6985b925f7da0815b2061316"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venue Detail",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}venue/venue_detail/69620248ac402a2a75137a74",
+              "host": [
+                "{{hii_local}}venue"
+              ],
+              "path": [
+                "venue_detail",
+                "69620248ac402a2a75137a74"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Left / Right Swipe",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcwMDQyNiwiZXhwIjoxNzczMjkyNDI2fQ.DxzK9H15UyVkaq8i2SVuSWOrduzOcf-6WMGWcdHkKwo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"target_user_id\":\"6989a737aa6a99716a998c54\",\r\n    \"action\":\"right\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}feed/swipe_user",
+              "host": [
+                "{{hii_local}}feed"
+              ],
+              "path": [
+                "swipe_user"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event Like Dislike",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcwMDQyNiwiZXhwIjoxNzczMjkyNDI2fQ.DxzK9H15UyVkaq8i2SVuSWOrduzOcf-6WMGWcdHkKwo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"event_id\":\"6985b925f7da0815b2061316\",\r\n    \"action\" : \"like\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}event/like_dislike",
+              "host": [
+                "{{hii_local}}event"
+              ],
+              "path": [
+                "like_dislike"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Venue Like Dislike",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"venue_id\":\"69620248ac402a2a75137a74\",\r\n    \"action\" : \"like\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}venue/like_dislike",
+              "host": [
+                "{{hii_local}}venue"
+              ],
+              "path": [
+                "like_dislike"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Filter",
+      "item": [
+        {
+          "name": "Filter Events & Venues",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}common/filter_events_venues?type=event&limit=2&page=1&latitude=22.7196&longitude=75.8577",
+              "host": [
+                "{{hii_local}}common"
+              ],
+              "path": [
+                "filter_events_venues"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "event",
+                  "description": "event , venue"
+                },
+                {
+                  "key": "search",
+                  "value": "hii",
+                  "disabled": true
+                },
+                {
+                  "key": "limit",
+                  "value": "2"
+                },
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "latitude",
+                  "value": "22.7196"
+                },
+                {
+                  "key": "longitude",
+                  "value": "75.8577"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Trending Keywords",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}common/get_trending_keywords?type=event",
+              "host": [
+                "{{hii_local}}common"
+              ],
+              "path": [
+                "get_trending_keywords"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "event"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Booking",
+      "item": [
+        {
+          "name": "Get Events Tickets",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}booking/get_event_tickets/6985b925f7da0815b2061316",
+              "host": [
+                "{{hii_local}}booking"
+              ],
+              "path": [
+                "get_event_tickets",
+                "6985b925f7da0815b2061316"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Coupon Percentage",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}booking/get_coupon_percentage?coupon_code=YDSETZ61",
+              "host": [
+                "{{hii_local}}booking"
+              ],
+              "path": [
+                "get_coupon_percentage"
+              ],
+              "query": [
+                {
+                  "key": "coupon_code",
+                  "value": "YDSETZ61"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Event Booking",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"event_id\": \"6985b925f7da0815b2061316\",\r\n    \"ticket_id\": \"6989af77aa6a99716a998ce7\",\r\n    \"quantity\": 2,\r\n    \"transaction_id\": \"TXN_9876543210\",\r\n    \"booking_type\": \"event\",\r\n    \"discount\": 20,\r\n    \"sub_total\": 100,\r\n    \"total\": 65.4,\r\n    \"contact_info\": {\r\n        \"country_code\": \"+91\",\r\n        \"phone_number\": \"5869586958\",\r\n        \"email\": \"maxton@mailinator.com\",\r\n        \"first_name\": \"Ethan\",\r\n        \"last_name\": \"Carter\"\r\n    }\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{hii_local}}booking/event_booking",
+              "host": [
+                "{{hii_local}}booking"
+              ],
+              "path": [
+                "event_booking"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Venue slots",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGM0YzUxZTllMjcyOGE5NWYyMTNjYiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDgwMjUzNSwiZXhwIjoxNzczMzk0NTM1fQ.Ubd2qKuV3TaZKSiT0t-tkwIh-i6bm3Futys_-mpwmD8",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}booking/get_venue_slots?date=2026-02-11&venue_id=693ce9b7a952887e61e7c3cd",
+              "host": [
+                "{{hii_local}}booking"
+              ],
+              "path": [
+                "get_venue_slots"
+              ],
+              "query": [
+                {
+                  "key": "date",
+                  "value": "2026-02-11"
+                },
+                {
+                  "key": "venue_id",
+                  "value": "693ce9b7a952887e61e7c3cd"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "My Tabs",
+      "item": [
+        {
+          "name": "Get My Members",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcwMDQyNiwiZXhwIjoxNzczMjkyNDI2fQ.DxzK9H15UyVkaq8i2SVuSWOrduzOcf-6WMGWcdHkKwo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}common/my_members?type=liked",
+              "host": [
+                "{{hii_local}}common"
+              ],
+              "path": [
+                "my_members"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "liked",
+                  "description": "liked,connected"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Venues",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzllZGJiMTIzY2IyNzNjZWIyOGY0NCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcwMDQyNiwiZXhwIjoxNzczMjkyNDI2fQ.DxzK9H15UyVkaq8i2SVuSWOrduzOcf-6WMGWcdHkKwo",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}common/my_venues?type=liked",
+              "host": [
+                "{{hii_local}}common"
+              ],
+              "path": [
+                "my_venues"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "liked",
+                  "description": "liked,reserved"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get My Events",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5OGFlZTYxNTJlZmU2NzdmNTBiMzFiZCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDcxODE5NCwiZXhwIjoxNzczMzEwMTk0fQ.xgRQrcGW_RpVCK80eqSNOqdhUi6vK_KOZKN7dNXJB80",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{hii_local}}common/my_events?type=booked",
+              "host": [
+                "{{hii_local}}common"
+              ],
+              "path": [
+                "my_events"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "booked",
+                  "description": "liked,booked"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -211,6 +211,22 @@ class _HomeState extends State<Home> {
     required String targetUserId,
     required String action,
   }) {
+    // Prevent duplicate callbacks from committing the same swipe immediately.
+    final isSamePending = _pendingMemberUserId == targetUserId &&
+        _pendingMemberAction == action;
+    if (isSamePending) {
+      _memberSwipeCommitTimer?.cancel();
+      _memberSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
+        _commitPendingMemberSwipe();
+      });
+      if (mounted && !_showMemberUndo) {
+        setState(() {
+          _showMemberUndo = true;
+        });
+      }
+      return;
+    }
+
     _commitPendingMemberSwipe();
 
     _memberSwipeCommitTimer?.cancel();
@@ -268,6 +284,26 @@ class _HomeState extends State<Home> {
       });
     }
     membersSwiperController.undo();
+  }
+
+  void _handleMemberDetailResult(dynamic result) {
+    if (result == null) return;
+    final map = result is Map ? result : <String, dynamic>{};
+    final action = (map['action'] ?? '').toString().trim();
+    final targetUserId = (map['targetUserId'] ?? '').toString().trim();
+    if (targetUserId.isEmpty) return;
+    if (action != 'left' && action != 'right') return;
+
+    // Queue once from detail result, then animate actual card swipe on home.
+    _queueMemberSwipeAction(
+      targetUserId: targetUserId,
+      action: action,
+    );
+
+    final direction = action == 'right'
+        ? CardSwiperDirection.right
+        : CardSwiperDirection.left;
+    membersSwiperController.swipe(direction);
   }
 
   void _queueEventSwipeAction({
@@ -998,18 +1034,23 @@ class _HomeState extends State<Home> {
                                                 : AppImage
                                                     .userImage1, // fallback image
                                             member['name'] ?? 'Unknown',
-                                            () {
-                                              Navigator.push(
+                                            () async {
+                                              final String memberId =
+                                                  (member['_id'] ?? '')
+                                                      .toString();
+                                              final result = await Navigator.push(
                                                 context,
                                                 PageTransition(
                                                   type: PageTransitionType
                                                       .rightToLeftWithFade,
-                                                  child:
-                                                      const LikedMemberDetail(),
+                                                  child: LikedMemberDetail(
+                                                    memberId: memberId,
+                                                  ),
                                                   duration: const Duration(
                                                       milliseconds: 500),
                                                 ),
                                               );
+                                              _handleMemberDetailResult(result);
                                             },
                                             key: ValueKey(
                                                 "member_image_${membersTabVersion}_$index"),
@@ -1030,6 +1071,10 @@ class _HomeState extends State<Home> {
                                                 member['distance_km'] != null
                                                     ? '${member['distance_km']}'
                                                     : '',
+                                            memberId: (member['_id'] ?? '')
+                                                .toString(),
+                                            onDetailResult:
+                                                _handleMemberDetailResult,
                                           ),
                                           SizedBox(
                                               height: MediaQuery.of(context)
@@ -2235,3 +2280,6 @@ class _HomeState extends State<Home> {
     );
   }
 }
+
+
+

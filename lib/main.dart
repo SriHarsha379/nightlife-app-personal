@@ -6,6 +6,7 @@ import 'controller/city/city_preference.dart';
 import 'controller/event_preference/event_preference_controller.dart';
 import 'controller/genres/music_genres_controller.dart';
 import 'controller/home/home_controller.dart';
+import 'controller/members/members_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/my_profile/my_visibility_controller.dart';
@@ -15,7 +16,6 @@ import 'controller/vibe_preference/vibe_prefernce_controller.dart';
 import 'provider/darkmode_provider.dart';
 import 'provider/post_api_provider.dart';
 import 'provider/user_controller.dart';
-import 'utilities/app_color.dart';
 import 'utilities/app_font.dart';
 
 void main() {
@@ -47,6 +47,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => GetMySwipeProfileController()),
         ChangeNotifierProvider(create: (_) => MyVisibilityController()),
         ChangeNotifierProvider(create: (_) => FaqController()),
+        ChangeNotifierProvider(create: (_) => MembersController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

@@ -23,6 +23,8 @@ class HomeWidget {
     String? bio,
     List<String>? vibes,
     String? distance,
+    String? memberId,
+    Function(dynamic)? onDetailResult,
   }) {
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -31,18 +33,21 @@ class HomeWidget {
         child: child,
       ),
       child: GestureDetector(
-        onVerticalDragEnd: (details) {
+        onVerticalDragEnd: (details) async {
           final velocity = details.primaryVelocity ?? 0;
 
           if (velocity < -300) {
-            Navigator.push(
+            final result = await Navigator.push(
               context,
               PageTransition(
                 type: PageTransitionType.bottomToTop,
-                child: const LikedMemberDetail(),
+                child: LikedMemberDetail(memberId: memberId),
                 duration: const Duration(milliseconds: 400),
               ),
             );
+            if (onDetailResult != null) {
+              onDetailResult(result);
+            }
           }
         },
         key: key,
@@ -105,7 +110,7 @@ class HomeWidget {
                                       },
                                     )
                                   : Image.asset(
-                                      image,
+                                      AppImage.placeHolder2Icon,
                                       fit: BoxFit.cover,
                                     ),
                             ),

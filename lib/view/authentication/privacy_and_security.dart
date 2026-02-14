@@ -1,11 +1,11 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:night_life/view/other/block_user_screen.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../controller/my_profile/my_visibility_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';

@@ -158,7 +158,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
               color: Colors.transparent,
               alignment: Alignment.bottomCenter,
               child: Container(
-                decoration:  BoxDecoration(
+                decoration: BoxDecoration(
                   gradient: AppColor.backgroundGradientcolor(context),
                   borderRadius: BorderRadius.only(
                     topLeft: Radius.circular(46),
@@ -180,7 +180,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                     SizedBox(height: size.height * 0.01),
                     Text(
                       AppLanguage.signupText[language],
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontWeight: FontWeight.w700,
                         fontFamily: AppFont.fontFamily,
@@ -205,15 +205,6 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       text: AppLanguage.continueText[language],
                       onPress: () {
                         LoginValidation();
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeftWithFade,
-                            child: ProfileDetailsScreen(
-                              mobile: mobileNumberTextEditingController.text,
-                            ),
-                          ),
-                        );
                       },
                     ),
                     SizedBox(height: size.height * 0.04),
@@ -222,7 +213,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                       children: [
                         Text(
                           AppLanguage.alreadyhaveanacoount[language],
-                          style:  TextStyle(
+                          style: TextStyle(
                             color: AppColor.secondryColor(context),
                             fontSize: 12,
                           ),
@@ -261,7 +252,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         children: [
                           Text(
                             "Have an Invite Code ?",
-                            style:  TextStyle(
+                            style: TextStyle(
                                 color: AppColor.secondryColor(context),
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
@@ -304,7 +295,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         children: [
                           Text(
                             AppLanguage.venueEventText[language],
-                            style:  TextStyle(
+                            style: TextStyle(
                                 color: AppColor.secondryColor(context),
                                 fontWeight: FontWeight.w400,
                                 fontFamily: AppFont.fontFamily,
