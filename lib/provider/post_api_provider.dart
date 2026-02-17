@@ -178,6 +178,10 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
+
+
+
+
   // ================Signup Api================//
   signupUserApi(
     BuildContext context,

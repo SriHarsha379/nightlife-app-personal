@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails5_screen.dart';
+import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_table.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';

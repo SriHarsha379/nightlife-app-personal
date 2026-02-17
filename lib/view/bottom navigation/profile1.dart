@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/view_all_events.dart';
 import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -17,6 +17,7 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/media_picker_helper.dart';
 import '../authentication/profile.dart';
+import '../other/MySplashSection/VenuesSection/view_all_venues.dart';
 import '../other/city_Preference/edit_event_prefrence.dart';
 import '../../helper/ImagePreviewScreen.dart';
 
@@ -702,7 +703,7 @@ class _Profile1State extends State<Profile1> {
                                         PageTransition(
                                           type: PageTransitionType
                                               .rightToLeftWithFade,
-                                          child: const LikedEventDetail(),
+                                          child: const ViewAllEventsScreen(),
                                           duration:
                                               const Duration(milliseconds: 400),
                                         ),
@@ -732,20 +733,34 @@ class _Profile1State extends State<Profile1> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
-                                    AppLanguage.followedVenuestext[language],
+                                    AppLanguage.likedVenues1text[language],
                                     style: TextStyle(
-                                        fontSize: 18,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                  Text(
-                                    AppLanguage.viewAlltext[language],
-                                    style: const TextStyle(
                                         fontSize: 16,
                                         fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        color: AppColor.pinkColor),
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.secondryColor(context)),
+                                  ),
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                        context,
+                                        PageTransition(
+                                          type: PageTransitionType
+                                              .rightToLeftWithFade,
+                                          child: const ViewAllVenuesScreen(),
+                                          duration:
+                                              const Duration(milliseconds: 500),
+                                        ),
+                                      );
+                                    },
+                                    child: Text(
+                                      AppLanguage.viewAlltext[language],
+                                      style: const TextStyle(
+                                          fontSize: 16,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          color: AppColor.pinkColor),
+                                    ),
                                   ),
                                 ],
                               ),
@@ -1012,9 +1027,6 @@ class _Profile1State extends State<Profile1> {
       ),
     );
   }
-
-
-
 
   Widget _buildGallerySection(
       BuildContext context, ProfileController controller) {
@@ -1358,86 +1370,211 @@ class _Profile1State extends State<Profile1> {
     );
   }
 
+  String _str(dynamic value) => (value ?? '').toString().trim();
+
+  String _asUploadUrl(dynamic path) {
+    final value = _str(path);
+    if (value.isEmpty) return '';
+    if (value.startsWith('http://') || value.startsWith('https://')) {
+      return value;
+    }
+    return '${AppConfigProvider.imageUrl}$value';
+  }
+
+  List<String> _extractEventCategoryNames(dynamic categoriesRaw) {
+    if (categoriesRaw is! List) return <String>[];
+    return categoriesRaw
+        .map((item) => item is Map ? _str(item['name']) : _str(item))
+        .where((name) => name.isNotEmpty)
+        .cast<String>()
+        .toList();
+  }
+
+  Widget _buildAdaptiveImage(
+    String imagePath, {
+    BoxFit fit = BoxFit.cover,
+    String fallbackAsset = AppImage.placeHolder2Icon,
+  }) {
+    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+      return Image.network(
+        imagePath,
+        fit: fit,
+        errorBuilder: (context, error, stackTrace) => Image.asset(
+          fallbackAsset,
+          fit: fit,
+        ),
+      );
+    }
+    if (imagePath.isEmpty) {
+      return Image.asset(
+        fallbackAsset,
+        fit: fit,
+      );
+    }
+    return Image.asset(
+      imagePath,
+      fit: fit,
+    );
+  }
+
   Widget _buildLikedEventsSection(
       BuildContext context, ProfileController controller) {
     final size = MediaQuery.of(context).size;
-
-    if (!controller.hasLikedEvents) {
-      return const SizedBox.shrink();
-    }
-
     return SizedBox(
-      height: size.height * 0.28,
-      child: ListView.separated(
+      height: size.height * 0.30,
+      child: ListView.builder(
         scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        itemCount: controller.likedEvents.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemCount:
+            controller.likedEvents.isEmpty ? 1 : controller.likedEvents.length,
         itemBuilder: (context, index) {
-          final event = controller.likedEvents[index];
-          final eventImage = event['event_image'] ?? event['image'] ?? '';
-          final imageUrl = eventImage.isNotEmpty
-              ? '${AppConfigProvider.imageUrl}$eventImage'
-              : '';
-          final eventName =
-              event['name'] ?? event['event_name'] ?? event['title'] ?? '';
+          if (controller.likedEvents.isEmpty) {
+            return _recentEventCard(
+              image: AppImage.eventCardImage,
+              name: "",
+              time: "",
+              tags: const [],
+              isNetwork: false,
+            );
+          }
+          final item = controller.likedEvents[index];
+          return _recentEventCard(
+            image: _asUploadUrl(item['event_image']),
+            name: _str(item['event_name']),
+            time: _str(item['date']),
+            tags: _extractEventCategoryNames(item['categories']),
+            isNetwork: true,
+          );
+        },
+      ),
+    );
+  }
 
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                PageTransition(
-                  type: PageTransitionType.rightToLeftWithFade,
-                  child: const LikedEventDetail(),
-                  duration: const Duration(milliseconds: 400),
+  Widget _recentEventCard({
+    required String image,
+    required String name,
+    required String time,
+    required List<String> tags, // Add tags parameter
+    required bool isNetwork,
+  }) {
+    final size = MediaQuery.of(context).size;
+    return Container(
+      width: size.width * 50 / 100,
+      height: size.height * 30 / 100,
+      margin: const EdgeInsets.only(right: 10),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: isNetwork
+                  ? _buildAdaptiveImage(
+                      image,
+                      fit: BoxFit.cover,
+                      fallbackAsset: AppImage.dummyImageIcon,
+                    )
+                  : Image.asset(
+                      AppImage.dummyImageIcon,
+                      fit: BoxFit.cover,
+                    ),
+            ),
+
+            // Gradient Overlay (more black at bottom)
+            Positioned.fill(
+              child: Container(
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                    colors: [
+                      Colors.transparent,
+                      Colors.black.withOpacity(0.5),
+                      Colors.black.withOpacity(0.85),
+                    ],
+                  ),
                 ),
-              );
-            },
-            child: SizedBox(
-              width: size.width * 0.4,
+              ),
+            ),
+
+            // Tags at Top Left (Black background type)
+            Positioned(
+              left: 10,
+              top: 10,
+              child: Row(
+                children: tags.map((tag) {
+                  return Container(
+                    margin: const EdgeInsets.only(right: 6),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 5,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(20),
+                      color: AppColor.themeColor.withOpacity(.7),
+                      border:
+                          Border.all(color: const Color(0xFF9C27B0), width: 2),
+                    ),
+                    child: Text(
+                      tag,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+            ),
+
+            // Event Name and Time at Bottom
+            Positioned(
+              left: 14,
+              right: 14,
+              bottom: 14,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(14),
-                      child: imageUrl.isNotEmpty
-                          ? Image.network(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  AppImage.aroundmeIcon,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                );
-                              },
-                            )
-                          : Image.asset(
-                              AppImage.aroundmeIcon,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                            ),
-                    ),
-                  ),
-                  const SizedBox(height: 6),
                   Text(
-                    eventName.toString(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w500,
+                    name.isEmpty ? "" : name,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 16,
                       fontFamily: AppFont.fontFamily,
-                      color: AppColor.secondryColor(context),
+                      fontWeight: FontWeight.w600,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 3),
+                  Row(
+                    children: [
+                      const Icon(
+                        Icons.access_time,
+                        size: 14,
+                        color: AppColor.buttonColor,
+                      ),
+                      const SizedBox(width: 6),
+                      Text(
+                        time.isEmpty ? "-" : time,
+                        style: const TextStyle(
+                          color: AppColor.buttonColor,
+                          fontSize: 12,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
             ),
-          );
-        },
+          ],
+        ),
       ),
     );
   }
@@ -1445,57 +1582,78 @@ class _Profile1State extends State<Profile1> {
   Widget _buildFollowedVenuesSection(
       BuildContext context, ProfileController controller) {
     final size = MediaQuery.of(context).size;
-    final double cardWidth = 105 * size.width / 375;
-    final double cardHeight = 105 * size.width / 375;
 
     if (!controller.hasFollowedVenues) {
       return const SizedBox.shrink();
     }
 
-    final firstVenue = controller.followedVenues.first;
-    final venueImage = firstVenue['venue_image'] ?? firstVenue['image'] ?? '';
-    final imageUrl =
-        venueImage.isNotEmpty ? '${AppConfigProvider.imageUrl}$venueImage' : '';
+    return SizedBox(
+      height: size.height * 0.18,
+      child: ListView.builder(
+        scrollDirection: Axis.horizontal,
+        itemCount: controller.followedVenues.length,
+        itemBuilder: (context, index) {
+          final item = controller.followedVenues[index];
+          return Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: _venueCard(
+              _asUploadUrl(item['venue_image'] ?? item['image']),
+              venueName: _str(item['venue_name']),
+              isNetwork: true,
+            ),
+          );
+        },
+      ),
+    );
+  }
 
+  Widget _venueCard(
+    String imagePath, {
+    String venueName = "",
+    bool isNetwork = false,
+  }) {
+    final size = MediaQuery.of(context).size;
+    final double cardWidth = 125 * size.width / 375;
+    final double cardHeight = 150 * size.width / 375;
     return Container(
       width: cardWidth,
       height: cardHeight,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(14),
-        boxShadow: [
+        boxShadow: const [
           BoxShadow(
             color: AppColor.cardFillColor,
-            blurRadius: 12,
+            blurRadius: 10,
             spreadRadius: 0.1,
-            offset: const Offset(0, 3),
+            offset: Offset(4, 0),
           ),
         ],
       ),
       child: ClipRRect(
         borderRadius: BorderRadius.circular(14),
-        child: imageUrl.isNotEmpty
-            ? Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    AppImage.dummyImageIcon,
-                    fit: BoxFit.cover,
-                  );
-                },
-              )
-            : Image.asset(
-                AppImage.dummyImageIcon,
-                fit: BoxFit.cover,
-              ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: isNetwork
+                  ? _buildAdaptiveImage(
+                      imagePath,
+                      fit: BoxFit.cover,
+                      fallbackAsset: AppImage.dummyImageIcon,
+                    )
+                  : Image.asset(
+                      AppImage.dummyImageIcon,
+                      fit: BoxFit.cover,
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildTopArtistSection(
       BuildContext context, ProfileController controller) {
-    final size = MediaQuery.of(context).size;
-
     final topArtist = controller.topArtist;
 
     if (topArtist == null || topArtist.isEmpty) {
@@ -1564,7 +1722,4 @@ class _Profile1State extends State<Profile1> {
       ),
     );
   }
-
-
-
 }

@@ -1441,6 +1441,9 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                 },
                                               ),
                                             ),
+                                       
+                                       
+                                       
                                           if (_recentVenues.isNotEmpty)
                                             SizedBox(
                                               height: size.height * 3 / 100,
@@ -2345,6 +2348,9 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       ),
     );
   }
+
+
+
 
   Widget _venueCard(
     String imagePath, {

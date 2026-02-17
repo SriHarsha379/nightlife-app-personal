@@ -51,7 +51,7 @@ dependencies:
   # For Image pick from library, crop image after pick image.
   # image_cropper: ^1.4.0
   image_picker: ^0.8.5+1
-  # cached_network_image: ^3.0.0
+  cached_network_image: ^3.0.0
 
   # For LocalStorage
   shared_preferences: ^2.2.3
@@ -78,6 +78,10 @@ dependencies:
   permission_handler: ^10.4.4
   video_thumbnail: ^0.5.3
   http_parser:
+  readmore: ^3.0.0
+  # cached_network_image: ^3.3.1
+  loading_animation_widget: ^1.2.1
+  intl: ^0.18.1
   # For GeoLocation
   # geolocator: ^9.0.2
   # geocoding: ^2.0.5

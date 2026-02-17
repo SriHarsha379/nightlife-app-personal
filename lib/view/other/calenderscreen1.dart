@@ -45,7 +45,7 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarColor: AppColor.primaryColor(context),
@@ -54,24 +54,24 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           backgroundColor: AppColor.primaryColor(context),
-           floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Padding(
-              padding: const EdgeInsets.only(bottom: 40),
-              child: AppButton(
-                text: '${AppLanguage.continueText[language]}',
-                onPress: () {
-                  Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: ReviewBooking2Details(),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );
-                },
-              ),
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Padding(
+            padding: const EdgeInsets.only(bottom: 40),
+            child: AppButton(
+              text: '${AppLanguage.continueText[language]}',
+              onPress: () {
+                // Navigator.push(
+                //               context,
+                //               PageTransition(
+                //                 type: PageTransitionType.rightToLeftWithFade,
+                //                 child: ReviewBooking2Details(),
+                //                 duration: const Duration(milliseconds: 500),
+                //               ),
+                //             );
+              },
             ),
+          ),
           body: SafeArea(
             child: Container(
               height: MediaQuery.of(context).size.height * 100 / 100,
@@ -156,7 +156,7 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
                                     ),
                                   ],
                                 ),
-                                selectedTextStyle:  TextStyle(
+                                selectedTextStyle: TextStyle(
                                   color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -164,14 +164,14 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
                                   color: AppColor.statusbar,
                                   shape: BoxShape.circle,
                                 ),
-                                disabledTextStyle:  TextStyle(
+                                disabledTextStyle: TextStyle(
                                   color: AppColor.secondryColor(context),
                                 ),
-                                defaultTextStyle:  TextStyle(
+                                defaultTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
-                                weekendTextStyle:  TextStyle(
+                                weekendTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
-                                outsideTextStyle:  TextStyle(
+                                outsideTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
                                 cellMargin: const EdgeInsets.all(
                                     4), // Reduced margin to compact height

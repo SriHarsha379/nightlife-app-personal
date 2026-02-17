@@ -5,11 +5,13 @@ import '../utilities/app_color.dart';
 class AppButton extends StatelessWidget {
   final String text;
   final Function onPress;
+  final Color? backgroundColor;
 
   const AppButton({
     Key? key,
     required this.text,
     required this.onPress,
+    this.backgroundColor,
   }) : super(key: key);
 
   @override
@@ -21,9 +23,9 @@ class AppButton extends StatelessWidget {
       child: Container(
         width: MediaQuery.of(context).size.width * 80 / 100,
         height: MediaQuery.of(context).size.height * 7 / 100,
-        decoration: const BoxDecoration(
-          color: AppColor.buttonColor,
-          borderRadius: BorderRadius.all(Radius.circular(40)),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? AppColor.buttonColor,
+          borderRadius: const BorderRadius.all(Radius.circular(40)),
         ),
         alignment: Alignment.center,
         child: Text(

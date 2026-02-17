@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
-import 'package:provider/provider.dart';
 import '../../../utilities/app_color.dart';
-import '../../provider/darkmode_provider.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';

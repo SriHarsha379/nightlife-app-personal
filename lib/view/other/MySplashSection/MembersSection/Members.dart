@@ -47,11 +47,40 @@ class _splashMembersState extends State<splashMembers> {
   String _str(dynamic value) => (value ?? '').toString().trim();
 
   String _buildMemberImage(dynamic rawPath) {
-    final path = _str(rawPath);
+    dynamic source = rawPath;
+
+    // Some APIs return `profile_image` as map/list instead of plain string.
+    if (source is Map) {
+      source = source['url'] ??
+          source['path'] ??
+          source['image'] ??
+          source['profile_image'];
+    } else if (source is List && source.isNotEmpty) {
+      final first = source.first;
+      if (first is Map) {
+        source = first['url'] ??
+            first['path'] ??
+            first['image'] ??
+            first['profile_image'];
+      } else {
+        source = first;
+      }
+    }
+
+    var path = _str(source);
     if (path.isEmpty) return AppImage.placeHolder2Icon;
+
     if (path.startsWith('http://') || path.startsWith('https://')) {
       return path;
     }
+
+    // Normalize known relative variants from backend.
+    if (path.startsWith('/')) path = path.substring(1);
+    if (path.startsWith('uploads/')) path = path.substring('uploads/'.length);
+    if (path.startsWith('app/server/uploads/')) {
+      path = path.substring('app/server/uploads/'.length);
+    }
+
     return '${AppConfigProvider.imageUrl}$path';
   }
 
@@ -139,6 +168,21 @@ class _splashMembersState extends State<splashMembers> {
       return Image.network(
         imagePath,
         fit: BoxFit.cover,
+        loadingBuilder: (context, child, loadingProgress) {
+          if (loadingProgress == null) return child;
+          return Container(
+            color: Colors.grey.shade300,
+            alignment: Alignment.center,
+            child: const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                color: AppColor.buttonColor,
+              ),
+            ),
+          );
+        },
         errorBuilder: (_, __, ___) => Image.asset(
           AppImage.placeHolder2Icon,
           fit: BoxFit.cover,

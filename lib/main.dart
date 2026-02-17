@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/controller/venues/my_venues_controller.dart';
 import 'package:night_life/view/authentication/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'controller/city/city_preference.dart';
+import 'controller/book_venue/book_venue_controller.dart';
 import 'controller/event_preference/event_preference_controller.dart';
 import 'controller/genres/music_genres_controller.dart';
 import 'controller/home/home_controller.dart';
@@ -11,6 +13,7 @@ import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/my_profile/my_visibility_controller.dart';
 import 'controller/support/faq_controller.dart';
+import 'controller/venues/venues_details_controller.dart';
 import 'controller/vibe_check/vibe_check_controller.dart';
 import 'controller/vibe_preference/vibe_prefernce_controller.dart';
 import 'provider/darkmode_provider.dart';
@@ -48,6 +51,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MyVisibilityController()),
         ChangeNotifierProvider(create: (_) => FaqController()),
         ChangeNotifierProvider(create: (_) => MembersController()),
+        ChangeNotifierProvider(create: (_) => VenuesDetailsController()),
+        ChangeNotifierProvider(create: (_) => BookVenueController()),
+        ChangeNotifierProvider(create: (_) => MyVenuesController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

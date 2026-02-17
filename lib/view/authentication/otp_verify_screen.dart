@@ -2,9 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/other/city_Preference/citypreference_screen.dart';
-import 'package:page_transition/page_transition.dart';
-
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/app_button.dart';

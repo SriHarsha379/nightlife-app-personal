@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/other/profile_details.dart';
 import 'package:page_transition/page_transition.dart';
 
 import '../../utilities/app_button.dart';

@@ -9,11 +9,9 @@ import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
 import 'package:page_transition/page_transition.dart';
-
 import '../../../../../utilities/app_footer.dart';
 import '../../../../../utilities/app_image_media_viewer.dart';
 import '../../../chats/chat_message_screen.dart';
-import 'view_all_image.dart';
 
 class LikedEventDetail extends StatefulWidget {
   static const String routeName = '/LikedEventDetail';
@@ -739,6 +737,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                           ),
                                         ),
                                       ),
+                                 
+                                 
+                                 
                                     ],
                                   ),
                                   SizedBox(
@@ -1741,4 +1742,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       },
     );
   }
+
+
+
+
 }

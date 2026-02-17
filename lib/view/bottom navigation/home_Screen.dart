@@ -37,16 +37,17 @@ class _HomeState extends State<Home> {
   CardSwiperController cardController = CardSwiperController();
   final CardSwiperController swipeControllerfollowGuardians =
       CardSwiperController();
+  late final HomeController _homeController;
 
   @override
   void initState() {
     super.initState();
+    _homeController = Provider.of<HomeController>(context, listen: false);
     // Fetch initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      final homeController =
-          Provider.of<HomeController>(context, listen: false);
-      homeController.fetchHomeData(context, type: 'member');
+      _homeController.refreshAllData(context);
     });
+    context.read<UserController>().getUserDetails();
   }
 
   int reportId = 0;
@@ -206,14 +207,63 @@ class _HomeState extends State<Home> {
   bool _isCommittingMemberSwipe = false;
   bool _isCommittingEventSwipe = false;
   bool _isCommittingVenueSwipe = false;
+  final Set<String> _hiddenMemberIds = <String>{};
+  final Set<String> _hiddenEventIds = <String>{};
+  final Set<String> _hiddenVenueIds = <String>{};
+
+  String _itemId(dynamic item) =>
+      (item is Map ? (item['_id'] ?? '') : '').toString().trim();
+
+  List<dynamic> _visibleItems(List<dynamic> source, Set<String> hiddenIds) {
+    return source.where((item) {
+      final id = _itemId(item);
+      return id.isEmpty || !hiddenIds.contains(id);
+    }).toList(growable: false);
+  }
+
+  Widget _undoActionChip(VoidCallback onTap) {
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: MediaQuery.of(context).size.width * 0.04,
+        vertical: MediaQuery.of(context).size.height * 0.008,
+      ),
+      decoration: BoxDecoration(
+        color: AppColor.themeColor,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: GestureDetector(
+        onTap: onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AppLanguage.undoText[language],
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 0.01),
+            Image.asset(
+              AppImage.arrow,
+              width: MediaQuery.of(context).size.width * 0.04,
+              height: MediaQuery.of(context).size.height * 0.02,
+              color: Colors.white,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   void _queueMemberSwipeAction({
     required String targetUserId,
     required String action,
   }) {
     // Prevent duplicate callbacks from committing the same swipe immediately.
-    final isSamePending = _pendingMemberUserId == targetUserId &&
-        _pendingMemberAction == action;
+    final isSamePending =
+        _pendingMemberUserId == targetUserId && _pendingMemberAction == action;
     if (isSamePending) {
       _memberSwipeCommitTimer?.cancel();
       _memberSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
@@ -273,7 +323,8 @@ class _HomeState extends State<Home> {
   }
 
   void _undoPendingMemberSwipe() {
-    if (_pendingMemberUserId == null) return;
+    final pendingUserId = _pendingMemberUserId;
+    if (pendingUserId == null) return;
 
     _memberSwipeCommitTimer?.cancel();
     _pendingMemberUserId = null;
@@ -281,6 +332,7 @@ class _HomeState extends State<Home> {
     if (mounted) {
       setState(() {
         _showMemberUndo = false;
+        _hiddenMemberIds.remove(pendingUserId);
       });
     }
     membersSwiperController.undo();
@@ -356,7 +408,8 @@ class _HomeState extends State<Home> {
   }
 
   void _undoPendingEventSwipe() {
-    if (_pendingEventId == null) return;
+    final pendingEventId = _pendingEventId;
+    if (pendingEventId == null) return;
 
     _eventSwipeCommitTimer?.cancel();
     _pendingEventId = null;
@@ -364,6 +417,7 @@ class _HomeState extends State<Home> {
     if (mounted) {
       setState(() {
         _showEventUndo = false;
+        _hiddenEventIds.remove(pendingEventId);
       });
     }
     eventsSwiperController.undo();
@@ -373,6 +427,21 @@ class _HomeState extends State<Home> {
     required String venueId,
     required String action,
   }) {
+    final isSamePending =
+        _pendingVenueId == venueId && _pendingVenueAction == action;
+    if (isSamePending) {
+      _venueSwipeCommitTimer?.cancel();
+      _venueSwipeCommitTimer = Timer(const Duration(seconds: 15), () {
+        _commitPendingVenueSwipe();
+      });
+      if (mounted && !_showVenueUndo) {
+        setState(() {
+          _showVenueUndo = true;
+        });
+      }
+      return;
+    }
+
     _commitPendingVenueSwipe();
 
     _venueSwipeCommitTimer?.cancel();
@@ -419,7 +488,8 @@ class _HomeState extends State<Home> {
   }
 
   void _undoPendingVenueSwipe() {
-    if (_pendingVenueId == null) return;
+    final pendingVenueId = _pendingVenueId;
+    if (pendingVenueId == null) return;
 
     _venueSwipeCommitTimer?.cancel();
     _pendingVenueId = null;
@@ -427,15 +497,35 @@ class _HomeState extends State<Home> {
     if (mounted) {
       setState(() {
         _showVenueUndo = false;
+        _hiddenVenueIds.remove(pendingVenueId);
       });
     }
     venuesSwiperController.undo();
   }
 
+  void _handleVenueDetailResult(dynamic result) {
+    if (result == null) return;
+    final map = result is Map ? result : <String, dynamic>{};
+    final action = (map['action'] ?? '').toString().trim();
+    final targetVenueId = (map['targetVenueId'] ?? '').toString().trim();
+    if (targetVenueId.isEmpty) return;
+    if (action != 'like' && action != 'dislike') return;
+
+    _queueVenueSwipeAction(
+      venueId: targetVenueId,
+      action: action,
+    );
+
+    final direction =
+        action == 'like' ? CardSwiperDirection.right : CardSwiperDirection.left;
+    venuesSwiperController.swipe(direction);
+  }
+
   bool _onSwipeMembers(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     final homeController = Provider.of<HomeController>(context, listen: false);
-    final membersList = homeController.getMembersList;
+    final membersList =
+        _visibleItems(homeController.getMembersList, _hiddenMemberIds);
 
     if (direction == CardSwiperDirection.right) {
       // Liked - Swipe right
@@ -449,6 +539,7 @@ class _HomeState extends State<Home> {
         final targetUserId =
             (membersList[previousIndex]['_id'] ?? '').toString();
         if (targetUserId.isNotEmpty) {
+          _hiddenMemberIds.add(targetUserId);
           _queueMemberSwipeAction(
             targetUserId: targetUserId,
             action: 'right',
@@ -476,6 +567,7 @@ class _HomeState extends State<Home> {
         final targetUserId =
             (membersList[previousIndex]['_id'] ?? '').toString();
         if (targetUserId.isNotEmpty) {
+          _hiddenMemberIds.add(targetUserId);
           _queueMemberSwipeAction(
             targetUserId: targetUserId,
             action: 'left',
@@ -502,7 +594,8 @@ class _HomeState extends State<Home> {
   bool _onSwipeEvents(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     final homeController = Provider.of<HomeController>(context, listen: false);
-    final eventsList = homeController.getEventsList;
+    final eventsList =
+        _visibleItems(homeController.getEventsList, _hiddenEventIds);
 
     if (direction == CardSwiperDirection.right) {
       setState(() {
@@ -514,6 +607,7 @@ class _HomeState extends State<Home> {
       if (previousIndex < eventsList.length) {
         final eventId = (eventsList[previousIndex]['_id'] ?? '').toString();
         if (eventId.isNotEmpty) {
+          _hiddenEventIds.add(eventId);
           _queueEventSwipeAction(
             eventId: eventId,
             action: 'like',
@@ -539,6 +633,7 @@ class _HomeState extends State<Home> {
       if (previousIndex < eventsList.length) {
         final eventId = (eventsList[previousIndex]['_id'] ?? '').toString();
         if (eventId.isNotEmpty) {
+          _hiddenEventIds.add(eventId);
           _queueEventSwipeAction(
             eventId: eventId,
             action: 'dislike',
@@ -567,7 +662,8 @@ class _HomeState extends State<Home> {
   bool _onSwipeVenues(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     final homeController = Provider.of<HomeController>(context, listen: false);
-    final venuesList = homeController.getVenuesList;
+    final venuesList =
+        _visibleItems(homeController.getVenuesList, _hiddenVenueIds);
 
     if (direction == CardSwiperDirection.right) {
       setState(() {
@@ -579,6 +675,7 @@ class _HomeState extends State<Home> {
       if (previousIndex < venuesList.length) {
         final venueId = (venuesList[previousIndex]['_id'] ?? '').toString();
         if (venueId.isNotEmpty) {
+          _hiddenVenueIds.add(venueId);
           _queueVenueSwipeAction(
             venueId: venueId,
             action: 'like',
@@ -604,6 +701,7 @@ class _HomeState extends State<Home> {
       if (previousIndex < venuesList.length) {
         final venueId = (venuesList[previousIndex]['_id'] ?? '').toString();
         if (venueId.isNotEmpty) {
+          _hiddenVenueIds.add(venueId);
           _queueVenueSwipeAction(
             venueId: venueId,
             action: 'dislike',
@@ -650,11 +748,9 @@ class _HomeState extends State<Home> {
     if (!_isCommittingMemberSwipe &&
         pendingTargetUserId != null &&
         pendingAction != null) {
-      final homeController =
-          Provider.of<HomeController>(context, listen: false);
       unawaited(
-        homeController.swipeUserAction(
-          context,
+        _homeController.swipeUserAction(
+          null,
           targetUserId: pendingTargetUserId,
           action: pendingAction,
           allowRedirectOnFailure: false,
@@ -664,11 +760,9 @@ class _HomeState extends State<Home> {
     if (!_isCommittingEventSwipe &&
         pendingEventId != null &&
         pendingEventAction != null) {
-      final homeController =
-          Provider.of<HomeController>(context, listen: false);
       unawaited(
-        homeController.eventLikeDislikeAction(
-          context,
+        _homeController.eventLikeDislikeAction(
+          null,
           eventId: pendingEventId,
           action: pendingEventAction,
           allowRedirectOnFailure: false,
@@ -678,11 +772,9 @@ class _HomeState extends State<Home> {
     if (!_isCommittingVenueSwipe &&
         pendingVenueId != null &&
         pendingVenueAction != null) {
-      final homeController =
-          Provider.of<HomeController>(context, listen: false);
       unawaited(
-        homeController.venueLikeDislikeAction(
-          context,
+        _homeController.venueLikeDislikeAction(
+          null,
           venueId: pendingVenueId,
           action: pendingVenueAction,
           allowRedirectOnFailure: false,
@@ -745,6 +837,12 @@ class _HomeState extends State<Home> {
     final isDark = themeProvider.isDarkMode;
     final headerUserName = _getHeaderUserName(userController);
     final headerUserImage = _getHeaderUserImage(userController);
+    final visibleMembers =
+        _visibleItems(homeController.getMembersList, _hiddenMemberIds);
+    final visibleEvents =
+        _visibleItems(homeController.getEventsList, _hiddenEventIds);
+    final visibleVenues =
+        _visibleItems(homeController.getVenuesList, _hiddenVenueIds);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -911,10 +1009,12 @@ class _HomeState extends State<Home> {
                                           selectedId = orders[index]['id'];
                                         });
 
-                                        // Fetch data for selected type
+                                        // Fetch latest data for selected type.
                                         String type = orders[index]['type'];
-                                        await homeController.changeType(
-                                            context, type);
+                                        await homeController.fetchHomeData(
+                                          context,
+                                          type: type,
+                                        );
                                       },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
@@ -971,7 +1071,7 @@ class _HomeState extends State<Home> {
                     Expanded(
                       child: Center(
                         child: CircularProgressIndicator(
-                          color: AppColor.themeColor,
+                          color: AppColor.buttonColor,
                         ),
                       ),
                     )
@@ -979,15 +1079,27 @@ class _HomeState extends State<Home> {
                   //! Members Card
                   else if (selectedId == 1)
                     Expanded(
-                      child: homeController.getMembersList.isEmpty
+                      child: visibleMembers.isEmpty
                           ? Center(
-                              child: Text(
-                                'No members found',
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColor.darkTextColor
-                                      : AppColor.richBlackColor,
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'No members found',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColor.darkTextColor
+                                          : AppColor.richBlackColor,
+                                    ),
+                                  ),
+                                  if (_showMemberUndo) ...[
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
+                                    _undoActionChip(_undoPendingMemberSwipe),
+                                  ],
+                                ],
                               ),
                             )
                           : AnimatedSwitcher(
@@ -1002,8 +1114,7 @@ class _HomeState extends State<Home> {
                                   controller: membersSwiperController,
                                   padding: EdgeInsets.zero,
                                   onSwipe: _onSwipeMembers,
-                                  cardsCount:
-                                      homeController.getMembersList.length,
+                                  cardsCount: visibleMembers.length,
                                   allowedSwipeDirection:
                                       const AllowedSwipeDirection.only(
                                     left: true,
@@ -1013,8 +1124,11 @@ class _HomeState extends State<Home> {
                                   ),
                                   numberOfCardsDisplayed: 1,
                                   cardBuilder: (context, index, _, __) {
-                                    final member =
-                                        homeController.getMembersList[index];
+                                    if (index < 0 ||
+                                        index >= visibleMembers.length) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final member = visibleMembers[index];
                                     return Center(
                                       child: Column(
                                         children: [
@@ -1038,7 +1152,8 @@ class _HomeState extends State<Home> {
                                               final String memberId =
                                                   (member['_id'] ?? '')
                                                       .toString();
-                                              final result = await Navigator.push(
+                                              final result =
+                                                  await Navigator.push(
                                                 context,
                                                 PageTransition(
                                                   type: PageTransitionType
@@ -1082,63 +1197,8 @@ class _HomeState extends State<Home> {
                                                       .height *
                                                   0.015),
                                           if (_showMemberUndo)
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.04,
-                                                vertical: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.008,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.themeColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: _undoPendingMemberSwipe,
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      AppLanguage
-                                                          .undoText[language],
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.01),
-                                                    Image.asset(
-                                                      AppImage.arrow,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.04,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.02,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                            _undoActionChip(
+                                                _undoPendingMemberSwipe),
                                         ],
                                       ),
                                     );
@@ -1151,15 +1211,27 @@ class _HomeState extends State<Home> {
                   //! Events Card
                   if (selectedId == 2)
                     Expanded(
-                      child: homeController.getEventsList.isEmpty
+                      child: visibleEvents.isEmpty
                           ? Center(
-                              child: Text(
-                                'No events found',
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColor.darkTextColor
-                                      : AppColor.richBlackColor,
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'No events found',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColor.darkTextColor
+                                          : AppColor.richBlackColor,
+                                    ),
+                                  ),
+                                  if (_showEventUndo) ...[
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
+                                    _undoActionChip(_undoPendingEventSwipe),
+                                  ],
+                                ],
                               ),
                             )
                           : AnimatedSwitcher(
@@ -1174,8 +1246,7 @@ class _HomeState extends State<Home> {
                                   controller: eventsSwiperController,
                                   padding: EdgeInsets.zero,
                                   onSwipe: _onSwipeEvents,
-                                  cardsCount:
-                                      homeController.getEventsList.length,
+                                  cardsCount: visibleEvents.length,
                                   allowedSwipeDirection:
                                       const AllowedSwipeDirection.only(
                                     left: true,
@@ -1185,8 +1256,11 @@ class _HomeState extends State<Home> {
                                   ),
                                   numberOfCardsDisplayed: 1,
                                   cardBuilder: (context, index, _, __) {
-                                    final event =
-                                        homeController.getEventsList[index];
+                                    if (index < 0 ||
+                                        index >= visibleEvents.length) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final event = visibleEvents[index];
                                     return Center(
                                       child: Column(
                                         children: [
@@ -1205,8 +1279,8 @@ class _HomeState extends State<Home> {
                                                 ? '${AppConfigProvider.imageUrl}${event['event_image']}'
                                                 : AppImage.eventimg,
                                             event['event_name'] ?? 'Event',
-                                            () {
-                                              Navigator.push(
+                                            () async {
+                                              await Navigator.push(
                                                 context,
                                                 PageTransition(
                                                   type: PageTransitionType
@@ -1248,63 +1322,8 @@ class _HomeState extends State<Home> {
                                                       .height *
                                                   0.015),
                                           if (_showEventUndo)
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.04,
-                                                vertical: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.008,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.themeColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: _undoPendingEventSwipe,
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      AppLanguage
-                                                          .undoText[language],
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.01),
-                                                    Image.asset(
-                                                      AppImage.arrow,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.04,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.02,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                            _undoActionChip(
+                                                _undoPendingEventSwipe),
                                         ],
                                       ),
                                     );
@@ -1317,15 +1336,27 @@ class _HomeState extends State<Home> {
                   //! Venues Card
                   if (selectedId == 3)
                     Expanded(
-                      child: homeController.getVenuesList.isEmpty
+                      child: visibleVenues.isEmpty
                           ? Center(
-                              child: Text(
-                                'No venues found',
-                                style: TextStyle(
-                                  color: isDark
-                                      ? AppColor.darkTextColor
-                                      : AppColor.richBlackColor,
-                                ),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'No venues found',
+                                    style: TextStyle(
+                                      color: isDark
+                                          ? AppColor.darkTextColor
+                                          : AppColor.richBlackColor,
+                                    ),
+                                  ),
+                                  if (_showVenueUndo) ...[
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                0.015),
+                                    _undoActionChip(_undoPendingVenueSwipe),
+                                  ],
+                                ],
                               ),
                             )
                           : AnimatedSwitcher(
@@ -1340,8 +1371,7 @@ class _HomeState extends State<Home> {
                                   controller: venuesSwiperController,
                                   padding: EdgeInsets.zero,
                                   onSwipe: _onSwipeVenues,
-                                  cardsCount:
-                                      homeController.getVenuesList.length,
+                                  cardsCount: visibleVenues.length,
                                   allowedSwipeDirection:
                                       const AllowedSwipeDirection.only(
                                     left: true,
@@ -1351,8 +1381,11 @@ class _HomeState extends State<Home> {
                                   ),
                                   numberOfCardsDisplayed: 1,
                                   cardBuilder: (context, index, _, __) {
-                                    final venue =
-                                        homeController.getVenuesList[index];
+                                    if (index < 0 ||
+                                        index >= visibleVenues.length) {
+                                      return const SizedBox.shrink();
+                                    }
+                                    final venue = visibleVenues[index];
                                     return Center(
                                       child: Column(
                                         children: [
@@ -1371,17 +1404,23 @@ class _HomeState extends State<Home> {
                                                 ? '${AppConfigProvider.imageUrl}${venue['venue_image']}'
                                                 : AppImage.venu1,
                                             venue['venue_name'] ?? 'Venue',
-                                            () {
-                                              Navigator.push(
+                                            venue['_id'] ?? '',
+                                            () async {
+                                              final result =
+                                                  await Navigator.push(
                                                 context,
                                                 PageTransition(
                                                   type: PageTransitionType
                                                       .rightToLeftWithFade,
-                                                  child: const VenuePages(),
+                                                  child: VenuePages(
+                                                    venueId:
+                                                        venue['_id'].toString(),
+                                                  ),
                                                   duration: const Duration(
                                                       milliseconds: 500),
                                                 ),
                                               );
+                                              _handleVenueDetailResult(result);
                                             },
                                             key: ValueKey(
                                                 "venues_tab_${venusTabVersion}_$index"),
@@ -1411,63 +1450,8 @@ class _HomeState extends State<Home> {
                                                       .height *
                                                   0.015),
                                           if (_showVenueUndo)
-                                            Container(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                    MediaQuery.of(context)
-                                                            .size
-                                                            .width *
-                                                        0.04,
-                                                vertical: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.008,
-                                              ),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.themeColor,
-                                                borderRadius:
-                                                    BorderRadius.circular(20),
-                                              ),
-                                              child: GestureDetector(
-                                                onTap: _undoPendingVenueSwipe,
-                                                child: Row(
-                                                  mainAxisSize:
-                                                      MainAxisSize.min,
-                                                  children: [
-                                                    Text(
-                                                      AppLanguage
-                                                          .undoText[language],
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                      ),
-                                                    ),
-                                                    SizedBox(
-                                                        width: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .width *
-                                                            0.01),
-                                                    Image.asset(
-                                                      AppImage.arrow,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              0.04,
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.02,
-                                                      color: Colors.white,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                            _undoActionChip(
+                                                _undoPendingVenueSwipe),
                                         ],
                                       ),
                                     );
@@ -2280,6 +2264,3 @@ class _HomeState extends State<Home> {
     );
   }
 }
-
-
-

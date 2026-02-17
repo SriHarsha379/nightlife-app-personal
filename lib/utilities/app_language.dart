@@ -358,7 +358,7 @@ class AppLanguage {
   static const washandpresspluspress = ["Wash & Press + Press"];
   static const reportforrejectText = ["Report for Rejection"];
   static const descriptionText = ["Description"];
-   static const deleteAccountDescriptionText = [
+  static const deleteAccountDescriptionText = [
     "You are about to send a request to the admin to delete your account. Once approved by the admin, your account and all data will be permanently deleted."
   ];
   static const deleteaccountdescriptionText = [
@@ -532,6 +532,7 @@ class AppLanguage {
   static const likedEvents = ["Liked Events"];
   static const followedVenuestext = ["Followed Venues"];
   static const likedVenuestext = ["Recently Liked Venues"];
+  static const likedVenues1text = ["Liked Venues"];
 
   static const mytopArtistonspotifyText = ["My Top Artist on Spotify"];
   static const likeText = [" Like"];
@@ -701,6 +702,8 @@ class AppLanguage {
   static const bookTableText = ["Book A Table"];
   static const bookEventText = ["Book A Event"];
   static const selectDateText = ["Select Date"];
+  static const selectDateTimeText = ["Select date "];
+
   static const selectTimeDayText = ["Select time of day"];
   static const selectNumberGiText = ["Select number of guests"];
 
@@ -820,8 +823,7 @@ class AppLanguage {
   static const describeYourIssueText = [
     "Describe your issue",
   ];
-    static const deleteAccountHintText = ["Reason for delete account"];
-
+  static const deleteAccountHintText = ["Reason for delete account"];
 
   static const addScreenshotsText = [
     "Add Screenshots",
@@ -850,6 +852,5 @@ class AppLanguage {
 
   static const gallerySelectText = ["Media from gallery"];
   static const selectoptionText = ["Select option"];
-    static const uploadPhotoText = ['Upload Photo'];
-
+  static const uploadPhotoText = ['Upload Photo'];
 }

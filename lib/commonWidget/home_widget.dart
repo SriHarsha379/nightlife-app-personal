@@ -781,6 +781,8 @@ class HomeWidget {
     BuildContext context,
     String image,
     String name,
+    String venueId,
+  
     VoidCallback onTap, {
     Key? key,
     required bool showHeart,

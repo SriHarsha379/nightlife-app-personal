@@ -243,6 +243,11 @@ class HomeController with ChangeNotifier {
     return null;
   }
 
+
+
+
+
+
   // Get event by ID
   dynamic getEventById(String id) {
     try {
@@ -302,7 +307,7 @@ class HomeController with ChangeNotifier {
 
   // Like/Unlike actions (you can implement API calls here)
   Future<bool> swipeUserAction(
-    BuildContext context, {
+    BuildContext? context, {
     required String targetUserId,
     required String action, // right | left
     bool allowRedirectOnFailure = true,
@@ -327,14 +332,14 @@ class HomeController with ChangeNotifier {
     if (res != null && res['success'] == true) {
       return true;
     }
-    if (res != null && allowRedirectOnFailure) {
+    if (res != null && allowRedirectOnFailure && context != null) {
       CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
   }
 
   Future<bool> eventLikeDislikeAction(
-    BuildContext context, {
+    BuildContext? context, {
     required String eventId,
     required String action, // like | dislike
     bool allowRedirectOnFailure = true,
@@ -361,14 +366,14 @@ class HomeController with ChangeNotifier {
 
       return true;
     }
-    if (res != null && allowRedirectOnFailure) {
+    if (res != null && allowRedirectOnFailure && context != null) {
       CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
   }
 
   Future<bool> venueLikeDislikeAction(
-    BuildContext context, {
+    BuildContext? context, {
     required String venueId,
     required String action, // like | dislike
     bool allowRedirectOnFailure = true,
@@ -393,7 +398,7 @@ class HomeController with ChangeNotifier {
     if (res != null && res['success'] == true) {
       return true;
     }
-    if (res != null && allowRedirectOnFailure) {
+    if (res != null && allowRedirectOnFailure && context != null) {
       CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
