@@ -10,6 +10,7 @@ import 'package:night_life/view/other/MySplashSection/MembersSection/member_like
 import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
 import 'package:page_transition/page_transition.dart';
 
+import '../../../../controller/home/home_controller.dart';
 import '../../../../controller/members/members_controller.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
@@ -192,6 +193,31 @@ class _splashMembersState extends State<splashMembers> {
     return Image.asset(
       imagePath,
       fit: BoxFit.cover,
+    );
+  }
+
+  Future<void> _handleMemberDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = _str(result['action']).toLowerCase();
+    final targetUserId = _str(result['targetUserId']);
+    if (targetUserId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'left') {
+      await homeController.dislikeItem(context, targetUserId, 'member');
+    } else if (action == 'right') {
+      await homeController.likeItem(context, targetUserId, 'member');
+    } else {
+      return;
+    }
+
+    if (!mounted) return;
+    await Provider.of<MembersController>(context, listen: false).fetchMyMembers(
+      context,
+      type: selectedIndex == 0 ? 'liked' : 'connected',
+      page: 1,
+      limit: 10,
     );
   }
 
@@ -433,246 +459,296 @@ class _splashMembersState extends State<splashMembers> {
                                 ),
                               ),
                           if (selectedIndex == 0)
-                            Wrap(
-                              runSpacing: 10,
-                              children: List.generate(
-                                membersController.likedMembers.length,
-                                (index) {
-                                  final member = membersController
-                                      .likedMembers[index] as Map;
-                                  final memberName = _str(member['name']);
-                                  final memberSince =
-                                      _memberSinceYearsText(member);
-                                  final memberAddress = _memberAddress(member);
-                                  final memberId = _str(member['_id']);
-                                  final memberImage = _buildMemberImage(
-                                      member['profile_image']);
-                                  return GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: size.width * 90 / 100,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.primaryColor(context),
-                                        borderRadius: BorderRadius.circular(15),
+                            membersController.likedMembers.isEmpty
+                                ? Container(
+                                    height: size.height * 60 / 100,
+                                    child: Center(
+                                      child: Text(
+                                        'No liked members yet',
+                                        style: TextStyle(
+                                          color:
+                                              AppColor.secondryColor(context),
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            width: size.width * 3 / 100,
-                                          ),
-                                          Container(
+                                    ),
+                                  )
+                                : Wrap(
+                                    runSpacing: 10,
+                                    children: List.generate(
+                                      membersController.likedMembers.length,
+                                      (index) {
+                                        final member = membersController
+                                            .likedMembers[index] as Map;
+                                        final memberName = _str(member['name']);
+                                        final memberSince =
+                                            _memberSinceYearsText(member);
+                                        final memberAddress =
+                                            _memberAddress(member);
+                                        final memberId = _str(member['_id']);
+                                        final memberImage = _buildMemberImage(
+                                            member['profile_image']);
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: Container(
                                             width: size.width * 90 / 100,
-                                            height: size.width * 42 / 100,
-                                            decoration: const BoxDecoration(),
-                                            child: ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(15),
-                                                  topRight: Radius.circular(15),
-                                                ),
-                                                child: _memberCardImage(
-                                                  memberImage,
-                                                )),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 3 / 100,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * 3 / 100,
-                                              vertical: size.height * 1 / 100,
+                                            decoration: BoxDecoration(
+                                              color: AppColor.primaryColor(
+                                                  context),
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
                                             ),
                                             child: Column(
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      memberName.isEmpty
-                                                          ? ''
-                                                          : memberName,
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                    Container(
-                                                      width:
-                                                          size.width * 8 / 100,
-                                                      height:
-                                                          size.width * 8 / 100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: []),
-                                                      child: ClipRRect(
-                                                          child: Image.asset(
-                                                        AppImage
-                                                            .liked_heart_icon,
-                                                        fit: BoxFit.cover,
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context),
-                                                      )),
-                                                    ),
-                                                  ],
-                                                ),
                                                 SizedBox(
-                                                  height:
-                                                      size.height * 0.4 / 100,
+                                                  width: size.width * 3 / 100,
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: size.width *
-                                                          4.5 /
-                                                          100,
-                                                      height: size.width *
-                                                          4.5 /
-                                                          100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: []),
-                                                      child: ClipRRect(
-                                                        child: Image.asset(
-                                                          AppImage
-                                                              .calenderPinkIcon,
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                Container(
+                                                  width: size.width * 90 / 100,
+                                                  height: size.width * 42 / 100,
+                                                  decoration:
+                                                      const BoxDecoration(),
+                                                  child: ClipRRect(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                        topLeft:
+                                                            Radius.circular(15),
+                                                        topRight:
+                                                            Radius.circular(15),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              1 /
-                                                              100,
-                                                    ),
-                                                    Text(
-                                                      "Member since $memberSince",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: size.height * 1 / 100,
-                                                ),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width:
-                                                          size.width * 5 / 100,
-                                                      height:
-                                                          size.width * 5 / 100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: []),
-                                                      child: ClipRRect(
-                                                          child: Image.asset(
-                                                        AppImage.locationIcon,
-                                                        fit: BoxFit.cover,
+                                                      child: _memberCardImage(
+                                                        memberImage,
                                                       )),
-                                                    ),
-                                                    SizedBox(
-                                                      width: size.width *
-                                                          0.8 /
-                                                          100,
-                                                    ),
-                                                    Text(
-                                                      memberAddress,
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ],
                                                 ),
                                                 SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      1.5 /
-                                                      100,
+                                                  width: size.width * 3 / 100,
                                                 ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                        type: PageTransitionType
-                                                            .rightToLeftWithFade,
-                                                        child:
-                                                            LikedMemberDetail(
-                                                          memberId: memberId,
-                                                        ),
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500),
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        size.width * 3 / 100,
+                                                    vertical:
+                                                        size.height * 1 / 100,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            memberName.isEmpty
+                                                                ? ''
+                                                                : memberName,
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                          Container(
+                                                            width: size.width *
+                                                                8 /
+                                                                100,
+                                                            height: size.width *
+                                                                8 /
+                                                                100,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    boxShadow: []),
+                                                            child: ClipRRect(
+                                                                child:
+                                                                    Image.asset(
+                                                              AppImage
+                                                                  .liked_heart_icon,
+                                                              fit: BoxFit.cover,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            )),
+                                                          ),
+                                                        ],
                                                       ),
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
+                                                      SizedBox(
+                                                        height: size.height *
+                                                            0.4 /
+                                                            100,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            width: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            height: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    boxShadow: []),
+                                                            child: ClipRRect(
+                                                              child:
+                                                                  Image.asset(
+                                                                AppImage
+                                                                    .calenderPinkIcon,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                1 /
+                                                                100,
+                                                          ),
+                                                          Text(
+                                                            "Member since $memberSince",
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: size.height *
+                                                            1 /
+                                                            100,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            width: size.width *
+                                                                5 /
+                                                                100,
+                                                            height: size.width *
+                                                                5 /
+                                                                100,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    boxShadow: []),
+                                                            child: ClipRRect(
+                                                                child:
+                                                                    Image.asset(
+                                                              AppImage
+                                                                  .locationIcon,
+                                                              fit: BoxFit.cover,
+                                                            )),
+                                                          ),
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                0.8 /
+                                                                100,
+                                                          ),
+                                                          Text(
+                                                            memberAddress,
+                                                            style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .height *
-                                                            6 /
+                                                            1.5 /
                                                             100,
-                                                    decoration: BoxDecoration(
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    child: Center(
-                                                      child: Text(
-                                                        AppLanguage
-                                                                .viewProfiletext[
-                                                            language],
-                                                        style: const TextStyle(
-                                                            fontSize: 16,
-                                                            fontFamily: AppFont
-                                                                .fontFamily,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: AppColor
-                                                                .pinkColor),
                                                       ),
-                                                    ),
+                                                      GestureDetector(
+                                                        onTap: () async {
+                                                          final result =
+                                                              await Navigator
+                                                                  .push(
+                                                            context,
+                                                            PageTransition(
+                                                              type: PageTransitionType
+                                                                  .rightToLeftWithFade,
+                                                              child:
+                                                                  LikedMemberDetail(
+                                                                memberId:
+                                                                    memberId,
+                                                                forceDislikeOnly:
+                                                                    true,
+                                                              ),
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          500),
+                                                            ),
+                                                          );
+                                                          await _handleMemberDetailResult(
+                                                              result);
+                                                        },
+                                                        child: Container(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              6 /
+                                                              100,
+                                                          decoration: BoxDecoration(
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Center(
+                                                            child: Text(
+                                                              AppLanguage
+                                                                      .viewProfiletext[
+                                                                  language],
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColor
+                                                                      .pinkColor),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
+                                  ),
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,
@@ -688,246 +764,288 @@ class _splashMembersState extends State<splashMembers> {
                                 ),
                               ),
                           if (selectedIndex == 1)
-                            Wrap(
-                              runSpacing: 10,
-                              children: List.generate(
-                                membersController.connectedMembers.length,
-                                (index) {
-                                  final member = membersController
-                                      .connectedMembers[index] as Map;
-                                  final memberName = _str(member['name']);
-                                  final memberSince =
-                                      _memberSinceYearsText(member);
-                                  final memberAddress = _memberAddress(member);
-                                  final memberImage = _buildMemberImage(
-                                      member['profile_image']);
-                                  final chatImage =
-                                      memberImage.startsWith('http')
-                                          ? AppImage.placeHolder2Icon
-                                          : memberImage;
-                                  return GestureDetector(
-                                    onTap: () {},
-                                    child: Container(
-                                      width: size.width * 90 / 100,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.primaryColor(context),
-                                        borderRadius: BorderRadius.circular(15),
+                            membersController.connectedMembers.isEmpty
+                                ? Container(
+                                    height: size.height * 50 / 100,
+                                    child: Center(
+                                      child: Text(
+                                        'No connections yet',
+                                        style: TextStyle(
+                                          color:
+                                              AppColor.secondryColor(context),
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 16,
+                                        ),
                                       ),
-                                      child: Column(
-                                        children: [
-                                          SizedBox(
-                                            width: size.width * 3 / 100,
-                                          ),
-                                          Container(
+                                    ),
+                                  )
+                                : Wrap(
+                                    runSpacing: 10,
+                                    children: List.generate(
+                                      membersController.connectedMembers.length,
+                                      (index) {
+                                        final member = membersController
+                                            .connectedMembers[index] as Map;
+                                        final memberName = _str(member['name']);
+                                        final memberSince =
+                                            _memberSinceYearsText(member);
+                                        final memberAddress =
+                                            _memberAddress(member);
+                                        final memberImage = _buildMemberImage(
+                                            member['profile_image']);
+                                        final chatImage =
+                                            memberImage.startsWith('http')
+                                                ? AppImage.placeHolder2Icon
+                                                : memberImage;
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: Container(
                                             width: size.width * 90 / 100,
-                                            height: size.width * 42 / 100,
-                                            decoration: const BoxDecoration(),
-                                            child: ClipRRect(
-                                                borderRadius:
-                                                    const BorderRadius.only(
-                                                  topLeft: Radius.circular(15),
-                                                  topRight: Radius.circular(15),
-                                                ),
-                                                child: _memberCardImage(
-                                                    memberImage)),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 3 / 100,
-                                          ),
-                                          Padding(
-                                            padding: EdgeInsets.symmetric(
-                                              horizontal: size.width * 3 / 100,
-                                              vertical: size.height * 1 / 100,
+                                            decoration: BoxDecoration(
+                                              color: AppColor.primaryColor(
+                                                  context),
+                                              borderRadius:
+                                                  BorderRadius.circular(15),
                                             ),
                                             child: Column(
                                               children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Text(
-                                                      memberName.isEmpty
-                                                          ? 'Unknown'
-                                                          : memberName,
-                                                      style: TextStyle(
-                                                          fontSize: 18,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w700,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                    // Container(
-                                                    //   width: size.width * 8 / 100,
-                                                    //   height:
-                                                    //       size.width * 8 / 100,
-                                                    //   decoration:
-                                                    //       const BoxDecoration(
-                                                    //           boxShadow: []),
-                                                    //   child: ClipRRect(
-                                                    //       child: Image.asset(
-                                                    //     AppImage.liked_heart_icon,
-                                                    //     fit: BoxFit.cover,
-                                                    //     color: AppColor
-                                                    //         .secondryColor,
-                                                    //   )),
-                                                    // ),
-                                                  ],
-                                                ),
                                                 SizedBox(
-                                                  height:
-                                                      size.height * 0.4 / 100,
+                                                  width: size.width * 3 / 100,
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width: size.width *
-                                                          4.5 /
-                                                          100,
-                                                      height: size.width *
-                                                          4.5 /
-                                                          100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: []),
-                                                      child: ClipRRect(
-                                                        child: Image.asset(
-                                                          AppImage
-                                                              .calenderPinkIcon,
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                Container(
+                                                  width: size.width * 90 / 100,
+                                                  height: size.width * 42 / 100,
+                                                  decoration:
+                                                      const BoxDecoration(),
+                                                  child: ClipRRect(
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .only(
+                                                        topLeft:
+                                                            Radius.circular(15),
+                                                        topRight:
+                                                            Radius.circular(15),
                                                       ),
-                                                    ),
-                                                    SizedBox(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              1 /
-                                                              100,
-                                                    ),
-                                                    Text(
-                                                      "Member since $memberSince",
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ],
+                                                      child: _memberCardImage(
+                                                          memberImage)),
                                                 ),
                                                 SizedBox(
-                                                  height: size.height * 1 / 100,
+                                                  width: size.width * 3 / 100,
                                                 ),
-                                                Row(
-                                                  children: [
-                                                    Container(
-                                                      width:
-                                                          size.width * 5 / 100,
-                                                      height:
-                                                          size.width * 5 / 100,
-                                                      decoration:
-                                                          const BoxDecoration(
-                                                              boxShadow: []),
-                                                      child: ClipRRect(
-                                                          child: Image.asset(
-                                                        AppImage.locationIcon,
-                                                        fit: BoxFit.cover,
-                                                      )),
-                                                    ),
-                                                    SizedBox(
-                                                      width: size.width *
-                                                          0.8 /
-                                                          100,
-                                                    ),
-                                                    Text(
-                                                      memberAddress,
-                                                      style: TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w500,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ],
-                                                ),
-                                                SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      1.5 /
-                                                      100,
-                                                ),
-                                                GestureDetector(
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                        type: PageTransitionType
-                                                            .rightToLeftWithFade,
-                                                        child: ChatMessageScreen(
-                                                            name: memberName
-                                                                    .isEmpty
+                                                Padding(
+                                                  padding: EdgeInsets.symmetric(
+                                                    horizontal:
+                                                        size.width * 3 / 100,
+                                                    vertical:
+                                                        size.height * 1 / 100,
+                                                  ),
+                                                  child: Column(
+                                                    children: [
+                                                      Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Text(
+                                                            memberName.isEmpty
                                                                 ? 'Unknown'
                                                                 : memberName,
-                                                            image: chatImage),
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500),
+                                                            style: TextStyle(
+                                                                fontSize: 18,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w700,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                          // Container(
+                                                          //   width: size.width * 8 / 100,
+                                                          //   height:
+                                                          //       size.width * 8 / 100,
+                                                          //   decoration:
+                                                          //       const BoxDecoration(
+                                                          //           boxShadow: []),
+                                                          //   child: ClipRRect(
+                                                          //       child: Image.asset(
+                                                          //     AppImage.liked_heart_icon,
+                                                          //     fit: BoxFit.cover,
+                                                          //     color: AppColor
+                                                          //         .secondryColor,
+                                                          //   )),
+                                                          // ),
+                                                        ],
                                                       ),
-                                                    );
-                                                  },
-                                                  child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
+                                                      SizedBox(
+                                                        height: size.height *
+                                                            0.4 /
+                                                            100,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            width: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            height: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    boxShadow: []),
+                                                            child: ClipRRect(
+                                                              child:
+                                                                  Image.asset(
+                                                                AppImage
+                                                                    .calenderPinkIcon,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                1 /
+                                                                100,
+                                                          ),
+                                                          Text(
+                                                            "Member since $memberSince",
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: size.height *
+                                                            1 /
+                                                            100,
+                                                      ),
+                                                      Row(
+                                                        children: [
+                                                          Container(
+                                                            width: size.width *
+                                                                5 /
+                                                                100,
+                                                            height: size.width *
+                                                                5 /
+                                                                100,
+                                                            decoration:
+                                                                const BoxDecoration(
+                                                                    boxShadow: []),
+                                                            child: ClipRRect(
+                                                                child:
+                                                                    Image.asset(
+                                                              AppImage
+                                                                  .locationIcon,
+                                                              fit: BoxFit.cover,
+                                                            )),
+                                                          ),
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                0.8 /
+                                                                100,
+                                                          ),
+                                                          Text(
+                                                            memberAddress,
+                                                            style: TextStyle(
+                                                                fontSize: 14,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                      SizedBox(
+                                                        height: MediaQuery.of(
+                                                                    context)
                                                                 .size
                                                                 .height *
-                                                            6 /
+                                                            1.5 /
                                                             100,
-                                                    decoration: BoxDecoration(
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(10)),
-                                                    child: Center(
-                                                      child: Text(
-                                                        AppLanguage.messageText[
-                                                            language],
-                                                        style: const TextStyle(
-                                                            fontSize: 16,
-                                                            fontFamily: AppFont
-                                                                .fontFamily,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: AppColor
-                                                                .pinkColor),
                                                       ),
-                                                    ),
+                                                      GestureDetector(
+                                                        onTap: () {
+                                                          Navigator.push(
+                                                            context,
+                                                            PageTransition(
+                                                              type: PageTransitionType
+                                                                  .rightToLeftWithFade,
+                                                              child: ChatMessageScreen(
+                                                                  name: memberName
+                                                                          .isEmpty
+                                                                      ? 'Unknown'
+                                                                      : memberName,
+                                                                  image:
+                                                                      chatImage),
+                                                              duration:
+                                                                  const Duration(
+                                                                      milliseconds:
+                                                                          500),
+                                                            ),
+                                                          );
+                                                        },
+                                                        child: Container(
+                                                          height: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .height *
+                                                              6 /
+                                                              100,
+                                                          decoration: BoxDecoration(
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                              borderRadius:
+                                                                  BorderRadius
+                                                                      .circular(
+                                                                          10)),
+                                                          child: Center(
+                                                            child: Text(
+                                                              AppLanguage
+                                                                      .messageText[
+                                                                  language],
+                                                              style: const TextStyle(
+                                                                  fontSize: 16,
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColor
+                                                                      .pinkColor),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ],
                                                   ),
                                                 ),
                                               ],
                                             ),
                                           ),
-                                        ],
-                                      ),
+                                        );
+                                      },
                                     ),
-                                  );
-                                },
-                              ),
-                            ),
+                                  ),
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,

@@ -70,6 +70,8 @@ class BookVenueController with ChangeNotifier {
     notifyListeners();
   }
 
+//==============book venue api-------------//
+
   Future<Map<String, dynamic>?> bookingVenueApi(
     BuildContext context, {
     required String venueId,
@@ -89,6 +91,9 @@ class BookVenueController with ChangeNotifier {
     required String phoneNumber,
     required String email,
     required String fullName,
+    required num gstPercent,
+    required num gstAmount,
+    required num couponDiscountPercent,
   }) async {
     final token = AppConstant.token;
     if (token.isEmpty) return null;
@@ -114,8 +119,11 @@ class BookVenueController with ChangeNotifier {
       "phone_number": phoneNumber.trim(),
       "email": email.trim(),
       "full_name": fullName.trim(),
+      "gst_amount": gstAmount,
+      "gst_percentage": gstPercent,
+      "discount_percent": couponDiscountPercentage,
     };
-    log("dafjdsafjadfbjadfjdfjsd$fields");
+    log("booking field data $fields");
     try {
       final response = await postJsonData(
         'booking/venue_booking',
@@ -134,8 +142,4 @@ class BookVenueController with ChangeNotifier {
       notifyListeners();
     }
   }
-
-
-
-
 }

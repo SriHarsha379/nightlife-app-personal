@@ -1,10 +1,10 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/controller/home/home_controller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:night_life/controller/venues/my_venues_controller.dart';
 import 'package:night_life/utilities/app_color.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/booked_view_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/past_venue_screeen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
@@ -18,6 +18,7 @@ import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../MembersSection/Members.dart';
+import 'venue_booking_details.dart';
 
 class MyVenue extends StatefulWidget {
   static const String routeName = '/MyVenue';
@@ -30,31 +31,10 @@ class MyVenue extends StatefulWidget {
 class _MyVenueState extends State<MyVenue> {
   int selectedIndex = 0;
 
-  // ── Dummy past events (unchanged — API not ready) ──────────────────────────
-  final List<Map<String, dynamic>> pastEventlist = [
-    {
-      'image': AppImage.eventImage3,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-    },
-    {
-      'image': AppImage.eventImage4,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-    },
-    {
-      'image': AppImage.eventImage5,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-    },
-  ];
-
   // ── Scroll controllers for load more ──────────────────────────────────────
   late final ScrollController _likedScrollController;
   late final ScrollController _reservedScrollController;
+  late final ScrollController _pastHorizontalScrollController;
 
   @override
   void initState() {
@@ -63,6 +43,8 @@ class _MyVenueState extends State<MyVenue> {
     _likedScrollController = ScrollController()..addListener(_onLikedScroll);
     _reservedScrollController = ScrollController()
       ..addListener(_onReservedScroll);
+    _pastHorizontalScrollController = ScrollController()
+      ..addListener(_onPastHorizontalScroll);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _fetchLiked();
@@ -74,7 +56,7 @@ class _MyVenueState extends State<MyVenue> {
       context,
       type: 'liked',
       page: 0,
-      limit: 5,
+      limit: 10,
     );
   }
 
@@ -83,7 +65,7 @@ class _MyVenueState extends State<MyVenue> {
       context,
       type: 'reserved',
       page: 0,
-      limit: 5,
+      limit: 10,
     );
   }
 
@@ -96,10 +78,14 @@ class _MyVenueState extends State<MyVenue> {
   }
 
   void _onReservedScroll() {
-    if (_reservedScrollController.position.pixels >=
-        _reservedScrollController.position.maxScrollExtent - 200) {
+    // No load more for upcoming
+  }
+
+  void _onPastHorizontalScroll() {
+    if (_pastHorizontalScrollController.position.pixels >=
+        _pastHorizontalScrollController.position.maxScrollExtent - 150) {
       Provider.of<MyVenuesController>(context, listen: false)
-          .loadMoreReserved(context);
+          .loadMorePast(context);
     }
   }
 
@@ -107,6 +93,7 @@ class _MyVenueState extends State<MyVenue> {
   void dispose() {
     _likedScrollController.dispose();
     _reservedScrollController.dispose();
+    _pastHorizontalScrollController.dispose();
     super.dispose();
   }
 
@@ -119,6 +106,26 @@ class _MyVenueState extends State<MyVenue> {
     } catch (_) {
       return isoDate;
     }
+  }
+
+  Future<void> _handleVenueDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = (result['action'] ?? '').toString().trim().toLowerCase();
+    final targetVenueId = (result['targetVenueId'] ?? '').toString().trim();
+    if (targetVenueId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetVenueId, 'venue');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetVenueId, 'venue');
+    } else {
+      return;
+    }
+
+    if (!mounted) return;
+    _fetchLiked();
   }
 
   @override
@@ -378,15 +385,19 @@ class _MyVenueState extends State<MyVenue> {
   Widget _buildLikedVenueCard(
       BuildContext context, Map<String, dynamic> venue, Size size) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           PageTransition(
             type: PageTransitionType.rightToLeftWithFade,
-            child: VenuePages(venueId: venue['_id'].toString()),
+            child: VenuePages(
+              venueId: venue['_id'].toString(),
+              forceDislikeOnly: true,
+            ),
             duration: const Duration(milliseconds: 500),
           ),
         );
+        await _handleVenueDetailResult(result);
       },
       child: Container(
         width: size.width * 90 / 100,
@@ -541,7 +552,9 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
+  // ══════════════════════════════════════════════════════════════════════════
   // RESERVED TAB
+  // ══════════════════════════════════════════════════════════════════════════
   Widget _buildReservedTab(BuildContext context, Size size) {
     return Consumer<MyVenuesController>(
       builder: (context, controller, _) {
@@ -563,39 +576,43 @@ class _MyVenueState extends State<MyVenue> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // ── Description ──────────────────────────────────────────
-                  Text(
-                    AppLanguage.ReserveddetailsText[language],
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.normal,
-                      color: AppColor.secondryColor(context),
+                  if (controller.upcomingReservations.isNotEmpty)
+                    Text(
+                      AppLanguage.ReserveddetailsText[language],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.normal,
+                        color: AppColor.secondryColor(context),
+                      ),
                     ),
-                  ),
                   SizedBox(height: size.height * 1.5 / 100),
 
                   // ── Upcoming reservations heading ─────────────────────────
-                  Text(
-                    AppLanguage.upcomingReservationsText[language],
-                    style: const TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColor.pinkColor,
+                  if (controller.upcomingReservations.isNotEmpty)
+                    Text(
+                      AppLanguage.upcomingReservationsText[language],
+                      style: const TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.pinkColor,
+                      ),
                     ),
-                  ),
                   SizedBox(height: size.height * 2 / 100),
 
-                  // ── Upcoming list ─────────────────────────────────────────
+                  // ── Upcoming list (NO load more) ──────────────────────────
                   if (controller.upcomingReservations.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: size.height * 2 / 100),
-                      child: Text(
-                        'No upcoming reservations',
-                        style: TextStyle(
-                          color: AppColor.secondryColor(context),
-                          fontFamily: AppFont.fontFamily,
-                          fontSize: 14,
+                    SizedBox(
+                      height: size.height * 30 / 100,
+                      child: Center(
+                        child: Text(
+                          'No upcoming reservations',
+                          style: TextStyle(
+                            color: AppColor.secondryColor(context),
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 16,
+                          ),
                         ),
                       ),
                     )
@@ -608,79 +625,82 @@ class _MyVenueState extends State<MyVenue> {
                       ),
                     ),
 
-                  // ── Load more upcoming button ──────────────────────────────
-                  if (controller.hasMoreReserved) ...[
-                    if (controller.isReservedLoadingMore)
-                      Center(
-                        child: Padding(
-                          padding:
-                              EdgeInsets.only(bottom: size.height * 1.5 / 100),
-                          child: LoadingAnimationWidget.dotsTriangle(
-                            color: AppColor.buttonColor,
-                            size: 30,
-                          ),
-                        ),
-                      )
-                    else
-                      Padding(
-                        padding: EdgeInsets.only(bottom: size.height * 2 / 100),
-                        child: GestureDetector(
-                          onTap: () => controller.loadMoreReserved(context),
-                          child: Container(
-                            height: size.height * 5 / 100,
-                            decoration: BoxDecoration(
-                              border: Border.all(
-                                  color: AppColor.pinkColor, width: 1.5),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'Load more',
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.pinkColor,
+                  // ── Past reservations heading ─────────────────────────────
+                  if (controller.pastReservations.isNotEmpty ||
+                      controller.isPastLoadingMore) ...[
+                    SizedBox(height: size.height * 1 / 100),
+                    Text(
+                      AppLanguage.pastReservationsText[language],
+                      style: const TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.pinkColor,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 2 / 100),
+
+                    // ── Past list (horizontal scroll with load more) ──────────
+                    SizedBox(
+                      width: size.width,
+                      height: size.height * 28 / 100,
+                      child: ListView.builder(
+                        controller: _pastHorizontalScrollController,
+                        scrollDirection: Axis.horizontal,
+                        itemCount: controller.pastReservations.length +
+                            (controller.isPastLoadingMore ? 1 : 0),
+                        itemBuilder: (context, index) {
+                          // Loading indicator at end of horizontal list
+                          if (index == controller.pastReservations.length) {
+                            return Padding(
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: size.width * 4 / 100),
+                              child: Center(
+                                child: LoadingAnimationWidget.dotsTriangle(
+                                  color: AppColor.buttonColor,
+                                  size: 30,
                                 ),
                               ),
+                            );
+                          }
+
+                          final pastEvent = controller.pastReservations[index];
+                          return Padding(
+                            padding:
+                                EdgeInsets.only(right: size.width * 4 / 100),
+                            child: GestureDetector(
+                              onTap: () {},
+                              child: _buildPastCard(context, pastEvent, size),
                             ),
-                          ),
-                        ),
+                          );
+                        },
                       ),
+                    ),
+
+                    SizedBox(height: size.height * 3 / 100),
+                  ] else if (controller.upcomingReservations.isEmpty) ...[
+                    // Show past empty state only if upcoming is also empty
+                    SizedBox(height: size.height * 1 / 100),
+                    Text(
+                      AppLanguage.pastReservationsText[language],
+                      style: const TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: AppColor.pinkColor,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 2 / 100),
+                    Text(
+                      'No past reservations',
+                      style: TextStyle(
+                        color: AppColor.secondryColor(context),
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 14,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 3 / 100),
                   ],
-
-                  // ── Past reservations heading ─────────────────────────────
-                  SizedBox(height: size.height * 1 / 100),
-                  Text(
-                    AppLanguage.pastReservationsText[language],
-                    style: const TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: AppColor.pinkColor,
-                    ),
-                  ),
-                  SizedBox(height: size.height * 2 / 100),
-
-                  // ── Past list (horizontal) — dummy data, unchanged ────────
-                  SizedBox(
-                    width: size.width,
-                    height: size.height * 28 / 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: pastEventlist.length,
-                      itemBuilder: (context, index) => Padding(
-                        padding: EdgeInsets.only(right: size.width * 4 / 100),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: _buildPastCard(
-                              context, pastEventlist[index], size),
-                        ),
-                      ),
-                    ),
-                  ),
-
-                  SizedBox(height: size.height * 3 / 100),
                 ],
               ),
             ),
@@ -699,9 +719,8 @@ class _MyVenueState extends State<MyVenue> {
           context,
           PageTransition(
             type: PageTransitionType.rightToLeftWithFade,
-            child: BookedViewDetails(
-              image: "${AppConfigProvider.imageUrl}${booking['venue_image']}",
-              name: booking['venue_name'] ?? '',
+            child: VenueBookedDetails(
+              venueId: booking['booking_id'].toString(),
             ),
             duration: const Duration(milliseconds: 500),
           ),
@@ -748,6 +767,7 @@ class _MyVenueState extends State<MyVenue> {
                 ),
               ),
             ),
+
             // Details section
             Padding(
               padding: EdgeInsets.symmetric(
@@ -757,7 +777,7 @@ class _MyVenueState extends State<MyVenue> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name + booking status badge
+                  // Name
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -882,9 +902,9 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
-  // ── Past event card (unchanged design) ────────────────────────────────────
+  // ── Past event card ────────────────────────────────────
   Widget _buildPastCard(
-      BuildContext context, Map<String, dynamic> event, Size size) {
+      BuildContext context, Map<String, dynamic> pastEvent, Size size) {
     return Container(
       width: size.width * 37 / 100,
       decoration: BoxDecoration(
@@ -895,7 +915,7 @@ class _MyVenueState extends State<MyVenue> {
       child: Column(
         children: [
           // Image
-          Container(
+          SizedBox(
             width: size.width * 35 / 100,
             height: size.height * 15 / 100,
             child: ClipRRect(
@@ -903,17 +923,35 @@ class _MyVenueState extends State<MyVenue> {
                 topLeft: Radius.circular(10),
                 topRight: Radius.circular(10),
               ),
-              child: Image.asset(
-                event['image'],
+              child: CachedNetworkImage(
+                imageUrl:
+                    "${AppConfigProvider.imageUrl}${pastEvent['venue_image']}",
                 fit: BoxFit.cover,
+                imageBuilder: (context, imageProvider) => Container(
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                        image: imageProvider, fit: BoxFit.cover),
+                  ),
+                ),
+                errorWidget: (context, url, error) => Image.asset(
+                  AppImage.dummyImageIcon,
+                  fit: BoxFit.cover,
+                ),
+                placeholder: (context, url) => Center(
+                  child: LoadingAnimationWidget.dotsTriangle(
+                    color: AppColor.buttonColor,
+                    size: 35,
+                  ),
+                ),
               ),
             ),
           ),
+
           // Title
           Container(
             width: size.width * 30 / 100,
             child: Text(
-              event['title'],
+              pastEvent['venue_name'] ?? "",
               style: TextStyle(
                 fontSize: 9,
                 fontFamily: AppFont.fontFamily,
@@ -939,7 +977,7 @@ class _MyVenueState extends State<MyVenue> {
                 ),
                 SizedBox(width: size.width * 1.5 / 100),
                 Text(
-                  event['date'],
+                  pastEvent['date'] ?? "",
                   style: TextStyle(
                     fontSize: 7,
                     fontFamily: AppFont.fontFamily,
@@ -967,7 +1005,7 @@ class _MyVenueState extends State<MyVenue> {
                 SizedBox(width: size.width * 1.5 / 100),
                 Expanded(
                   child: Text(
-                    event['address'],
+                    pastEvent['location'] ?? "",
                     style: TextStyle(
                       fontSize: 7,
                       fontFamily: AppFont.fontFamily,
@@ -989,7 +1027,9 @@ class _MyVenueState extends State<MyVenue> {
                 context,
                 PageTransition(
                   type: PageTransitionType.rightToLeftWithFade,
-                  child: PastVenueScreen(),
+                  child: PastVenueScreen(
+                    venueId: pastEvent['booking_id'],
+                  ),
                   duration: const Duration(milliseconds: 500),
                 ),
               );
@@ -1018,9 +1058,6 @@ class _MyVenueState extends State<MyVenue> {
       ),
     );
   }
-
-  String _capitalise(String s) =>
-      s.isEmpty ? s : '${s[0].toUpperCase()}${s.substring(1)}';
 
   void documenttypebottomsheet(BuildContext context) {
     final size = MediaQuery.of(context).size;

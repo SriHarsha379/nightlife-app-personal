@@ -19,8 +19,13 @@ import '../../chats/chat_message_screen.dart';
 class VenuePages extends StatefulWidget {
   static String routeName = './VenuePages';
   final String? venueId;
+  final bool forceDislikeOnly;
 
-  const VenuePages({super.key, this.venueId});
+  const VenuePages({
+    super.key,
+    this.venueId,
+    this.forceDislikeOnly = false,
+  });
 
   @override
   State<VenuePages> createState() => _VenuePagesState();
@@ -220,6 +225,12 @@ class _VenuePagesState extends State<VenuePages> {
     return _str(widget.venueId).trim();
   }
 
+  bool _toBool(dynamic value) {
+    if (value is bool) return value;
+    final str = _str(value).trim().toLowerCase();
+    return str == 'true' || str == '1';
+  }
+
   Future<void> _submitVenueSwipeAction(
     String action, {
     required String targetVenueId,
@@ -283,7 +294,8 @@ class _VenuePagesState extends State<VenuePages> {
         final about = _str(venueData['about']);
         final tickets = venueData['tickets'] as Map<String, dynamic>? ?? {};
         final reservationFee = tickets['reservation_fee'] ?? 0;
-        final isLiked = venueData['is_liked'] ?? false;
+        final isLiked = _toBool(venueData['is_liked']);
+        final showDislikeOnly = widget.forceDislikeOnly || isLiked;
         final targetVenueId = _targetVenueId(venueData['_id']);
 
         return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -313,7 +325,9 @@ class _VenuePagesState extends State<VenuePages> {
                           .withOpacity(0.9),
                       borderRadius: BorderRadius.circular(25),
                     ),
-                    width: size.width * 85 / 100,
+                    width: showDislikeOnly
+                        ? size.width * 52 / 100
+                        : size.width * 85 / 100,
                     height: size.height * 7 / 100,
                     child: Row(
                       children: [
@@ -368,42 +382,44 @@ class _VenuePagesState extends State<VenuePages> {
                             ),
                           ),
                         ),
-                        SizedBox(width: size.width * 3 / 100),
-                        GestureDetector(
-                          onTap: () async {
-                            await _submitVenueSwipeAction(
-                              'like',
-                              targetVenueId: targetVenueId,
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 35, vertical: 10),
-                            decoration: BoxDecoration(
-                              color: AppColor.buttonColor,
-                              borderRadius: BorderRadius.circular(50),
-                            ),
-                            child: Row(
-                              children: [
-                                Image.asset(
-                                  AppImage.heartImg,
-                                  height: 20,
-                                  width: 20,
-                                  color: AppColor.secondryColor(context),
-                                ),
-                                Text(
-                                  AppLanguage.likeText[language],
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: AppFont.fontFamily,
+                        if (!showDislikeOnly) ...[
+                          SizedBox(width: size.width * 3 / 100),
+                          GestureDetector(
+                            onTap: () async {
+                              await _submitVenueSwipeAction(
+                                'like',
+                                targetVenueId: targetVenueId,
+                              );
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 35, vertical: 10),
+                              decoration: BoxDecoration(
+                                color: AppColor.buttonColor,
+                                borderRadius: BorderRadius.circular(50),
+                              ),
+                              child: Row(
+                                children: [
+                                  Image.asset(
+                                    AppImage.heartImg,
+                                    height: 20,
+                                    width: 20,
                                     color: AppColor.secondryColor(context),
                                   ),
-                                ),
-                              ],
+                                  Text(
+                                    AppLanguage.likeText[language],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                      color: AppColor.secondryColor(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ),

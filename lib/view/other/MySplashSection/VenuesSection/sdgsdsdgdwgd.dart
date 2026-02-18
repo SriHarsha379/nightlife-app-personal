@@ -1,19 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_constant.dart';
+import 'package:night_life/utilities/app_language.dart';
+
+import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 
-class BookedViewDetails extends StatefulWidget {
-  final dynamic image;
-  final String? name;
-  const BookedViewDetails({super.key, this.image, this.name});
+class PastVenueScreen extends StatefulWidget {
+  const PastVenueScreen({super.key});
 
   @override
-  State<BookedViewDetails> createState() => _BookedViewDetailsState();
+  State<PastVenueScreen> createState() => _PastVenueScreenState();
 }
 
-class _BookedViewDetailsState extends State<BookedViewDetails> {
+class _PastVenueScreenState extends State<PastVenueScreen> {
   final List<Map<String, String>> dates = [
     {'day': 'Friday', 'date': '24 Oct'},
     {'day': '9:00', 'date': 'P.M.'},
@@ -25,12 +27,13 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
   TextEditingController feedbackController = TextEditingController();
   bool showDetails = false;
 
+  List<String> emojis = ["😡", "😞", "😐", "😊", "🤩"];
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value:  SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
@@ -39,26 +42,39 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
       ),
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-          child: Scaffold(
+          child: 
+          Scaffold(
               backgroundColor: AppColor.primaryColor(context),
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(bottom: 40),
+                child: AppButton(
+                    text: '${AppLanguage.submitButtonText[language]}',
+                    onPress: () {}),
+              ),
               body: Container(
                   height: size.height * 100 / 100,
                   width: size.width * 100 / 100,
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        SizedBox(height: size.height * 0.03),
+                        SizedBox(height: size.height * 2 / 100),
                         Stack(
                           children: [
-                            Image.asset(
-                              widget.image,
+                            Container(
                               width: size.width * 100 / 100,
-                              height: size.height * 30 / 100,
-                              fit: BoxFit.cover,
+                              height: size.height * 28 / 100,
+                              child: ClipRRect(
+                                child: Image.asset(
+                                  AppImage.brewandbloomIcon,
+                                  fit: BoxFit.fill,
+                                ),
+                              ),
                             ),
                             Positioned(
                               top: size.height * 4 / 100,
-                              left: size.width * 5 / 100,
+                              left: size.width * 2.9 / 100,
                               child: Container(
                                 width: size.width * 8 / 100,
                                 height: size.width * 8 / 100,
@@ -78,7 +94,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                           ],
                         ),
                         SizedBox(
-                          height: size.height * 0.9 / 100,
+                          height: size.height * 2 / 100,
                         ),
                         SizedBox(
                           width: size.width * 92 / 100,
@@ -92,25 +108,29 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                     child: Align(
                                       alignment: Alignment.centerLeft,
                                       child: Text(
-                                        widget.name.toString(),
+                                        AppLanguage
+                                            .brewandBloomCafetext[language],
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 24,
-                                          color: AppColor.secondryColor(context),
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  SizedBox(height: size.height * 0.5 / 100),
+                                  SizedBox(
+                                    height: size.height * 1 / 100,
+                                  ),
                                   SizedBox(
                                     width: size.width * 75 / 100,
                                     child: Text(
-                                      "Santacruz East, Mumbai",
+                                      "Santacruz East,Mumbai",
                                       style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
-                                        fontSize: 14.5,
+                                        fontSize: 12,
                                         color: AppColor.buttonColor,
                                       ),
                                     ),
@@ -141,7 +161,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                         color: Colors.white.withOpacity(0.8),
                                       ),
                                     ),
-                                    SizedBox(height: size.height * 0.5 / 100),
+                                    SizedBox(height: size.height * 0.6 / 100),
                                     Text(
                                       "2",
                                       style: TextStyle(
@@ -200,7 +220,6 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
 
                             SizedBox(height: size.height * 1 / 100),
 
-                            // Select Items
                             Wrap(
                               spacing: 10,
                               runSpacing: 10,
@@ -233,7 +252,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: AppColor.pasttimecolor(context),
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                         SizedBox(
@@ -244,7 +264,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
-                                            color: AppColor.pasttimecolor(context),
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                       ],
@@ -268,8 +289,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                     padding: EdgeInsets.symmetric(
                                         horizontal: 18, vertical: 20),
                                     decoration: BoxDecoration(
-                                      color: AppColor.bookeventcontainercolor(
-                                          context),
+                                      color:
+                                          const Color.fromARGB(255, 44, 27, 58),
                                       borderRadius: BorderRadius.circular(14),
                                     ),
                                     child: Column(
@@ -319,7 +340,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                           ),
                                         ),
 
-                                        SizedBox(height: 16),
+                                        SizedBox(height: size.height * 2 / 100),
 
                                         detailsRow("Ticket Charges", "₹14,999"),
                                         Divider(
@@ -332,8 +353,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                     .height *
                                                 0.2 /
                                                 100),
-
                                         detailsRow("Cover charge", "₹50"),
+
                                         Divider(
                                             thickness: 0.2,
                                             color: AppColor.secondryColor(
@@ -345,7 +366,6 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                     .height *
                                                 0.2 /
                                                 100),
-
                                         // -------- Expandable Booking Fee ----------
                                         GestureDetector(
                                           onTap: () {
@@ -507,8 +527,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w600,
-                                                    color: AppColor
-                                                        .secondryColor(
+                                                    color:
+                                                        AppColor.secondryColor(
                                                             context))),
                                           ],
                                         ),
@@ -560,11 +580,193 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                             ),
 
                             SizedBox(height: size.height * 2 / 100),
+
+                            // ------------------- Emoji Rating -----------------------
+                            Container(
+                              width: size.width * 90 / 100,
+                              height: size.height * 27.6 / 100,
+                              padding: EdgeInsets.symmetric(
+                                  vertical: 18, horizontal: 16),
+                              decoration: BoxDecoration(
+                                color:
+                                    AppColor.bookeventcontainercolor(context),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  // Heading
+                                  Text(
+                                    "How’s your experience?",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      color: AppColor.secondryColor(context),
+                                      fontFamily: AppFont.fontFamily,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+
+                                  SizedBox(height: size.height * 1 / 100),
+
+                                  // Subtitle
+                                  Text(
+                                    "We’d love to know!",
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.lightGreyColor(context)
+                                          .withOpacity(0.8),
+                                      fontFamily: AppFont.fontFamily,
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+
+                                  SizedBox(height: size.height * 3 / 100),
+
+                                  // Divider Line
+                                  Container(
+                                    height: 1,
+                                    width: size.width * 80 / 100,
+                                    color: Colors.white24,
+                                  ),
+
+                                  SizedBox(height: size.height * 2.6 / 100),
+
+                                  // Emoji Row
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children:
+                                        List.generate(emojis.length, (index) {
+                                      final isSelected = selectedEmoji == index;
+
+                                      return GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            selectedEmoji = index;
+                                          });
+                                        },
+                                        child: AnimatedContainer(
+                                          duration:
+                                              const Duration(milliseconds: 250),
+                                          padding: EdgeInsets.all(
+                                              isSelected ? 10 : 8),
+                                          decoration: BoxDecoration(
+                                            shape: BoxShape.circle,
+                                            gradient: isSelected
+                                                ? const LinearGradient(
+                                                    colors: [
+                                                      Color.fromARGB(255, 195,
+                                                          151, 236), // purple
+                                                      Color.fromARGB(255, 80,
+                                                          91, 216), // blue
+                                                    ],
+                                                    begin: Alignment.topCenter,
+                                                    end: Alignment.bottomCenter,
+                                                  )
+                                                : null,
+                                            color: isSelected
+                                                ? null
+                                                : Colors.transparent,
+                                          ),
+                                          child: Text(
+                                            emojis[index],
+                                            style:
+                                                const TextStyle(fontSize: 30),
+                                          ),
+                                        ),
+                                      );
+                                    }),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: size.height * 2 / 100),
+
+                            // ----------------- Feedback Text Field -----------------------
+
+                            SizedBox(height: size.height * 2 / 100),
+                            Container(
+                              width: size.width * 90 / 100,
+                              height: size.height * 55 / 100,
+                              padding: EdgeInsets.symmetric(
+                                  horizontal: 16, vertical: 18),
+                              decoration: BoxDecoration(
+                                color:
+                                    AppColor.bookeventcontainercolor(context),
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    "Thanks for your feedback!",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: AppFont.fontFamily,
+                                      color: AppColor.secondryColor(context),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: size.height * 1 / 100),
+
+                                  Text(
+                                    "Your opinion matters. Tell us what worked and what didn’t.",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                      color: AppColor.lightGreyColor(context),
+                                    ),
+                                  ),
+
+                                  SizedBox(height: size.height * 1.2 / 100),
+
+                                  Container(
+                                    width: size.width,
+                                    height: size.height * 0.0025,
+                                    color: Colors.white12,
+                                  ),
+
+                                  SizedBox(height: size.height * 2.2 / 100),
+
+                                  // Feedback Text Input
+                                  Container(
+                                    width: size.width * 80 / 100,
+                                    height: size.height * 32 / 100,
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 14, vertical: 10),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.myperfectcontainercolr(
+                                          context),
+                                      borderRadius: BorderRadius.circular(14),
+                                    ),
+                                    child: TextField(
+                                      controller: feedbackController,
+                                      maxLines: 8,
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 14),
+                                      decoration: InputDecoration(
+                                        hintText: "My perfect night...",
+                                        hintStyle: TextStyle(
+                                            color: Colors.white60,
+                                            fontSize: 14),
+                                        border: InputBorder.none,
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
                           ],
                         ),
-                        // SizedBox(
-                        //   height: size.height * 20.5 / 100,
-                        // ),
+                        SizedBox(
+                          height: size.height * 20.5 / 100,
+                        ),
                       ],
                     ),
                   )))),
@@ -597,17 +799,17 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
             title,
             style: TextStyle(
               fontSize: fontSize ?? 13, // default 13
-              fontWeight: FontWeight.w400,
-
+              fontWeight: fontWeight ?? FontWeight.w400,
               color: AppColor.lightGreyColor(context),
             ),
           ),
           Text(
             value,
             style: TextStyle(
-              fontSize: fontSize ?? 13, // default 14
-              fontWeight: FontWeight.w400,
-              color: highlight ? Colors.white : Colors.white,
+              fontSize: fontSize ?? 14, // default 14
+              fontWeight:
+                  fontWeight ?? (isBold ? FontWeight.w700 : FontWeight.w500),
+              color: highlight ? Colors.white : Colors.white70,
             ),
           ),
         ],

@@ -45,5 +45,16 @@
 	<true/>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>We use your location to show nearby venues and events.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We use your camera for profile photos and uploads.</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>We use your microphone for in-app audio features.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We use your photos so you can select and upload media.</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We use photo library access to save media when needed.</string>
 </dict>
 </plist>
+

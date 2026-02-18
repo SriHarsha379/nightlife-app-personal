@@ -178,10 +178,6 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-
-
-
-
   // ================Signup Api================//
   signupUserApi(
     BuildContext context,
@@ -1011,7 +1007,8 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
 
     if (res != null && res['success'] == true) {
-      TopNotification.success(context, "Event Preferenece Updated");
+      TopNotification.success(
+          context, "Event Preferenece Updated Successfully");
       return true;
     }
 
@@ -1052,7 +1049,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
 
     if (res != null && res['success'] == true) {
-      TopNotification.success(context, res['message'][language]);
+      TopNotification.success(context, "Vibe Updated Successfully");
       return true;
     }
 

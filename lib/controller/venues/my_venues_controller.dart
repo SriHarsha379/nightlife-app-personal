@@ -17,21 +17,25 @@ class MyVenuesController with ChangeNotifier {
   List<dynamic> get likedVenues => _likedVenues;
   bool get hasMoreLiked => _hasMoreLiked;
 
-  // ── Reserved ───────────────────────────────────────────────────────────────
+  // ── Reserved / Upcoming ────────────────────────────────────────────────────
   bool _isReservedVenuesLoading = false;
-  bool _isReservedLoadingMore = false;
   List<dynamic> _upcomingReservations = [];
-  List<dynamic> _pastReservations = [];
-  int _reservedCurrentPage = 1;
-  int _reservedTotalPages = 0;
 
   bool get isReservedVenuesLoading => _isReservedVenuesLoading;
-  bool get isReservedLoadingMore => _isReservedLoadingMore;
   List<dynamic> get upcomingReservations => _upcomingReservations;
-  List<dynamic> get pastReservations => _pastReservations;
-  bool get hasMoreReserved => _reservedCurrentPage < _reservedTotalPages;
 
-  // ── Fetch liked venues (initial load) ─────────────────────────────────────
+
+  bool _isPastLoadingMore = false;
+  bool _isPastFullyLoaded = false;
+  List<dynamic> _pastReservations = [];
+  int _pastTotalRecords = 0;
+  bool _hasMorePast = false;
+
+  bool get isPastLoadingMore => _isPastLoadingMore;
+  List<dynamic> get pastReservations => _pastReservations;
+  bool get hasMorePast => _hasMorePast;
+
+  // ── Fetch (initial load) ───────────────────────────────────────────────────
   Future<void> fetchMyVenues(
     BuildContext context, {
     String type = 'liked',
@@ -51,7 +55,10 @@ class MyVenuesController with ChangeNotifier {
     } else {
       _upcomingReservations = [];
       _pastReservations = [];
-      _reservedCurrentPage = 1;
+      _pastTotalRecords = 0;
+      _hasMorePast = false;
+      _isPastLoadingMore = false;
+      _isPastFullyLoaded = false;
       _isReservedVenuesLoading = true;
     }
     notifyListeners();
@@ -67,7 +74,8 @@ class MyVenuesController with ChangeNotifier {
         if (type == 'liked') {
           _parseLikedResponse(response['data'], append: false);
         } else {
-          _parseReservedResponse(response['data'], append: false);
+          await _parseReservedResponse(response['data'], context,
+              initialLimit: limit);
         }
       }
     } catch (_) {
@@ -110,30 +118,43 @@ class MyVenuesController with ChangeNotifier {
     }
   }
 
-  // ── Load more reserved (upcoming) ─────────────────────────────────────────
-  Future<void> loadMoreReserved(BuildContext context, {int limit = 10}) async {
-    if (_isReservedLoadingMore || !hasMoreReserved) return;
+  // ── Load more past (fetch remaining all at once from page=0) ──────────────
+  Future<void> loadMorePast(BuildContext context) async {
+    if (_isPastLoadingMore || !_hasMorePast || _isPastFullyLoaded) return;
     final token = AppConstant.token;
     if (token.isEmpty) return;
 
-    _isReservedLoadingMore = true;
+    _isPastLoadingMore = true;
     notifyListeners();
 
     try {
-      final nextPage = _reservedCurrentPage + 1;
+      // Backend: past sirf page=0 pe aata hai
+      // Fetch with total_records as limit to get ALL past records at once
       final response = await getData(
-        'common/my_venues?type=reserved&page=$nextPage&limit=$limit',
+        'common/my_venues?type=reserved&page=0&limit=$_pastTotalRecords',
         context,
         headers: {'authorization': 'Bearer $token'},
       );
 
       if (response != null && response['success'] == true) {
-        _parseReservedResponse(response['data'], append: true);
+        final past = response['data']['past'];
+        final List<dynamic> allPast =
+            past is List ? List<dynamic>.from(past) : [];
+
+        // Replace with full list
+        _pastReservations = allPast;
+        _isPastFullyLoaded = true;
+        _hasMorePast = false;
+
+        debugPrint(
+            '[MyVenues] past fully loaded: ${_pastReservations.length} / $_pastTotalRecords');
+      } else {
+        _hasMorePast = false;
       }
     } catch (_) {
-      // silently ignore
+      _hasMorePast = false;
     } finally {
-      _isReservedLoadingMore = false;
+      _isPastLoadingMore = false;
       notifyListeners();
     }
   }
@@ -141,7 +162,6 @@ class MyVenuesController with ChangeNotifier {
   // ── Parsers ────────────────────────────────────────────────────────────────
 
   void _parseLikedResponse(dynamic data, {required bool append}) {
-    // Response shape: { totalItems, item: [...], totalPages, currentPage }
     final items = data['item'];
     final List<dynamic> parsed = items is List ? List<dynamic>.from(items) : [];
 
@@ -155,7 +175,6 @@ class MyVenuesController with ChangeNotifier {
     _likedTotalPages = (data['totalPages'] as num?)?.toInt() ?? 1;
     _likedCurrentPage = (data['currentPage'] as num?)?.toInt() ?? 0;
 
-    // Handle both 0-based and 1-based backends safely.
     if (_likedTotalItems > 0) {
       _hasMoreLiked = _likedVenues.length < _likedTotalItems;
     } else if (_likedTotalPages > 0) {
@@ -168,24 +187,28 @@ class MyVenuesController with ChangeNotifier {
     }
   }
 
-  void _parseReservedResponse(dynamic data, {required bool append}) {
+  /// Initial load — page=0&limit=X
+  /// Past ke pehle X records milte hain + total_records pata chalta hai
+  /// Agar total_records > loaded past → hasMorePast = true
+  Future<void> _parseReservedResponse(
+    dynamic data,
+    BuildContext context, {
+    required int initialLimit,
+  }) async {
     final upcoming = data['upcoming'];
     final past = data['past'];
 
-    final List<dynamic> parsedUpcoming =
+    _upcomingReservations =
         upcoming is List ? List<dynamic>.from(upcoming) : [];
-    final List<dynamic> parsedPast =
-        past is List ? List<dynamic>.from(past) : [];
+    _pastReservations = past is List ? List<dynamic>.from(past) : [];
 
-    if (append) {
-      _upcomingReservations.addAll(parsedUpcoming);
-      _pastReservations.addAll(parsedPast);
-    } else {
-      _upcomingReservations = parsedUpcoming;
-      _pastReservations = parsedPast;
-    }
+    _pastTotalRecords = (data['total_records'] as num?)?.toInt() ?? 0;
 
-    _reservedTotalPages = (data['total_pages'] as num?)?.toInt() ?? 0;
-    _reservedCurrentPage = (data['current_page'] as num?)?.toInt() ?? 1;
+    // has more if we got fewer past records than total
+    _hasMorePast = _pastTotalRecords > _pastReservations.length;
+    _isPastFullyLoaded = !_hasMorePast;
+
+    debugPrint(
+        '[MyVenues] initial past: ${_pastReservations.length} / $_pastTotalRecords  hasMore: $_hasMorePast');
   }
 }

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:night_life/controller/venues/my_venues_controller.dart';
 import 'package:night_life/view/authentication/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'controller/book_venue/book_venue_details_controller.dart';
 import 'controller/city/city_preference.dart';
 import 'controller/book_venue/book_venue_controller.dart';
 import 'controller/event_preference/event_preference_controller.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VenuesDetailsController()),
         ChangeNotifierProvider(create: (_) => BookVenueController()),
         ChangeNotifierProvider(create: (_) => MyVenuesController()),
+        ChangeNotifierProvider(create: (_) => VenuesBookingDetailsController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

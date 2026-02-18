@@ -16,7 +16,12 @@ import '../../chats/chat_message_screen.dart';
 class LikedMemberDetail extends StatefulWidget {
   static const String routeName = '/LikedMemberDetail';
   final String? memberId;
-  const LikedMemberDetail({super.key, this.memberId});
+  final bool forceDislikeOnly;
+  const LikedMemberDetail({
+    super.key,
+    this.memberId,
+    this.forceDislikeOnly = false,
+  });
 
   @override
   State<LikedMemberDetail> createState() => _LikedMemberDetailState();
@@ -287,6 +292,15 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     return _str(widget.memberId);
   }
 
+  bool _toBool(dynamic value) {
+    if (value is bool) return value;
+    final str = _str(value).toLowerCase();
+    return str == 'true' || str == '1';
+  }
+
+  bool get _showDislikeOnly =>
+      widget.forceDislikeOnly || _toBool(_memberData?['is_liked']);
+
   Future<void> _submitSwipeAction(String action) async {
     final userId = _targetUserId();
     if (userId.isEmpty) return;
@@ -338,10 +352,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                     AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
                 borderRadius: BorderRadius.circular(25),
               ),
-              width: size.width * 85 / 100,
+              width: _showDislikeOnly
+                  ? size.width * 52 / 100
+                  : size.width * 85 / 100,
               height: size.height * 7 / 100,
               child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 5),
+                padding: EdgeInsets.symmetric(horizontal: 9),
                 child: Row(
                   children: [
                     GestureDetector(
@@ -370,7 +386,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                         documenttypebottomsheet(context);
                       },
                       child: Container(
-                        width: size.width * 30 / 100,
+                        width: size.width * 29 / 100,
                         height: size.height * 4.6 / 100,
                         decoration: BoxDecoration(
                           color: AppColor.secondryColor(context),
@@ -395,44 +411,45 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                     SizedBox(
                       width: size.width * 3 / 100,
                     ),
-                    GestureDetector(
-                      onTap: () async {
-                        await _submitSwipeAction('right');
-                      },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 35, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppColor.buttonColor,
-                          borderRadius: BorderRadius.circular(50),
+                    if (!_showDislikeOnly)
+                      GestureDetector(
+                        onTap: () async {
+                          await _submitSwipeAction('right');
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 35, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: AppColor.buttonColor,
+                            borderRadius: BorderRadius.circular(50),
 
-                          // border: Border.all(
+                            // border: Border.all(
 
-                          //      color : AppColor.primaryColor,
-                          // ),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              AppImage.heartImg,
-                              height: 20,
-                              width: 20,
-                              color: AppColor.secondryColor(
-                                  context), // optional tint color
-                            ),
-                            Text(
-                              AppLanguage.likeText[language],
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor(context),
+                            //      color : AppColor.primaryColor,
+                            // ),
+                          ),
+                          child: Row(
+                            children: [
+                              Image.asset(
+                                AppImage.heartImg,
+                                height: 20,
+                                width: 20,
+                                color: AppColor.secondryColor(
+                                    context), // optional tint color
                               ),
-                            ),
-                          ],
+                              Text(
+                                AppLanguage.likeText[language],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
                   ],
                 ),
               ),
@@ -1441,9 +1458,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                 },
                                               ),
                                             ),
-                                       
-                                       
-                                       
                                           if (_recentVenues.isNotEmpty)
                                             SizedBox(
                                               height: size.height * 3 / 100,
@@ -2348,9 +2362,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       ),
     );
   }
-
-
-
 
   Widget _venueCard(
     String imagePath, {

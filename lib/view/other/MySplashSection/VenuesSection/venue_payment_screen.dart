@@ -258,6 +258,10 @@ class _CompletePayment2State extends State<CompletePayment2>
                         phoneNumber: widget.phoneNumber.trim(),
                         email: widget.email.trim(),
                         fullName: widget.fullName.trim(),
+                        gstPercent: taxPercentage,
+                        gstAmount: (gstAmount),
+                        couponDiscountPercent:
+                              (_appliedDiscountPercent),
                       );
 
               if (!mounted) return;

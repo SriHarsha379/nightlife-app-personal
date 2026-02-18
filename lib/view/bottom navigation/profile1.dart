@@ -7,6 +7,7 @@ import 'package:night_life/view/other/MySplashSection/EventSection/view_all_even
 import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import '../../controller/home/home_controller.dart';
 import '../../controller/my_profile/get_my_profile.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_color.dart';
@@ -17,6 +18,7 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/media_picker_helper.dart';
 import '../authentication/profile.dart';
+import '../other/MySplashSection/VenuesSection/venuepages.dart';
 import '../other/MySplashSection/VenuesSection/view_all_venues.dart';
 import '../other/city_Preference/edit_event_prefrence.dart';
 import '../../helper/ImagePreviewScreen.dart';
@@ -163,6 +165,28 @@ class _Profile1State extends State<Profile1> {
     );
   }
 
+  Future<void> _handleVenueDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = (result['action'] ?? '').toString().trim().toLowerCase();
+    final targetVenueId = (result['targetVenueId'] ?? '').toString().trim();
+    if (targetVenueId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetVenueId, 'venue');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetVenueId, 'venue');
+    } else {
+      return;
+    }
+
+    if (!mounted) return;
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
+    profileController.fetchProfileData(context);
+  }
+
   @override
   void initState() {
     super.initState();
@@ -203,7 +227,7 @@ class _Profile1State extends State<Profile1> {
             child: profileController.getIsLoading
                 ? Center(
                     child: CircularProgressIndicator(
-                      color: AppColor.themeColor,
+                      color: AppColor.buttonColor,
                     ),
                   )
                 : RefreshIndicator(
@@ -1596,10 +1620,26 @@ class _Profile1State extends State<Profile1> {
           final item = controller.followedVenues[index];
           return Padding(
             padding: const EdgeInsets.only(right: 10),
-            child: _venueCard(
-              _asUploadUrl(item['venue_image'] ?? item['image']),
-              venueName: _str(item['venue_name']),
-              isNetwork: true,
+            child: GestureDetector(
+              onTap: () async {
+                final result = await Navigator.push(
+                  context,
+                  PageTransition(
+                    type: PageTransitionType.rightToLeftWithFade,
+                    child: VenuePages(
+                      venueId: item['_id'].toString(),
+                      forceDislikeOnly: true,
+                    ),
+                    duration: const Duration(milliseconds: 500),
+                  ),
+                );
+                await _handleVenueDetailResult(result);
+              },
+              child: _venueCard(
+                _asUploadUrl(item['venue_image'] ?? item['image']),
+                venueName: _str(item['venue_name']),
+                isNetwork: true,
+              ),
             ),
           );
         },
