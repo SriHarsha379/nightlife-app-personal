@@ -90,29 +90,33 @@ class MyAppFooterState extends State<MyAppFooter> {
           child: _getCurrentPage(),
         ),
       ),
-      floatingActionButton: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14.0),
-          child: Container(
-            width: MediaQuery.of(context).size.width * 85 / 100,
-            height: MediaQuery.of(context).size.height * 8 / 100,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(100),
-              color: AppColor.themeColor,
-              boxShadow: const [
-                BoxShadow(
-                  blurRadius: 4,
-                  spreadRadius: 0,
-                  color: AppColor.transparentColor,
-                  offset: Offset(0, 0),
+      floatingActionButton: ValueListenableBuilder<bool>(
+        valueListenable: footerVisibilityNotifier,
+        builder: (context, isVisible, _) {
+          if (!isVisible) return const SizedBox.shrink();
+          return SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14.0),
+              child: Container(
+                width: MediaQuery.of(context).size.width * 85 / 100,
+                height: MediaQuery.of(context).size.height * 8 / 100,
+                alignment: Alignment.center,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(100),
+                  color: AppColor.themeColor,
+                  boxShadow: const [
+                    BoxShadow(
+                      blurRadius: 4,
+                      spreadRadius: 0,
+                      color: AppColor.transparentColor,
+                      offset: Offset(0, 0),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            padding: const EdgeInsets.symmetric(horizontal: 19),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: List.generate(iconList.length, (index) {
+                padding: const EdgeInsets.symmetric(horizontal: 19),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: List.generate(iconList.length, (index) {
                 // Define icon sizes for each index
                 double getIconWidth(int index) {
                   switch (index) {
@@ -184,10 +188,12 @@ class MyAppFooterState extends State<MyAppFooter> {
                     ),
                   ),
                 );
-              }),
+                  }),
+                ),
+              ),
             ),
-          ),
-        ),
+          );
+        },
       ),
     );
   }

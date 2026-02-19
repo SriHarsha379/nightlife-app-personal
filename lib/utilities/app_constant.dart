@@ -7,6 +7,7 @@ import 'package:night_life/utilities/app_footer.dart';
 import 'app_color.dart';
 
 final GlobalKey<MyAppFooterState> footerKey = GlobalKey<MyAppFooterState>();
+final ValueNotifier<bool> footerVisibilityNotifier = ValueNotifier<bool>(true);
 
 int language = 0;
 

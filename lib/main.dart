@@ -13,6 +13,7 @@ import 'controller/members/members_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/my_profile/my_visibility_controller.dart';
+import 'controller/search/search_filter_controller.dart';
 import 'controller/support/faq_controller.dart';
 import 'controller/venues/venues_details_controller.dart';
 import 'controller/vibe_check/vibe_check_controller.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookVenueController()),
         ChangeNotifierProvider(create: (_) => MyVenuesController()),
         ChangeNotifierProvider(create: (_) => VenuesBookingDetailsController()),
+        ChangeNotifierProvider(create: (_) => SearchFilterController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

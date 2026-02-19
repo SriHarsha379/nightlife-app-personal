@@ -24,7 +24,6 @@ class MyVenuesController with ChangeNotifier {
   bool get isReservedVenuesLoading => _isReservedVenuesLoading;
   List<dynamic> get upcomingReservations => _upcomingReservations;
 
-
   bool _isPastLoadingMore = false;
   bool _isPastFullyLoaded = false;
   List<dynamic> _pastReservations = [];
