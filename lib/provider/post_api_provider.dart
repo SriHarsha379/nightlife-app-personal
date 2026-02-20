@@ -917,6 +917,7 @@ class PostApiProvider with ChangeNotifier {
     String email,
     String mobile,
     String gender,
+    String cityId,
     XFile? profileImage,
   ) async {
     setLoading(true);
@@ -929,6 +930,7 @@ class PostApiProvider with ChangeNotifier {
       'email': email,
       'bio': bio,
       'mobile': mobile,
+      'city_id': cityId,
     };
 
     Map<String, XFile>? files;

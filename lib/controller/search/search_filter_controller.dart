@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../provider/common_api_helper.dart';
-import '../../utilities/app_constant.dart';
 
 class SearchFilterController with ChangeNotifier {
   bool _isVenueLoading = false;
@@ -118,8 +117,9 @@ class SearchFilterController with ChangeNotifier {
 
   Map<String, String> _toFeaturedMap(Map<String, dynamic> item) {
     final tags = item['tags'];
-    final categoryName =
-        _firstCategoryName(item['category_ids'] ?? item['categories']);
+    final categories =
+        _categoryNames(item['category_ids'] ?? item['categories']);
+    final categoryName = categories.isNotEmpty ? categories.first : '';
     final subtitle = tags is List && tags.isNotEmpty
         ? _readString(tags.first)
         : categoryName.isNotEmpty
@@ -134,6 +134,8 @@ class SearchFilterController with ChangeNotifier {
       'title':
           _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'subtitle': subtitle,
+      'event_date': _readString(item['event_date']),
+      'categories': categories.join('||'),
       'location': _readString(item['location'] ?? item['address']),
     };
   }
@@ -175,11 +177,15 @@ class SearchFilterController with ChangeNotifier {
     return '${number.toStringAsFixed(1)} km';
   }
 
-  String _firstCategoryName(dynamic categories) {
-    if (categories is! List || categories.isEmpty) return '';
-    final first = categories.first;
-    if (first is! Map) return '';
-    return _readString(first['category_name']);
+  List<String> _categoryNames(dynamic categories) {
+    if (categories is! List || categories.isEmpty) return <String>[];
+    return categories
+        .whereType<Map>()
+        .map((category) {
+          return _readString(category['category_name']);
+        })
+        .where((name) => name.isNotEmpty)
+        .toList();
   }
 
   String _locationLabel(String distance, String location) {

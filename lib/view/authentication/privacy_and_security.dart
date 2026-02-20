@@ -66,90 +66,90 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 onPress: () => Navigator.pop(context),
                 text: AppLanguage.privacyPolicyText[language],
               ),
-              SizedBox(height: size.height * 2 / 100),
+              SizedBox(height: size.height * 1 / 100),
 
-              /// --- Visibility Section Heading ---
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                child: Text(
-                  AppLanguage.visibilityText[language],
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontFamily: AppFont.fontFamily,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor(context),
-                  ),
-                ),
-              ),
+              // /// --- Visibility Section Heading ---
+              // Padding(
+              //   padding: const EdgeInsets.symmetric(horizontal: 17.0),
+              //   child: Text(
+              //     AppLanguage.visibilityText[language],
+              //     textAlign: TextAlign.left,
+              //     style: TextStyle(
+              //       fontFamily: AppFont.fontFamily,
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.w700,
+              //       color: AppColor.secondryColor(context),
+              //     ),
+              //   ),
+              // ),
 
-              /// --- Visibility Container ---
-              Container(
-                padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
-                margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor(context),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.primaryColor(context),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          AppLanguage.showMeonText[language],
-                          style: TextStyle(
-                            color: AppColor.secondryColor(context),
-                            fontSize: 15,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w500,
-                            height: 1.0,
-                          ),
-                        ),
-                        Transform.scale(
-                          scale: 0.80,
-                          child: CupertinoSwitch(
-                            value: visibilityController.myVisibility,
-                            onChanged: visibilityController.isUpdating
-                                ? null
-                                : (value) async {
-                                    await visibilityController
-                                        .updateMyVisibility(
-                                      context,
-                                      value: value,
-                                    );
-                                  },
-                            activeColor: AppColor.pinkColor,
-                            thumbColor: Colors.white,
-                            trackColor: AppColor.toggleColor(context),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Text(
-                      AppLanguage.allowOthersText[language],
-                      style: TextStyle(
-                        color: AppColor.notificationtextColor(context),
-                        fontSize: 14,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w400,
-                        height: 0,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // /// --- Visibility Container ---
+              // Container(
+              //   padding: EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+              //   margin: EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              //   decoration: BoxDecoration(
+              //     color: AppColor.notificationContainerColor(context),
+              //     borderRadius: BorderRadius.circular(8),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: AppColor.primaryColor(context),
+              //         spreadRadius: 3,
+              //         blurRadius: 7,
+              //         offset: Offset(0, 1),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Column(
+              //     mainAxisSize: MainAxisSize.min,
+              //     crossAxisAlignment: CrossAxisAlignment.start,
+              //     children: [
+              //       Row(
+              //         crossAxisAlignment: CrossAxisAlignment.center,
+              //         mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //         children: [
+              //           Text(
+              //             AppLanguage.showMeonText[language],
+              //             style: TextStyle(
+              //               color: AppColor.secondryColor(context),
+              //               fontSize: 15,
+              //               fontFamily: AppFont.fontFamily,
+              //               fontWeight: FontWeight.w500,
+              //               height: 1.0,
+              //             ),
+              //           ),
+              //           Transform.scale(
+              //             scale: 0.80,
+              //             child: CupertinoSwitch(
+              //               value: visibilityController.myVisibility,
+              //               onChanged: visibilityController.isUpdating
+              //                   ? null
+              //                   : (value) async {
+              //                       await visibilityController
+              //                           .updateMyVisibility(
+              //                         context,
+              //                         value: value,
+              //                       );
+              //                     },
+              //               activeColor: AppColor.pinkColor,
+              //               thumbColor: Colors.white,
+              //               trackColor: AppColor.toggleColor(context),
+              //             ),
+              //           ),
+              //         ],
+              //       ),
+              //       Text(
+              //         AppLanguage.allowOthersText[language],
+              //         style: TextStyle(
+              //           color: AppColor.notificationtextColor(context),
+              //           fontSize: 14,
+              //           fontFamily: AppFont.fontFamily,
+              //           fontWeight: FontWeight.w400,
+              //           height: 0,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
 
               Padding(
                 padding:
@@ -224,61 +224,62 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                 ),
               ),
 
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
-                child: Text(
-                  AppLanguage.locationSharingText[language],
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontFamily: AppFont.fontFamily,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor(context),
-                  ),
-                ),
-              ),
+              // Padding(
+              //   padding:
+              //       const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
+              //   child: Text(
+              //     AppLanguage.locationSharingText[language],
+              //     textAlign: TextAlign.left,
+              //     style: TextStyle(
+              //       fontFamily: AppFont.fontFamily,
+              //       fontSize: 18,
+              //       fontWeight: FontWeight.w700,
+              //       color: AppColor.secondryColor(context),
+              //     ),
+              //   ),
+              // ),
 
-              Container(
-                height: size.height * 6 / 100,
-                width: size.width * 94 / 100,
-                padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-                margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
-                decoration: BoxDecoration(
-                  color: AppColor.notificationContainerColor(context),
-                  borderRadius: BorderRadius.circular(8),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColor.primaryColor(context),
-                      spreadRadius: 3,
-                      blurRadius: 7,
-                      offset: const Offset(0, 1),
-                    ),
-                  ],
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      AppLanguage.managePermissionsText[language],
-                      style: TextStyle(
-                        color: AppColor.secondryColor(context),
-                        fontSize: 16,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w400,
-                      ),
-                    ),
-                    SizedBox(
-                      height: size.width * 8 / 100,
-                      width: size.width * 9 / 100,
-                      child: Image.asset(
-                        AppImage.frontArrowIcon,
-                        fit: BoxFit.contain,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              // Container(
+              //   height: size.height * 6 / 100,
+              //   width: size.width * 94 / 100,
+              //   padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+              //   margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+              //   decoration: BoxDecoration(
+              //     color: AppColor.notificationContainerColor(context),
+              //     borderRadius: BorderRadius.circular(8),
+              //     boxShadow: [
+              //       BoxShadow(
+              //         color: AppColor.primaryColor(context),
+              //         spreadRadius: 3,
+              //         blurRadius: 7,
+              //         offset: const Offset(0, 1),
+              //       ),
+              //     ],
+              //   ),
+              //   child: Row(
+              //     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //     children: [
+              //       Text(
+              //         AppLanguage.managePermissionsText[language],
+              //         style: TextStyle(
+              //           color: AppColor.secondryColor(context),
+              //           fontSize: 16,
+              //           fontFamily: AppFont.fontFamily,
+              //           fontWeight: FontWeight.w400,
+              //         ),
+              //       ),
+              //       SizedBox(
+              //         height: size.width * 8 / 100,
+              //         width: size.width * 9 / 100,
+              //         child: Image.asset(
+              //           AppImage.frontArrowIcon,
+              //           fit: BoxFit.contain,
+              //         ),
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
               Padding(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),

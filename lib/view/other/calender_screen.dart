@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_header.dart';
 import '../../../utilities/app_image.dart';
+import '../../controller/search/search_calender_filter_controller.dart';
 
 class CalendarScreen extends StatefulWidget {
   static String routeName = './CalendarScreen';
@@ -35,19 +38,29 @@ class _CalendarScreenState extends State<CalendarScreen> {
 
   bool isDayDisabled(DateTime day) {
     if (disabledDays.isEmpty) return false;
-
     String dayName = _getDayName(day);
     return disabledDays.any(
         (disabledDay) => disabledDay.toLowerCase() == dayName.toLowerCase());
   }
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context
+          .read<CalendarController>()
+          .fetchCalendarEvents(context, selectedDay);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light));
+
     return GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
@@ -101,18 +114,20 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 return !isDayDisabled(day);
                               },
                               selectedDayPredicate: (day) =>
-                                  isSameDay(selectedDay, day), // Uncommented
+                                  isSameDay(selectedDay, day),
                               onDaySelected: (selected, focused) {
-                                // Uncommented
                                 if (!isDayDisabled(selected)) {
                                   setState(() {
                                     selectedDay = selected;
-                                    // sendDate = selected.toLocal().toString().split(' ')[0];
                                   });
                                   print("Selected date: $selectedDay");
                                   print(
                                       "sendDate date: ${selectedDay.toLocal().toString().split(' ')[0]}");
-                                } else {}
+                                  // Fetch events for selected date
+                                  context
+                                      .read<CalendarController>()
+                                      .fetchCalendarEvents(context, selected);
+                                }
                               },
                               calendarFormat: CalendarFormat.month,
                               calendarStyle: CalendarStyle(
@@ -121,14 +136,13 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   shape: BoxShape.circle,
                                   boxShadow: [
                                     BoxShadow(
-                                      color:
-                                          AppColor.pinkColor,
+                                      color: AppColor.pinkColor,
                                       blurRadius: 12,
                                       spreadRadius: 3,
                                     ),
                                   ],
                                 ),
-                                selectedTextStyle:  TextStyle(
+                                selectedTextStyle: TextStyle(
                                   color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w600,
                                 ),
@@ -145,21 +159,18 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     ),
                                   ],
                                 ),
-
-                                disabledTextStyle:  TextStyle(
+                                disabledTextStyle: TextStyle(
                                   color: AppColor.secondryColor(context),
                                 ),
-                                defaultTextStyle:  TextStyle(
+                                defaultTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
-                                weekendTextStyle:  TextStyle(
+                                weekendTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
-                                outsideTextStyle:  TextStyle(
+                                outsideTextStyle: TextStyle(
                                     color: AppColor.secondryColor(context)),
                                 cellMargin: const EdgeInsets.all(4),
-                                cellPadding:
-                                    const EdgeInsets.all(0), // Reduced padding
+                                cellPadding: const EdgeInsets.all(0),
                               ),
-
                               daysOfWeekStyle: const DaysOfWeekStyle(
                                 weekdayStyle: TextStyle(
                                   color: AppColor.buttonColor,
@@ -182,8 +193,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                 rightChevronIcon: Icon(Icons.chevron_right,
                                     color: AppColor.textcolor),
                               ),
-                              rowHeight:
-                                  40, // Added to reduce overall calendar height
+                              rowHeight: 40,
                             ),
                           ),
                           SizedBox(
@@ -194,7 +204,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             width: MediaQuery.of(context).size.width * 90 / 100,
                             child: Text(
                               AppLanguage.eventsText[language],
-                              style:  TextStyle(
+                              style: TextStyle(
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 20,
                                   fontWeight: FontWeight.w500,
@@ -205,76 +215,184 @@ class _CalendarScreenState extends State<CalendarScreen> {
                             height:
                                 MediaQuery.of(context).size.height * 1 / 100,
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 90 / 100,
-                            child: ListView.builder(
-                              physics: NeverScrollableScrollPhysics(),
-                              shrinkWrap: true,
-                              itemCount: 5,
-                              itemBuilder: (context, index) {
-                                return Container(
-                                  margin: EdgeInsets.symmetric(vertical: 8),
-                                  // Added 'return' here
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: AppColor.themeColor,
-                                  ),
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(
+                          // API-driven events list
+                          Consumer<CalendarController>(
+                            builder: (context, controller, child) {
+                              if (controller.getIsLoading) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
                                       vertical:
                                           MediaQuery.of(context).size.height *
+                                              3 /
+                                              100),
+                                  child: const CircularProgressIndicator(
+                                    color: AppColor.pinkColor,
+                                  ),
+                                );
+                              }
+
+                              if (controller.getEventsList.isEmpty) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                      vertical:
+                                          MediaQuery.of(context).size.height *
+                                              3 /
+                                              100),
+                                  child: Text(
+                                    "No events found",
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      color: AppColor.secondryColor(context)
+                                          .withOpacity(0.6),
+                                    ),
+                                  ),
+                                );
+                              }
+
+                              return SizedBox(
+                                width: MediaQuery.of(context).size.width *
+                                    90 /
+                                    100,
+                                child: ListView.builder(
+                                  physics: const NeverScrollableScrollPhysics(),
+                                  shrinkWrap: true,
+                                  itemCount: controller.getEventsList.length,
+                                  itemBuilder: (context, index) {
+                                    final event =
+                                        controller.getEventsList[index];
+                                    final String eventName =
+                                        event['event_name'] ?? '';
+                                    final String eventDate =
+                                        event['event_date'] ?? '';
+                                    final String address =
+                                        event['address'] ?? '';
+                                    final String eventImage =
+                                        event['event_image'] ?? '';
+
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                          vertical: 8),
+                                      width: MediaQuery.of(context).size.width *
+                                          90 /
+                                          100,
+                                      decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(20),
+                                        color: AppColor.themeColor,
+                                      ),
+                                      child: Padding(
+                                        padding: EdgeInsets.symmetric(
+                                          vertical: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
                                               1.5 /
                                               100,
-                                      horizontal:
-                                          MediaQuery.of(context).size.width *
+                                          horizontal: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
                                               2.5 /
                                               100,
-                                    ),
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              15 /
-                                              100,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              15 /
-                                              100,
-                                          child: Image.asset(
-                                            AppImage.ticketImage,
-                                            fit: BoxFit.cover,
-                                          ),
                                         ),
-                                        SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              2 /
-                                              100,
-                                        ),
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                        child: Row(
                                           children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                            Container(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  15 /
+                                                  100,
+                                              height: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  15 /
+                                                  100,
+                                              child: eventImage.isNotEmpty
+                                                  ? ClipRRect(
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              8),
+                                                      child: Image.network(
+                                                        '${AppConfigProvider.imageUrl}$eventImage',
+                                                        fit: BoxFit.cover,
+                                                        errorBuilder: (context,
+                                                            error, stackTrace) {
+                                                          return Image.asset(
+                                                            AppImage
+                                                                .ticketImage,
+                                                            fit: BoxFit.cover,
+                                                          );
+                                                        },
+                                                      ),
+                                                    )
+                                                  : Image.asset(
+                                                      AppImage.ticketImage,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                            ),
+                                            SizedBox(
+                                              width: MediaQuery.of(context)
+                                                      .size
+                                                      .width *
+                                                  2 /
+                                                  100,
+                                            ),
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .width *
+                                                              45 /
+                                                              100,
+                                                      child: Text(
+                                                        eventName,
+                                                        style: TextStyle(
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontSize: 14,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: AppColor
+                                                              .secondryColor(
+                                                                  context),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    Text(
+                                                      AppLanguage
+                                                              .viewdetailsText[
+                                                          language],
+                                                      style: const TextStyle(
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontSize: 10,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColor.pinkColor,
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                                 Container(
                                                   width: MediaQuery.of(context)
                                                           .size
                                                           .width *
-                                                      45 /
+                                                      60 /
                                                       100,
-                                                  child:  Text(
-                                                    "Open Mic",
+                                                  child: Text(
+                                                    "$eventDate • $address",
+                                                    overflow:
+                                                        TextOverflow.ellipsis,
                                                     style: TextStyle(
                                                       fontFamily:
                                                           AppFont.fontFamily,
@@ -287,46 +405,21 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                     ),
                                                   ),
                                                 ),
-                                                Text(
-                                                  AppLanguage.viewdetailsText[
-                                                      language],
-                                                  style: const TextStyle(
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontSize: 10,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: AppColor.pinkColor,
-                                                  ),
-                                                ),
                                               ],
-                                            ),
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  60 /
-                                                  100,
-                                              child:  Text(
-                                                "Open mic session at saket mall..",
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontSize: 14,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColor.secondryColor(context),
-                                                ),
-                                              ),
                                             ),
                                           ],
                                         ),
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
-                            ),
-                          )
+                                      ),
+                                    );
+                                  },
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                            height:
+                                MediaQuery.of(context).size.height * 2 / 100,
+                          ),
                         ],
                       ),
                     ))

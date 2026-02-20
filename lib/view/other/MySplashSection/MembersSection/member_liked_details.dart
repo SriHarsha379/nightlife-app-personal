@@ -2315,6 +2315,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
               ),
             ),
 
+
+
+
+
             // Event Name and Time at Bottom
             Positioned(
               left: 14,

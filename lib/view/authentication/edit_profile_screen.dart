@@ -5,6 +5,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
+import '../../commonWidget/city_bottomsheet.dart';
+import '../../controller/city/city_preference.dart';
 import '../../provider/post_api_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_button.dart';
@@ -33,9 +35,11 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController bioController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
+  final TextEditingController cityController = TextEditingController();
 
   final List<String> genderOptions = ['Male', 'Female', 'Other'];
   String selectedGender = 'Male';
+  String? selectedCityId;
   String profileImage = '';
   XFile? _selectedProfileImage;
   String fullName = '';
@@ -75,6 +79,9 @@ class _EditProfileState extends State<EditProfile> {
   void initState() {
     super.initState();
     _loadUserData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<CityPreferenceController>().fetchCityList(context);
+    });
   }
 
   Future<void> _loadUserData() async {
@@ -109,6 +116,9 @@ class _EditProfileState extends State<EditProfile> {
       selectedGender = userController.getUserGender.isNotEmpty
           ? userController.getUserGender
           : selectedGender;
+      final userCity = userController.getCityData;
+      selectedCityId = (userCity['_id'] ?? userCity['id'] ?? '').toString();
+      cityController.text = (userCity['city_name'] ?? '').toString();
       profileImage = userController.getUserImage;
       fullName = loadedFullName.isNotEmpty
           ? loadedFullName
@@ -133,6 +143,7 @@ class _EditProfileState extends State<EditProfile> {
       emailController.text.trim(),
       mobileController.text.trim(),
       selectedGender,
+      selectedCityId ?? '',
       _selectedProfileImage,
     );
 
@@ -147,6 +158,7 @@ class _EditProfileState extends State<EditProfile> {
       'email': emailController.text.trim(),
       'phone_number': mobileController.text.trim(),
       'bio': bioController.text.trim(),
+      'city_id': selectedCityId,
       'profile_image': _selectedProfileImage?.path ?? profileImage,
     });
 
@@ -199,6 +211,8 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
+
+
   @override
   void dispose() {
     firstNameController.dispose();
@@ -207,7 +221,30 @@ class _EditProfileState extends State<EditProfile> {
     bioController.dispose();
     emailController.dispose();
     mobileController.dispose();
+    cityController.dispose();
     super.dispose();
+  }
+
+  void _showCitySelectionSheet(BuildContext context) {
+    final cityPreferenceController = context.read<CityPreferenceController>();
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => SizedBox(
+        height: MediaQuery.of(context).size.height * 0.8,
+        child: CitySelectionBottomSheet(
+          cities: cityPreferenceController.getCityList,
+          selectedCityId: selectedCityId,
+          onCitySelected: (cityId, cityName) {
+            setState(() {
+              selectedCityId = cityId;
+              cityController.text = cityName;
+            });
+          },
+        ),
+      ),
+    );
   }
 
   Widget _buildFieldBox({
@@ -794,6 +831,62 @@ class _EditProfileState extends State<EditProfile> {
                             selectedGender = value;
                           });
                         },
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 87 / 100,
+                      child: const Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "City",
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.textcolor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    _buildFieldBox(
+                      context: context,
+                      child: TextFormField(
+                        readOnly: true,
+                        controller: cityController,
+                        onTap: () {
+                          final cityProvider =
+                              context.read<CityPreferenceController>();
+                          if (cityProvider.getCityList.isEmpty) {
+                            cityProvider.fetchCityList(context).then((_) {
+                              if (!mounted) return;
+                              _showCitySelectionSheet(context);
+                            });
+                            return;
+                          }
+                          _showCitySelectionSheet(context);
+                        },
+                        style: TextStyle(
+                          color: AppColor.secondryColor(context),
+                          fontFamily: AppFont.fontFamily,
+                          fontSize: 14,
+                        ),
+                        decoration: InputDecoration(
+                          border: InputBorder.none,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 20,
+                            vertical: 14,
+                          ),
+                          hintText: "Select City",
+                          hintStyle: AppConstant.textFilledStyle(context),
+                          suffixIcon: Icon(
+                            Icons.keyboard_arrow_down,
+                            color: AppColor.secondryColor(context),
+                          ),
+                        ),
                       ),
                     ),
                     SizedBox(

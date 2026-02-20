@@ -11,6 +11,7 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
+import '../other/profile_details.dart';
 import 'refer_code_screen.dart';
 
 class SignUp extends StatefulWidget {
@@ -66,6 +67,15 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
 
     if (!Validation.isMobilValid(
         context, mobileNumberTextEditingController.text)) return;
+
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: ProfileDetailsScreen(),
+        duration: const Duration(milliseconds: 600),
+      ),
+    );
 
     // final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);

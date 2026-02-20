@@ -13,6 +13,7 @@ import 'controller/members/members_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/my_profile/my_visibility_controller.dart';
+import 'controller/search/search_calender_filter_controller.dart';
 import 'controller/search/search_filter_controller.dart';
 import 'controller/support/faq_controller.dart';
 import 'controller/venues/venues_details_controller.dart';
@@ -58,11 +59,12 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => MyVenuesController()),
         ChangeNotifierProvider(create: (_) => VenuesBookingDetailsController()),
         ChangeNotifierProvider(create: (_) => SearchFilterController()),
+        ChangeNotifierProvider(create: (_) => CalendarController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(
-            title: "Night Life",
+            title: "Hii",
             debugShowCheckedModeBanner: false,
 
             // Theme Mode - Switches between dark, light, and system
@@ -76,7 +78,7 @@ class MyApp extends StatelessWidget {
 
               // Color Scheme for Dark Mode
               colorScheme: const ColorScheme.dark(
-                primary: Color(0xffFF1CC0), // Pink accent
+                primary: Color(0xffFF1CC0), 
                 secondary: Colors.white,
                 surface: Color(0xff171217),
                 background: Colors.black,

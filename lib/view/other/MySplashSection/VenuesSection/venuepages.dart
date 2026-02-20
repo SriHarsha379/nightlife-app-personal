@@ -487,14 +487,17 @@ class _VenuePagesState extends State<VenuePages> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            venueName,
-                                            style: TextStyle(
-                                              fontSize: 24,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w700,
-                                              color: AppColor.secondryColor(
-                                                  context),
+                                          Container(
+                                            width: size.width * 75 / 100,
+                                            child: Text(
+                                              venueName,
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColor.secondryColor(
+                                                    context),
+                                              ),
                                             ),
                                           ),
                                           SizedBox(

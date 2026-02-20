@@ -333,35 +333,35 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    2 /
-                                    100,
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
                                     5 /
                                     100,
-                                width: MediaQuery.of(context).size.width *
-                                    90 /
-                                    100,
-                                child: Padding(
-                                  padding: EdgeInsets.all(
-                                    MediaQuery.of(context).size.width * 0.02,
-                                  ),
-                                  child: Text(
-                                    AppLanguage.firstNameText[language],
-                                    style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500,
-                                        fontFamily: AppFont.lexendFontFamily,
-                                        color: AppColor.appHeadTextColor),
-                                  ),
-                                ),
                               ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.5 /
-                                    100,
-                              ),
+                              // SizedBox(
+                              //   height: MediaQuery.of(context).size.height *
+                              //       5 /
+                              //       100,
+                              //   width: MediaQuery.of(context).size.width *
+                              //       90 /
+                              //       100,
+                              //   child: Padding(
+                              //     padding: EdgeInsets.all(
+                              //       MediaQuery.of(context).size.width * 0.02,
+                              //     ),
+                              //     child: Text(
+                              //       AppLanguage.firstNameText[language],
+                              //       style: const TextStyle(
+                              //           fontSize: 16,
+                              //           fontWeight: FontWeight.w500,
+                              //           fontFamily: AppFont.lexendFontFamily,
+                              //           color: AppColor.appHeadTextColor),
+                              //     ),
+                              //   ),
+                              // ),
+                              // SizedBox(
+                              //   height: MediaQuery.of(context).size.height *
+                              //       0.5 /
+                              //       100,
+                              // ),
                               Center(
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width *
@@ -730,7 +730,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    13 /
+                                    8 /
                                     100,
                               ),
                               Consumer<PostApiProvider>(
