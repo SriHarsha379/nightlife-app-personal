@@ -1131,6 +1131,77 @@ class PostApiProvider with ChangeNotifier {
     return res;
   }
 
+
+
+  // Booking Event API
+  Future<Map<String, dynamic>?> bookingEventApi(
+    BuildContext context, {
+    required String eventId,
+    required int numberOfGuests,
+    required String transactionId,
+    required num discount,
+    required num allTicketsPrice,
+    required num total,
+    required String cityName,
+    required String countryCode,
+    required String phoneNumber,
+    required String email,
+    required String fullName,
+    required List<dynamic> ticketList,
+  }) async {
+    final token = AppConstant.token;
+    if (token.isEmpty) return null;
+    setLoading(true);
+
+    final Map<String, dynamic> fields = {
+      "event_id": eventId.toString(),
+      "ticket_id": ticketList
+          .map((ticket) => {
+                "_id": ticket["_id"],
+                "count": ticket["count"],
+                "base_price": ticket["base_price"],
+                "total_price": ticket["total_price"],
+                "title": ticket["title"],
+                "isOneDay": ticket["isOneDay"] == 1 ||
+                    ticket["isOneDay"] == true, // ✅ force bool
+              })
+          .toList(),
+      "quantity": numberOfGuests,
+      "transaction_id": transactionId.toString(),
+      "booking_type": "event",
+      "discount": discount,
+      "sub_total": allTicketsPrice,
+      "total": total,
+      "country_code": countryCode.toString(),
+      "phone_number": phoneNumber.toString(),
+      "email": email.toString(),
+      "full_name": fullName.toString(),
+      "city_name": cityName
+    };
+
+    print(jsonEncode(fields));
+    try {
+      final response = await postJsonData(
+        'booking/event_booking',
+        fields,
+        context,
+        headers: {
+          'authorization': 'Bearer $token',
+        },
+      );
+      log("bookingEventApi fields: $fields");
+      return response;
+    } catch (_) {
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
+
+
+
+
 // ====================log out API=============//
 
   logOutApiCalling(BuildContext context) async {

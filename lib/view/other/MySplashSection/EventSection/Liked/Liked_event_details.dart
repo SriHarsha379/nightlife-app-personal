@@ -1,231 +1,156 @@
 // ignore_for_file: avoid_unnecessary_containers, prefer_const_constructors
-
+import 'dart:async';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/utilities/app_color.dart';
-import 'package:night_life/utilities/app_constant.dart';
-import 'package:night_life/utilities/app_font.dart';
-import 'package:night_life/utilities/app_image.dart';
-import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails8_screen.dart';
+import '/controller/eventDetails/events_details_controller.dart';
+import '/utilities/app_color.dart';
+import '/utilities/app_constant.dart';
+import '/utilities/app_font.dart';
+import '/utilities/app_image.dart';
+import '/utilities/app_language.dart';
+import '/view/other/view_all_lineup.dart';
 import 'package:page_transition/page_transition.dart';
-import '../../../../../utilities/app_footer.dart';
+import 'package:provider/provider.dart';
+import 'package:readmore/readmore.dart';
+import '../../../../../utilities/app_config_provider.dart';
+import '../../../../../commonWidget/event_types_bottomsheet.dart';
 import '../../../../../utilities/app_image_media_viewer.dart';
-import '../../../chats/chat_message_screen.dart';
+import '../../../../../utilities/app_loader.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:intl/intl.dart';
+import '../../VenuesSection/book_event.dart';
 
 class LikedEventDetail extends StatefulWidget {
-  static const String routeName = '/LikedEventDetail';
-  const LikedEventDetail({super.key});
+  final String? eventId;
+  final bool forceDislikeOnly;
+  LikedEventDetail({
+    super.key,
+    this.eventId,
+    this.forceDislikeOnly = false,
+  });
 
   @override
   State<LikedEventDetail> createState() => _LikedEventDetailState();
 }
 
 class _LikedEventDetailState extends State<LikedEventDetail> {
+  Timer? _countdownTimer;
+  String _timerText = "🔥 Limited time";
+  bool isEnded = false;
+  Map<String, String>? _swipeResult;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final homeController =
+          Provider.of<EventDetailsController>(context, listen: false);
+      homeController.fetchEventData(context, widget.eventId.toString());
+    });
+  }
+
+  @override
+  void dispose() {
+    _countdownTimer?.cancel();
+    super.dispose();
+  }
+
+  //! Start timer based on end date
+  void _startTimer(String? endDateString) {
+    _countdownTimer?.cancel();
+
+    if (endDateString == null || endDateString.isEmpty) {
+      setState(() {
+        _timerText = "🔥 Limited time";
+        isEnded = false;
+      });
+      return;
+    }
+
+    try {
+      DateTime endDate = DateTime.parse(endDateString);
+      DateTime now = DateTime.now();
+
+      // Set end time to 11:59:59 PM of the day BEFORE the event
+      DateTime dayBeforeEvent = endDate.subtract(Duration(days: 1));
+      DateTime endDateMidnight = DateTime(
+        dayBeforeEvent.year,
+        dayBeforeEvent.month,
+        dayBeforeEvent.day,
+        23,
+        59,
+        59,
+      );
+
+      // Check if event booking has ended
+      if (now.isAfter(endDateMidnight)) {
+        setState(() {
+          _timerText = "🔥 Ended";
+          isEnded = true;
+        });
+        return;
+      }
+
+      setState(() {
+        isEnded = false;
+      });
+
+      bool isSameDay = now.year == dayBeforeEvent.year &&
+          now.month == dayBeforeEvent.month &&
+          now.day == dayBeforeEvent.day;
+
+      if (isSameDay) {
+        _updateCountdown(endDateMidnight);
+
+        _countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+          DateTime currentTime = DateTime.now();
+
+          if (currentTime.isAfter(endDateMidnight)) {
+            timer.cancel();
+            setState(() {
+              _timerText = "🔥 Ended";
+              isEnded = true;
+            });
+          } else {
+            _updateCountdown(endDateMidnight);
+          }
+        });
+      } else {
+        // Show days remaining if deadline is in the future
+        int daysRemaining = endDateMidnight.difference(now).inDays + 1;
+        setState(() {
+          if (daysRemaining == 1) {
+            _timerText = "🔥 Ends in 1 day";
+          } else {
+            _timerText = "🔥 Ends in $daysRemaining days";
+          }
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _timerText = "🔥 Limited time";
+        isEnded = false;
+      });
+    }
+  }
+
+  //! Add the _updateCountdown helper function
+  void _updateCountdown(DateTime endDate) {
+    DateTime now = DateTime.now();
+    Duration remaining = endDate.difference(now);
+
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    String hours = twoDigits(remaining.inHours);
+    String minutes = twoDigits(remaining.inMinutes.remainder(60));
+    String seconds = twoDigits(remaining.inSeconds.remainder(60));
+
+    setState(() {
+      _timerText = "🔥 Ends in $hours:$minutes:$seconds";
+    });
+  }
+
   int selectedIndex = 0;
-  List<Map<String, String>> storyImages = [
-    {
-      "image": "assets/icons/ProfilePhoto.png",
-      "name": "Arjun",
-      "subname": "opening Act"
-    },
-    {
-      "image": "assets/icons/aadityaIcon.png",
-      "name": "Aarav",
-      "subname": "Main Act"
-    },
-    {
-      "image": "assets/icons/galleryIcon.png",
-      "name": "Bloom Cafe",
-      "subname": "Break Act"
-    },
-    {
-      "image": "assets/icons/girlImage.png",
-      "name": "Bistro",
-      "subname": "Break Act"
-    },
-    {
-      "image": "assets/icons/userprofile.png",
-      "name": "olivia",
-      "subname": "Break Act"
-    },
-  ];
-  List Likedlist = [
-    {
-      'image': AppImage.eventimg,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-    {
-      'image': AppImage.brewandbloomIcon,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-  ];
-  List<dynamic> galleryImagesList = [
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg1,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg2,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg3,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.gallImg4,
-    },
-    {
-      "media_type": 1,
-      "workshop_media": AppImage.eventImage1,
-    },
-  ];
-
-  List Bookedlist = [
-    {
-      'image': AppImage.brewandbloomIcon,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-    {
-      'image': AppImage.eventimg,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-  ];
-
-  List chats = [
-    {
-      'id': 1,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Brew&Bloom',
-      'lastMessage': '@Brew&BloomCafé',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Techno',
-      'lastMessage': '@Techno',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'SUNBURN',
-      'lastMessage': '@Sunburn',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/eventstory1.jpg',
-      'name': 'Mitro',
-      'lastMessage': '@Mitro',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 5,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Razberry',
-      'lastMessage': '@Razberry',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 6,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'CCD',
-      'lastMessage': '@CCD',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-  ];
-
-  List chatsLists = [
-    {
-      'id': 1,
-      'image': 'assets/icons/ProfilePhoto.png',
-      'name': 'Gaurav Kapoor',
-      'lastMessage': '@gkapoor02',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/riya.png',
-      'name': 'Riya',
-      'lastMessage': '@riya00',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/galleryIcon.png',
-      'name': 'Bloom Café',
-      'lastMessage': '@cafebloom34',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/aadityaIcon.png',
-      'name': 'Aaditya',
-      'lastMessage': '@aadi54',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 5,
-      'image': 'assets/icons/rushi.png',
-      'name': 'Rushi',
-      'lastMessage': '@rushi87',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-    {
-      'id': 6,
-      'image': AppImage.soham,
-      'name': 'soham',
-      'lastMessage': '@soham23',
-      'message': 'Send',
-      'message1': 'Done',
-      'isSend': false,
-    },
-  ];
-
-  final List<String> shareIcons = [
-    AppImage.shareIcon,
-    AppImage.whatsappIcon,
-    AppImage.instaIcon,
-    AppImage.snapIcon,
-  ];
 
   void showMediaViewerBottomSheet({
     required BuildContext context,
@@ -252,1136 +177,185 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     );
   }
 
+  String formatDateWithSuffix(String isoDate) {
+    if (isoDate.isEmpty) return "N/A";
+    DateTime date = DateTime.parse(isoDate);
+
+    String day = DateFormat('d').format(date);
+    String month = DateFormat('MMM').format(date);
+    String weekday = DateFormat('EEEE').format(date);
+
+    return "${_getDayWithSuffix(int.parse(day))} $month, $weekday";
+  }
+
+  String _getDayWithSuffix(int day) {
+    if (day >= 11 && day <= 13) {
+      return "${day}th";
+    }
+
+    switch (day % 10) {
+      case 1:
+        return "${day}st";
+      case 2:
+        return "${day}nd";
+      case 3:
+        return "${day}rd";
+      default:
+        return "${day}th";
+    }
+  }
+
+  String _str(dynamic value) => (value ?? '').toString().trim();
+
+  bool _toBool(dynamic value) {
+    if (value is bool) return value;
+    final str = _str(value).toLowerCase();
+    return str == 'true' || str == '1';
+  }
+
+  String _targetEventId(dynamic eventDataId) {
+    final fromData = _str(eventDataId);
+    if (fromData.isNotEmpty) return fromData;
+    return _str(widget.eventId);
+  }
+
+  Future<void> _submitEventSwipeAction(
+    String action, {
+    required String targetEventId,
+  }) async {
+    if (targetEventId.isEmpty) return;
+    _swipeResult = {
+      'action': action, // like | dislike
+      'targetEventId': targetEventId,
+    };
+    if (!mounted) return;
+    Navigator.pop(context, _swipeResult);
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value:  SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
-      ),
-      child: GestureDetector(
-        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-        child: Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Container(
-            decoration: BoxDecoration(
-              color: AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
-              borderRadius: BorderRadius.circular(25),
-            ),
-            width: size.width * 85 / 100,
-            height: size.height * 7 / 100,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: size.width * 3 / 100,
+    final isLoading = context.watch<EventDetailsController>().getIsLoading;
+    final eventDetails =
+        context.watch<EventDetailsController>().getEventDetails;
+    final isLiked = _toBool(eventDetails['is_liked']);
+    final showDislikeOnly = widget.forceDislikeOnly || isLiked;
+    final targetEventId = _targetEventId(eventDetails['_id']);
+    return ProgressHUD(
+        isLoading: isLoading,
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: SystemUiOverlayStyle(
+            statusBarColor: AppColor.primaryColor(context),
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarIconBrightness: Brightness.light,
+          ),
+          child: GestureDetector(
+            onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+            child: Scaffold(
+              floatingActionButtonLocation:
+                  FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Container(
+                decoration: BoxDecoration(
+                  color: AppColor.sendinvitecontainercolor(context)
+                      .withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(25),
                 ),
-                GestureDetector(
-                  behavior: HitTestBehavior.translucent,
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.leftToRightWithFade,
-                        child: MyAppFooter(initialIndex: 0),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: size.width * 12 / 100,
-                    child: ClipRRect(
-                        borderRadius: const BorderRadius.only(
-                          topLeft: Radius.circular(15),
-                          topRight: Radius.circular(15),
-                        ),
-                        child: Image.asset(
-                          AppImage.crossIcon,
-                          fit: BoxFit.cover,
-                        )),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    eventstypebottomsheet(context);
-                  },
-                  child: Container(
-                    width: size.width * 30 / 100,
-                    height: size.height * 4.6 / 100,
-                    decoration: BoxDecoration(
-                      color: AppColor.secondryColor(context),
-                      borderRadius: BorderRadius.circular(50),
-                      border: Border.all(
-                        color: AppColor.secondryColor(context),
+                width: showDislikeOnly
+                    ? size.width * 52 / 100
+                    : size.width * 85 / 100,
+                height: size.height * 7 / 100,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: size.width * 3 / 100,
+                    ),
+                    GestureDetector(
+                      behavior: HitTestBehavior.translucent,
+                      onTap: () async {
+                        await _submitEventSwipeAction(
+                          'dislike',
+                          targetEventId: targetEventId,
+                        );
+                      },
+                      child: SizedBox(
+                        width: size.width * 12 / 100,
+                        child: ClipRRect(
+                            borderRadius: const BorderRadius.only(
+                              topLeft: Radius.circular(15),
+                              topRight: Radius.circular(15),
+                            ),
+                            child: Image.asset(
+                              AppImage.crossIcon,
+                              fit: BoxFit.cover,
+                            )),
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        AppLanguage.sendInviteText[language],
-                        style: TextStyle(
-                          fontSize: 14,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: AppFont.fontFamily,
-                          color: AppColor.pinkColor,
-                        ),
-                      ),
+                    SizedBox(
+                      width: size.width * 3 / 100,
                     ),
-                  ),
-                ),
-                SizedBox(
-                  width: size.width * 3 / 100,
-                ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: MyAppFooter(initialIndex: 0),
-                        duration: const Duration(milliseconds: 500),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 35, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: AppColor.buttonColor,
-                      borderRadius: BorderRadius.circular(50),
-                    ),
-                    child: Row(
-                      children: [
-                        Image.asset(
-                          AppImage.heartImg,
-                          height: 20,
-                          width: 20,
-                          color: AppColor.secondryColor(context), // optional tint color
-                        ),
-                        Text(
-                          AppLanguage.likeText[language],
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily,
+                    GestureDetector(
+                      onTap: () {
+                        eventstypebottomsheet(context);
+                      },
+                      child: Container(
+                        width: size.width * 30 / 100,
+                        height: size.height * 4.6 / 100,
+                        decoration: BoxDecoration(
+                          color: AppColor.secondryColor(context),
+                          borderRadius: BorderRadius.circular(50),
+                          border: Border.all(
                             color: AppColor.secondryColor(context),
                           ),
                         ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          body: Container(
-            width: size.width * 100 / 100,
-            height: size.height * 100 / 100,
-            color: AppColor.primaryColor(context),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(height: size.height * 3 / 100),
-                Expanded(
-                  child: SingleChildScrollView(
-                    child: Center(
-                      child: Container(
-                        width: size.width * 100 / 100,
-                        child: Column(
-                          children: [
-                            Stack(
-                              children: [
-                                Container(
-                                  width: size.width * 100 / 100,
-                                  height: size.height * 30 / 100,
-                                  child: ClipRRect(
-                                    child: Image.asset(
-                                      AppImage.eventimg,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                ),
-                                Positioned(
-                                  top: 26,
-                                  left: 16,
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.pop(context);
-                                    },
-                                    child: Image.asset(
-                                      AppImage.backarrow,
-                                      color: AppColor.secondryColor(context),
-                                      fit: BoxFit.cover,
-                                      height: size.width * 5 / 100,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                        child: Center(
+                          child: Text(
+                            AppLanguage.sendInviteText[language],
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.pinkColor,
                             ),
-                            SizedBox(
-                              height: size.height * 1 / 100,
-                            ),
-                            Container(
-                              width: size.width * 90 / 100,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Container(
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              AppLanguage
-                                                  .BassDropFridaytext[language],
-                                              style:  TextStyle(
-                                                  fontSize: 24,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w700,
-                                                  color:
-                                                      AppColor.secondryColor(context)),
-                                            ),
-                                            SizedBox(
-                                              height: size.height * 2 / 100,
-                                            ),
-                                            Row(
-                                              children: [
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        width: 1,
-                                                        color:
-                                                            AppColor.pinkColor,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * 2 / 100,
-                                                      vertical: 1,
-                                                    ),
-                                                    child: Text(
-                                                      AppLanguage
-                                                          .technoText[language],
-                                                      style:  TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 2 / 100,
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        width: 1,
-                                                        color:
-                                                            AppColor.pinkColor,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * 2 / 100,
-                                                      vertical: 1,
-                                                    ),
-                                                    child: Text(
-                                                      AppLanguage.wishkeyText[
-                                                          language],
-                                                      style:  TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 2 / 100,
-                                                ),
-                                                Container(
-                                                  decoration: BoxDecoration(
-                                                      border: Border.all(
-                                                        width: 1,
-                                                        color:
-                                                            AppColor.pinkColor,
-                                                      ),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20)),
-                                                  child: Padding(
-                                                    padding:
-                                                        EdgeInsets.symmetric(
-                                                      horizontal:
-                                                          size.width * 2 / 100,
-                                                      vertical: 1,
-                                                    ),
-                                                    child: Text(
-                                                      AppLanguage
-                                                          .EDMText[language],
-                                                      style:  TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.normal,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
-                                            )
-                                          ],
-                                        ),
-                                        Column(
-                                          children: [
-                                            Container(
-                                              width: size.width * 12 / 100,
-                                              child: Image.asset(
-                                                AppImage.likeImage,
-                                                fit: BoxFit.cover,
-                                                height: size.width * 18 / 100,
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 3 / 100,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: size.width * 4.5 / 100,
-                                        height: size.width * 4.5 / 100,
-                                        child: ClipRRect(
-                                          child: Image.asset(
-                                            AppImage.calenderPinkIcon,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                100,
-                                      ),
-                                      Text(
-                                        AppLanguage.datydateText[language],
-                                        style:  TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColor.secondryColor(context)),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: size.width * 4.5 / 100,
-                                        height: size.width * 4.5 / 100,
-                                        child: ClipRRect(
-                                          child: Image.asset(
-                                            AppImage.clock,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                100,
-                                      ),
-                                      Text(
-                                        AppLanguage.time[language],
-                                        style:  TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColor.secondryColor(context)),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  Row(
-                                    children: [
-                                      Container(
-                                        width: size.width * 4.5 / 100,
-                                        height: size.width * 4.5 / 100,
-                                        child: ClipRRect(
-                                          child: Image.asset(
-                                            AppImage.locationIcon,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                2 /
-                                                100,
-                                      ),
-                                      Container(
-                                        child: Column(
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Container(
-                                              child: Text(
-                                                AppLanguage.dummylocationText[
-                                                    language],
-                                                style:  TextStyle(
-                                                    fontSize: 15,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                        AppColor.secondryColor(context)),
-                                              ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                Text(
-                                                  AppLanguage.awaylocationText[
-                                                      language],
-                                                  style: const TextStyle(
-                                                      fontSize: 15,
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontWeight:
-                                                          FontWeight.w400,
-                                                      color: AppColor
-                                                          .greyLightColor),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 4 / 100,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          AppLanguage.GalleryText[language],
-                                          style:  TextStyle(
-                                              fontSize: 18,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.secondryColor(context)),
-                                        ),
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          // showMediaViewerBottomSheet(
-                                          //     context: context,
-                                          //     mediaList: galleryImagesList,
-                                          //     initialIndex: 0);
-                                          _openGalleryBottomSheet(context);
-                                        },
-                                        child: Container(
-                                          child: Text(
-                                            AppLanguage.viewAlltext[language],
-                                            style: const TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                color: AppColor.pinkColor),
-                                          ),
-                                        ),
-                                      ),
-                                 
-                                 
-                                 
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  SingleChildScrollView(
-                                    scrollDirection: Axis.horizontal,
-                                    child: Row(
-                                      children: [
-                                        Container(
-                                          width: size.width * 60 / 100,
-                                          height: size.height * 15 / 100,
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              AppImage.eventimg,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: size.width * 60 / 100,
-                                          height: size.height * 15 / 100,
-                                          margin:
-                                              const EdgeInsets.only(right: 10),
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: Image.asset(
-                                              AppImage.eventimg,
-                                              fit: BoxFit.cover,
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 4 / 100,
-                                  ),
-                                  Container(
-                                    child: Text(
-                                      AppLanguage.aboutText[language],
-                                      style:  TextStyle(
-                                          fontSize: 18,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.secondryColor(context)),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 1 / 100,
-                                  ),
-                                  RichText(
-                                    text: TextSpan(
-                                      children: [
-                                        TextSpan(
-                                          text: AppLanguage
-                                              .getReadystatement[language],
-                                          style: const TextStyle(
-                                            fontSize: 16.5,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColor.textcolor,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text:
-                                              "\nmidnight. Dance till the sun comes up with the best techno and EDM DJs...",
-                                          style: const TextStyle(
-                                            fontSize: 16.5,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColor.textcolor,
-                                          ),
-                                        ),
-                                        TextSpan(
-                                          text: " Read More",
-                                          style: const TextStyle(
-                                            fontSize: 15,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w500,
-                                            color: AppColor
-                                                .pinkColor, // ✅ Pink color
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Container(
-                                        child: Text(
-                                          AppLanguage.LineupText[language],
-                                          style:  TextStyle(
-                                              fontSize: 16,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor(context)),
-                                        ),
-                                      ),
-                                      Container(
-                                        child: Text(
-                                          AppLanguage.viewAlltext[language],
-                                          style: const TextStyle(
-                                              fontSize: 14,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.pinkColor),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 2 / 100,
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        0.01,
-                                  ),
-                                  SizedBox(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: List.generate(
-                                            storyImages.length, (index) {
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0),
-                                            child: Column(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () {},
-                                                  child: Container(
-                                                    width: 80,
-                                                    height: 80,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: Colors.black
-                                                              .withOpacity(
-                                                                  0.25),
-                                                          blurRadius: 4,
-                                                          offset: const Offset(
-                                                              0, 4),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      child: Image.asset(
-                                                        storyImages[index]
-                                                                ["image"] ??
-                                                            "no image",
-                                                        fit: BoxFit.cover,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height *
-                                                      2 /
-                                                      100,
-                                                ),
-                                                Text(
-                                                  storyImages[index]["name"] ??
-                                                      "No Name",
-                                                  style:  TextStyle(
-                                                    color:
-                                                        AppColor.secondryColor(context),
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    // height: MediaQuery.of(context).size.height * 0.2/100,
-                                                    ),
-                                                Text(
-                                                  storyImages[index]
-                                                          ["subname"] ??
-                                                      "No Name",
-                                                  style:  TextStyle(
-                                                    color:
-                                                        AppColor.secondryColor(context),
-                                                    fontWeight: FontWeight.w300,
-                                                    fontSize: 12,
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        }),
-                                      ),
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 3 / 100,
-                                  ),
-                                  SizedBox(
-                                    width: size.width * 88 / 100,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Container(
-                                          child: Text(
-                                            AppLanguage.TicketText[language],
-                                            style:  TextStyle(
-                                                fontSize: 16,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColor.secondryColor(context)),
-                                          ),
-                                        ),
-                                        Container(
-                                          child: Text(
-                                            AppLanguage.endinText[language],
-                                            style: const TextStyle(
-                                                fontSize: 12,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w700,
-                                                color: AppColor.textcolor),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: size.height * 3 / 100,
-                                  ),
-                                  Container(
-                                    width: size.width * 90 / 100,
-                                    height: size.height * 18 / 100,
-                                    margin: const EdgeInsets.only(right: 10),
-                                    decoration: BoxDecoration(
-                                      color: AppColor.backgroundColor,
-                                      borderRadius: BorderRadius.circular(20),
-                                    ),
-                                    child: Column(
-                                      children: [
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                4 /
-                                                100,
-                                            vertical: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                2 /
-                                                100,
-                                          ),
-                                          child: Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Column(
-                                                children: [
-                                                  SizedBox(
-                                                    width:
-                                                        size.width * 15 / 100,
-                                                    child: Text(
-                                                      AppLanguage
-                                                          .fromText[language],
-                                                      style:  TextStyle(
-                                                          fontSize: 14,
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context)),
-                                                    ),
-                                                  ),
-                                                  Text(
-                                                    AppLanguage.ruppesruppeText[
-                                                        language],
-                                                    style:  TextStyle(
-                                                        fontSize: 24,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontWeight:
-                                                            FontWeight.w700,
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context)),
-                                                  ),
-                                                ],
-                                              ),
-                                              GestureDetector(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                      context,
-                                                      MaterialPageRoute(
-                                                          builder: ((context) =>
-                                                              BookEvent())));
-                                                },
-                                                child: Container(
-                                                  width: size.width * 45 / 100,
-                                                  decoration: BoxDecoration(
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              40)),
-                                                  child: Center(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.symmetric(
-                                                        horizontal:
-                                                            MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                3 /
-                                                                100,
-                                                        vertical: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            1.8 /
-                                                            100,
-                                                      ),
-                                                      child: Text(
-                                                        AppLanguage.BookNowText[
-                                                            language],
-                                                        style: const TextStyle(
-                                                            fontSize: 20,
-                                                            fontFamily: AppFont
-                                                                .fontFamily,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            color: AppColor
-                                                                .pinkColor),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                            horizontal: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                6 /
-                                                100,
-                                            vertical: 4,
-                                          ),
-                                          child: Align(
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              textAlign: TextAlign.center,
-                                              AppLanguage
-                                                  .secureYourspotText[language],
-                                              style:  TextStyle(
-                                                  fontSize: 14,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w400,
-                                                  color:
-                                                      AppColor.secondryColor(context)),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    height: MediaQuery.of(context).size.height *
-                                        4 /
-                                        100,
-                                  ),
-                                  Center(
-                                    child: Container(
-                                      width: 180, // adjust size as needed
-                                      height: 1,
-                                      color: AppColor.lightgreyColor,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            SizedBox(
-                              height: size.height * 12 / 100,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  void eventstypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return Container(
-            width: MediaQuery.of(context).size.width * 100 / 100,
-            height: MediaQuery.of(context).size.height * 60 / 100,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 100 / 100,
-                  height: MediaQuery.of(context).size.height * 60 / 100,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
+                    if (!showDislikeOnly) ...[
+                      SizedBox(
+                        width: size.width * 3 / 100,
+                      ),
+                      GestureDetector(
+                        onTap: () async {
+                          await _submitEventSwipeAction(
+                            'like',
+                            targetEventId: targetEventId,
+                          );
+                        },
                         child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 35, vertical: 10),
                           decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor(context),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(46),
-                              topRight: Radius.circular(46),
-                            ),
+                            color: AppColor.buttonColor,
+                            borderRadius: BorderRadius.circular(50),
                           ),
-                          width: size.width * 100 / 100,
-                          height: size.height * 80 / 100,
-                          child: Column(
+                          child: Row(
                             children: [
-                              SizedBox(height: size.height * 2 / 100),
                               Image.asset(
-                                AppImage.dashIcon,
-                                height: size.height * 0.5 / 100,
-                                width: size.width * 28 / 100,
-                                fit: BoxFit.fill,
+                                AppImage.heartImg,
+                                height: 20,
+                                width: 20,
+                                color: AppColor.secondryColor(
+                                    context), // optional tint color
                               ),
-                              SizedBox(height: size.height * 2 / 100),
-                              Center(
-                                child: SizedBox(
-                                  width: size.width * 90 / 100,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: List.generate(shareIcons.length,
-                                        (index) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * 3 / 100,
-                                            vertical: size.height * 2 / 100),
-                                        child: Image.asset(
-                                          shareIcons[index],
-                                          width: size.width * 14 / 100,
-                                          height: size.width * 14 / 100,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-                              Divider(
-                                height: 0.2,
-                                thickness: 0.5,
-                                color: AppColor.secondryColor(context),
-                                indent: 28,
-                                endIndent: 28,
-                              ),
-                              SizedBox(height: size.height * 2 / 100),
-                              SizedBox(height: size.height * 1 / 100),
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      ...List.generate(chats.length, (index) {
-                                        final chat = chatsLists[index];
-                                        final isSend =
-                                            chats[index]['isSend'] == true;
-
-                                        return Wrap(
-                                          children: [
-                                            Container(
-                                              width: size.width * 90 / 100,
-                                              height: size.height * 8.5 / 100,
-                                              child: ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                leading: Container(
-                                                  height:
-                                                      size.height * 10 / 100,
-                                                  width: size.width * 13 / 100,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                      image: AssetImage(
-                                                          chat['image'] ?? ''),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                title: Text(
-                                                  chat['name'] ?? '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                    color:
-                                                        AppColor.secondryColor(context),
-                                                  ),
-                                                ),
-                                                subtitle: Text(
-                                                  chat['lastMessage'] ?? '',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color:
-                                                        AppColor.secondryColor(context),
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                trailing: GestureDetector(
-                                                  onTap: () {
-                                                    setStateBottomSheet(() {
-                                                      chats[index]['isSend'] =
-                                                          true;
-                                                    });
-
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 200),
-                                                        () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageTransition(
-                                                          type:
-                                                              PageTransitionType
-                                                                  .bottomToTop,
-                                                          child:
-                                                              ChatMessageScreen(
-                                                            name: chats[index]
-                                                                    ['name'] ??
-                                                                '',
-                                                            image: chats[index]
-                                                                    ['image'] ??
-                                                                '',
-                                                          ),
-                                                        ),
-                                                      );
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: isSend
-                                                          ? AppColor
-                                                              .logoutContainerColor(
-                                                                  context)
-                                                          : AppColor
-                                                              .secondryColor(
-                                                                  context),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: isSend
-                                                          ? Border.all(
-                                                              color: AppColor
-                                                                  .buttonColor,
-                                                              width: 1)
-                                                          : null,
-                                                    ),
-                                                    child: Text(
-                                                      isSend
-                                                          ? (chats[index][
-                                                                      'message1']
-                                                                  ?.toString() ??
-                                                              'Send')
-                                                          : (chats[index][
-                                                                      'message']
-                                                                  ?.toString() ??
-                                                              'Send'),
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        color: isSend
-                                                            ? AppColor
-                                                                .secondryColor(
-                                                                    context)
-                                                            : AppColor
-                                                                .primaryColor(
-                                                                    context),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            if (index < chats.length - 0)
-                                              if (index < chats.length - 0)
-                                                SizedBox(
-                                                    height: size.height *
-                                                        0.1 /
-                                                        100),
-                                          ],
-                                        );
-                                      }),
-                                    ],
-                                  ),
+                              Text(
+                                AppLanguage.likeText[language],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ],
@@ -1389,166 +363,1196 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         ),
                       ),
                     ],
-                  ),
+                  ],
                 ),
-              ],
-            ),
-          );
-        });
-      },
-    );
-  }
-
-  void _openGuestBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      backgroundColor: AppColor.themeColor,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(25)),
-      ),
-      isScrollControlled: true,
-      builder: (context) {
-        final size = MediaQuery.of(context).size;
-        List<int> guestList = List.generate(20, (index) => index + 1);
-        int selectedGuest = -1;
-
-        return StatefulBuilder(
-          builder: (context, setState) {
-            return Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: size.width * 6 / 100,
-                vertical: size.height * 3 / 100,
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  // --- Title ---
-                  Row(
-                    children: [
-                      SizedBox(width: size.width * 3 / 100),
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          "Select number of Guest",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  SizedBox(height: size.height * 3 / 100),
-
-                  // --- Horizontal Scrollable Chips ---
-                  SizedBox(
-                    height: size.height * 7 / 100,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: guestList.length,
-                      itemBuilder: (context, index) {
-                        final isSelected = selectedGuest == index;
-                        return GestureDetector(
-                          onTap: () {
-                            setState(() {
-                              selectedGuest = index;
-                            });
-                          },
-                          child: Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 18),
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 10, horizontal: 22),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10),
-                              border: Border.all(
-                                color: isSelected
-                                    ? AppColor.pinkColor
-                                    : AppColor.textTapColor(context),
-                                width: 1,
-                              ),
-                              color: isSelected
-                                  ? AppColor.pinkColor.withOpacity(0.2)
-                                  : Colors.transparent,
-                            ),
-                            child: Center(
-                              child: Text(
-                                '${guestList[index]}',
-                                style: TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  fontSize: 14,
-                                  color: isSelected
-                                      ? AppColor.pinkColor
-                                      : AppColor.secondryColor(context),
+              body: Container(
+                width: size.width * 100 / 100,
+                height: size.height * 100 / 100,
+                color: AppColor.primaryColor(context),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(height: size.height * 3 / 100),
+                    Expanded(
+                      child: SingleChildScrollView(
+                        child: Center(
+                          child: SizedBox(
+                            width: size.width * 100 / 100,
+                            child: Column(
+                              children: [
+                                //! Event Image
+                                Consumer<EventDetailsController>(
+                                  builder:
+                                      (BuildContext context, controller, _) {
+                                    if (controller.getEventDetails.isEmpty) {
+                                      return CircularProgressIndicator();
+                                    }
+                                    return Stack(
+                                      children: [
+                                        SizedBox(
+                                          width: size.width * 100 / 100,
+                                          height: size.height * 30 / 100,
+                                          child: ClipRRect(
+                                            child: CachedNetworkImage(
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              imageUrl:
+                                                  "${AppConfigProvider.imageUrl}${controller.getEventDetails['event_image']}",
+                                              fit: BoxFit.cover,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                AppImage.dummyImageIcon,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              placeholder: (context, url) =>
+                                                  Center(
+                                                child: LoadingAnimationWidget
+                                                    .dotsTriangle(
+                                                  color: AppColor.themeColor,
+                                                  size: 35,
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        Positioned(
+                                          top: 26,
+                                          left: 16,
+                                          child: GestureDetector(
+                                            onTap: () {
+                                              Navigator.pop(context);
+                                            },
+                                            child: Image.asset(
+                                              AppImage.backarrow,
+                                              color: AppColor.secondryColor(
+                                                  context),
+                                              fit: BoxFit.cover,
+                                              height: size.width * 5 / 100,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    );
+                                  },
                                 ),
-                              ),
+                                SizedBox(
+                                  height: size.height * 1 / 100,
+                                ),
+                                SizedBox(
+                                  width: size.width * 90 / 100,
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Container(
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Column(
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                //! Event Name
+                                                Consumer<
+                                                    EventDetailsController>(
+                                                  builder:
+                                                      (BuildContext context,
+                                                          controller, _) {
+                                                    String eventName = controller
+                                                                .getEventDetails[
+                                                            'event_name'] ??
+                                                        "";
+                                                    return Text(
+                                                      eventName,
+                                                      style: TextStyle(
+                                                          fontSize: 24,
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                              FontWeight.w700,
+                                                          color: AppColor
+                                                              .secondryColor(
+                                                                  context)),
+                                                    );
+                                                  },
+                                                ),
+                                                SizedBox(
+                                                  height: size.height * 2 / 100,
+                                                ),
+
+                                                //! Categories List
+                                                Consumer<
+                                                    EventDetailsController>(
+                                                  builder:
+                                                      (BuildContext context,
+                                                          controller, _) {
+                                                    List<dynamic>
+                                                        categoriesList =
+                                                        controller.getEventDetails[
+                                                                'categories'] ??
+                                                            [];
+                                                    if (categoriesList
+                                                        .isEmpty) {
+                                                      return CircularProgressIndicator();
+                                                    }
+                                                    return SingleChildScrollView(
+                                                      scrollDirection:
+                                                          Axis.horizontal,
+                                                      child: Wrap(
+                                                        direction:
+                                                            Axis.horizontal,
+                                                        spacing:
+                                                            8, // space between items
+                                                        children: List.generate(
+                                                          categoriesList.length,
+                                                          (index) {
+                                                            return Container(
+                                                              margin:
+                                                                  const EdgeInsets
+                                                                      .only(
+                                                                      right: 8),
+                                                              child: _buildTag(
+                                                                  categoriesList[
+                                                                              index]
+                                                                          [
+                                                                          'name'] ??
+                                                                      "",
+                                                                  size,
+                                                                  context),
+                                                            );
+                                                          },
+                                                        ),
+                                                      ),
+                                                    );
+                                                  },
+                                                )
+                                              ],
+                                            ),
+
+                                            //! Like Icon and Count
+                                            Stack(
+                                              children: [
+                                                SizedBox(
+                                                  width: size.width * 12 / 100,
+                                                  child: Image.asset(
+                                                    AppImage.likeIcon,
+                                                    fit: BoxFit.cover,
+                                                    height:
+                                                        size.width * 17 / 100,
+                                                  ),
+                                                ),
+                                                Positioned(
+                                                  bottom: 0,
+                                                  child: Consumer<
+                                                      EventDetailsController>(
+                                                    builder:
+                                                        (BuildContext context,
+                                                            controller, _) {
+                                                      String likeCount = (controller
+                                                                          .getEventDetails[
+                                                                      'total_likes'] ==
+                                                                  null ||
+                                                              controller.getEventDetails[
+                                                                      'total_likes'] ==
+                                                                  0)
+                                                          ? ""
+                                                          : controller
+                                                              .getEventDetails[
+                                                                  'total_likes']
+                                                              .toString();
+                                                      if (likeCount.isEmpty) {
+                                                        return SizedBox();
+                                                      }
+                                                      return SizedBox(
+                                                        width: size.width *
+                                                            12 /
+                                                            100,
+                                                        child: Text(
+                                                          likeCount,
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          style: const TextStyle(
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontSize: 13,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: AppColor
+                                                                  .textcolor),
+                                                        ),
+                                                      );
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 3 / 100,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 4.5 / 100,
+                                            height: size.width * 4.5 / 100,
+                                            child: ClipRRect(
+                                              child: Image.asset(
+                                                AppImage.calenderPinkIcon,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2 /
+                                                100,
+                                          ),
+
+                                          //! Event Date
+                                          Consumer<EventDetailsController>(
+                                            builder: (BuildContext context,
+                                                controller, _) {
+                                              String eventDate =
+                                                  controller.getEventDetails[
+                                                          'event_date'] ??
+                                                      "";
+
+                                              return Text(
+                                                formatDateWithSuffix(eventDate),
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context)),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 4.5 / 100,
+                                            height: size.width * 4.5 / 100,
+                                            child: ClipRRect(
+                                              child: Image.asset(
+                                                AppImage.clock,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2 /
+                                                100,
+                                          ),
+
+                                          //! Event timing
+                                          Consumer<EventDetailsController>(
+                                            builder: (BuildContext context,
+                                                controller, _) {
+                                              String eventTime =
+                                                  controller.getEventDetails[
+                                                          'event_time'] ??
+                                                      "";
+                                              return Text(
+                                                eventTime,
+                                                style: TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w500,
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context)),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                      Row(
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 4.5 / 100,
+                                            height: size.width * 4.5 / 100,
+                                            child: ClipRRect(
+                                              child: Image.asset(
+                                                AppImage.locationIcon,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2 /
+                                                100,
+                                          ),
+
+                                          //! Addrss and Distance
+                                          Consumer<EventDetailsController>(
+                                            builder: (BuildContext context,
+                                                controller, _) {
+                                              String eventAddress =
+                                                  controller.getEventDetails[
+                                                          'address'] ??
+                                                      "";
+                                              String distance = controller
+                                                      .getEventDetails[
+                                                          'distance_km']
+                                                      ?.toString() ??
+                                                  "";
+
+                                              return Container(
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Container(
+                                                      child: SizedBox(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            80 /
+                                                            100,
+                                                        child: Text(
+                                                          eventAddress,
+                                                          maxLines: 2,
+                                                          overflow: TextOverflow
+                                                              .ellipsis,
+                                                          style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    if (distance.isNotEmpty)
+                                                      Row(
+                                                        children: [
+                                                          Text(
+                                                            "${distance}km",
+                                                            style: const TextStyle(
+                                                                fontSize: 15,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w400,
+                                                                color: AppColor
+                                                                    .greyLightColor),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                  ],
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 4 / 100,
+                                      ),
+
+                                      //! Gallery Text and View All
+                                      Consumer<EventDetailsController>(
+                                        builder: (BuildContext context,
+                                            controller, _) {
+                                          List<dynamic> galleryList =
+                                              (controller.getEventDetails[
+                                                              'gallery'] ==
+                                                          null ||
+                                                      controller
+                                                          .getEventDetails[
+                                                              'gallery']
+                                                          .isEmpty)
+                                                  ? []
+                                                  : controller.getEventDetails[
+                                                      'gallery'];
+                                          if (galleryList.isEmpty) {
+                                            return SizedBox();
+                                          }
+                                          return Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Container(
+                                                child: Text(
+                                                  AppLanguage
+                                                      .GalleryText[language],
+                                                  style: TextStyle(
+                                                      fontSize: 18,
+                                                      fontFamily:
+                                                          AppFont.fontFamily,
+                                                      fontWeight:
+                                                          FontWeight.w500,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                              context)),
+                                                ),
+                                              ),
+                                              GestureDetector(
+                                                onTap: () {
+                                                  // showMediaViewerBottomSheet(
+                                                  //     context: context,
+                                                  //     mediaList: galleryImagesList,
+                                                  //     initialIndex: 0);
+                                                  _openGalleryBottomSheet(
+                                                      context, galleryList, 0);
+                                                },
+                                                child: Container(
+                                                  child: Text(
+                                                    AppLanguage
+                                                        .viewAlltext[language],
+                                                    style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontFamily:
+                                                            AppFont.fontFamily,
+                                                        fontWeight:
+                                                            FontWeight.w500,
+                                                        color:
+                                                            AppColor.pinkColor),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+
+                                      //! Gallery Images List
+                                      Consumer<EventDetailsController>(
+                                        builder: (BuildContext context,
+                                            controller, _) {
+                                          List<dynamic> galleryList =
+                                              (controller.getEventDetails[
+                                                              'gallery'] ==
+                                                          null ||
+                                                      controller
+                                                          .getEventDetails[
+                                                              'gallery']
+                                                          .isEmpty)
+                                                  ? []
+                                                  : controller.getEventDetails[
+                                                      'gallery'];
+                                          if (galleryList.isEmpty) {
+                                            return SizedBox();
+                                          }
+                                          return SingleChildScrollView(
+                                            scrollDirection: Axis.horizontal,
+                                            child: Wrap(
+                                              direction: Axis.horizontal,
+                                              spacing: 8, // space between items
+                                              children: List.generate(
+                                                galleryList.length > 3
+                                                    ? 3
+                                                    : galleryList.length,
+                                                (index) {
+                                                  return InkWell(
+                                                    onTap: () {
+                                                      _openGalleryBottomSheet(
+                                                          context,
+                                                          galleryList,
+                                                          index);
+                                                    },
+                                                    child: Container(
+                                                      width:
+                                                          size.width * 60 / 100,
+                                                      height: size.height *
+                                                          15 /
+                                                          100,
+                                                      margin:
+                                                          const EdgeInsets.only(
+                                                              right: 10),
+                                                      child: ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(20),
+                                                        child:
+                                                            CachedNetworkImage(
+                                                          imageBuilder: (context,
+                                                                  imageProvider) =>
+                                                              Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              image:
+                                                                  DecorationImage(
+                                                                image:
+                                                                    imageProvider,
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                          imageUrl:
+                                                              "${AppConfigProvider.imageUrl}${galleryList[index]}",
+                                                          fit: BoxFit.cover,
+                                                          errorWidget: (context,
+                                                                  url, error) =>
+                                                              Image.asset(
+                                                            AppImage
+                                                                .dummyImageIcon,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                          placeholder:
+                                                              (context, url) =>
+                                                                  Center(
+                                                            child:
+                                                                LoadingAnimationWidget
+                                                                    .dotsTriangle(
+                                                              color: AppColor
+                                                                  .themeColor,
+                                                              size: 35,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 4 / 100,
+                                      ),
+
+                                      //! About Text
+                                      Consumer<EventDetailsController>(
+                                        builder: (BuildContext context,
+                                            controller, _) {
+                                          String about = controller
+                                                  .getEventDetails['about'] ??
+                                              "";
+                                          return Column(
+                                            children: [
+                                              SizedBox(
+                                                width: size.width * 0.90,
+                                                child: Text(
+                                                  AppLanguage
+                                                      .aboutText[language],
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context),
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontSize: 14,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height:
+                                                      size.height * 1 / 100),
+                                              SizedBox(
+                                                width: size.width * 90 / 100,
+                                                child: ReadMoreText(
+                                                  about,
+                                                  trimLines: 3,
+                                                  trimMode: TrimMode.Line,
+                                                  trimCollapsedText:
+                                                      'Read More',
+                                                  trimExpandedText:
+                                                      ' Show Less',
+                                                  style: const TextStyle(
+                                                    fontSize: 15,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontWeight:
+                                                        FontWeight.normal,
+                                                    color:
+                                                        AppColor.greyLightColor,
+                                                  ),
+                                                  moreStyle: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: AppColor.buttonColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                  ),
+                                                  lessStyle: const TextStyle(
+                                                    fontSize: 15,
+                                                    color: AppColor.buttonColor,
+                                                    fontWeight: FontWeight.w600,
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  height:
+                                                      size.height * 2 / 100),
+                                            ],
+                                          );
+                                        },
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+
+                                      //! Line Up list
+                                      Consumer<EventDetailsController>(
+                                        builder: (BuildContext context,
+                                            controller, _) {
+                                          List<dynamic> lineUpList = (controller
+                                                          .getEventDetails[
+                                                      'lineup'] ==
+                                                  null)
+                                              ? []
+                                              : controller
+                                                  .getEventDetails['lineup'];
+                                          if (lineUpList.isEmpty) {
+                                            return SizedBox();
+                                          }
+                                          return Column(
+                                            children: [
+                                              Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                      AppLanguage
+                                                          .LineupText[language],
+                                                      style: TextStyle(
+                                                          fontSize: 16,
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                              FontWeight.w600,
+                                                          color: AppColor
+                                                              .secondryColor(
+                                                                  context)),
+                                                    ),
+                                                  ),
+                                                  InkWell(
+                                                    onTap: () {
+                                                      Navigator.push(
+                                                        context,
+                                                        PageTransition(
+                                                          type: PageTransitionType
+                                                              .rightToLeftWithFade,
+                                                          child:
+                                                              ViewAllLinupScreen(
+                                                            viewAllLineUpList:
+                                                                lineUpList,
+                                                          ),
+                                                          duration:
+                                                              const Duration(
+                                                                  milliseconds:
+                                                                      500),
+                                                        ),
+                                                      );
+                                                    },
+                                                    child: Container(
+                                                      child: Text(
+                                                        AppLanguage.viewAlltext[
+                                                            language],
+                                                        style: const TextStyle(
+                                                            fontSize: 14,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.w500,
+                                                            color: AppColor
+                                                                .pinkColor),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 2 / 100,
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    0.01,
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                    .size
+                                                    .width,
+                                                child: SingleChildScrollView(
+                                                  scrollDirection:
+                                                      Axis.horizontal,
+                                                  child: Row(
+                                                    children: List.generate(
+                                                        lineUpList.length,
+                                                        (index) {
+                                                      return Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .symmetric(
+                                                                horizontal:
+                                                                    8.0),
+                                                        child: Column(
+                                                          children: [
+                                                            GestureDetector(
+                                                              onTap: () {},
+                                                              child: Container(
+                                                                width: 80,
+                                                                height: 80,
+                                                                decoration:
+                                                                    BoxDecoration(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              35),
+                                                                  boxShadow: [
+                                                                    BoxShadow(
+                                                                      color: Colors
+                                                                          .black
+                                                                          .withOpacity(
+                                                                              0.25),
+                                                                      blurRadius:
+                                                                          4,
+                                                                      offset:
+                                                                          const Offset(
+                                                                              0,
+                                                                              4),
+                                                                    ),
+                                                                  ],
+                                                                ),
+                                                                child:
+                                                                    ClipRRect(
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              35),
+                                                                  child:
+                                                                      CachedNetworkImage(
+                                                                    imageUrl:
+                                                                        "${AppConfigProvider.imageUrl}${lineUpList[index]['image']}",
+                                                                    fit: BoxFit
+                                                                        .cover,
+                                                                    errorWidget: (context,
+                                                                            url,
+                                                                            error) =>
+                                                                        Image
+                                                                            .asset(
+                                                                      AppImage
+                                                                          .placeHolderIcon,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                    ),
+                                                                    placeholder:
+                                                                        (context,
+                                                                                url) =>
+                                                                            Center(
+                                                                      child: LoadingAnimationWidget
+                                                                          .dotsTriangle(
+                                                                        color: AppColor
+                                                                            .themeColor,
+                                                                        size:
+                                                                            35,
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                              height: MediaQuery.of(
+                                                                          context)
+                                                                      .size
+                                                                      .height *
+                                                                  2 /
+                                                                  100,
+                                                            ),
+                                                            Text(
+                                                              lineUpList[index][
+                                                                      "name"] ??
+                                                                  "No Name",
+                                                              style: TextStyle(
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w600,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                            SizedBox(
+                                                                // height: MediaQuery.of(context).size.height * 0.2/100,
+                                                                ),
+                                                            Text(
+                                                              lineUpList[index][
+                                                                      "title"] ??
+                                                                  "No Name",
+                                                              style: TextStyle(
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context),
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w300,
+                                                                fontSize: 12,
+                                                              ),
+                                                            ),
+                                                          ],
+                                                        ),
+                                                      );
+                                                    }),
+                                                  ),
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 3 / 100,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+
+                                      //! Ticket Details
+                                      Consumer<EventDetailsController>(
+                                        builder: (BuildContext context,
+                                            controller, _) {
+                                          dynamic ticketDetails = controller
+                                                  .getEventDetails['tickets'] ??
+                                              {};
+                                          if (ticketDetails.isEmpty) {
+                                            return SizedBox();
+                                          }
+                                          String endDate =
+                                              ticketDetails['end_date'] ?? '';
+
+                                          // START TIMER WHEN TICKET DETAILS ARE AVAILABLE
+                                          WidgetsBinding.instance
+                                              .addPostFrameCallback((_) {
+                                            _startTimer(endDate);
+                                          });
+
+                                          return Column(
+                                            children: [
+                                              SizedBox(
+                                                width: size.width * 88 / 100,
+                                                child: Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Container(
+                                                      child: Text(
+                                                        AppLanguage.TicketText[
+                                                            language],
+                                                        style: TextStyle(
+                                                            fontSize: 16,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: AppColor
+                                                                .secondryColor(
+                                                                    context)),
+                                                      ),
+                                                    ),
+                                                    Container(
+                                                      child: Text(
+                                                        _timerText,
+                                                        style: const TextStyle(
+                                                            fontSize: 12,
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontWeight:
+                                                                FontWeight.w700,
+                                                            color: AppColor
+                                                                .textcolor),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: size.height * 3 / 100,
+                                              ),
+                                              Container(
+                                                width: size.width * 90 / 100,
+                                                height: size.height * 18 / 100,
+                                                margin: const EdgeInsets.only(
+                                                    right: 10),
+                                                decoration: BoxDecoration(
+                                                  color:
+                                                      AppColor.backgroundColor,
+                                                  borderRadius:
+                                                      BorderRadius.circular(20),
+                                                ),
+                                                child: Column(
+                                                  children: [
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                4 /
+                                                                100,
+                                                        vertical: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .height *
+                                                            2 /
+                                                            100,
+                                                      ),
+                                                      child: Row(
+                                                        mainAxisAlignment:
+                                                            MainAxisAlignment
+                                                                .spaceBetween,
+                                                        children: [
+                                                          Column(
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              SizedBox(
+                                                                width:
+                                                                    size.width *
+                                                                        15 /
+                                                                        100,
+                                                                child: Text(
+                                                                  AppLanguage
+                                                                          .fromText[
+                                                                      language],
+                                                                  style: TextStyle(
+                                                                      fontSize:
+                                                                          14,
+                                                                      fontFamily:
+                                                                          AppFont
+                                                                              .fontFamily,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: AppColor
+                                                                          .secondryColor(
+                                                                              context)),
+                                                                ),
+                                                              ),
+                                                              Text(
+                                                                "₹${ticketDetails['min_price']?.toString() ?? ""}",
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        24,
+                                                                    fontFamily:
+                                                                        AppFont
+                                                                            .fontFamily,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w700,
+                                                                    color: AppColor
+                                                                        .secondryColor(
+                                                                            context)),
+                                                              ),
+                                                            ],
+                                                          ),
+                                                          GestureDetector(
+                                                            onTap: () {
+                                                              if (isEnded) {
+                                                                return;
+                                                              }
+                                                              Navigator.push(
+                                                                context,
+                                                                PageTransition(
+                                                                  type: PageTransitionType
+                                                                      .rightToLeftWithFade,
+                                                                  child:
+                                                                      BookEvent(
+                                                                    eventId: widget
+                                                                        .eventId,
+                                                                  ),
+                                                                  duration: const Duration(
+                                                                      milliseconds:
+                                                                          500),
+                                                                ),
+                                                              );
+                                                            },
+                                                            child: Container(
+                                                              width:
+                                                                  size.width *
+                                                                      45 /
+                                                                      100,
+                                                              decoration: BoxDecoration(
+                                                                  color: AppColor
+                                                                      .secondryColor(
+                                                                          context),
+                                                                  borderRadius:
+                                                                      BorderRadius
+                                                                          .circular(
+                                                                              40)),
+                                                              child: Center(
+                                                                child: Padding(
+                                                                  padding:
+                                                                      EdgeInsets
+                                                                          .symmetric(
+                                                                    horizontal:
+                                                                        MediaQuery.of(context).size.width *
+                                                                            3 /
+                                                                            100,
+                                                                    vertical: MediaQuery.of(context)
+                                                                            .size
+                                                                            .height *
+                                                                        1.8 /
+                                                                        100,
+                                                                  ),
+                                                                  child: Text(
+                                                                    AppLanguage
+                                                                            .BookNowText[
+                                                                        language],
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            20,
+                                                                        fontFamily:
+                                                                            AppFont
+                                                                                .fontFamily,
+                                                                        fontWeight:
+                                                                            FontWeight
+                                                                                .w600,
+                                                                        color: isEnded
+                                                                            ? AppColor.textcolor
+                                                                            : AppColor.pinkColor),
+                                                                  ),
+                                                                ),
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding:
+                                                          EdgeInsets.symmetric(
+                                                        horizontal:
+                                                            MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                6 /
+                                                                100,
+                                                        vertical: 4,
+                                                      ),
+                                                      child: Align(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        child: Text(
+                                                          textAlign:
+                                                              TextAlign.center,
+                                                          AppLanguage
+                                                                  .secureYourspotText[
+                                                              language],
+                                                          style: TextStyle(
+                                                              fontSize: 14,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context)),
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .height *
+                                                    4 /
+                                                    100,
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                      ),
+
+                                      Center(
+                                        child: Container(
+                                          width: 180, // adjust size as needed
+                                          height: 1,
+                                          color: AppColor.lightgreyColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: size.height * 12 / 100,
+                                ),
+                              ],
                             ),
                           ),
-                        );
-                      },
-                    ),
-                  ),
-
-                  SizedBox(height: size.height * 4 / 100),
-
-                  // --- Continue Button ---
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        PageTransition(
-                          type: PageTransitionType.rightToLeftWithFade,
-                          child: BookEvent(),
-                          duration: const Duration(milliseconds: 500),
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: size.width * 75 / 100,
-                      height: size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.secondryColor(context),
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      alignment: Alignment.center,
-                      child: Text(
-                        "Continue",
-                        style: TextStyle(
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 15,
-                          color: AppColor.pinkColor,
                         ),
                       ),
                     ),
-                  ),
-
-                  SizedBox(height: size.height * 2 / 100),
-                ],
+                  ],
+                ),
               ),
-            );
-          },
-        );
-      },
-    );
+            ),
+          ),
+        ));
   }
 
-  void _openGalleryBottomSheet(BuildContext context) {
+  void eventstypebottomsheet(BuildContext context) =>
+      showEventTypesBottomSheet(context);
+
+  void _openGalleryBottomSheet(
+      BuildContext context, List<dynamic> galleryImages, int curentPage) {
     final size = MediaQuery.of(context).size;
 
-    PageController pageController = PageController();
-    int currentPage = 0;
+    PageController pageController = PageController(
+      initialPage: curentPage, // ✅ Start from passed index
+    );
 
-    List<String> galleryImages = [
-      AppImage.gallImg1,
-      AppImage.gallImg2,
-      AppImage.gallImg3,
-      // AppImage.gallImg4,
-    ];
+    int currentPage = curentPage; // ✅ Sync current page
 
     showModalBottomSheet(
       context: context,
@@ -1597,7 +1601,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                   SizedBox(height: size.height * 2 / 100),
 
                   /// -------- MAIN IMAGE WITH ARROWS --------
-                  Container(
+                  SizedBox(
                     height: size.height * 0.35,
                     child: Stack(
                       children: [
@@ -1615,9 +1619,21 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   horizontal: size.width * 3 / 100),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(20),
-                                child: Image.asset(
-                                  galleryImages[index],
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      "${AppConfigProvider.imageUrl}${galleryImages[index]}",
                                   fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    AppImage.dummyImageIcon,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  placeholder: (context, url) => Center(
+                                    child: LoadingAnimationWidget.dotsTriangle(
+                                      color: AppColor.themeColor,
+                                      size: 35,
+                                    ),
+                                  ),
                                 ),
                               ),
                             );
@@ -1628,21 +1644,21 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         if (currentPage > 0)
                           Positioned(
                             left: size.width * 5 / 100,
-                            top: size.height * 0.20,
+                            top: size.height * 0.15,
                             child: GestureDetector(
                               onTap: () {
                                 pageController.previousPage(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.black.withOpacity(0.5),
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.chevron_left,
                                   color: Colors.white,
                                   size: 24,
@@ -1655,21 +1671,21 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                         if (currentPage < galleryImages.length - 1)
                           Positioned(
                             right: size.width * 5 / 100,
-                            top: size.height * 0.20,
+                            top: size.height * 0.15,
                             child: GestureDetector(
                               onTap: () {
                                 pageController.nextPage(
-                                  duration: Duration(milliseconds: 300),
+                                  duration: const Duration(milliseconds: 300),
                                   curve: Curves.easeInOut,
                                 );
                               },
                               child: Container(
-                                padding: EdgeInsets.all(8),
+                                padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
                                   color: Colors.black.withOpacity(0.5),
                                 ),
-                                child: Icon(
+                                child: const Icon(
                                   Icons.chevron_right,
                                   color: Colors.white,
                                   size: 24,
@@ -1683,14 +1699,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
                   SizedBox(height: size.height * 2 / 100),
 
-                  /// -------- GALLERY TEXT --------
-
+                  /// -------- GALLERY GRID --------
                   Expanded(
                     child: Padding(
                       padding: EdgeInsets.symmetric(
                           horizontal: size.width * 5 / 100),
                       child: GridView.builder(
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        gridDelegate:
+                            const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
@@ -1703,9 +1719,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               setState(() {
                                 currentPage = index;
                               });
+
                               pageController.animateToPage(
                                 index,
-                                duration: Duration(milliseconds: 300),
+                                duration: const Duration(milliseconds: 300),
                                 curve: Curves.easeInOut,
                               );
                             },
@@ -1721,9 +1738,21 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               ),
                               child: ClipRRect(
                                 borderRadius: BorderRadius.circular(13),
-                                child: Image.asset(
-                                  galleryImages[index],
+                                child: CachedNetworkImage(
+                                  imageUrl:
+                                      "${AppConfigProvider.imageUrl}${galleryImages[index]}",
                                   fit: BoxFit.cover,
+                                  errorWidget: (context, url, error) =>
+                                      Image.asset(
+                                    AppImage.dummyImageIcon,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  placeholder: (context, url) => Center(
+                                    child: LoadingAnimationWidget.dotsTriangle(
+                                      color: AppColor.themeColor,
+                                      size: 35,
+                                    ),
+                                  ),
                                 ),
                               ),
                             ),
@@ -1743,7 +1772,30 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     );
   }
 
-
-
-
+  Widget _buildTag(String text, Size size, BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(
+          width: 1,
+          color: AppColor.pinkColor,
+        ),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: size.width * 2 / 100,
+          vertical: 1,
+        ),
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 14,
+            fontFamily: AppFont.fontFamily,
+            fontWeight: FontWeight.normal,
+            color: AppColor.secondryColor(context),
+          ),
+        ),
+      ),
+    );
+  }
 }

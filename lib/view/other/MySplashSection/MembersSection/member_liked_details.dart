@@ -11,7 +11,9 @@ import 'package:page_transition/page_transition.dart';
 
 import '../../../../controller/home/home_controller.dart';
 import '../../../../helper/ImagePreviewScreen.dart';
-import '../../chats/chat_message_screen.dart';
+import '../../../../commonWidget/invite_members_type_bottomsheet.dart';
+import '../EventSection/Liked/liked_event_details.dart';
+import '../VenuesSection/venuepages.dart';
 
 class LikedMemberDetail extends StatefulWidget {
   static const String routeName = '/LikedMemberDetail';
@@ -80,7 +82,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       'id': 1,
       'image': 'assets/icons/eventstory2.png',
       'name': 'Brew&Bloom',
-      'lastMessage': '@Brew&BloomCafÃ©',
+      'lastMessage': '@Brew&BloomCafé',
       'message': 'Send',
       'message1': 'Send',
       'isSend': false,
@@ -271,12 +273,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       _str(_memberData?['name']).isNotEmpty ? _str(_memberData?['name']) : "";
 
   String _memberVibesText() {
-    if (_vibeNames.isNotEmpty) return _vibeNames.join(' · ');
+    if (_vibeNames.isNotEmpty) return _vibeNames.join(' � ');
     final hobbies = _toList(_memberData?['hobbies'])
         .map((e) => _str(e))
         .where((e) => e.isNotEmpty)
         .toList();
-    if (hobbies.isNotEmpty) return hobbies.join(' · ');
+    if (hobbies.isNotEmpty) return hobbies.join(' � ');
     return "";
   }
 
@@ -310,6 +312,20 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       'targetUserId': userId,
     };
     Navigator.pop(context, _swipeResult);
+  }
+
+  Future<void> _handleEventSwipeResult(Map<String, dynamic>? result) async {
+    if (result == null) return;
+    final action = _str(result['action']).toLowerCase();
+    final targetEventId = _str(result['targetEventId']);
+    if (targetEventId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetEventId, 'event');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetEventId, 'event');
+    }
   }
 
   List<String> _extractEventCategoryNames(dynamic categoriesRaw) {
@@ -383,7 +399,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                     ),
                     GestureDetector(
                       onTap: () {
-                        documenttypebottomsheet(context);
+                        showInviteMemberstypebottomsheet(context);
                       },
                       child: Container(
                         width: size.width * 29 / 100,
@@ -1438,6 +1454,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                       name: "",
                                                       time: "",
                                                       tags: [], // Add tags
+                                                      id: "",
                                                       isNetwork: false,
                                                     );
                                                   }
@@ -1453,6 +1470,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                         _extractEventCategoryNames(
                                                       item['categories'],
                                                     ),
+                                                    id: _str(item['_id']),
                                                     isNetwork: true,
                                                   );
                                                 },
@@ -1505,6 +1523,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                       child: _venueCard(
                                                         fallback[index],
                                                         venueName: "",
+                                                        id: "",
                                                       ),
                                                     );
                                                   }
@@ -1519,6 +1538,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                           item['venue_image']),
                                                       venueName: _str(
                                                           item['venue_name']),
+                                                      id: item['_id'],
                                                       isNetwork: true,
                                                     ),
                                                   );
@@ -1577,562 +1597,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     );
   }
 
-  void documenttypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return TweenAnimationBuilder<double>(
-            tween: Tween(begin: 0.0, end: 1.0),
-            duration: const Duration(milliseconds: 400),
-            curve: Curves.easeOutCubic,
-            builder: (context, value, child) {
-              return Transform.translate(
-                offset: Offset(0, (1 - value) * size.height * 0.3),
-                child: Opacity(
-                  opacity: value.clamp(0.0, 1.0),
-                  child: child,
-                ),
-              );
-            },
-            child: Container(
-              width: MediaQuery.of(context).size.width * 100 / 100,
-              height: MediaQuery.of(context).size.height * 60 / 100,
-              color: Colors.transparent,
-              child: Column(
-                children: [
-                  Container(
-                    width: MediaQuery.of(context).size.width * 100 / 100,
-                    height: MediaQuery.of(context).size.height * 60 / 100,
-                    child: Column(
-                      children: [
-                        Expanded(
-                          flex: 1,
-                          child: Container(
-                            decoration: BoxDecoration(
-                              gradient:
-                                  AppColor.backgroundGradientcolor(context),
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(46),
-                                topRight: Radius.circular(46),
-                              ),
-                            ),
-                            width: size.width * 100 / 100,
-                            height: size.height * 80 / 100,
-                            child: Column(
-                              children: [
-                                SizedBox(height: size.height * 2 / 100),
-
-                                /// -------- DRAG INDICATOR --------
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: const Duration(milliseconds: 500),
-                                  curve: Curves.easeOut,
-                                  builder: (context, value, child) {
-                                    return Opacity(
-                                      opacity: value.clamp(0.0, 1.0),
-                                      child: Transform.scale(
-                                        scale: 0.8 + (0.2 * value),
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: Image.asset(
-                                    AppImage.dashIcon,
-                                    height: size.height * 0.5 / 100,
-                                    width: size.width * 28 / 100,
-                                    fit: BoxFit.fill,
-                                  ),
-                                ),
-
-                                SizedBox(height: size.height * 2 / 100),
-
-                                /// -------- TABS (EVENTS & VENUES) --------
-                                TweenAnimationBuilder<double>(
-                                  tween: Tween(begin: 0.0, end: 1.0),
-                                  duration: const Duration(milliseconds: 600),
-                                  curve: Curves.easeOut,
-                                  builder: (context, value, child) {
-                                    return Transform.translate(
-                                      offset: Offset(0, -20 * (1 - value)),
-                                      child: Opacity(
-                                        opacity: value.clamp(0.0, 1.0),
-                                        child: child,
-                                      ),
-                                    );
-                                  },
-                                  child: Container(
-                                    color: AppColor.transparentColor,
-                                    width: MediaQuery.of(context).size.width,
-                                    height: MediaQuery.of(context).size.height *
-                                        8 /
-                                        100,
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * 5 / 100,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        /// -------- EVENTS TAB --------
-                                        GestureDetector(
-                                          onTap: () {
-                                            setStateBottomSheet(() {
-                                              selectedIndex = 0;
-                                            });
-                                          },
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                45 /
-                                                100,
-                                            child: Center(
-                                              child: AnimatedDefaultTextStyle(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                style: TextStyle(
-                                                  fontWeight: selectedIndex == 0
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                  color: selectedIndex == 0
-                                                      ? AppColor.secondryColor(
-                                                          context)
-                                                      : AppColor.greyLightColor,
-                                                  fontSize: selectedIndex == 0
-                                                      ? 16
-                                                      : 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .eventsText[language],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-
-                                        /// -------- VENUES TAB --------
-                                        GestureDetector(
-                                          onTap: () {
-                                            setStateBottomSheet(() {
-                                              selectedIndex = 1;
-                                            });
-                                          },
-                                          child: AnimatedContainer(
-                                            duration: const Duration(
-                                                milliseconds: 300),
-                                            curve: Curves.easeInOut,
-                                            width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
-                                                45 /
-                                                100,
-                                            child: Center(
-                                              child: AnimatedDefaultTextStyle(
-                                                duration: const Duration(
-                                                    milliseconds: 300),
-                                                style: TextStyle(
-                                                  fontWeight: selectedIndex == 1
-                                                      ? FontWeight.w600
-                                                      : FontWeight.w500,
-                                                  color: selectedIndex == 1
-                                                      ? AppColor.secondryColor(
-                                                          context)
-                                                      : AppColor.greyLightColor,
-                                                  fontSize: selectedIndex == 1
-                                                      ? 16
-                                                      : 15,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .venuesText[language],
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-
-                                /// -------- TAB INDICATOR (FULL WIDTH) --------
-                                Container(
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
-                                  height: 2,
-                                  child: Stack(
-                                    children: [
-                                      // Background line (full width)
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width,
-                                        height: 2,
-                                        color: AppColor.greyLightColor
-                                            .withOpacity(0.3),
-                                      ),
-                                      // Animated indicator
-                                      AnimatedAlign(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        curve: Curves.easeInOut,
-                                        alignment: selectedIndex == 0
-                                            ? Alignment.centerLeft
-                                            : Alignment.centerRight,
-                                        child: AnimatedContainer(
-                                          duration:
-                                              const Duration(milliseconds: 300),
-                                          curve: Curves.easeInOut,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              0.45,
-                                          height: 3,
-                                          decoration: BoxDecoration(
-                                            color:
-                                                AppColor.secondryColor(context),
-                                            borderRadius:
-                                                BorderRadius.circular(2),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: AppColor.secondryColor(
-                                                        context)
-                                                    .withOpacity(0.4),
-                                                blurRadius: 8,
-                                                spreadRadius: 1,
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-
-                                SizedBox(height: size.height * 2 / 100),
-                                SizedBox(height: size.height * 1 / 100),
-
-                                /// -------- CONTACTS LIST --------
-                                Expanded(
-                                  child: AnimatedSwitcher(
-                                    duration: const Duration(milliseconds: 400),
-                                    switchInCurve: Curves.easeInOut,
-                                    switchOutCurve: Curves.easeInOut,
-                                    transitionBuilder: (Widget child,
-                                        Animation<double> animation) {
-                                      return FadeTransition(
-                                        opacity: animation,
-                                        child: SlideTransition(
-                                          position: Tween<Offset>(
-                                            begin: const Offset(0.1, 0),
-                                            end: Offset.zero,
-                                          ).animate(animation),
-                                          child: child,
-                                        ),
-                                      );
-                                    },
-                                    child: SingleChildScrollView(
-                                      key: ValueKey<int>(selectedIndex),
-                                      child: Column(
-                                        children: [
-                                          ...List.generate(
-                                            selectedIndex == 0
-                                                ? chats.length
-                                                : chats.length,
-                                            (index) {
-                                              final chat = selectedIndex == 0
-                                                  ? chats[index]
-                                                  : chats[index];
-                                              final isSend = selectedIndex == 0
-                                                  ? (chats[index]['isSend'] ==
-                                                      true)
-                                                  : (chats[index]['isSend'] ==
-                                                      true);
-
-                                              return TweenAnimationBuilder<
-                                                  double>(
-                                                tween:
-                                                    Tween(begin: 0.0, end: 1.0),
-                                                duration: Duration(
-                                                    milliseconds:
-                                                        300 + (index * 50)),
-                                                curve: Curves.easeOutBack,
-                                                builder:
-                                                    (context, value, child) {
-                                                  return Transform.translate(
-                                                    offset: Offset(
-                                                        30 * (1 - value), 0),
-                                                    child: Opacity(
-                                                      opacity:
-                                                          value.clamp(0.0, 1.0),
-                                                      child: child,
-                                                    ),
-                                                  );
-                                                },
-                                                child: Wrap(
-                                                  children: [
-                                                    Container(
-                                                      width:
-                                                          size.width * 90 / 100,
-                                                      height: size.height *
-                                                          8.5 /
-                                                          100,
-                                                      child: ListTile(
-                                                        contentPadding:
-                                                            EdgeInsets.zero,
-                                                        leading: Container(
-                                                          height: size.height *
-                                                              10 /
-                                                              100,
-                                                          width: size.width *
-                                                              13 /
-                                                              100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            image:
-                                                                DecorationImage(
-                                                              image: AssetImage(
-                                                                  chat['image'] ??
-                                                                      ''),
-                                                              fit: BoxFit.cover,
-                                                            ),
-                                                          ),
-                                                        ),
-                                                        title: Row(
-                                                          children: [
-                                                            Text(
-                                                              chat['name'] ??
-                                                                  '',
-                                                              style: TextStyle(
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                fontSize: 16,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context),
-                                                              ),
-                                                            ),
-                                                            SizedBox(
-                                                                width:
-                                                                    size.width *
-                                                                        2 /
-                                                                        100),
-                                                            // Bordered label for Event/Venue
-                                                            Container(
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                horizontal:
-                                                                    size.width *
-                                                                        2 /
-                                                                        100,
-                                                                vertical: 2,
-                                                              ),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                border:
-                                                                    Border.all(
-                                                                  color: AppColor
-                                                                      .pinkColor,
-                                                                  width: .3,
-                                                                ),
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            12),
-                                                              ),
-                                                              child: Text(
-                                                                selectedIndex ==
-                                                                        0
-                                                                    ? AppLanguage
-                                                                            .eventsText[
-                                                                        language]
-                                                                    : AppLanguage
-                                                                            .venuesText[
-                                                                        language],
-                                                                style:
-                                                                    TextStyle(
-                                                                  fontSize: 8,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
-                                                                  color: AppColor
-                                                                      .secondryColor(
-                                                                          context),
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        ),
-                                                        subtitle: Text(
-                                                          chat['lastMessage'] ??
-                                                              '',
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            color: AppColor
-                                                                .secondryColor(
-                                                                    context),
-                                                          ),
-                                                          maxLines: 1,
-                                                          overflow: TextOverflow
-                                                              .ellipsis,
-                                                        ),
-                                                        trailing:
-                                                            GestureDetector(
-                                                          onTap: () {
-                                                            setStateBottomSheet(
-                                                                () {
-                                                              if (selectedIndex ==
-                                                                  0) {
-                                                                chats[index][
-                                                                        'isSend'] =
-                                                                    true;
-                                                              } else {
-                                                                chats[index][
-                                                                        'isSend'] =
-                                                                    true;
-                                                              }
-                                                            });
-
-                                                            Future.delayed(
-                                                              const Duration(
-                                                                  milliseconds:
-                                                                      200),
-                                                              () {
-                                                                Navigator.push(
-                                                                  context,
-                                                                  PageTransition(
-                                                                    type: PageTransitionType
-                                                                        .bottomToTop,
-                                                                    child:
-                                                                        ChatMessageScreen(
-                                                                      name: chat[
-                                                                              'name'] ??
-                                                                          '',
-                                                                      image:
-                                                                          chat['image'] ??
-                                                                              '',
-                                                                    ),
-                                                                  ),
-                                                                );
-                                                              },
-                                                            );
-                                                          },
-                                                          child:
-                                                              AnimatedContainer(
-                                                            duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                        300),
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        17,
-                                                                    vertical:
-                                                                        7),
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              color: isSend
-                                                                  ? AppColor
-                                                                      .logoutContainerColor(
-                                                                          context)
-                                                                  : AppColor
-                                                                      .secondryColor(
-                                                                          context),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10),
-                                                              border: isSend
-                                                                  ? Border.all(
-                                                                      color: AppColor
-                                                                          .buttonColor,
-                                                                      width: 1)
-                                                                  : null,
-                                                            ),
-                                                            child: Text(
-                                                              isSend
-                                                                  ? (chat['message1']
-                                                                          ?.toString() ??
-                                                                      'Send')
-                                                                  : (chat['message']
-                                                                          ?.toString() ??
-                                                                      'Send'),
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                color: isSend
-                                                                    ? AppColor
-                                                                        .secondryColor(
-                                                                            context)
-                                                                    : AppColor
-                                                                        .primaryColor(
-                                                                            context),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    if (index <
-                                                        (selectedIndex == 0
-                                                                ? chats.length
-                                                                : chats
-                                                                    .length) -
-                                                            1)
-                                                      SizedBox(
-                                                          height: size.height *
-                                                              0.1 /
-                                                              100),
-                                                  ],
-                                                ),
-                                              );
-                                            },
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          );
-        });
-      },
-    );
-  }
+  void showInviteMemberstypebottomsheet(BuildContext context) =>
+      showInviteMembersTypeBottomSheet(context);
 
   Widget _buildVibesSection(BuildContext context) {
     final vibes = _toList(_memberData?['vibes']);
@@ -2238,130 +1704,144 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     required String name,
     required String time,
     required List<String> tags, // Add tags parameter
+    required String id,
     required bool isNetwork,
   }) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width * 50 / 100,
-      height: size.height * 30 / 100,
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: isNetwork
-                  ? _buildAdaptiveImage(
-                      image,
-                      fit: BoxFit.cover,
-                      fallbackAsset: AppImage.dummyImageIcon,
-                    )
-                  : Image.asset(
-                      AppImage.dummyImageIcon,
-                      fit: BoxFit.cover,
-                    ),
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: LikedEventDetail(
+              eventId: id,
             ),
+            duration: const Duration(milliseconds: 500),
+          ),
+        );
+        if (!mounted) return;
+        await _handleEventSwipeResult(
+            result is Map ? Map<String, dynamic>.from(result) : null);
+      },
+      child: Container(
+        width: size.width * 50 / 100,
+        height: size.height * 30 / 100,
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              // Background Image
+              Positioned.fill(
+                child: isNetwork
+                    ? _buildAdaptiveImage(
+                        image,
+                        fit: BoxFit.cover,
+                        fallbackAsset: AppImage.dummyImageIcon,
+                      )
+                    : Image.asset(
+                        AppImage.dummyImageIcon,
+                        fit: BoxFit.cover,
+                      ),
+              ),
 
-            // Gradient Overlay (more black at bottom)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(0.85),
-                    ],
+              // Gradient Overlay (more black at bottom)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.5),
+                        Colors.black.withOpacity(0.85),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Tags at Top Left (Black background type)
-            Positioned(
-              left: 10,
-              top: 10,
-              child: Row(
-                children: tags.map((tag) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 6),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColor.themeColor.withOpacity(.7),
-                      border:
-                          Border.all(color: const Color(0xFF9C27B0), width: 2),
-                    ),
-                    child: Text(
-                      tag,
+              // Tags at Top Left (Black background type)
+              Positioned(
+                left: 10,
+                top: 10,
+                child: Row(
+                  children: tags.map((tag) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: AppColor.themeColor.withOpacity(.7),
+                        border: Border.all(
+                            color: const Color(0xFF9C27B0), width: 2),
+                      ),
+                      child: Text(
+                        tag,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              // Event Name and Time at Bottom
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 14,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name.isEmpty ? "" : name,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-
-
-
-
-            // Event Name and Time at Bottom
-            Positioned(
-              left: 14,
-              right: 14,
-              bottom: 14,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name.isEmpty ? "" : name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 3),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 14,
-                        color: AppColor.buttonColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        time.isEmpty ? "-" : time,
-                        style: const TextStyle(
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 14,
                           color: AppColor.buttonColor,
-                          fontSize: 12,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 6),
+                        Text(
+                          time.isEmpty ? "-" : time,
+                          style: const TextStyle(
+                            color: AppColor.buttonColor,
+                            fontSize: 12,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -2370,58 +1850,73 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   Widget _venueCard(
     String imagePath, {
     String venueName = "",
+    String id = '',
     bool isNetwork = false,
   }) {
     final size = MediaQuery.of(context).size;
     final double cardWidth = 125 * size.width / 375;
     final double cardHeight = 150 * size.width / 375;
-    return Container(
-      width: cardWidth,
-      height: cardHeight,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(
-            color: AppColor.cardFillColor,
-            blurRadius: 10,
-            spreadRadius: 0.1,
-            offset: const Offset(4, 0),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: isNetwork
-                  ? _buildAdaptiveImage(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      fallbackAsset: AppImage.dummyImageIcon,
-                    )
-                  : Image.asset(
-                      AppImage.dummyImageIcon,
-                      fit: BoxFit.cover,
-                    ),
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: VenuePages(
+              venueId: id.toString(),
             ),
-            // if (venueName.isNotEmpty)
-            //   Padding(
-            //     padding: const EdgeInsets.all(8),
-            //     child: Text(
-            //       venueName,
-            //       maxLines: 1,
-            //       overflow: TextOverflow.ellipsis,
-            //       style: TextStyle(
-            //         color: AppColor.secondryColor(context),
-            //         fontSize: 12,
-            //         fontFamily: AppFont.fontFamily,
-            //         fontWeight: FontWeight.w600,
-            //       ),
-            //     ),
-            //   ),
+            duration: const Duration(milliseconds: 500),
+          ),
+        );
+      },
+      child: Container(
+        width: cardWidth,
+        height: cardHeight,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(14),
+          boxShadow: const [
+            BoxShadow(
+              color: AppColor.cardFillColor,
+              blurRadius: 10,
+              spreadRadius: 0.1,
+              offset: const Offset(4, 0),
+            ),
           ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: isNetwork
+                    ? _buildAdaptiveImage(
+                        imagePath,
+                        fit: BoxFit.cover,
+                        fallbackAsset: AppImage.dummyImageIcon,
+                      )
+                    : Image.asset(
+                        AppImage.dummyImageIcon,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+              // if (venueName.isNotEmpty)
+              //   Padding(
+              //     padding: const EdgeInsets.all(8),
+              //     child: Text(
+              //       venueName,
+              //       maxLines: 1,
+              //       overflow: TextOverflow.ellipsis,
+              //       style: TextStyle(
+              //         color: AppColor.secondryColor(context),
+              //         fontSize: 12,
+              //         fontFamily: AppFont.fontFamily,
+              //         fontWeight: FontWeight.w600,
+              //       ),
+              //     ),
+              //   ),
+            ],
+          ),
         ),
       ),
     );

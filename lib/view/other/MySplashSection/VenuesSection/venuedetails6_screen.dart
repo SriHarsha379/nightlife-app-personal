@@ -445,6 +445,10 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                       );
                                     },
                                   ),
+                            
+                            
+                            
+                            
                                 ],
                               );
                             },

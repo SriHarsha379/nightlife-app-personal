@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_config_provider.dart';
+import '../../utilities/app_constant.dart';
 
 class CityPreferenceController with ChangeNotifier {
   List<dynamic> _cityList = [];
@@ -102,9 +103,9 @@ class CityPreferenceController with ChangeNotifier {
 
   // Fetch city list from API
   Future<void> fetchCityList(BuildContext context) async {
-    // String token = AppConstant.token;
-    String token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ4NmE1MWVlOWE5NGM3NGVkZTFkNCIsImlhdCI6MTc2OTU5NDk0NiwiZXhwIjoxNzcyMTg2OTQ2fQ.hA61WV_g0cXiKCs5saXoEeFWa38q_1BO7GwTucHUWMw";
+    String token = AppConstant.token;
+    // String token =
+    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ4NmE1MWVlOWE5NGM3NGVkZTFkNCIsImlhdCI6MTc2OTU5NDk0NiwiZXhwIjoxNzcyMTg2OTQ2fQ.hA61WV_g0cXiKCs5saXoEeFWa38q_1BO7GwTucHUWMw";
     if (token.isEmpty) {
       print("Token is missing!");
       return;

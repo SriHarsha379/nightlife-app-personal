@@ -72,7 +72,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       context,
       PageTransition(
         type: PageTransitionType.rightToLeftWithFade,
-        child: ProfileDetailsScreen(),
+        child: ProfileDetailsScreen(
+          mobile: mobileNumberTextEditingController.text,
+        ),
         duration: const Duration(milliseconds: 600),
       ),
     );

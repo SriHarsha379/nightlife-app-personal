@@ -18,6 +18,7 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/media_picker_helper.dart';
 import '../authentication/profile.dart';
+import '../other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
 import '../other/MySplashSection/VenuesSection/view_all_venues.dart';
 import '../other/city_Preference/edit_event_prefrence.dart';
@@ -185,6 +186,28 @@ class _Profile1State extends State<Profile1> {
     final profileController =
         Provider.of<ProfileController>(context, listen: false);
     profileController.fetchProfileData(context);
+  }
+
+  Future<void> _handleEventDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = (result['action'] ?? '').toString().trim().toLowerCase();
+    final targetEventId = (result['targetEventId'] ?? '').toString().trim();
+    if (targetEventId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetEventId, 'event');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetEventId, 'event');
+    } else {
+      return;
+    }
+
+    if (!mounted) return;
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
+    await profileController.fetchProfileData(context);
   }
 
   @override
@@ -1453,12 +1476,12 @@ class _Profile1State extends State<Profile1> {
         itemBuilder: (context, index) {
           if (controller.likedEvents.isEmpty) {
             return _recentEventCard(
-              image: AppImage.eventCardImage,
-              name: "",
-              time: "",
-              tags: const [],
-              isNetwork: false,
-            );
+                image: AppImage.eventCardImage,
+                name: "",
+                time: "",
+                tags: const [],
+                isNetwork: false,
+                id: "");
           }
           final item = controller.likedEvents[index];
           return _recentEventCard(
@@ -1467,6 +1490,7 @@ class _Profile1State extends State<Profile1> {
             time: _str(item['date']),
             tags: _extractEventCategoryNames(item['categories']),
             isNetwork: true,
+            id: _str(item['_id']),
           );
         },
       ),
@@ -1479,125 +1503,141 @@ class _Profile1State extends State<Profile1> {
     required String time,
     required List<String> tags, // Add tags parameter
     required bool isNetwork,
+    required String id,
   }) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      width: size.width * 50 / 100,
-      height: size.height * 30 / 100,
-      margin: const EdgeInsets.only(right: 10),
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: Stack(
-          children: [
-            // Background Image
-            Positioned.fill(
-              child: isNetwork
-                  ? _buildAdaptiveImage(
-                      image,
-                      fit: BoxFit.cover,
-                      fallbackAsset: AppImage.dummyImageIcon,
-                    )
-                  : Image.asset(
-                      AppImage.dummyImageIcon,
-                      fit: BoxFit.cover,
-                    ),
+    return GestureDetector(
+      onTap: () async {
+        final result = await Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: LikedEventDetail(
+              eventId: id,
             ),
+            duration: const Duration(milliseconds: 500),
+          ),
+        );
+        await _handleEventDetailResult(result);
+      },
+      child: Container(
+        width: size.width * 50 / 100,
+        height: size.height * 30 / 100,
+        margin: const EdgeInsets.only(right: 10),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(20),
+          child: Stack(
+            children: [
+              // Background Image
+              Positioned.fill(
+                child: isNetwork
+                    ? _buildAdaptiveImage(
+                        image,
+                        fit: BoxFit.cover,
+                        fallbackAsset: AppImage.dummyImageIcon,
+                      )
+                    : Image.asset(
+                        AppImage.dummyImageIcon,
+                        fit: BoxFit.cover,
+                      ),
+              ),
 
-            // Gradient Overlay (more black at bottom)
-            Positioned.fill(
-              child: Container(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(0.85),
-                    ],
+              // Gradient Overlay (more black at bottom)
+              Positioned.fill(
+                child: Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                      colors: [
+                        Colors.transparent,
+                        Colors.black.withOpacity(0.5),
+                        Colors.black.withOpacity(0.85),
+                      ],
+                    ),
                   ),
                 ),
               ),
-            ),
 
-            // Tags at Top Left (Black background type)
-            Positioned(
-              left: 10,
-              top: 10,
-              child: Row(
-                children: tags.map((tag) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 6),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 5,
-                    ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(20),
-                      color: AppColor.themeColor.withOpacity(.7),
-                      border:
-                          Border.all(color: const Color(0xFF9C27B0), width: 2),
-                    ),
-                    child: Text(
-                      tag,
+              // Tags at Top Left (Black background type)
+              Positioned(
+                left: 10,
+                top: 10,
+                child: Row(
+                  children: tags.map((tag) {
+                    return Container(
+                      margin: const EdgeInsets.only(right: 6),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 10,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(20),
+                        color: AppColor.themeColor.withOpacity(.7),
+                        border: Border.all(
+                            color: const Color(0xFF9C27B0), width: 2),
+                      ),
+                      child: Text(
+                        tag,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+              ),
+
+              // Event Name and Time at Bottom
+              Positioned(
+                left: 14,
+                right: 14,
+                bottom: 14,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      name.isEmpty ? "" : name,
                       style: const TextStyle(
                         color: Colors.white,
-                        fontSize: 10,
+                        fontSize: 16,
                         fontFamily: AppFont.fontFamily,
                         fontWeight: FontWeight.w600,
                       ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                     ),
-                  );
-                }).toList(),
-              ),
-            ),
-
-            // Event Name and Time at Bottom
-            Positioned(
-              left: 14,
-              right: 14,
-              bottom: 14,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    name.isEmpty ? "" : name,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.w600,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 3),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.access_time,
-                        size: 14,
-                        color: AppColor.buttonColor,
-                      ),
-                      const SizedBox(width: 6),
-                      Text(
-                        time.isEmpty ? "-" : time,
-                        style: const TextStyle(
+                    const SizedBox(height: 3),
+                    Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          size: 14,
                           color: AppColor.buttonColor,
-                          fontSize: 12,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        const SizedBox(width: 6),
+                        Text(
+                          time.isEmpty ? "-" : time,
+                          style: const TextStyle(
+                            color: AppColor.buttonColor,
+                            fontSize: 12,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

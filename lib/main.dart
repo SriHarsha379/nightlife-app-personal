@@ -4,11 +4,16 @@ import 'package:night_life/controller/venues/my_venues_controller.dart';
 import 'package:night_life/view/authentication/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'controller/book_venue/book_venue_details_controller.dart';
+import 'controller/bookingEvent/booking_event_controller.dart';
 import 'controller/city/city_preference.dart';
 import 'controller/book_venue/book_venue_controller.dart';
+import 'controller/eventBookingDetails/event_booking_details_controller.dart';
+import 'controller/eventDetails/events_details_controller.dart';
 import 'controller/event_preference/event_preference_controller.dart';
 import 'controller/genres/music_genres_controller.dart';
 import 'controller/home/home_controller.dart';
+import 'controller/invite/invite_event_venue_list_controller.dart';
+import 'controller/likedAndBookedEvents/like_booked_event_controller.dart';
 import 'controller/members/members_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
@@ -49,6 +54,7 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VibePreferenceController()),
         ChangeNotifierProvider(create: (_) => VibeCheckController()),
         ChangeNotifierProvider(create: (_) => HomeController()),
+        ChangeNotifierProvider(create: (_) => InviteEventVenueListController()),
         ChangeNotifierProvider(create: (_) => ProfileController()),
         ChangeNotifierProvider(create: (_) => GetMySwipeProfileController()),
         ChangeNotifierProvider(create: (_) => MyVisibilityController()),
@@ -60,6 +66,10 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => VenuesBookingDetailsController()),
         ChangeNotifierProvider(create: (_) => SearchFilterController()),
         ChangeNotifierProvider(create: (_) => CalendarController()),
+        ChangeNotifierProvider(create: (_) => EventDetailsController()),
+        ChangeNotifierProvider(create: (_) => BookingEventDetails()),
+        ChangeNotifierProvider(create: (_) => LikedBookedEventController()),
+        ChangeNotifierProvider(create: (_) => EventsBookingDetailsController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
@@ -78,7 +88,7 @@ class MyApp extends StatelessWidget {
 
               // Color Scheme for Dark Mode
               colorScheme: const ColorScheme.dark(
-                primary: Color(0xffFF1CC0), 
+                primary: Color(0xffFF1CC0),
                 secondary: Colors.white,
                 surface: Color(0xff171217),
                 background: Colors.black,

@@ -18,18 +18,10 @@ import '../../../../utilities/app_image.dart';
 
 class BookTable extends StatefulWidget {
   String? venueId;
-  String? venueName;
-  String? venueAddress;
-  dynamic venueImage;
-  int? venueLikes;
 
   BookTable({
     super.key,
     this.venueId,
-    this.venueName,
-    this.venueAddress,
-    this.venueImage,
-    this.venueLikes,
   });
 
   @override
@@ -78,8 +70,13 @@ class _BookTableState extends State<BookTable> {
     super.initState();
     selectedDate = dates[0]['fullDate']!;
     currentMonth = dates[0]['month']!;
-    // Fetch slots for initial date
+    // Fetch venue details and slots for initial date
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (widget.venueId != null && widget.venueId!.isNotEmpty) {
+        final controller =
+            Provider.of<VenuesDetailsController>(context, listen: false);
+        controller.fetchVenuesDetail(context, venueId: widget.venueId!);
+      }
       _fetchSlots();
     });
   }
@@ -262,22 +259,30 @@ class _BookTableState extends State<BookTable> {
                   SizedBox(height: size.height * 1 / 100),
                   Stack(
                     children: [
-                      Container(
-                        width: size.width * 100 / 100,
-                        height: size.height * 30 / 100,
-                        child: ClipRRect(
-                          child: widget.venueImage != null &&
-                                  widget.venueImage.isNotEmpty
-                              ? _buildAdaptiveImage(
-                                  widget.venueImage,
-                                  fit: BoxFit.fill,
-                                  fallbackAsset: AppImage.dummyImageIcon,
-                                )
-                              : Image.asset(
-                                  AppImage.dummyImageIcon,
-                                  fit: BoxFit.fill,
-                                ),
-                        ),
+                      Consumer<VenuesDetailsController>(
+                        builder:
+                            (BuildContext context, controller, Widget? child) {
+                          final imageUrl = controller.getImageUrl(
+                            controller.getVenuesDetail?['venue_image']
+                                ?.toString(),
+                          );
+                          return Container(
+                            width: size.width * 100 / 100,
+                            height: size.height * 30 / 100,
+                            child: ClipRRect(
+                              child: imageUrl.isNotEmpty
+                                  ? _buildAdaptiveImage(
+                                      imageUrl,
+                                      fit: BoxFit.fill,
+                                      fallbackAsset: AppImage.dummyImageIcon,
+                                    )
+                                  : Image.asset(
+                                      AppImage.dummyImageIcon,
+                                      fit: BoxFit.fill,
+                                    ),
+                            ),
+                          );
+                        },
                       ),
                       Positioned(
                         top: size.height * 4 / 100,
@@ -336,7 +341,6 @@ class _BookTableState extends State<BookTable> {
                                       child: Text(
                                         controller.getVenuesDetail?[
                                                 'venue_name'] ??
-                                            widget.venueName ??
                                             "",
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
@@ -349,44 +353,65 @@ class _BookTableState extends State<BookTable> {
                                     );
                                   },
                                 ),
-                                SizedBox(
-                                  width: size.width * 75 / 100,
-                                  child: Text(
-                                    widget.venueAddress ?? "",
-                                    style: const TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 12,
-                                      color: AppColor.buttonColor,
-                                    ),
-                                  ),
+                                Consumer<VenuesDetailsController>(
+                                  builder: (BuildContext context, controller,
+                                      Widget? child) {
+                                    return SizedBox(
+                                      width: size.width * 75 / 100,
+                                      child: Text(
+                                        controller
+                                                .getVenuesDetail?['address'] ??
+                                            "",
+                                        style: const TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 12,
+                                          color: AppColor.buttonColor,
+                                        ),
+                                      ),
+                                    );
+                                  },
                                 ),
                               ],
                             ),
-                            Column(
-                              children: [
-                                Container(
-                                  width: size.width * 12 / 100,
-                                  height: size.width * 12 / 100,
-                                  child: Image.asset(
-                                    AppImage.likeimg,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Text(
-                                  widget.venueLikes != null
-                                      ? widget.venueLikes! >= 1000
-                                          ? "${(widget.venueLikes! / 1000).toStringAsFixed(1)}K"
-                                          : widget.venueLikes.toString()
-                                      : "0",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.spancolor(context),
-                                  ),
-                                ),
-                              ],
+                            Consumer<VenuesDetailsController>(
+                              builder: (BuildContext context, controller,
+                                  Widget? child) {
+                                final totalLikes =
+                                    controller.getVenuesDetail?['total_likes'];
+
+                                String likesText;
+                                if (totalLikes == null) {
+                                  likesText = "0";
+                                } else if (totalLikes >= 1000) {
+                                  likesText =
+                                      "${(totalLikes / 1000).toStringAsFixed(1)}K";
+                                } else {
+                                  likesText = totalLikes.toString();
+                                }
+
+                                return Column(
+                                  children: [
+                                    SizedBox(
+                                      width: size.width * 12 / 100,
+                                      height: size.width * 12 / 100,
+                                      child: Image.asset(
+                                        AppImage.likeimg,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    Text(
+                                      likesText,
+                                      style: TextStyle(
+                                        fontSize: 12,
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.spancolor(context),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              },
                             ),
                           ],
                         ),

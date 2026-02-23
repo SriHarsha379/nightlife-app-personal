@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/controller/home/home_controller.dart';
 import 'package:night_life/controller/venues/venues_details_controller.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_table.dart';
@@ -7,14 +8,13 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import '../../../../../utilities/app_color.dart';
+import '../../../../commonWidget/event_types_bottomsheet.dart';
 import '../../../../commonWidget/show_images_bottomsheet.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
-import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../../../../utilities/app_config_provider.dart';
-import '../../chats/chat_message_screen.dart';
 
 class VenuePages extends StatefulWidget {
   static String routeName = './VenuePages';
@@ -242,6 +242,37 @@ class _VenuePagesState extends State<VenuePages> {
     };
     if (!mounted) return;
     Navigator.pop(context, _swipeResult);
+  }
+
+  Future<void> _handleEventSwipeResult(Map<String, dynamic>? result) async {
+    if (result == null) return;
+    final action = _str(result['action']).trim().toLowerCase();
+    final targetEventId = _str(result['targetEventId']).trim();
+    if (targetEventId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetEventId, 'event');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetEventId, 'event');
+    }
+  }
+
+  Future<void> _openLikedEventDetail(String eventId) async {
+    if (eventId.trim().isEmpty) return;
+    final result = await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: LikedEventDetail(
+          eventId: eventId,
+        ),
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
+    if (!mounted) return;
+    await _handleEventSwipeResult(
+        result is Map ? Map<String, dynamic>.from(result) : null);
   }
 
   @override
@@ -834,45 +865,38 @@ class _VenuePagesState extends State<VenuePages> {
                             ),
                           ),
                           SizedBox(height: size.height * 2 / 100),
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: LikedEventDetail(),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );
-                            },
-                            child: SizedBox(
-                              height: size.height * 30 / 100,
-                              child: ListView.builder(
-                                scrollDirection: Axis.horizontal,
-                                padding: EdgeInsets.only(left: 19),
-                                itemCount: _recentEvents.isEmpty
-                                    ? 1
-                                    : _recentEvents.length,
-                                itemBuilder: (context, index) {
-                                  if (_recentEvents.isEmpty) {
-                                    return _recentEventCard(
-                                      image: AppImage.eventCardImage,
-                                      name: "No upcoming events",
-                                      time: "",
-                                      tags: [],
-                                      isNetwork: false,
-                                    );
-                                  }
-                                  final item = _recentEvents[index];
+                          SizedBox(
+                            height: size.height * 30 / 100,
+                            child: ListView.builder(
+                              scrollDirection: Axis.horizontal,
+                              padding: EdgeInsets.only(left: 19),
+                              itemCount:
+                                  _recentEvents.isEmpty ? 1 : _recentEvents.length,
+                              itemBuilder: (context, index) {
+                                if (_recentEvents.isEmpty) {
                                   return _recentEventCard(
+                                    image: AppImage.eventCardImage,
+                                    name: "No upcoming events",
+                                    time: "",
+                                    tags: [],
+                                    isNetwork: false,
+                                  );
+                                }
+                                final item = _recentEvents[index];
+                                final eventId = _str(item['_id']);
+                                return GestureDetector(
+                                  onTap: () async {
+                                    await _openLikedEventDetail(eventId);
+                                  },
+                                  child: _recentEventCard(
                                     image: _asUploadUrl(item['event_image']),
                                     name: _str(item['event_name']),
                                     time: _str(item['date']),
                                     tags: [], // Events don't have categories in the response
                                     isNetwork: true,
-                                  );
-                                },
-                              ),
+                                  ),
+                                );
+                              },
                             ),
                           ),
                           SizedBox(height: size.height * 3 / 100),
@@ -955,10 +979,10 @@ class _VenuePagesState extends State<VenuePages> {
                                                   .rightToLeftWithFade,
                                               child: BookTable(
                                                 venueId: widget.venueId,
-                                                venueName: venueName.toString(),
-                                                venueAddress: address,
-                                                venueImage: venueImage,
-                                                venueLikes: totalLikes,
+                                                // venueName: venueName.toString(),
+                                                // venueAddress: address,
+                                                // // venueImage: venueImage,
+                                                // venueLikes: totalLikes,
                                               ),
                                               duration: const Duration(
                                                   milliseconds: 500),
@@ -1172,253 +1196,6 @@ class _VenuePagesState extends State<VenuePages> {
     );
   }
 
-  void documenttypebottomsheet(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    showModalBottomSheet<void>(
-      backgroundColor: Colors.transparent,
-      isScrollControlled: true,
-      shape: const RoundedRectangleBorder(),
-      context: context,
-      builder: (BuildContext context) {
-        return StatefulBuilder(builder: (context, setStateBottomSheet) {
-          return Container(
-            width: MediaQuery.of(context).size.width * 100 / 100,
-            height: MediaQuery.of(context).size.height * 60 / 100,
-            color: Colors.transparent,
-            child: Column(
-              children: [
-                Container(
-                  width: MediaQuery.of(context).size.width * 100 / 100,
-                  height: MediaQuery.of(context).size.height * 60 / 100,
-                  child: Column(
-                    children: [
-                      Expanded(
-                        flex: 1,
-                        child: Container(
-                          decoration: BoxDecoration(
-                            gradient: AppColor.backgroundGradientcolor(context),
-                            borderRadius: BorderRadius.only(
-                              topLeft: Radius.circular(46),
-                              topRight: Radius.circular(46),
-                            ),
-                          ),
-                          width: size.width * 100 / 100,
-                          height: size.height * 80 / 100,
-                          child: Column(
-                            children: [
-                              SizedBox(height: size.height * 2 / 100),
-
-                              /// -------- DRAG INDICATOR --------
-                              Image.asset(
-                                AppImage.dashIcon,
-                                height: size.height * 0.5 / 100,
-                                width: size.width * 28 / 100,
-                                fit: BoxFit.fill,
-                              ),
-
-                              SizedBox(height: size.height * 2 / 100),
-
-                              /// -------- SOCIAL SHARE ICONS --------
-                              Center(
-                                child: SizedBox(
-                                  width: size.width * 90 / 100,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: List.generate(shareIcons.length,
-                                        (index) {
-                                      return Padding(
-                                        padding: EdgeInsets.symmetric(
-                                            horizontal: size.width * 3 / 100,
-                                            vertical: size.height * 2 / 100),
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            // Handle share icon tap
-                                          },
-                                          child: Image.asset(
-                                            shareIcons[index],
-                                            width: size.width * 14 / 100,
-                                            height: size.width * 14 / 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      );
-                                    }),
-                                  ),
-                                ),
-                              ),
-
-                              /// -------- DIVIDER --------
-                              Divider(
-                                height: 0.2,
-                                thickness: 0.5,
-                                color: AppColor.secondryColor(context),
-                                indent: 28,
-                                endIndent: 28,
-                              ),
-
-                              SizedBox(height: size.height * 2 / 100),
-                              SizedBox(height: size.height * 1 / 100),
-
-                              /// -------- CONTACTS LIST --------
-                              Expanded(
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    children: [
-                                      ...List.generate(chats.length, (index) {
-                                        final chat = chats[index];
-                                        final isSend =
-                                            chats[index]['isSend'] == true;
-
-                                        return Wrap(
-                                          children: [
-                                            Container(
-                                              width: size.width * 90 / 100,
-                                              height: size.height * 8.5 / 100,
-                                              child: ListTile(
-                                                contentPadding: EdgeInsets.zero,
-                                                leading: Container(
-                                                  height:
-                                                      size.height * 10 / 100,
-                                                  width: size.width * 13 / 100,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.circle,
-                                                    image: DecorationImage(
-                                                      image: AssetImage(
-                                                          chat['image'] ?? ''),
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                                  ),
-                                                ),
-                                                title: Text(
-                                                  chat['name'] ?? '',
-                                                  style: TextStyle(
-                                                    fontWeight: FontWeight.w600,
-                                                    fontSize: 16,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                  ),
-                                                ),
-                                                subtitle: Text(
-                                                  chat['lastMessage'] ?? '',
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                  ),
-                                                  maxLines: 1,
-                                                  overflow:
-                                                      TextOverflow.ellipsis,
-                                                ),
-                                                trailing: GestureDetector(
-                                                  onTap: () {
-                                                    setStateBottomSheet(() {
-                                                      chats[index]['isSend'] =
-                                                          true;
-                                                    });
-
-                                                    Future.delayed(
-                                                        const Duration(
-                                                            milliseconds: 200),
-                                                        () {
-                                                      Navigator.push(
-                                                        context,
-                                                        PageTransition(
-                                                          type:
-                                                              PageTransitionType
-                                                                  .bottomToTop,
-                                                          child:
-                                                              ChatMessageScreen(
-                                                            name: chats[index]
-                                                                    ['name'] ??
-                                                                '',
-                                                            image: chats[index]
-                                                                    ['image'] ??
-                                                                '',
-                                                          ),
-                                                        ),
-                                                      );
-                                                    });
-                                                  },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 20,
-                                                        vertical: 8),
-                                                    decoration: BoxDecoration(
-                                                      color: isSend
-                                                          ? AppColor
-                                                              .logoutContainerColor(
-                                                                  context)
-                                                          : AppColor
-                                                              .secondryColor(
-                                                                  context),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              10),
-                                                      border: isSend
-                                                          ? Border.all(
-                                                              color: AppColor
-                                                                  .buttonColor,
-                                                              width: 1)
-                                                          : null,
-                                                    ),
-                                                    child: Text(
-                                                      isSend
-                                                          ? (chats[index][
-                                                                      'message1']
-                                                                  ?.toString() ??
-                                                              'Send')
-                                                          : (chats[index][
-                                                                      'message']
-                                                                  ?.toString() ??
-                                                              'Send'),
-                                                      style: TextStyle(
-                                                        fontSize: 14,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        color: isSend
-                                                            ? AppColor
-                                                                .secondryColor(
-                                                                    context)
-                                                            : AppColor
-                                                                .primaryColor(
-                                                                    context),
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            if (index < chats.length - 1)
-                                              SizedBox(
-                                                  height:
-                                                      size.height * 0.1 / 100),
-                                          ],
-                                        );
-                                      }),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          );
-        });
-      },
-    );
-  }
+  void documenttypebottomsheet(BuildContext context) =>
+      showEventTypesBottomSheet(context);
 }

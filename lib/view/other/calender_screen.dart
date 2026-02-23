@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 
@@ -11,6 +12,7 @@ import '../../../utilities/app_font.dart';
 import '../../../utilities/app_header.dart';
 import '../../../utilities/app_image.dart';
 import '../../controller/search/search_calender_filter_controller.dart';
+import 'MySplashSection/EventSection/Liked/liked_event_details.dart';
 
 class CalendarScreen extends StatefulWidget {
   static String routeName = './CalendarScreen';
@@ -271,143 +273,163 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                     final String eventImage =
                                         event['event_image'] ?? '';
 
-                                    return Container(
-                                      margin: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      width: MediaQuery.of(context).size.width *
-                                          90 /
-                                          100,
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(20),
-                                        color: AppColor.themeColor,
-                                      ),
-                                      child: Padding(
-                                        padding: EdgeInsets.symmetric(
-                                          vertical: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              1.5 /
-                                              100,
-                                          horizontal: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              2.5 /
-                                              100,
+                                    return GestureDetector(
+                                      onTap: () {
+                                        Navigator.push(
+                                          context,
+                                          PageTransition(
+                                            type: PageTransitionType
+                                                .rightToLeftWithFade,
+                                            child: LikedEventDetail(
+                                              eventId: event['event_id'],
+                                            ),
+                                            duration: const Duration(
+                                                milliseconds: 500),
+                                          ),
+                                        );
+                                      },
+                                      child: Container(
+                                        margin: const EdgeInsets.symmetric(
+                                            vertical: 8),
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                90 /
+                                                100,
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          color: AppColor.themeColor,
                                         ),
-                                        child: Row(
-                                          children: [
-                                            Container(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  15 /
-                                                  100,
-                                              height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  15 /
-                                                  100,
-                                              child: eventImage.isNotEmpty
-                                                  ? ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              8),
-                                                      child: Image.network(
-                                                        '${AppConfigProvider.imageUrl}$eventImage',
+                                        child: Padding(
+                                          padding: EdgeInsets.symmetric(
+                                            vertical: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1.5 /
+                                                100,
+                                            horizontal: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                2.5 /
+                                                100,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Container(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    15 /
+                                                    100,
+                                                height: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    15 /
+                                                    100,
+                                                child: eventImage.isNotEmpty
+                                                    ? ClipRRect(
+                                                        borderRadius:
+                                                            BorderRadius
+                                                                .circular(8),
+                                                        child: Image.network(
+                                                          '${AppConfigProvider.imageUrl}$eventImage',
+                                                          fit: BoxFit.cover,
+                                                          errorBuilder:
+                                                              (context, error,
+                                                                  stackTrace) {
+                                                            return Image.asset(
+                                                              AppImage
+                                                                  .ticketImage,
+                                                              fit: BoxFit.cover,
+                                                            );
+                                                          },
+                                                        ),
+                                                      )
+                                                    : Image.asset(
+                                                        AppImage.ticketImage,
                                                         fit: BoxFit.cover,
-                                                        errorBuilder: (context,
-                                                            error, stackTrace) {
-                                                          return Image.asset(
-                                                            AppImage
-                                                                .ticketImage,
-                                                            fit: BoxFit.cover,
-                                                          );
-                                                        },
                                                       ),
-                                                    )
-                                                  : Image.asset(
-                                                      AppImage.ticketImage,
-                                                      fit: BoxFit.cover,
-                                                    ),
-                                            ),
-                                            SizedBox(
-                                              width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
-                                                  2 /
-                                                  100,
-                                            ),
-                                            Column(
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    Container(
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              45 /
-                                                              100,
-                                                      child: Text(
-                                                        eventName,
-                                                        style: TextStyle(
-                                                          fontFamily: AppFont
-                                                              .fontFamily,
-                                                          fontSize: 14,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context),
+                                              ),
+                                              SizedBox(
+                                                width: MediaQuery.of(context)
+                                                        .size
+                                                        .width *
+                                                    2 /
+                                                    100,
+                                              ),
+                                              Column(
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
+                                                children: [
+                                                  Row(
+                                                    mainAxisAlignment:
+                                                        MainAxisAlignment
+                                                            .spaceBetween,
+                                                    children: [
+                                                      Container(
+                                                        width: MediaQuery.of(
+                                                                    context)
+                                                                .size
+                                                                .width *
+                                                            45 /
+                                                            100,
+                                                        child: Text(
+                                                          eventName,
+                                                          style: TextStyle(
+                                                            fontFamily: AppFont
+                                                                .fontFamily,
+                                                            fontSize: 14,
+                                                            fontWeight:
+                                                                FontWeight.w600,
+                                                            color: AppColor
+                                                                .secondryColor(
+                                                                    context),
+                                                          ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    Text(
-                                                      AppLanguage
-                                                              .viewdetailsText[
-                                                          language],
-                                                      style: const TextStyle(
+                                                      Text(
+                                                        AppLanguage
+                                                                .viewdetailsText[
+                                                            language],
+                                                        style: const TextStyle(
+                                                          fontFamily: AppFont
+                                                              .fontFamily,
+                                                          fontSize: 10,
+                                                          fontWeight:
+                                                              FontWeight.w500,
+                                                          color: AppColor
+                                                              .pinkColor,
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                        MediaQuery.of(context)
+                                                                .size
+                                                                .width *
+                                                            60 /
+                                                            100,
+                                                    child: Text(
+                                                      "$eventDate • $address",
+                                                      overflow:
+                                                          TextOverflow.ellipsis,
+                                                      style: TextStyle(
                                                         fontFamily:
                                                             AppFont.fontFamily,
-                                                        fontSize: 10,
+                                                        fontSize: 14,
                                                         fontWeight:
-                                                            FontWeight.w500,
-                                                        color:
-                                                            AppColor.pinkColor,
+                                                            FontWeight.w600,
+                                                        color: AppColor
+                                                            .secondryColor(
+                                                                context),
                                                       ),
                                                     ),
-                                                  ],
-                                                ),
-                                                Container(
-                                                  width: MediaQuery.of(context)
-                                                          .size
-                                                          .width *
-                                                      60 /
-                                                      100,
-                                                  child: Text(
-                                                    "$eventDate • $address",
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontSize: 14,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context),
-                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     );

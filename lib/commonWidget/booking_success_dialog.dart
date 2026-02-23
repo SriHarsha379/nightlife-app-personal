@@ -38,7 +38,8 @@ class _BookingSuccessDialogState extends State<BookingSuccessDialog>
     );
     _popupScale = CurvedAnimation(parent: _popupCtrl, curve: Curves.elasticOut);
     _popupFade = CurvedAnimation(parent: _popupCtrl, curve: Curves.easeIn);
-    _checkScale = CurvedAnimation(parent: _checkCtrl, curve: Curves.easeOutBack);
+    _checkScale =
+        CurvedAnimation(parent: _checkCtrl, curve: Curves.easeOutBack);
 
     _popupCtrl.forward();
     Future.delayed(const Duration(milliseconds: 150), () {
