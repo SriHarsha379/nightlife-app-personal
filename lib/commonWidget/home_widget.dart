@@ -449,7 +449,7 @@ class HomeWidget {
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return Image.asset(
-                                          AppImage.eventimg,
+                                          AppImage.dummyImageIcon,
                                           fit: BoxFit.fitHeight,
                                         );
                                       },
@@ -782,7 +782,6 @@ class HomeWidget {
     String image,
     String name,
     String venueId,
-  
     VoidCallback onTap, {
     Key? key,
     required bool showHeart,
@@ -858,7 +857,7 @@ class HomeWidget {
                                       errorBuilder:
                                           (context, error, stackTrace) {
                                         return Image.asset(
-                                          AppImage.venu1,
+                                          AppImage.dummyImageIcon,
                                           fit: BoxFit.fitHeight,
                                         );
                                       },

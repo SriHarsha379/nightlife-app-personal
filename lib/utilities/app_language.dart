@@ -460,6 +460,8 @@ class AppLanguage {
   static const completeBio = ["Complete Bio"];
   static const connectInstagramtext = ["Connect Instagram"];
   static const addFivevedios = ["Add 5 Videos"];
+    static const addHobbyText = ["Add Hobby"];
+
   static const royalClub = ["Royal Club"];
   static const moneyFesttext = ["Money Fest"];
   static const arjunRampaltext = ["Arjun Rampal"];

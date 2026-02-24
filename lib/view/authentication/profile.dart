@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:night_life/view/authentication/app_preference_screen.dart';
 import 'package:night_life/view/authentication/delete_account_screen.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/authentication/notifications_setting_screen.dart';
 import 'package:night_life/view/authentication/privacy_and_security.dart';
 import 'package:night_life/view/authentication/support_screen.dart';
+import 'package:night_life/controller/my_profile/profile_indicator_controller.dart';
 import 'package:night_life/view/other/about/aboutscreen.dart';
 import 'package:night_life/view/other/referafriend_screen.dart';
 import 'package:page_transition/page_transition.dart';
@@ -35,9 +35,39 @@ class Profile extends StatefulWidget {
 
 class _ProfileState extends State<Profile> {
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context
+          .read<MyProfleCompltetionController>()
+          .fetchMyProfleCompltetion(context);
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final isLoggingOut = context.watch<PostApiProvider>().secondaryLoading;
     final userController = context.watch<UserController>();
+    final profileCompletionController =
+        context.watch<MyProfleCompltetionController>();
+    final profileCompletionPercent =
+        profileCompletionController.profileCompletionPercentage;
+    final profileCompletionValue =
+        (profileCompletionPercent.clamp(0, 100) / 100.0);
+    final profileImageSize = MediaQuery.of(context).size.width * 33 / 100;
+    final completionTasks = profileCompletionController.completionMessages;
+    final fallbackTasks = [
+      // AppLanguage.addthreeMoreTExt[language],
+      // AppLanguage.completeBio[language],
+      // AppLanguage.connectInstagramtext[language],
+      // AppLanguage.addHobbyText[language],
+    ];
+    final tasksToShow =
+        completionTasks.isNotEmpty ? completionTasks : fallbackTasks;
+    final completionText = profileCompletionController.hasLoadedOnce
+        ? '$profileCompletionPercent% complete'
+        : AppLanguage.seventySevencompleteText[language];
     final fullName = userController.getUserName.trim().isNotEmpty
         ? userController.getUserName
         : "User";
@@ -85,6 +115,7 @@ class _ProfileState extends State<Profile> {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             // Profile Image
+                            // Profile Image with animated gradient indicator
                             GestureDetector(
                               onTap: () {
                                 Navigator.push(
@@ -100,38 +131,81 @@ class _ProfileState extends State<Profile> {
                               child: Column(
                                 children: [
                                   Container(
-                                    margin: EdgeInsets.only(top: 10),
-                                    width: MediaQuery.of(context).size.width *
-                                        33 /
-                                        100,
-                                    height: MediaQuery.of(context).size.width *
-                                        33 /
-                                        100,
+                                    margin:
+                                        const EdgeInsets.only(top: 10, left: 5),
+                                    width: profileImageSize + 8,
+                                    height: profileImageSize + 12,
                                     decoration: const BoxDecoration(
                                       shape: BoxShape.circle,
                                     ),
-                                    child: ClipOval(
-                                      child: hasNetworkImage
-                                          ? Image.network(
-                                              profileImageUrl,
-                                              fit: BoxFit.cover,
-                                              errorBuilder:
-                                                  (context, error, stackTrace) {
-                                                return Image.asset(
-                                                  AppImage.userprofile,
-                                                  fit: BoxFit.cover,
-                                                );
-                                              },
-                                            )
-                                          : Image.asset(
-                                              AppImage.placeHolder2Icon,
-                                              fit: BoxFit.cover,
-                                            ),
+                                    child: Stack(
+                                      alignment: Alignment.center,
+                                      children: [
+                                        // Animated Gradient Circular Progress Indicator
+                                        TweenAnimationBuilder<double>(
+                                          tween: Tween<double>(
+                                              begin: 0,
+                                              end: profileCompletionValue),
+                                          duration: const Duration(
+                                              milliseconds: 1500),
+                                          curve: Curves.easeInOutCubic,
+                                          builder: (context, value, child) {
+                                            return SizedBox(
+                                              width: profileImageSize + 10,
+                                              height: profileImageSize + 10,
+                                              child: CustomPaint(
+                                                painter:
+                                                    GradientCircularProgressPainter(
+                                                  progress: value,
+                                                  strokeWidth: 8,
+                                                  gradientColors: const [
+                                                    Color.fromARGB(255, 236, 58,
+                                                        97), // Light pink
+                                                    Color.fromARGB(255, 91, 32,
+                                                        187), // Purple
+                                                    Color.fromARGB(255, 212,
+                                                        121, 85), // Orange
+                                                    Color.fromARGB(
+                                                        255, 201, 59, 106),
+                                                  ],
+                                                  backgroundColor: Colors.white
+                                                      .withOpacity(0.18),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+
+                                        // Profile Image
+                                        SizedBox(
+                                          width: profileImageSize,
+                                          height: profileImageSize,
+                                          child: ClipOval(
+                                            child: hasNetworkImage
+                                                ? Image.network(
+                                                    profileImageUrl,
+                                                    fit: BoxFit.cover,
+                                                    errorBuilder: (context,
+                                                        error, stackTrace) {
+                                                      return Image.asset(
+                                                        AppImage.userprofile,
+                                                        fit: BoxFit.cover,
+                                                      );
+                                                    },
+                                                  )
+                                                : Image.asset(
+                                                    AppImage.placeHolder2Icon,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
                                 ],
                               ),
                             ),
+
                             SizedBox(
                                 width: MediaQuery.of(context).size.width *
                                     8 /
@@ -144,14 +218,17 @@ class _ProfileState extends State<Profile> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
+                                      height: profileCompletionPercent == 100
+                                          ? MediaQuery.of(context).size.height *
+                                              7 /
+                                              100
+                                          : MediaQuery.of(context).size.height *
                                               1 /
                                               100),
                                   Text(
                                     fullName,
                                     style: TextStyle(
-                                      fontSize: 24,
+                                      fontSize: 23,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
                                       color: AppColor.secondryColor(context),
@@ -162,26 +239,26 @@ class _ProfileState extends State<Profile> {
                                           MediaQuery.of(context).size.height *
                                               2 /
                                               100),
-                                  buildTaskRow(
-                                      AppLanguage.addthreeMoreTExt[language],
-                                      Colors.pinkAccent),
-                                  buildTaskRow(
-                                      AppLanguage.completeBio[language],
-                                      Colors.orangeAccent),
-                                  buildTaskRow(
-                                      AppLanguage
-                                          .connectInstagramtext[language],
-                                      Colors.purpleAccent),
-                                  buildTaskRow(
-                                      AppLanguage.addFivevedios[language],
-                                      Colors.redAccent),
+                                  ...List.generate(tasksToShow.length, (index) {
+                                    const colors = [
+                                      Colors.pinkAccent,
+                                      Colors.orangeAccent,
+                                      Colors.purpleAccent,
+                                      Colors.redAccent,
+                                    ];
+                                    return buildTaskRow(
+                                      tasksToShow[index],
+                                      colors[index % colors.length],
+                                    );
+                                  }),
                                 ],
                               ),
                             ),
                           ],
                         ),
                       ),
-
+                      SizedBox(
+                          height: MediaQuery.of(context).size.height * 1 / 100),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 0.84,
                         child: Row(
@@ -200,7 +277,7 @@ class _ProfileState extends State<Profile> {
                                     0.5 /
                                     100),
                             Text(
-                              AppLanguage.seventySevencompleteText[language],
+                              completionText,
                               style: TextStyle(
                                 fontSize: 11,
                                 fontWeight: FontWeight.w400,
@@ -616,5 +693,92 @@ class _ActionSheetButton extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class GradientCircularProgressPainter extends CustomPainter {
+  final double progress;
+  final double strokeWidth;
+  final List<Color> gradientColors;
+  final Color backgroundColor;
+
+  GradientCircularProgressPainter({
+    required this.progress,
+    required this.strokeWidth,
+    required this.gradientColors,
+    required this.backgroundColor,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = Offset(size.width / 2, size.height / 2);
+    final radius = (size.width / 2) - (strokeWidth / 2);
+    final rect = Rect.fromCircle(center: center, radius: radius);
+
+    // Draw background circle
+    final backgroundPaint = Paint()
+      ..color = backgroundColor
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = strokeWidth
+      ..strokeCap = StrokeCap.round;
+
+    canvas.drawCircle(center, radius, backgroundPaint);
+
+    if (progress > 0) {
+      final gradient = SweepGradient(
+        startAngle: -90 * (3.14159 / 180),
+        endAngle: -90 * (3.14159 / 180) + (2 * 3.14159 * progress),
+        colors: gradientColors,
+        tileMode: TileMode.repeated,
+      );
+
+      final gradientPaint = Paint()
+        ..shader = gradient.createShader(rect)
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round;
+
+      canvas.drawArc(
+        rect,
+        90 * (3.14159 / 180),
+        2 * 3.14159 * progress,
+        false,
+        gradientPaint,
+      );
+
+      if (progress < 1.0) {
+        final shimmerPaint = Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white.withOpacity(0.8),
+              Colors.transparent,
+            ],
+            stops: const [0.0, 0.3],
+          ).createShader(rect)
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2);
+
+        // Draw a small white arc at the progress edge for shimmer effect
+        final shimmerStartAngle =
+            -90 * (3.14159 / 180) + (2 * 3.14159 * progress) - 0.1;
+        final shimmerSweepAngle = 0.2;
+
+        canvas.drawArc(
+          rect,
+          shimmerStartAngle,
+          shimmerSweepAngle,
+          false,
+          shimmerPaint,
+        );
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant GradientCircularProgressPainter oldDelegate) {
+    return oldDelegate.progress != progress;
   }
 }

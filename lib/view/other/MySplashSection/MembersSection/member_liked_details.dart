@@ -38,102 +38,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   List<String> _eventPreferenceNames = [];
   List<Map<String, dynamic>> _recentEvents = [];
   List<Map<String, dynamic>> _recentVenues = [];
-
   int selectedIndex = 0;
-
-  List Interest = [
-    {'id': 1, 'title': 'Music'},
-    {'id': 2, 'title': 'Photography'},
-    {'id': 3, 'title': 'Social Mixers'},
-    {'id': 4, 'title': 'Open Mic'},
-    {'id': 5, 'title': 'Comedy Shows'},
-  ];
-
-  final List<Map<String, dynamic>> chatUsers = [
-    {
-      "name": "Priya",
-      "username": "@priya",
-      "image": "assets/icons/ProfilePhoto.png"
-    },
-    {
-      "name": "Neha",
-      "username": "@neha",
-      "image": "assets/icons/aadityaIcon.png"
-    },
-    {
-      "name": "Preet",
-      "username": "@preet",
-      "image": "assets/icons/galleryIcon.png"
-    },
-    {
-      "name": "Rohan",
-      "username": "@rohan",
-      "image": "assets/icons/girlImage.png"
-    },
-    {
-      "name": "Golu",
-      "username": "@golu",
-      "image": "assets/icons/userprofile.png"
-    },
-  ];
-
-  List chats = [
-    {
-      'id': 1,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Brew&Bloom',
-      'lastMessage': '@Brew&BloomCafé',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Techno',
-      'lastMessage': '@Techno',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'SUNBURN',
-      'lastMessage': '@Sunburn',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/eventstory1.jpg',
-      'name': 'Mitro',
-      'lastMessage': '@Mitro',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 5,
-      'image': 'assets/icons/eventstory2.png',
-      'name': 'Razberry',
-      'lastMessage': '@Razberry',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-    {
-      'id': 6,
-      'image': 'assets/icons/eventstory3.png',
-      'name': 'CCD',
-      'lastMessage': '@CCD',
-      'message': 'Send',
-      'message1': 'Send',
-      'isSend': false,
-    },
-  ];
-
+  List Interest = [];
   int selectedId = 1;
   List pics = [];
 
@@ -325,6 +231,20 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       await homeController.dislikeItem(context, targetEventId, 'event');
     } else if (action == 'like') {
       await homeController.likeItem(context, targetEventId, 'event');
+    }
+  }
+
+  Future<void> _handleVenueSwipeResult(Map<String, dynamic>? result) async {
+    if (result == null) return;
+    final action = _str(result['action']).toLowerCase();
+    final targetVenueId = _str(result['targetVenueId']);
+    if (targetVenueId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetVenueId, 'venue');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetVenueId, 'venue');
     }
   }
 
@@ -1857,8 +1777,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     final double cardWidth = 125 * size.width / 375;
     final double cardHeight = 150 * size.width / 375;
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
+      onTap: () async {
+        final result = await Navigator.push(
           context,
           PageTransition(
             type: PageTransitionType.rightToLeftWithFade,
@@ -1868,6 +1788,9 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             duration: const Duration(milliseconds: 500),
           ),
         );
+        if (!mounted) return;
+        await _handleVenueSwipeResult(
+            result is Map ? Map<String, dynamic>.from(result) : null);
       },
       child: Container(
         width: cardWidth,

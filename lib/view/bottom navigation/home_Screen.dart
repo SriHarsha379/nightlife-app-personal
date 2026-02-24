@@ -493,6 +493,7 @@ class _HomeState extends State<Home> {
     setState(() {
       currentMemberIndex = currentIndex ?? 0;
     });
+    _tryLoadMoreForType('member', currentIndex, membersList.length);
     return true;
   }
 
@@ -560,6 +561,7 @@ class _HomeState extends State<Home> {
       log("currentIndex$currentIndex");
       currentEventIndex = currentIndex ?? 0;
     });
+    _tryLoadMoreForType('event', currentIndex, eventsList.length);
 
     return true;
   }
@@ -627,6 +629,7 @@ class _HomeState extends State<Home> {
     setState(() {
       currentVenueIndex = currentIndex ?? 0;
     });
+    _tryLoadMoreForType('venue', currentIndex, venuesList.length);
     return true;
   }
 
@@ -705,6 +708,29 @@ class _HomeState extends State<Home> {
 
   int selectedTab = 0; // 0=Members, 1=Events, 2=Venues
 
+  String _typeFromSelectedId(int id) {
+    if (id == 1) return 'member';
+    if (id == 2) return 'event';
+    return 'venue';
+  }
+
+  void _tryLoadMoreForType(String type, int? currentIndex, int visibleLength) {
+    if (!mounted || visibleLength == 0) return;
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final int nextVisibleIndex = currentIndex ?? visibleLength;
+    final int remaining = visibleLength - nextVisibleIndex;
+    // Prefetch one card before list end for smoother continuity.
+    if (remaining <= 1) {
+      unawaited(
+        homeController.fetchNextPage(
+          context,
+          type: type,
+          limit: 20,
+        ),
+      );
+    }
+  }
+
   String _getHeaderUserName(UserController userController) {
     final localName = userController.getUserName.trim();
     if (localName.isNotEmpty) return localName;
@@ -748,6 +774,36 @@ class _HomeState extends State<Home> {
         _visibleItems(homeController.getEventsList, _hiddenEventIds);
     final visibleVenues =
         _visibleItems(homeController.getVenuesList, _hiddenVenueIds);
+    final selectedType = _typeFromSelectedId(selectedId);
+    final showBottomPaginationLoader =
+        homeController.isPaginationLoadingForType(selectedType);
+    final hasMoreForSelectedType = homeController.hasMoreForType(selectedType);
+
+    int selectedVisibleCount = visibleMembers.length;
+    if (selectedId == 2) {
+      selectedVisibleCount = visibleEvents.length;
+    } else if (selectedId == 3) {
+      selectedVisibleCount = visibleVenues.length;
+    }
+
+    final shouldShowCenterPaginationLoader = showBottomPaginationLoader ||
+        (selectedVisibleCount == 0 && hasMoreForSelectedType);
+
+    if (!homeController.getIsLoading &&
+        selectedVisibleCount == 0 &&
+        hasMoreForSelectedType &&
+        !showBottomPaginationLoader) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(
+          homeController.fetchNextPage(
+            context,
+            type: selectedType,
+            limit: 20,
+          ),
+        );
+      });
+    }
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -837,8 +893,9 @@ class _HomeState extends State<Home> {
                         Row(
                           children: [
                             GestureDetector(
-                              onTap: () {
-                                Navigator.push(
+                              onTap: () async {
+                                homeController.clearNotificationStatus();
+                                await Navigator.push(
                                   context,
                                   PageTransition(
                                     type: PageTransitionType.topToBottom,
@@ -847,13 +904,37 @@ class _HomeState extends State<Home> {
                                   ),
                                 );
                               },
-                              child: SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    3 /
-                                    100,
-                                child: Image.asset(
-                                  AppImage.bellicon,
-                                ),
+                              child: Stack(
+                                clipBehavior: Clip.none,
+                                children: [
+                                  SizedBox(
+                                    height: MediaQuery.of(context).size.height *
+                                        3 /
+                                        100,
+                                    child: Image.asset(
+                                      AppImage.bellicon,
+                                    ),
+                                  ),
+                                  if (homeController.getNotificationStatus)
+                                    Positioned(
+                                      right: 2,
+                                      top: 2,
+                                      child: Container(
+                                        width: 10,
+                                        height: 10,
+                                        decoration: BoxDecoration(
+                                          color: const Color.fromARGB(
+                                              255, 163, 86, 199),
+                                          shape: BoxShape.circle,
+                                          border: Border.all(
+                                            color:
+                                                Colors.white,
+                                            width: 2, // thickness
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                ],
                               ),
                             ),
                             SizedBox(
@@ -919,6 +1000,8 @@ class _HomeState extends State<Home> {
                                         await homeController.fetchHomeData(
                                           context,
                                           type: type,
+                                          page: 0,
+                                          limit: 20,
                                         );
                                       },
                                 child: Container(
@@ -985,28 +1068,36 @@ class _HomeState extends State<Home> {
                   else if (selectedId == 1)
                     Expanded(
                       child: visibleMembers.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'No members found',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColor.darkTextColor
-                                          : AppColor.richBlackColor,
-                                    ),
+                          ? shouldShowCenterPaginationLoader
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor.buttonColor,
                                   ),
-                                  if (_showMemberUndo) ...[
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                                )
+                              : Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'No members found',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColor.darkTextColor
+                                              : AppColor.richBlackColor,
+                                        ),
+                                      ),
+                                      if (_showMemberUndo) ...[
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.015),
-                                    _undoActionChip(_undoPendingMemberSwipe),
-                                  ],
-                                ],
-                              ),
-                            )
+                                        _undoActionChip(
+                                            _undoPendingMemberSwipe),
+                                      ],
+                                    ],
+                                  ),
+                                )
                           : AnimatedSwitcher(
                               duration: const Duration(milliseconds: 500),
                               transitionBuilder: (child, animation) =>
@@ -1118,28 +1209,35 @@ class _HomeState extends State<Home> {
                   if (selectedId == 2)
                     Expanded(
                       child: visibleEvents.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'No events found',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColor.darkTextColor
-                                          : AppColor.richBlackColor,
-                                    ),
+                          ? shouldShowCenterPaginationLoader
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor.buttonColor,
                                   ),
-                                  if (_showEventUndo) ...[
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                                )
+                              : Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'No events found',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColor.darkTextColor
+                                              : AppColor.richBlackColor,
+                                        ),
+                                      ),
+                                      if (_showEventUndo) ...[
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.015),
-                                    _undoActionChip(_undoPendingEventSwipe),
-                                  ],
-                                ],
-                              ),
-                            )
+                                        _undoActionChip(_undoPendingEventSwipe),
+                                      ],
+                                    ],
+                                  ),
+                                )
                           : AnimatedSwitcher(
                               duration: const Duration(milliseconds: 500),
                               transitionBuilder: (child, animation) =>
@@ -1183,7 +1281,7 @@ class _HomeState extends State<Home> {
                                                     event['event_image']
                                                         .isNotEmpty
                                                 ? '${AppConfigProvider.imageUrl}${event['event_image']}'
-                                                : AppImage.eventimg,
+                                                : AppImage.dummyImageIcon,
                                             event['event_name'] ?? 'Event',
                                             () async {
                                               final String eventId =
@@ -1249,28 +1347,35 @@ class _HomeState extends State<Home> {
                   if (selectedId == 3)
                     Expanded(
                       child: visibleVenues.isEmpty
-                          ? Center(
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    'No venues found',
-                                    style: TextStyle(
-                                      color: isDark
-                                          ? AppColor.darkTextColor
-                                          : AppColor.richBlackColor,
-                                    ),
+                          ? shouldShowCenterPaginationLoader
+                              ? Center(
+                                  child: CircularProgressIndicator(
+                                    color: AppColor.buttonColor,
                                   ),
-                                  if (_showVenueUndo) ...[
-                                    SizedBox(
-                                        height:
-                                            MediaQuery.of(context).size.height *
+                                )
+                              : Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        'No venues found',
+                                        style: TextStyle(
+                                          color: isDark
+                                              ? AppColor.darkTextColor
+                                              : AppColor.richBlackColor,
+                                        ),
+                                      ),
+                                      if (_showVenueUndo) ...[
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                    .size
+                                                    .height *
                                                 0.015),
-                                    _undoActionChip(_undoPendingVenueSwipe),
-                                  ],
-                                ],
-                              ),
-                            )
+                                        _undoActionChip(_undoPendingVenueSwipe),
+                                      ],
+                                    ],
+                                  ),
+                                )
                           : AnimatedSwitcher(
                               duration: const Duration(milliseconds: 500),
                               transitionBuilder: (child, animation) =>
@@ -1314,7 +1419,7 @@ class _HomeState extends State<Home> {
                                                     venue['venue_image']
                                                         .isNotEmpty
                                                 ? '${AppConfigProvider.imageUrl}${venue['venue_image']}'
-                                                : AppImage.venu1,
+                                                : AppImage.dummyImageIcon,
                                             venue['venue_name'] ?? 'Venue',
                                             venue['_id'] ?? '',
                                             () async {
@@ -1371,6 +1476,20 @@ class _HomeState extends State<Home> {
                                 ),
                               ),
                             ),
+                    ),
+                  if (showBottomPaginationLoader)
+                    Padding(
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * 0.02,
+                      ),
+                      child: SizedBox(
+                        height: 24,
+                        width: 24,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2.4,
+                          color: AppColor.buttonColor,
+                        ),
+                      ),
                     ),
                 ],
               ),

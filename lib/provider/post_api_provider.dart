@@ -26,6 +26,7 @@ import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
 
+import 'socket_provider.dart';
 import 'user_controller.dart';
 
 class PostApiProvider with ChangeNotifier {
@@ -70,7 +71,11 @@ class PostApiProvider with ChangeNotifier {
     if (res != null) {
       if (res['success'] == true) {
         final data = res['data'] ?? <String, dynamic>{};
+
         AppConstant.token = data['token'] ?? '12345';
+        final socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        socketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(data));
         TopNotification.success(context, res['message'][language]);
 
@@ -533,6 +538,9 @@ class PostApiProvider with ChangeNotifier {
 
       if (result != null && result['success'] == true) {
         AppConstant.token = result['data']['token'] ?? '12345';
+        final socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        socketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(result['data']));
         TopNotification.success(context, result['message'][language]);
 
@@ -578,7 +586,11 @@ class PostApiProvider with ChangeNotifier {
       final dynamic data = res['data'];
       if (data is Map) {
         final mapData = Map<String, dynamic>.from(data);
+
         AppConstant.token = mapData['token'] ?? AppConstant.token;
+        final socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        socketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(mapData));
         if (context.mounted) {
           Provider.of<UserController>(context, listen: false)
@@ -914,6 +926,9 @@ class PostApiProvider with ChangeNotifier {
     String lastName,
     String userName,
     String bio,
+    String instagramAccount,
+    String snapchatAccount,
+    String spotifyAccount,
     String email,
     String mobile,
     String gender,
@@ -929,6 +944,9 @@ class PostApiProvider with ChangeNotifier {
       'gender': gender,
       'email': email,
       'bio': bio,
+      'instagram_account': instagramAccount,
+      'snapchat_account': snapchatAccount,
+      'spotify_account': spotifyAccount,
       'mobile': mobile,
       'city_id': cityId,
     };
@@ -1131,8 +1149,6 @@ class PostApiProvider with ChangeNotifier {
     return res;
   }
 
-
-
   // Booking Event API
   Future<Map<String, dynamic>?> bookingEventApi(
     BuildContext context, {
@@ -1197,10 +1213,6 @@ class PostApiProvider with ChangeNotifier {
       setLoading(false);
     }
   }
-
-
-
-
 
 // ====================log out API=============//
 

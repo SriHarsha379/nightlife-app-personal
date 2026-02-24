@@ -67,7 +67,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
         statusBarColor: AppColor.primaryColor(context),
@@ -185,12 +185,25 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                         CrossAxisAlignment.start,
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      Text(widget.name,
-                                          style: TextStyle(
-                                              color: AppColor.secondryColor(context),
-                                              fontSize: 16,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: AppFont.fontFamily)),
+                                      Container(
+                                        width:
+                                            MediaQuery.of(context).size.width *
+                                                45 /
+                                                100,
+                                        child: Row(
+                                          children: [
+                                            Text(widget.name,
+                                                style: TextStyle(
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context),
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w500,
+                                                    fontFamily:
+                                                        AppFont.fontFamily)),
+                                          ],
+                                        ),
+                                      ),
                                       Text(
                                           AppLanguage
                                               .activeTwominuteAgotext[language],
@@ -209,28 +222,28 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                           // SizedBox(
                           //     width:
                           //         MediaQuery.of(context).size.width * 1 / 100),
-                          Container(
-                            height: size.height * 4.5 / 100,
-                            width: size.width * 4.5 / 100,
-                            child: Image.asset(
-                              AppImage.callIcon,
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
+                          // Container(
+                          //   height: size.height * 4.5 / 100,
+                          //   width: size.width * 4.5 / 100,
+                          //   child: Image.asset(
+                          //     AppImage.callIcon,
+                          //     color: AppColor.secondryColor(context),
+                          //   ),
+                          // ),
+                          // SizedBox(
+                          //     width:
+                          //         MediaQuery.of(context).size.width * 3 / 100),
+                          // Container(
+                          //   height: size.height * 6 / 100,
+                          //   width: size.width * 5 / 100,
+                          //   child: Image.asset(
+                          //     AppImage.vedioCallicon,
+                          //     color: AppColor.secondryColor(context),
+                          //   ),
+                          // ),
                           SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 3 / 100),
-                          Container(
-                            height: size.height * 6 / 100,
-                            width: size.width * 5 / 100,
-                            child: Image.asset(
-                              AppImage.vedioCallicon,
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
-                          SizedBox(
-                              width:
-                                  MediaQuery.of(context).size.width * 3 / 100),
+                                  MediaQuery.of(context).size.width * 15 / 100),
                           GestureDetector(
                             onTap: () {
                               reportBottomSheet(context);
@@ -398,7 +411,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                                       2 !=
                                                                   0
                                                               ? AppColor
-                                                                  .secondryColor(context)
+                                                                  .secondryColor(
+                                                                      context)
                                                               : AppColor
                                                                   .secondryColor(
                                                                       context),
@@ -628,8 +642,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                   MediaQuery.of(context).size.height * 7 / 100,
                               child: TextFormField(
                                 cursorColor: AppColor.secondryColor(context),
-                                style:  TextStyle(
-                                    height: 1, color: AppColor.secondryColor(context)),
+                                style: TextStyle(
+                                    height: 1,
+                                    color: AppColor.secondryColor(context)),
                                 textAlignVertical: TextAlignVertical.center,
                                 keyboardType: TextInputType.name,
                                 maxLength: AppConstant.describeLength,
@@ -762,8 +777,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                     .width *
                                                 6 /
                                                 100,
-                                            color: AppColor.secondryColor(context)
-                                                .withOpacity(0.5),
+                                            color:
+                                                AppColor.secondryColor(context)
+                                                    .withOpacity(0.5),
                                           ),
                                         ),
                                         SizedBox(

@@ -33,6 +33,9 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController usernameController = TextEditingController();
   final TextEditingController bioController = TextEditingController();
+  final TextEditingController instagramController = TextEditingController();
+  final TextEditingController snapchatController = TextEditingController();
+  final TextEditingController spotifyController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController cityController = TextEditingController();
@@ -111,6 +114,9 @@ class _EditProfileState extends State<EditProfile> {
 
       usernameController.text = userController.getUserNameId;
       bioController.text = userController.getUserBio;
+      instagramController.text = userController.getInstagramAccount;
+      snapchatController.text = userController.getSnapchatAccount;
+      spotifyController.text = userController.getSpotifyAccount;
       emailController.text = userController.getUserEmail;
       mobileController.text = userController.getUserMobile;
       selectedGender = userController.getUserGender.isNotEmpty
@@ -140,6 +146,9 @@ class _EditProfileState extends State<EditProfile> {
       lastNameController.text.trim(),
       usernameController.text.trim(),
       bioController.text.trim(),
+      instagramController.text.trim(),
+      snapchatController.text.trim(),
+      spotifyController.text.trim(),
       emailController.text.trim(),
       mobileController.text.trim(),
       selectedGender,
@@ -147,6 +156,7 @@ class _EditProfileState extends State<EditProfile> {
       _selectedProfileImage,
     );
 
+    if (!mounted) return;
     final userController = Provider.of<UserController>(context, listen: false);
     userController.setUserFromMap({
       ...userController.getUserData,
@@ -158,6 +168,9 @@ class _EditProfileState extends State<EditProfile> {
       'email': emailController.text.trim(),
       'phone_number': mobileController.text.trim(),
       'bio': bioController.text.trim(),
+      'instagram_account': instagramController.text.trim(),
+      'snapchat_account': snapchatController.text.trim(),
+      'spotify_account': spotifyController.text.trim(),
       'city_id': selectedCityId,
       'profile_image': _selectedProfileImage?.path ?? profileImage,
     });
@@ -211,14 +224,15 @@ class _EditProfileState extends State<EditProfile> {
     );
   }
 
-
-
   @override
   void dispose() {
     firstNameController.dispose();
     lastNameController.dispose();
     usernameController.dispose();
     bioController.dispose();
+    instagramController.dispose();
+    snapchatController.dispose();
+    spotifyController.dispose();
     emailController.dispose();
     mobileController.dispose();
     cityController.dispose();
@@ -583,6 +597,20 @@ class _EditProfileState extends State<EditProfile> {
                       ),
                     ),
                     SizedBox(
+                        height: MediaQuery.of(context).size.height * 1.5 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 0.87,
+                      child: Text(
+                        AppLanguage.aboutYouText[language],
+                        style: const TextStyle(
+                          color: AppColor.buttonColor,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                    SizedBox(
                         height: MediaQuery.of(context).size.height * 1 / 100),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 87 / 100,
@@ -649,6 +677,94 @@ class _EditProfileState extends State<EditProfile> {
                     ),
                     SizedBox(
                         height: MediaQuery.of(context).size.height * 1 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 87 / 100,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppLanguage.instagramText[language],
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.textcolor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    _buildFieldBox(
+                      context: context,
+                      child: CustomTextFieldInput(
+                        hintText:
+                            AppLanguage.yourInstagramProfileText[language],
+                        maxLength: AppConstant.fullNameText,
+                        keyboardType: TextInputType.name,
+                        controller: instagramController,
+                        fillColor: AppColor.textfieldcontainercolor(context),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 87 / 100,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          "Snapchat",
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.textcolor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    _buildFieldBox(
+                      context: context,
+                      child: CustomTextFieldInput(
+                        hintText: AppLanguage.yourSnapchataccountText[language],
+                        maxLength: AppConstant.fullNameText,
+                        keyboardType: TextInputType.name,
+                        controller: snapchatController,
+                        fillColor: AppColor.textfieldcontainercolor(context),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * 87 / 100,
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: Text(
+                          AppLanguage.spotifyText[language],
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                            fontFamily: AppFont.fontFamily,
+                            color: AppColor.textcolor,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100),
+                    _buildFieldBox(
+                      context: context,
+                      child: CustomTextFieldInput(
+                        hintText: AppLanguage.yourSpotifyaccountText[language],
+                        maxLength: AppConstant.fullNameText,
+                        keyboardType: TextInputType.name,
+                        controller: spotifyController,
+                        fillColor: AppColor.textfieldcontainercolor(context),
+                      ),
+                    ),
+                    SizedBox(
+                        height: MediaQuery.of(context).size.height * 1.5 / 100),
                     SizedBox(
                       width: MediaQuery.of(context).size.width * 0.87,
                       child: Text(

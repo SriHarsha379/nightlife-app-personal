@@ -18,6 +18,8 @@ import 'controller/members/members_controller.dart';
 import 'controller/my_profile/get_my_profile.dart';
 import 'controller/my_profile/get_my_swipe_profile_controller.dart';
 import 'controller/my_profile/my_visibility_controller.dart';
+import 'controller/my_profile/profile_indicator_controller.dart';
+import 'controller/notification/notification_controller.dart';
 import 'controller/search/search_calender_filter_controller.dart';
 import 'controller/search/search_filter_controller.dart';
 import 'controller/support/faq_controller.dart';
@@ -26,6 +28,7 @@ import 'controller/vibe_check/vibe_check_controller.dart';
 import 'controller/vibe_preference/vibe_prefernce_controller.dart';
 import 'provider/darkmode_provider.dart';
 import 'provider/post_api_provider.dart';
+import 'provider/socket_provider.dart';
 import 'provider/user_controller.dart';
 import 'utilities/app_font.dart';
 
@@ -44,6 +47,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
+        ChangeNotifierProvider(create: (_) => SocketProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
         ChangeNotifierProvider(create: (_) => PostApiProvider()),
         ChangeNotifierProvider(create: (_) => VibeCheckController()),
@@ -70,6 +74,8 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(create: (_) => BookingEventDetails()),
         ChangeNotifierProvider(create: (_) => LikedBookedEventController()),
         ChangeNotifierProvider(create: (_) => EventsBookingDetailsController()),
+        ChangeNotifierProvider(create: (_) => NotificationController()),
+        ChangeNotifierProvider(create: (_) => MyProfleCompltetionController()),
       ],
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {

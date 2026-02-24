@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:night_life/controller/home/home_controller.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_table.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
@@ -295,6 +296,37 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     _searchDebounce?.cancel();
     await _loadSearchData(type: tapBarStatus == 1 ? 'venue' : 'event');
+  }
+
+  Future<void> _handleVenueDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = (result['action'] ?? '').toString().trim().toLowerCase();
+    final targetVenueId = (result['targetVenueId'] ?? '').toString().trim();
+    if (targetVenueId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetVenueId, 'venue');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetVenueId, 'venue');
+    }
+  }
+
+  Future<void> _openVenueDetail(String venueId) async {
+    if (venueId.trim().isEmpty) return;
+    final result = await Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: VenuePages(
+          venueId: venueId,
+        ),
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
+    if (!mounted) return;
+    await _handleVenueDetailResult(result);
   }
 
   @override
@@ -1032,16 +1064,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 ),
                                                                               ),
                                                                               child: GestureDetector(
-                                                                                onTap: () {
-                                                                                  Navigator.push(
-                                                                                    context,
-                                                                                    PageTransition(
-                                                                                      type: PageTransitionType.rightToLeftWithFade,
-                                                                                      child: VenuePages(
-                                                                                        venueId: venueFeaturedList[index]['id'].toString(),
-                                                                                      ),
-                                                                                      duration: const Duration(milliseconds: 500),
-                                                                                    ),
+                                                                                onTap: () async {
+                                                                                  await _openVenueDetail(
+                                                                                    venueFeaturedList[index]['id'].toString(),
                                                                                   );
                                                                                 },
                                                                                 child: Column(
@@ -1231,21 +1256,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           100),
                                                                   child:
                                                                       GestureDetector(
-                                                                    onTap: () {
-                                                                      Navigator
-                                                                          .push(
-                                                                        context,
-                                                                        PageTransition(
-                                                                          type:
-                                                                              PageTransitionType.rightToLeftWithFade,
-                                                                          child:
-                                                                              VenuePages(
-                                                                            venueId:
-                                                                                placeList[index]['id'].toString(),
-                                                                          ),
-                                                                          duration:
-                                                                              const Duration(milliseconds: 500),
-                                                                        ),
+                                                                    onTap:
+                                                                        () async {
+                                                                      await _openVenueDetail(
+                                                                        placeList[index]['id']
+                                                                            .toString(),
                                                                       );
                                                                     },
                                                                     child:
@@ -1919,7 +1934,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       type: PageTransitionType
                                                                           .rightToLeftWithFade,
                                                                       child:
-                                                                          LikedEventDetail(),
+                                                                          LikedEventDetail(
+                                                                        eventId:
+                                                                            event["id"],
+                                                                      ),
                                                                       duration: const Duration(
                                                                           milliseconds:
                                                                               500),
@@ -2222,7 +2240,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             type:
                                                                                 PageTransitionType.bottomToTop,
                                                                             child:
-                                                                                LikedEventDetail(),
+                                                                                LikedEventDetail(
+                                                                              eventId: eventRecommendedList[i2]['id'].toString(),
+                                                                            ),
                                                                             duration:
                                                                                 const Duration(milliseconds: 500),
                                                                           ),
