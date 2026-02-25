@@ -8,6 +8,8 @@ import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 import '../../provider/darkmode_provider.dart';
+import '../../utilities/app_constant.dart';
+import '../../utilities/app_validation.dart';
 
 class UseReferCodeScreen extends StatefulWidget {
   static String routeName = "./UseReferCodeScreen";
@@ -20,6 +22,22 @@ class UseReferCodeScreen extends StatefulWidget {
 
 class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
   TextEditingController referCodeController = TextEditingController();
+
+  void referCodeValidation() {
+    if (Validation.isFieldEmpty(context,
+        value: referCodeController.text, fieldName: "Refer Code")) return;
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: ProfileDetailsScreen(
+          screen: "refer",
+          refercode: referCodeController.text.toUpperCase(),
+        ),
+        duration: const Duration(milliseconds: 600),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -195,6 +213,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                   ),
                   child: TextFormField(
                     controller: referCodeController,
+                    maxLength: 8,
                     cursorColor: AppColor.secondryColor(context),
                     style: TextStyle(
                       color: AppColor.secondryColor(context),
@@ -202,6 +221,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                     ),
                     decoration: InputDecoration(
                       hintText: "Enter your code here",
+                      counterText: "",
                       hintStyle: TextStyle(
                         color: AppColor.hinttextcolor(context),
                         fontFamily: AppFont.fontFamily,
@@ -233,16 +253,7 @@ class _UseReferCodeScreenState extends State<UseReferCodeScreen> {
                 // Verify Button
                 GestureDetector(
                   onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: ProfileDetailsScreen(
-                          screen: "refer",
-                        ),
-                        duration: const Duration(milliseconds: 600),
-                      ),
-                    );
+                    referCodeValidation();
                   },
                   child: Container(
                     width: size.width * 88 / 100,

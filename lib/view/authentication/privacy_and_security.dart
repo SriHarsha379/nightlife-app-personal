@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:night_life/view/other/block_user_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import '../../controller/my_profile/my_visibility_controller.dart';
+import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -24,6 +25,7 @@ class PrivacySecurityScreen extends StatefulWidget {
 
 class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   bool isSelected = true;
+  String socialType = '';
   List<bool> switches = [
     false,
     false,
@@ -43,6 +45,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
   @override
   Widget build(BuildContext context) {
     final visibilityController = Provider.of<MyVisibilityController>(context);
+    final userController = Provider.of<UserController>(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
@@ -51,7 +54,10 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
         statusBarIconBrightness: Brightness.light));
 
     final size = MediaQuery.of(context).size;
-
+    socialType = userController.getLoginType.toString();
+    final normalizedSocialType = socialType.trim().toLowerCase();
+    final isSocialLogin =
+        normalizedSocialType == "google" || normalizedSocialType == "apple";
     return Scaffold(
       body: Container(
         width: size.width,
@@ -280,20 +286,21 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
               //   ),
               // ),
 
-              Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 17.0, vertical: 10),
-                child: Text(
-                  AppLanguage.dataAndsecurity[language],
-                  textAlign: TextAlign.left,
-                  style: TextStyle(
-                    fontFamily: AppFont.fontFamily,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    color: AppColor.secondryColor(context),
+              if (!isSocialLogin)
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 17.0, vertical: 10),
+                  child: Text(
+                    AppLanguage.dataAndsecurity[language],
+                    textAlign: TextAlign.left,
+                    style: TextStyle(
+                      fontFamily: AppFont.fontFamily,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: AppColor.secondryColor(context),
+                    ),
                   ),
                 ),
-              ),
 
               // Container(
               //   height: size.height * 7 / 100,
@@ -338,61 +345,62 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
               //   ),
               // ),
 
-              GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeftWithFade,
-                      child: ChangePasswordScreen(),
-                      duration: const Duration(milliseconds: 500),
+              if (!isSocialLogin)
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: ChangePasswordScreen(),
+                        duration: const Duration(milliseconds: 500),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    height: size.height * 7 / 100,
+                    width: size.width * 94 / 100,
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
+                    margin: const EdgeInsets.symmetric(
+                      horizontal: 10,
                     ),
-                  );
-                },
-                child: Container(
-                  height: size.height * 7 / 100,
-                  width: size.width * 94 / 100,
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 5, horizontal: 8),
-                  margin: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColor.notificationContainerColor(context),
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.primaryColor(context),
-                        spreadRadius: 3,
-                        blurRadius: 7,
-                        offset: const Offset(0, 1),
-                      ),
-                    ],
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        AppLanguage.changePasswordText[language],
-                        style: TextStyle(
-                          color: AppColor.secondryColor(context),
-                          fontSize: 16,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w400,
+                    decoration: BoxDecoration(
+                      color: AppColor.notificationContainerColor(context),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.primaryColor(context),
+                          spreadRadius: 3,
+                          blurRadius: 7,
+                          offset: const Offset(0, 1),
                         ),
-                      ),
-                      SizedBox(
-                        height: size.width * 8 / 100,
-                        width: size.width * 9 / 100,
-                        child: Image.asset(
-                          AppImage.frontArrowIcon,
-                          fit: BoxFit.contain,
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          AppLanguage.changePasswordText[language],
+                          style: TextStyle(
+                            color: AppColor.secondryColor(context),
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w400,
+                          ),
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          height: size.width * 8 / 100,
+                          width: size.width * 9 / 100,
+                          child: Image.asset(
+                            AppImage.frontArrowIcon,
+                            fit: BoxFit.contain,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
 
               SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
             ],

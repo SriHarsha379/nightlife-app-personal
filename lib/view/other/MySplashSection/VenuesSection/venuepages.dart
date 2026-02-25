@@ -1197,5 +1197,9 @@ class _VenuePagesState extends State<VenuePages> {
   }
 
   void documenttypebottomsheet(BuildContext context) =>
-      showEventTypesBottomSheet(context);
+      showEventTypesBottomSheet(
+        context,
+        type: 'venue',
+        id: _str(widget.venueId),
+      );
 }

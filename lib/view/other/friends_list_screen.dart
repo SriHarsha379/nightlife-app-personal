@@ -97,7 +97,7 @@ class _FriendsListState extends State<FriendsList> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-     SystemChrome.setSystemUIOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(
       SystemUiOverlayStyle(
         // background color
         statusBarIconBrightness:
@@ -252,14 +252,14 @@ class _FriendsListState extends State<FriendsList> {
                       ),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
-                        borderSide:  BorderSide(
+                        borderSide: BorderSide(
                           color: AppColor.primaryColor(context),
                           width: 1,
                         ),
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(40),
-                        borderSide:  BorderSide(
+                        borderSide: BorderSide(
                           color: AppColor.primaryColor(context),
                           width: 0,
                         ),
@@ -418,7 +418,6 @@ class _FriendsListState extends State<FriendsList> {
                         ),
                       ),
                     )
-                 
                   ],
                 ),
 
@@ -527,7 +526,6 @@ class _FriendsListState extends State<FriendsList> {
                                   ),
                                 ),
                                 if (index < chats.length - 0)
-                                 
                                   if (index < chats.length - 0)
                                     SizedBox(height: size.height * 0.1 / 100),
                               ],

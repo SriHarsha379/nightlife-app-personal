@@ -66,6 +66,12 @@ class UserController with ChangeNotifier {
   String get getPlayerId => _str(_userData['player_id']);
   String get getDeviceType => _str(_userData['device_type']);
   String get getReferralCode => _str(_userData['referral_code']);
+  String get getMyReferralCode => _str(_userData['my_referral_code']);
+  String get getDisplayReferralCode {
+    final myCode = getMyReferralCode.trim();
+    if (myCode.isNotEmpty) return myCode;
+    return getReferralCode.trim();
+  }
   String get getToken => _str(_userData['token']);
   String get getCreatedAt => _str(_userData['createdAt']);
   String get getUpdatedAt => _str(_userData['updatedAt']);

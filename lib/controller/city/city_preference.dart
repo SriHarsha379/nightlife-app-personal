@@ -103,17 +103,12 @@ class CityPreferenceController with ChangeNotifier {
 
   // Fetch city list from API
   Future<void> fetchCityList(BuildContext context) async {
-    String token = AppConstant.token;
     // String token =
     //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ4NmE1MWVlOWE5NGM3NGVkZTFkNCIsImlhdCI6MTc2OTU5NDk0NiwiZXhwIjoxNzcyMTg2OTQ2fQ.hA61WV_g0cXiKCs5saXoEeFWa38q_1BO7GwTucHUWMw";
-    if (token.isEmpty) {
-      print("Token is missing!");
-      return;
-    }
 
-    Map<String, String> headers = {
-      'Authorization': 'Bearer $token',
-    };
+    // Map<String, String> headers = {
+    //   'Authorization': 'Bearer $token',
+    // };
 
     if (_cityList.isEmpty) {
       _isLoading = true;
@@ -124,7 +119,7 @@ class CityPreferenceController with ChangeNotifier {
       final response = await getFormData(
         'auth/popular_cities',
         context,
-        headers: headers,
+        // headers: headers,
       );
 
       print("API Response: $response");

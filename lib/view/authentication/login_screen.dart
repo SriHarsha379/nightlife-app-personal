@@ -1,5 +1,8 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../provider/content_service.dart';
@@ -12,6 +15,7 @@ import '../../utilities/app_loader.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_validation.dart';
+import '../../utilities/auth_service.dart';
 import '../../utilities/custom_password.dart';
 import '../../utilities/widgets.dart';
 import '../content_screen/content_screen.dart';
@@ -97,6 +101,29 @@ class _LoginScreenState extends State<LoginScreen>
         context, emailController.text, passwordController.text);
     emailController.clear();
     passwordController.clear();
+  }
+
+
+
+
+
+  // ---- Google Login ------
+  void loginGoogle(BuildContext context) async {
+    final user = await AuthService.signInWithGoogle();
+    log("userrrrrrr$user");
+    if (user != null) {
+      final apiprovider = Provider.of<PostApiProvider>(context, listen: false);
+      apiprovider.socialLoginApiCalling(context, user);
+    }
+  }
+
+  // ---- Apple Login ------
+  void loginApple(BuildContext context) async {
+    final user = await AuthService.signInWithApple();
+    if (user != null) {
+      final apiprovider = Provider.of<PostApiProvider>(context, listen: false);
+      apiprovider.socialLoginApiCalling(context, user);
+    }
   }
 
   @override
@@ -250,10 +277,15 @@ class _LoginScreenState extends State<LoginScreen>
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Image.asset(
-                                AppImage.google,
-                                width: size.width * 0.14,
-                                height: size.width * 0.14,
+                              GestureDetector(
+                                onTap: () {
+                                  loginGoogle(context);
+                                },
+                                child: Image.asset(
+                                  AppImage.google,
+                                  width: size.width * 0.14,
+                                  height: size.width * 0.14,
+                                ),
                               ),
                               if (AppConstant.deviceType == "ios") ...[
                                 SizedBox(width: size.width * 0.02),

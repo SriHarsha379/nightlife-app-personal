@@ -388,7 +388,7 @@ class _Profile1State extends State<Profile1> {
                                     children: [
                                       SizedBox(height: size.height * 0.03),
                                       Text(
-                                        profileController.name,
+                                        profileController.name ,
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w700,

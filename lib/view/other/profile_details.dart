@@ -24,8 +24,16 @@ import '../../utilities/widgets.dart';
 class ProfileDetailsScreen extends StatefulWidget {
   final String? mobile;
   final String? screen;
+  final String? refercode;
+  final Map<String, dynamic>? socialUser;
 
-  const ProfileDetailsScreen({super.key, this.mobile, this.screen});
+  const ProfileDetailsScreen({
+    super.key,
+    this.mobile,
+    this.screen,
+    this.socialUser,
+    this.refercode,
+  });
   static String routeName = './ProfileDetailsScreen';
   @override
   State<ProfileDetailsScreen> createState() => _ProfileDetailsScreenState();
@@ -53,6 +61,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       TextEditingController();
   TextEditingController confirmpasswordTextEditingController =
       TextEditingController();
+
+  TextEditingController referCodeTextEditingController =
+      TextEditingController();
   String selectLocation = "NA";
 
   final FocusNode _focusNode = FocusNode();
@@ -63,12 +74,23 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   TextEditingController cityTextEditingController = TextEditingController();
   String? selectedCity;
   String? selectedCityId;
+  bool get _isSocialSignup => widget.screen == "social";
 
   @override
   void initState() {
     super.initState();
     mobileNumberTextEditingController.text =
         widget.mobile == null ? "" : widget.mobile.toString();
+    referCodeTextEditingController.text =
+        widget.refercode == null ? "" : widget.refercode.toString();
+    if (_isSocialSignup && widget.socialUser != null) {
+      final Map<String, dynamic> socialUser = widget.socialUser!;
+      NameTextEditingController.text =
+          (socialUser['first_name'] ?? '').toString();
+      lastnameTextEditingController.text =
+          (socialUser['last_name'] ?? '').toString();
+      emailController.text = (socialUser['email'] ?? '').toString();
+    }
     _dobFocusNode.addListener(() {
       setState(() {
         _isDobFocused = _dobFocusNode.hasFocus;
@@ -95,7 +117,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
     if (Validation.isFieldEmpty(context,
         value: NameTextEditingController.text,
-        fieldName: AppLanguage.nameText[language])) return;
+        fieldName: AppLanguage.firstNameText[language])) return;
 
     if (Validation.isFieldEmpty(context,
         value: lastnameTextEditingController.text,
@@ -113,29 +135,32 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       context,
       emailController.text,
     )) return;
-    if (Validation.isFieldEmpty(
-      context,
-      value: passwordTextEditingController.text,
-      fieldName: AppLanguage.passwordtext[language],
-    )) return;
 
-    if (!Validation.isPasswordLength(
-        context, passwordTextEditingController.text)) return;
+    if (!_isSocialSignup) {
+      if (Validation.isFieldEmpty(
+        context,
+        value: passwordTextEditingController.text,
+        fieldName: AppLanguage.passwordtext[language],
+      )) return;
 
-    if (Validation.isFieldEmpty(
-      context,
-      value: confirmpasswordTextEditingController.text,
-      fieldName: AppLanguage.confirmPassword[language],
-    )) return;
+      if (!Validation.isPasswordLength(
+          context, passwordTextEditingController.text)) return;
 
-    if (!Validation.isPasswordLength(
-        context, confirmpasswordTextEditingController.text)) return;
+      if (Validation.isFieldEmpty(
+        context,
+        value: confirmpasswordTextEditingController.text,
+        fieldName: AppLanguage.confirmPassword[language],
+      )) return;
 
-    if (!Validation.isPasswordMatch(
-      context,
-      passwordTextEditingController.text,
-      confirmpasswordTextEditingController.text,
-    )) return;
+      if (!Validation.isPasswordLength(
+          context, confirmpasswordTextEditingController.text)) return;
+
+      if (!Validation.isPasswordMatch(
+        context,
+        passwordTextEditingController.text,
+        confirmpasswordTextEditingController.text,
+      )) return;
+    }
 
     if (Validation.isFieldEmpty(context,
         value: dobtexteditingController.text,
@@ -155,6 +180,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         NameTextEditingController.text,
         lastnameTextEditingController.text,
         usernameTextEditingController.text,
+        referCodeTextEditingController.text,
         emailController.text,
         mobileNumberTextEditingController.text,
         passwordTextEditingController.text,
@@ -162,7 +188,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         selectedGender.toString(),
         heightTextEditingController.text,
         selectedCityId.toString(),
-        profilePhoto); // Pass city ID to API
+        profilePhoto,
+        loginType: _isSocialSignup
+            ? (widget.socialUser?['login_type']?.toString() ?? 'google')
+            : 'email',
+        isSocialSignup: _isSocialSignup); // Pass city ID to API
   }
 
   @override
@@ -371,7 +401,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       7 /
                                       100,
                                   child: CustomTextField(
-                                    hintText: AppLanguage.nameText[language],
+                                    hintText:
+                                        AppLanguage.firstNameText[language],
                                     maxLength: AppConstant.fullNameText,
                                     controller: NameTextEditingController,
                                     readOnly: false,
@@ -383,11 +414,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     2 /
                                     100,
                               ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    0.5 /
-                                    100,
-                              ),
+
                               Center(
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width *
@@ -467,8 +494,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.mobileMaxLenth,
                                     controller:
                                         mobileNumberTextEditingController,
-                                    readOnly:
-                                        widget.screen == "refer" ? false : true,
+                                    readOnly: (widget.screen == "refer" ||
+                                            _isSocialSignup)
+                                        ? false
+                                        : true,
+                                    // keyboardType: TextInputType.name,
                                   ),
                                 ),
                               ),
@@ -477,49 +507,51 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     2 /
                                     100,
                               ),
-                              Center(
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
+                              if (!_isSocialSignup) ...[
+                                Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        90 /
+                                        100,
+                                    height: MediaQuery.of(context).size.height *
+                                        7 /
+                                        100,
+                                    child: CustomTextField(
+                                      hintText: "Enter Password",
+                                      maxLength: 50,
+                                      controller: passwordTextEditingController,
+                                      isPassword: true,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(
                                   height: MediaQuery.of(context).size.height *
-                                      7 /
+                                      2 /
                                       100,
-                                  child: CustomTextField(
-                                    hintText: "Enter Password",
-                                    maxLength: 50,
-                                    controller: passwordTextEditingController,
-                                    isPassword: true,
+                                ),
+                                Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        90 /
+                                        100,
+                                    height: MediaQuery.of(context).size.height *
+                                        7 /
+                                        100,
+                                    child: CustomTextField(
+                                      hintText: "Enter Confirm Password",
+                                      maxLength: 50,
+                                      controller:
+                                          confirmpasswordTextEditingController,
+                                      isPassword: true,
+                                    ),
                                   ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    2 /
-                                    100,
-                              ),
-                              Center(
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
+                                SizedBox(
                                   height: MediaQuery.of(context).size.height *
-                                      7 /
+                                      2 /
                                       100,
-                                  child: CustomTextField(
-                                    hintText: "Enter Confirm Password",
-                                    maxLength: 50,
-                                    controller:
-                                        confirmpasswordTextEditingController,
-                                    isPassword: true,
-                                  ),
                                 ),
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    2 /
-                                    100,
-                              ),
+                              ],
                               Center(
                                 child: SizedBox(
                                   width: MediaQuery.of(context).size.width *
@@ -627,14 +659,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           if (cityController
                                               .getCityList.isEmpty) {
                                             // Show loading or fetch cities
-                                            ScaffoldMessenger.of(context)
-                                                .showSnackBar(
-                                              const SnackBar(
-                                                content:
-                                                    Text('Loading cities...'),
-                                                duration: Duration(seconds: 1),
-                                              ),
-                                            );
+                                            TopNotification.error(
+                                                context, 'Loading cities...');
                                           } else {
                                             _showCitySelectionSheet(context);
                                           }
@@ -725,12 +751,35 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    1 /
+                                    2 /
+                                    100,
+                              ),
+                              if (widget.screen == "refer")
+                                Center(
+                                  child: SizedBox(
+                                    width: MediaQuery.of(context).size.width *
+                                        90 /
+                                        100,
+                                    height: MediaQuery.of(context).size.height *
+                                        7 /
+                                        100,
+                                    child: CustomTextField(
+                                      hintText: "ReferCode",
+                                      maxLength: AppConstant.fullNameText,
+                                      controller:
+                                          referCodeTextEditingController,
+                                      readOnly: true,
+                                    ),
+                                  ),
+                                ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
                                     100,
                               ),
                               SizedBox(
                                 height: MediaQuery.of(context).size.height *
-                                    8 /
+                                    4 /
                                     100,
                               ),
                               Consumer<PostApiProvider>(

@@ -1542,7 +1542,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   void eventstypebottomsheet(BuildContext context) =>
-      showEventTypesBottomSheet(context);
+      showEventTypesBottomSheet(
+        context,
+        type: 'event',
+        id: _str(widget.eventId),
+      );
 
   void _openGalleryBottomSheet(
       BuildContext context, List<dynamic> galleryImages, int curentPage) {

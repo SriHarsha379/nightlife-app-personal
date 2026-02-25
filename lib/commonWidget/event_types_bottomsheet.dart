@@ -1,8 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:share_plus/share_plus.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../controller/invite/invite_event_venue_list_controller.dart';
 import '../utilities/app_color.dart';
 import '../utilities/app_config_provider.dart';
@@ -10,18 +13,28 @@ import '../utilities/app_font.dart';
 import '../utilities/app_image.dart';
 import '../view/other/chats/chat_message_screen.dart';
 
-void showEventTypesBottomSheet(BuildContext context) {
+void showEventTypesBottomSheet(
+  BuildContext context, {
+  required String type,
+  required String id,
+}) {
   showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(),
     context: context,
-    builder: (_) => const _InviteMembersBottomSheet(),
+    builder: (_) => _InviteMembersBottomSheet(type: type, id: id),
   );
 }
 
 class _InviteMembersBottomSheet extends StatefulWidget {
-  const _InviteMembersBottomSheet();
+  final String type;
+  final String id;
+
+  const _InviteMembersBottomSheet({
+    required this.type,
+    required this.id,
+  });
 
   @override
   State<_InviteMembersBottomSheet> createState() =>
@@ -32,11 +45,29 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
   final Set<String> _sentIds = <String>{};
   late final ScrollController _membersScrollController;
   final List<String> shareIcons = const [
-    "assets/icons/shareIcon.png",
-    "assets/icons/whatsappIcon.png",
-    "assets/icons/instaIcon.png",
-    "assets/icons/snapIcon.png",
+    'assets/icons/shareIcon.png',
+    'assets/icons/whatsappIcon.png',
+    'assets/icons/instaIcon.png',
+    'assets/icons/snapIcon.png',
   ];
+
+  String get _readableDeepLinkUrl =>
+      '${AppConfigProvider.apiUrl}common/deepLink?type=${widget.type}&id=${widget.id}&link=hii://${widget.type}/${widget.id}';
+
+  String get _appSchemeLink => 'hii://${widget.type}/${widget.id}';
+
+  String get _shareText =>
+      'Check this ${widget.type} on Hii app.\n$_appSchemeLink\n$_readableDeepLinkUrl';
+
+  Future<bool> _safeLaunchExternal(Uri uri) async {
+    try {
+      return await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } on PlatformException {
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
 
   @override
   void initState() {
@@ -81,6 +112,50 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
     return AssetImage(imagePath);
   }
 
+  Future<void> _handleShareTap(int index) async {
+    Navigator.pop(context);
+    if (index == 0) {
+      await Share.share(_shareText);
+      return;
+    }
+
+    if (index == 1) {
+      final uri = Uri.parse(
+        'https://wa.me/?text=${Uri.encodeComponent(_shareText)}',
+      );
+      final launched = await _safeLaunchExternal(uri);
+      if (!launched) {
+        await Share.share(_shareText);
+      }
+      return;
+    }
+
+    if (index == 2) {
+      final appLaunch = await _safeLaunchExternal(Uri.parse('instagram://app'));
+      if (!appLaunch) {
+        final webLaunch =
+            await _safeLaunchExternal(Uri.parse('https://www.instagram.com/'));
+        if (!webLaunch) {
+          await Share.share(_shareText);
+        }
+      }
+      return;
+    }
+
+    if (index == 3) {
+      final appLaunch = await _safeLaunchExternal(Uri.parse(
+        'snapchat://share?text=${Uri.encodeComponent(_shareText)}',
+      ));
+      if (!appLaunch) {
+        final webLaunch =
+            await _safeLaunchExternal(Uri.parse('https://www.snapchat.com/'));
+        if (!webLaunch) {
+          await Share.share(_shareText);
+        }
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -123,13 +198,17 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
                     children: List.generate(shareIcons.length, (index) {
                       return Padding(
                         padding: EdgeInsets.symmetric(
-                            horizontal: size.width * 3 / 100,
-                            vertical: size.height * 2 / 100),
-                        child: Image.asset(
-                          shareIcons[index],
-                          width: size.width * 14 / 100,
-                          height: size.width * 14 / 100,
-                          fit: BoxFit.cover,
+                          horizontal: size.width * 3 / 100,
+                          vertical: size.height * 2 / 100,
+                        ),
+                        child: GestureDetector(
+                          onTap: () => _handleShareTap(index),
+                          child: Image.asset(
+                            shareIcons[index],
+                            width: size.width * 14 / 100,
+                            height: size.width * 14 / 100,
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       );
                     }),
@@ -158,123 +237,135 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
                     }
                     return SingleChildScrollView(
                       controller: _membersScrollController,
-                      child: Column(children: [
-                        ...List.generate(controller.memberItems.length,
-                            (index) {
-                          final item = controller.memberItems[index];
-                          final id = _str(item['id']);
-                          final key = id.isEmpty ? index.toString() : id;
-                          final isSend = _sentIds.contains(key);
-                          final name = _str(item['full_name']);
-                          final username = _str(item['username']);
-                          final image = _fullImage(_str(item['profile_image']));
-                          final resolved =
-                              image.isEmpty ? AppImage.dummyImageIcon : image;
-                          return Column(
-                            children: [
-                              SizedBox(
-                                width: size.width * 0.9,
-                                height: size.height * 0.085,
-                                child: ListTile(
-                                  contentPadding: EdgeInsets.zero,
-                                  leading: SizedBox(
-                                    height: size.width * 0.13,
-                                    width: size.width * 0.13,
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(100),
-                                      child: Image(
-                                        image: _providerFor(resolved),
-                                        fit: BoxFit.cover,
-                                        errorBuilder: (_, __, ___) =>
-                                            Image.asset(
-                                          AppImage.dummyImageIcon,
+                      child: Column(
+                        children: [
+                          ...List.generate(controller.memberItems.length,
+                              (index) {
+                            final item = controller.memberItems[index];
+                            final id = _str(item['id']);
+                            final key = id.isEmpty ? index.toString() : id;
+                            final isSend = _sentIds.contains(key);
+                            final name = _str(item['full_name']);
+                            final username = _str(item['username']);
+                            final image =
+                                _fullImage(_str(item['profile_image']));
+                            final resolved =
+                                image.isEmpty ? AppImage.dummyImageIcon : image;
+                            return Column(
+                              children: [
+                                SizedBox(
+                                  width: size.width * 0.9,
+                                  height: size.height * 0.085,
+                                  child: ListTile(
+                                    contentPadding: EdgeInsets.zero,
+                                    leading: SizedBox(
+                                      height: size.width * 0.13,
+                                      width: size.width * 0.13,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: Image(
+                                          image: _providerFor(resolved),
                                           fit: BoxFit.cover,
+                                          errorBuilder: (_, __, ___) =>
+                                              Image.asset(
+                                            AppImage.dummyImageIcon,
+                                            fit: BoxFit.cover,
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  title: Text(
-                                    name,
-                                    maxLines: 2,
-                                    style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 16,
-                                      color: AppColor.secondryColor(context),
+                                    title: Text(
+                                      name,
+                                      maxLines: 2,
+                                      style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 16,
+                                        color: AppColor.secondryColor(context),
+                                      ),
                                     ),
-                                  ),
-                                  subtitle: Text(
-                                    username.isEmpty ? '' : '@$username',
-                                    style: TextStyle(
-                                      fontSize: 14,
-                                      color: AppColor.secondryColor(context),
+                                    subtitle: Text(
+                                      username.isEmpty ? '' : '@$username',
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                  trailing: GestureDetector(
-                                    onTap: () {
-                                      setState(() => _sentIds.add(key));
-                                      Future.delayed(
+                                    trailing: GestureDetector(
+                                      onTap: () {
+                                        setState(() => _sentIds.add(key));
+                                        Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {
-                                        Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type:
-                                                PageTransitionType.bottomToTop,
-                                            child: ChatMessageScreen(
-                                              name: name,
-                                              image: resolved.startsWith('http')
-                                                  ? AppImage.dummyImageIcon
-                                                  : resolved,
-                                            ),
-                                          ),
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .bottomToTop,
+                                                child: ChatMessageScreen(
+                                                  name: name,
+                                                  image: resolved
+                                                          .startsWith('http')
+                                                      ? AppImage.dummyImageIcon
+                                                      : resolved,
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         );
-                                      });
-                                    },
-                                    child: AnimatedContainer(
-                                      duration:
-                                          const Duration(milliseconds: 300),
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 17, vertical: 7),
-                                      decoration: BoxDecoration(
-                                        color: isSend
-                                            ? AppColor.logoutContainerColor(
-                                                context)
-                                            : AppColor.secondryColor(context),
-                                        borderRadius: BorderRadius.circular(10),
-                                        border: isSend
-                                            ? Border.all(
-                                                color: AppColor.buttonColor,
-                                                width: 1)
-                                            : null,
-                                      ),
-                                      child: Text(
-                                        isSend ? 'Done' : 'Send',
-                                        style: TextStyle(
-                                          fontSize: 13,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
+                                      },
+                                      child: AnimatedContainer(
+                                        duration:
+                                            const Duration(milliseconds: 300),
+                                        padding: const EdgeInsets.symmetric(
+                                          horizontal: 17,
+                                          vertical: 7,
+                                        ),
+                                        decoration: BoxDecoration(
                                           color: isSend
-                                              ? AppColor.secondryColor(context)
-                                              : AppColor.primaryColor(context),
+                                              ? AppColor.logoutContainerColor(
+                                                  context)
+                                              : AppColor.secondryColor(context),
+                                          borderRadius:
+                                              BorderRadius.circular(10),
+                                          border: isSend
+                                              ? Border.all(
+                                                  color: AppColor.buttonColor,
+                                                  width: 1,
+                                                )
+                                              : null,
+                                        ),
+                                        child: Text(
+                                          isSend ? 'Done' : 'Send',
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.w500,
+                                            fontFamily: AppFont.fontFamily,
+                                            color: isSend
+                                                ? AppColor.secondryColor(
+                                                    context)
+                                                : AppColor.primaryColor(
+                                                    context),
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
                                 ),
+                                SizedBox(height: size.height * 0.002),
+                              ],
+                            );
+                          }),
+                          if (controller.isMembersLoadingMore)
+                            Center(
+                              child: CircularProgressIndicator(
+                                color: AppColor.buttonColor,
                               ),
-                              SizedBox(height: size.height * 0.002),
-                            ],
-                          );
-                        }),
-                        if (controller.isMembersLoadingMore)
-                          Center(
-                            child: CircularProgressIndicator(
-                              color: AppColor.buttonColor,
                             ),
-                          )
-                      ]),
+                        ],
+                      ),
                     );
                   },
                 ),

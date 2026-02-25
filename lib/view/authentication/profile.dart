@@ -132,7 +132,7 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   Container(
                                     margin:
-                                        const EdgeInsets.only(top: 10, left: 5),
+                                        const EdgeInsets.only(top: 15, left: 5),
                                     width: profileImageSize + 8,
                                     height: profileImageSize + 12,
                                     decoration: const BoxDecoration(
@@ -208,55 +208,67 @@ class _ProfileState extends State<Profile> {
 
                             SizedBox(
                                 width: MediaQuery.of(context).size.width *
-                                    8 /
+                                    5 /
                                     100),
 
                             // Profile Text
                             Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  SizedBox(
-                                      height: profileCompletionPercent == 100
-                                          ? MediaQuery.of(context).size.height *
-                                              7 /
-                                              100
-                                          : MediaQuery.of(context).size.height *
-                                              1 /
-                                              100),
-                                  Text(
-                                    fullName,
-                                    style: TextStyle(
-                                      fontSize: 23,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor(context),
+                              child: Container(
+                                // color: AppColor.blueTextColor,
+                                // width: MediaQuery.of(context).size.width * 0.80,
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    SizedBox(
+                                        height: profileCompletionPercent == 100
+                                            ? MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                7 /
+                                                100
+                                            : MediaQuery.of(context)
+                                                    .size
+                                                    .height *
+                                                1 /
+                                                100),
+                                    Text(
+                                      fullName,
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.secondryColor(context),
+                                      ),
                                     ),
-                                  ),
-                                  SizedBox(
-                                      height:
-                                          MediaQuery.of(context).size.height *
-                                              2 /
-                                              100),
-                                  ...List.generate(tasksToShow.length, (index) {
-                                    const colors = [
-                                      Colors.pinkAccent,
-                                      Colors.orangeAccent,
-                                      Colors.purpleAccent,
-                                      Colors.redAccent,
-                                    ];
-                                    return buildTaskRow(
-                                      tasksToShow[index],
-                                      colors[index % colors.length],
-                                    );
-                                  }),
-                                ],
+                                    SizedBox(
+                                        height:
+                                            MediaQuery.of(context).size.height *
+                                                2 /
+                                                100),
+                                    ...List.generate(tasksToShow.length,
+                                        (index) {
+                                      const colors = [
+                                        Colors.pinkAccent,
+                                        Colors.orangeAccent,
+                                        Colors.purpleAccent,
+                                        Colors.redAccent,
+                                      ];
+                                      return buildTaskRow(
+                                        tasksToShow[index],
+                                        colors[index % colors.length],
+                                      );
+                                    }),
+                                  ],
+                                ),
                               ),
                             ),
                           ],
                         ),
                       ),
+
                       SizedBox(
                           height: MediaQuery.of(context).size.height * 1 / 100),
                       SizedBox(

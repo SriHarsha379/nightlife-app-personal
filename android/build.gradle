@@ -62,9 +62,6 @@ subprojects {
                         case 'firebase_storage':
                             namespace 'io.flutter.plugins.firebase.storage'
                             break
-                        case 'onesignal_flutter':
-                            namespace 'com.onesignal.flutter'
-                            break
                         case 'webview_flutter_android':
                             namespace 'io.flutter.plugins.webviewflutter'
                             break

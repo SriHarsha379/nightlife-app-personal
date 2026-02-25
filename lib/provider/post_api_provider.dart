@@ -22,6 +22,7 @@ import '../view/other/city_Preference/citypreference_screen.dart';
 import '../view/other/city_Preference/music_genres.dart';
 import '../view/other/city_Preference/stay_connected_otp_verification.dart';
 import '../view/other/city_Preference/stay_connected_screen.dart';
+import '../view/other/profile_details.dart';
 import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
@@ -53,6 +54,118 @@ class PostApiProvider with ChangeNotifier {
         .resetState();
     AppContentCache().clear();
     AppConstant.selectFooterIndex = 0;
+  }
+
+  int _parseSignupStep(dynamic stepValue) {
+    if (stepValue is int) return stepValue;
+    if (stepValue is String) return int.tryParse(stepValue) ?? 0;
+    return 0;
+  }
+
+  Map<String, dynamic> _extractUserData(dynamic data) {
+    if (data is Map && data['user'] is Map) {
+      return Map<String, dynamic>.from(data['user']);
+    }
+    if (data is Map) {
+      return Map<String, dynamic>.from(data);
+    }
+    return <String, dynamic>{};
+  }
+
+  void _navigateFromAuthState(
+    BuildContext context,
+    Map<String, dynamic> userData, {
+    Map<String, dynamic>? socialUser,
+  }) {
+    final bool isNewUser = userData['is_new_user'] == true;
+    if (isNewUser && socialUser != null) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: ProfileDetailsScreen(
+            mobile: userData['phone_number']?.toString(),
+            screen: "social",
+            socialUser: socialUser,
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+
+    final bool isVerified =
+        userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
+    final bool isProfileCompleted = userData['is_profile_completed'] ??
+        userData['isProfileCompleted'] ??
+        false;
+    final bool isAnotherEmailVerify =
+        userData['is_another_email_verify'] == true;
+    final String anotherEmail = (userData['another_email'] ?? '').toString();
+    final int signupStep = _parseSignupStep(userData['signup_step']);
+
+    if (signupStep >= 3 &&
+        anotherEmail.trim().isNotEmpty &&
+        !isAnotherEmailVerify) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: StayConnectedOTPVerify(
+            isEmail: true,
+            email: anotherEmail,
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    } else if (isProfileCompleted) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MyAppFooter(initialIndex: 0),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    } else if (signupStep >= 3) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: StayConnectedScreen(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    } else if (signupStep == 1 && isVerified) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: CityPreference(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    } else if (signupStep == 2) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MusicGenresScreen(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    } else if (signupStep == 1 && !isVerified) {
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: OtpVerify(
+            mobile: userData['phone_number']?.toString() ?? '',
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+    }
   }
 
   // =============Login Api=================//
@@ -183,22 +296,86 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-  // ================Signup Api================//
-  signupUserApi(
+// =============social Api=================//
+  socialLoginApiCalling(
     BuildContext context,
-    String name,
-    String lastName,
-    String userName,
-    String email,
-    String mobile,
-    String password,
-    String dob,
-    String gender,
-    String height,
-    String cityId,
-    XFile? profileImage,
+    user,
   ) async {
     setLoading(true);
+
+    final String fullName =
+        (user['full_name'] ?? user['name'] ?? '').toString();
+    final String firstName = (user['first_name'] ?? '').toString().trim();
+    final String lastName = (user['last_name'] ?? '').toString().trim();
+    final List<String> fullNameParts = fullName.trim().split(' ');
+    final String fallbackFirstName =
+        fullNameParts.isNotEmpty ? fullNameParts.first : '';
+    final String fallbackLastName =
+        fullNameParts.length > 1 ? fullNameParts.sublist(1).join(' ') : '';
+
+    Map<String, String> fields = {
+      'socialType': (user['login_type'] ?? '').toString(),
+      "social_id": (user['social_id'] ?? '').toString(),
+      'email': (user['email'] ?? '').toString(),
+      'first_name': firstName.isNotEmpty ? firstName : fallbackFirstName,
+      'last_name': lastName.isNotEmpty ? lastName : fallbackLastName,
+      'device_type': AppConstant.deviceType,
+      'player_id': AppConstant.playerID.toString(),
+    };
+    log("fields$fields");
+    final res = await postJsonData('auth/social_login', fields, context);
+
+    if (res != null) {
+      if (res['success'] == true) {
+        final data = res['data'] ?? <String, dynamic>{};
+        final userData = _extractUserData(data);
+
+        AppConstant.token = data['token'] ?? '12345';
+        final socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        socketProvider.initSocket(AppConstant.token);
+        await CacheHelper.save("user_details", jsonEncode(data));
+        TopNotification.success(context, res['message'][language]);
+
+        if (!context.mounted) {
+          setLoading(false);
+          return;
+        }
+
+        _clearSessionState(context);
+        Provider.of<UserController>(context, listen: false).setUserFromMap(
+          Map<String, dynamic>.from(userData),
+        );
+        _navigateFromAuthState(
+          context,
+          userData,
+          socialUser: Map<String, dynamic>.from(user),
+        );
+      }
+    }
+    setLoading(false);
+  }
+
+  // ================Signup Api================//
+  signupUserApi(
+      BuildContext context,
+      String name,
+      String lastName,
+      String userName,
+      String referalcode,
+      String email,
+      String mobile,
+      String password,
+      String dob,
+      String gender,
+      String height,
+      String cityId,
+      XFile? profileImage,
+      {String loginType = 'email',
+      bool isSocialSignup = false}) async {
+    setLoading(true);
+
+    final String trimmedPassword = password.toString().trim();
 
     final Map<String, String> fields = {
       'first_name': name.toString(),
@@ -206,14 +383,21 @@ class PostApiProvider with ChangeNotifier {
       'username': userName.toString(),
       'email': email.toString(),
       'phone_number': mobile.toString(),
-      'password': password.toString(),
       'dob': dob.toString(),
       'gender': gender.toString(),
       'height': height.toString(),
       'city_id': cityId.toString(),
       'player_id': AppConstant.playerID.toString(),
-      "device_type": AppConstant.deviceType
+      "device_type": AppConstant.deviceType,
+      'login_type': loginType.toString(),
+      'referral_code': referalcode.toString()
     };
+
+    if (trimmedPassword.isNotEmpty) {
+      fields['password'] = trimmedPassword;
+    } else if (isSocialSignup) {
+      fields['password'] = '123456';
+    }
 
     print("Line 105 $fields");
 
@@ -240,19 +424,30 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true) {
         TopNotification.success(context, res['message'][language]);
         AppConstant.token = res['data']['token'] ?? '12345';
+        final socketProvider =
+            Provider.of<SocketProvider>(context, listen: false);
+        socketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(res['data']));
-        TopNotification.success(context, res['message'][language]);
-
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: OtpVerify(
-              mobile: mobile,
-            ),
-            duration: const Duration(milliseconds: 500),
-          ),
+        final userData = _extractUserData(res['data']);
+        _clearSessionState(context);
+        Provider.of<UserController>(context, listen: false).setUserFromMap(
+          Map<String, dynamic>.from(userData),
         );
+
+        if (isSocialSignup) {
+          _navigateFromAuthState(context, userData);
+        } else {
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: OtpVerify(
+                mobile: mobile,
+              ),
+              duration: const Duration(milliseconds: 500),
+            ),
+          );
+        }
       }
     }
 

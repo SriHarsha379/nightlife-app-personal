@@ -1308,7 +1308,12 @@ class _HomeState extends State<Home> {
                                             showCross: showCross,
                                             lastSwipeType: lastSwipeType,
                                             onShareTap: () {
-                                              eventstypebottomsheet(context);
+                                              showEventTypesBottomSheet(
+                                                context,
+                                                type: 'event',
+                                                id: (event['_id'] ?? '')
+                                                    .toString(),
+                                              );
                                             },
                                             onHeartTap: () {
                                               eventsSwiperController.swipe(
@@ -1445,7 +1450,12 @@ class _HomeState extends State<Home> {
                                             showCross: showCross,
                                             lastSwipeType: lastSwipeType,
                                             onShareTap: () {
-                                              eventstypebottomsheet(context);
+                                              showEventTypesBottomSheet(
+                                                context,
+                                                type: 'venue',
+                                                id: (venue['_id'] ?? '')
+                                                    .toString(),
+                                              );
                                             },
                                             onHeartTap: () {
                                               venuesSwiperController.swipe(
@@ -1502,6 +1512,4 @@ class _HomeState extends State<Home> {
 
   void showInviteMemberstypebottomsheet(BuildContext context) =>
       showInviteMembersTypeBottomSheet(context);
-  void eventstypebottomsheet(BuildContext context) =>
-      showEventTypesBottomSheet(context);
 }
