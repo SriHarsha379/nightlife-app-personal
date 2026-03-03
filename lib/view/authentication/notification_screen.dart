@@ -426,22 +426,6 @@ class _NotificationsState extends State<Notifications> {
                 text: AppLanguage.notificationText[language],
               ),
               SizedBox(height: MediaQuery.of(context).size.height * 2 / 100),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                  child: Text(
-                    AppLanguage.newtext[language],
-                    textAlign: TextAlign.left,
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 20,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.secondryColor(context),
-                    ),
-                  ),
-                ),
-              ),
               Expanded(
                 child: Consumer<NotificationController>(
                   builder: (context, controller, _) {
@@ -466,6 +450,26 @@ class _NotificationsState extends State<Notifications> {
                               if (controller.isLoading &&
                                   recent.isEmpty &&
                                   older.isEmpty)
+                                Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 17.0),
+                                    child: Text(
+                                      AppLanguage.newtext[language],
+                                      textAlign: TextAlign.left,
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              if (controller.isLoading &&
+                                  recent.isEmpty &&
+                                  older.isEmpty)
                                 const Padding(
                                   padding: EdgeInsets.symmetric(vertical: 24),
                                   child: CircularProgressIndicator(),
@@ -475,7 +479,7 @@ class _NotificationsState extends State<Notifications> {
                                   older.isEmpty)
                                 Padding(
                                   padding:
-                                      const EdgeInsets.symmetric(vertical: 24),
+                                      const EdgeInsets.symmetric(vertical: 250),
                                   child: Text(
                                     'No notifications found',
                                     style: TextStyle(

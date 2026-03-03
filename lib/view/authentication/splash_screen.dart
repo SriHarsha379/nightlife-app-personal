@@ -8,6 +8,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/socket_provider.dart';
+import '../../provider/user_chat_socket_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_footer.dart';
@@ -66,9 +67,8 @@ class _SplashState extends State<Splash> {
           }
           AppConstant.token = token;
           log("app token----->>>>${AppConstant.token}");
-          final socketProvider =
-              Provider.of<SocketProvider>(context, listen: false);
-          socketProvider.initSocket(AppConstant.token);
+          Provider.of<SocketProvider>(context, listen: false)
+              .setToken(AppConstant.token);
           if (data['player_id'] != null) {
             AppConstant.playerID = data['player_id'].toString();
           }

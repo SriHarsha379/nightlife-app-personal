@@ -11,6 +11,7 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dar
 import 'package:page_transition/page_transition.dart';
 
 import '../../../../controller/home/home_controller.dart';
+import '../../../../controller/members/conversion_list_controller.dart';
 import '../../../../controller/members/members_controller.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
@@ -31,10 +32,12 @@ class _splashMembersState extends State<splashMembers> {
   int selectedIndex = 0;
 
   bool isDropdownOpen = false;
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
+    _scrollController.addListener(_onScroll);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<MembersController>(context, listen: false).fetchMyMembers(
         context,
@@ -43,6 +46,28 @@ class _splashMembersState extends State<splashMembers> {
         limit: 10,
       );
     });
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+    final max = _scrollController.position.maxScrollExtent;
+    final current = _scrollController.position.pixels;
+    if (current < (max - 180)) return;
+
+    final membersController =
+        Provider.of<MembersController>(context, listen: false);
+    membersController.loadMoreMembers(
+      context,
+      type: selectedIndex == 0 ? 'liked' : 'connected',
+      limit: 10,
+    );
   }
 
   String _str(dynamic value) => (value ?? '').toString().trim();
@@ -443,6 +468,7 @@ class _splashMembersState extends State<splashMembers> {
               ),
               Expanded(
                 child: SingleChildScrollView(
+                  controller: _scrollController,
                   child: Center(
                     child: Container(
                       width: size.width * 90 / 100,
@@ -482,11 +508,11 @@ class _splashMembersState extends State<splashMembers> {
                                         final member = membersController
                                             .likedMembers[index] as Map;
                                         final memberName = _str(member['name']);
+                                        final memberId = _str(member['_id']);
                                         final memberSince =
                                             _memberSinceYearsText(member);
                                         final memberAddress =
                                             _memberAddress(member);
-                                        final memberId = _str(member['_id']);
                                         final memberImage = _buildMemberImage(
                                             member['profile_image']);
                                         return GestureDetector(
@@ -570,9 +596,9 @@ class _splashMembersState extends State<splashMembers> {
                                                               AppImage
                                                                   .liked_heart_icon,
                                                               fit: BoxFit.cover,
-                                                              color: AppColor
-                                                                  .secondryColor(
-                                                                      context),
+                                                              // color: AppColor
+                                                              //     .secondryColor(
+                                                              //         context),
                                                             )),
                                                           ),
                                                         ],
@@ -695,6 +721,8 @@ class _splashMembersState extends State<splashMembers> {
                                                                     memberId,
                                                                 forceDislikeOnly:
                                                                     true,
+                                                                deferSwipeActionToParent:
+                                                                    true,
                                                               ),
                                                               duration:
                                                                   const Duration(
@@ -749,6 +777,15 @@ class _splashMembersState extends State<splashMembers> {
                                       },
                                     ),
                                   ),
+                          if (selectedIndex == 0 &&
+                              membersController.isLikedMembersLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: CircularProgressIndicator(
+                                color: AppColor.buttonColor,
+                                strokeWidth: 2,
+                              ),
+                            ),
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,
@@ -787,16 +824,14 @@ class _splashMembersState extends State<splashMembers> {
                                         final member = membersController
                                             .connectedMembers[index] as Map;
                                         final memberName = _str(member['name']);
+                                        final memberId = _str(member['_id']);
                                         final memberSince =
                                             _memberSinceYearsText(member);
                                         final memberAddress =
                                             _memberAddress(member);
                                         final memberImage = _buildMemberImage(
                                             member['profile_image']);
-                                        final chatImage =
-                                            memberImage.startsWith('http')
-                                                ? AppImage.placeHolder2Icon
-                                                : memberImage;
+                                        final chatImage = memberImage;
                                         return GestureDetector(
                                           onTap: () {},
                                           child: Container(
@@ -982,19 +1017,46 @@ class _splashMembersState extends State<splashMembers> {
                                                             100,
                                                       ),
                                                       GestureDetector(
-                                                        onTap: () {
+                                                        onTap: () async {
+                                                          final conversationController =
+                                                              Provider.of<
+                                                                      ConversionListController>(
+                                                                  context,
+                                                                  listen:
+                                                                      false);
+
+                                                          final conversationId =
+                                                              await conversationController
+                                                                  .fetchConversationIdByUserId(
+                                                            otherUserId:
+                                                                memberId,
+                                                          );
+
+                                                          if (!context.mounted) {
+                                                            return;
+                                                          }
+
                                                           Navigator.push(
                                                             context,
                                                             PageTransition(
                                                               type: PageTransitionType
                                                                   .rightToLeftWithFade,
-                                                              child: ChatMessageScreen(
-                                                                  name: memberName
-                                                                          .isEmpty
-                                                                      ? 'Unknown'
-                                                                      : memberName,
-                                                                  image:
-                                                                      chatImage),
+                                                              child:
+                                                                  ChatMessageScreen(
+                                                                name: memberName
+                                                                        .isEmpty
+                                                                    ? 'Unknown'
+                                                                    : memberName,
+                                                                image:
+                                                                    chatImage,
+                                                                receiverId:
+                                                                    memberId,
+                                                                conversationId:
+                                                                    conversationId
+                                                                            .isEmpty
+                                                                        ? null
+                                                                        : conversationId,
+                                                              ),
                                                               duration:
                                                                   const Duration(
                                                                       milliseconds:
@@ -1046,6 +1108,15 @@ class _splashMembersState extends State<splashMembers> {
                                       },
                                     ),
                                   ),
+                          if (selectedIndex == 1 &&
+                              membersController.isConnectedMembersLoadingMore)
+                            const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 12),
+                              child: CircularProgressIndicator(
+                                color: AppColor.buttonColor,
+                                strokeWidth: 2,
+                              ),
+                            ),
                           SizedBox(
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,

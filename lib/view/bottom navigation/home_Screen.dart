@@ -492,6 +492,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       currentMemberIndex = currentIndex ?? 0;
+      membersTabVersion++;
     });
     _tryLoadMoreForType('member', currentIndex, membersList.length);
     return true;
@@ -560,6 +561,7 @@ class _HomeState extends State<Home> {
     setState(() {
       log("currentIndex$currentIndex");
       currentEventIndex = currentIndex ?? 0;
+      eventTabVersion++;
     });
     _tryLoadMoreForType('event', currentIndex, eventsList.length);
 
@@ -628,6 +630,7 @@ class _HomeState extends State<Home> {
 
     setState(() {
       currentVenueIndex = currentIndex ?? 0;
+      venusTabVersion++;
     });
     _tryLoadMoreForType('venue', currentIndex, venuesList.length);
     return true;
@@ -729,6 +732,31 @@ class _HomeState extends State<Home> {
         ),
       );
     }
+  }
+
+  Widget _buildSwipeCardFallback(String type) {
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final bool isLoadingNext = homeController.isPaginationLoadingForType(type);
+    final bool hasMore = homeController.hasMoreForType(type);
+
+    if (!isLoadingNext && hasMore) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        unawaited(
+          homeController.fetchNextPage(
+            context,
+            type: type,
+            limit: 20,
+          ),
+        );
+      });
+    }
+
+    return Center(
+      child: CircularProgressIndicator(
+        color: AppColor.buttonColor,
+      ),
+    );
   }
 
   String _getHeaderUserName(UserController userController) {
@@ -1122,7 +1150,7 @@ class _HomeState extends State<Home> {
                                   cardBuilder: (context, index, _, __) {
                                     if (index < 0 ||
                                         index >= visibleMembers.length) {
-                                      return const SizedBox.shrink();
+                                      return _buildSwipeCardFallback('member');
                                     }
                                     final member = visibleMembers[index];
                                     return Center(
@@ -1156,6 +1184,8 @@ class _HomeState extends State<Home> {
                                                       .rightToLeftWithFade,
                                                   child: LikedMemberDetail(
                                                     memberId: memberId,
+                                                    deferSwipeActionToParent:
+                                                        true,
                                                   ),
                                                   duration: const Duration(
                                                       milliseconds: 500),
@@ -1262,7 +1292,7 @@ class _HomeState extends State<Home> {
                                   cardBuilder: (context, index, _, __) {
                                     if (index < 0 ||
                                         index >= visibleEvents.length) {
-                                      return const SizedBox.shrink();
+                                      return _buildSwipeCardFallback('event');
                                     }
                                     final event = visibleEvents[index];
                                     return Center(
@@ -1405,7 +1435,7 @@ class _HomeState extends State<Home> {
                                   cardBuilder: (context, index, _, __) {
                                     if (index < 0 ||
                                         index >= visibleVenues.length) {
-                                      return const SizedBox.shrink();
+                                      return _buildSwipeCardFallback('venue');
                                     }
                                     final venue = visibleVenues[index];
                                     return Center(

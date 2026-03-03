@@ -28,6 +28,7 @@ import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
 
 import 'socket_provider.dart';
+import 'user_chat_socket_provider.dart';
 import 'user_controller.dart';
 
 class PostApiProvider with ChangeNotifier {
@@ -186,9 +187,11 @@ class PostApiProvider with ChangeNotifier {
         final data = res['data'] ?? <String, dynamic>{};
 
         AppConstant.token = data['token'] ?? '12345';
-        final socketProvider =
-            Provider.of<SocketProvider>(context, listen: false);
-        socketProvider.initSocket(AppConstant.token);
+        Provider.of<SocketProvider>(context, listen: false)
+            .setToken(AppConstant.token);
+        // final usersocketProvider =
+        //     Provider.of<UserChatSocketProvider>(context, listen: false);
+        // usersocketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(data));
         TopNotification.success(context, res['message'][language]);
 
@@ -331,9 +334,8 @@ class PostApiProvider with ChangeNotifier {
         final userData = _extractUserData(data);
 
         AppConstant.token = data['token'] ?? '12345';
-        final socketProvider =
-            Provider.of<SocketProvider>(context, listen: false);
-        socketProvider.initSocket(AppConstant.token);
+        Provider.of<SocketProvider>(context, listen: false)
+            .setToken(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(data));
         TopNotification.success(context, res['message'][language]);
 
@@ -427,6 +429,9 @@ class PostApiProvider with ChangeNotifier {
         final socketProvider =
             Provider.of<SocketProvider>(context, listen: false);
         socketProvider.initSocket(AppConstant.token);
+        final usersocketProvider =
+            Provider.of<UserChatSocketProvider>(context, listen: false);
+        usersocketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(res['data']));
         final userData = _extractUserData(res['data']);
         _clearSessionState(context);
@@ -736,6 +741,9 @@ class PostApiProvider with ChangeNotifier {
         final socketProvider =
             Provider.of<SocketProvider>(context, listen: false);
         socketProvider.initSocket(AppConstant.token);
+        final usersocketProvider =
+            Provider.of<UserChatSocketProvider>(context, listen: false);
+        usersocketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(result['data']));
         TopNotification.success(context, result['message'][language]);
 
@@ -786,6 +794,9 @@ class PostApiProvider with ChangeNotifier {
         final socketProvider =
             Provider.of<SocketProvider>(context, listen: false);
         socketProvider.initSocket(AppConstant.token);
+        final usersocketProvider =
+            Provider.of<UserChatSocketProvider>(context, listen: false);
+        usersocketProvider.initSocket(AppConstant.token);
         await CacheHelper.save("user_details", jsonEncode(mapData));
         if (context.mounted) {
           Provider.of<UserController>(context, listen: false)
@@ -1426,6 +1437,8 @@ class PostApiProvider with ChangeNotifier {
 
     _clearSessionState(context);
     AppConstant.token = '';
+    Provider.of<SocketProvider>(context, listen: false).disconnect();
+
     await CacheHelper.clearAll();
     setSecondaryLoading(false);
 

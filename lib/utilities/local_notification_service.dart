@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
@@ -13,17 +15,39 @@ class LocalNotificationService {
   );
 
   static bool _initialized = false;
+  static void Function(String? payload)? _onNotificationTap;
+  static String? _pendingLaunchPayload;
+  static final Map<String, DateTime> _recentNotificationKeys =
+      <String, DateTime>{};
+  static const Duration _dedupeWindow = Duration(seconds: 6);
+
+  static void setOnNotificationTapHandler(
+      void Function(String? payload) onTap) {
+    _onNotificationTap = onTap;
+  }
 
   static Future<void> initialize() async {
     if (_initialized) return;
 
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@drawable/ic_stat_notification');
 
     const InitializationSettings initSettings =
         InitializationSettings(android: androidSettings);
 
-    await _notifications.initialize(initSettings);
+    await _notifications.initialize(
+      initSettings,
+      onDidReceiveNotificationResponse:
+          (NotificationResponse notificationResponse) {
+        _onNotificationTap?.call(notificationResponse.payload);
+      },
+    );
+
+    final NotificationAppLaunchDetails? launchDetails =
+        await _notifications.getNotificationAppLaunchDetails();
+    if (launchDetails?.didNotificationLaunchApp == true) {
+      _pendingLaunchPayload = launchDetails?.notificationResponse?.payload;
+    }
 
     await _notifications
         .resolvePlatformSpecificImplementation<
@@ -33,18 +57,39 @@ class LocalNotificationService {
     _initialized = true;
   }
 
+  static String? consumePendingLaunchPayload() {
+    final payload = _pendingLaunchPayload;
+    _pendingLaunchPayload = null;
+    return payload;
+  }
+
   static Future<void> showFromRemoteMessage(RemoteMessage message) async {
     final RemoteNotification? notification = message.notification;
 
-    final String? title = notification?.title ?? message.data['title'];
-    final String? body = notification?.body ?? message.data['body'];
+    if (!_shouldShowNotification(message)) {
+      return;
+    }
+
+    final String? title = _pickFirstString(<dynamic>[
+      notification?.title,
+      message.data['title'],
+      message.data['notification_title'],
+    ]);
+    final String? body = _pickFirstString(<dynamic>[
+      notification?.body,
+      message.data['body'],
+      message.data['message'],
+      message.data['description'],
+      message.data['content'],
+    ]);
 
     if ((title == null || title.isEmpty) && (body == null || body.isEmpty)) {
       return;
     }
 
+    final int notificationId = _stableNotificationId(message);
     await _notifications.show(
-      message.hashCode,
+      notificationId,
       title,
       body,
       NotificationDetails(
@@ -57,7 +102,72 @@ class LocalNotificationService {
           icon: 'ic_stat_notification',
         ),
       ),
+      payload: jsonEncode(message.data),
     );
+  }
+
+  static String? _pickFirstString(List<dynamic> values) {
+    for (final dynamic value in values) {
+      if (value == null) continue;
+      final String text = value.toString().trim();
+      if (text.isNotEmpty) return text;
+    }
+    return null;
+  }
+
+  static bool _shouldShowNotification(RemoteMessage message) {
+    final String key = _notificationKey(message);
+    if (key.isEmpty) return true;
+
+    final DateTime now = DateTime.now();
+    _recentNotificationKeys.removeWhere(
+      (String _, DateTime timestamp) => now.difference(timestamp) > _dedupeWindow,
+    );
+
+    final DateTime? lastSeen = _recentNotificationKeys[key];
+    if (lastSeen != null && now.difference(lastSeen) <= _dedupeWindow) {
+      return false;
+    }
+
+    _recentNotificationKeys[key] = now;
+    return true;
+  }
+
+  static String _notificationKey(RemoteMessage message) {
+    final Map<String, dynamic> data = message.data;
+    final String id = _pickFirstString(<dynamic>[
+      message.messageId,
+      data['notification_id'],
+      data['booking_id'],
+      data['venue_booking_id'],
+      data['event_booking_id'],
+      data['senderId'],
+    ]) ??
+        '';
+    if (id.isNotEmpty) return id;
+
+    final String? action = _pickFirstString(<dynamic>[data['action']]);
+    final String? title = _pickFirstString(<dynamic>[
+      message.notification?.title,
+      data['title'],
+      data['notification_title'],
+    ]);
+    final String? body = _pickFirstString(<dynamic>[
+      message.notification?.body,
+      data['body'],
+      data['message'],
+      data['description'],
+      data['content'],
+    ]);
+    return '${action ?? ''}|${title ?? ''}|${body ?? ''}'.trim();
+  }
+
+  static int _stableNotificationId(RemoteMessage message) {
+    final String key = _notificationKey(message);
+    if (key.isEmpty) {
+      return message.hashCode;
+    }
+    return key.hashCode & 0x7fffffff;
   }
 }
 

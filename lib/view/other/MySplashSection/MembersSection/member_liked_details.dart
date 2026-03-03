@@ -19,10 +19,12 @@ class LikedMemberDetail extends StatefulWidget {
   static const String routeName = '/LikedMemberDetail';
   final String? memberId;
   final bool forceDislikeOnly;
+  final bool deferSwipeActionToParent;
   const LikedMemberDetail({
     super.key,
     this.memberId,
     this.forceDislikeOnly = false,
+    this.deferSwipeActionToParent = false,
   });
 
   @override
@@ -179,12 +181,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       _str(_memberData?['name']).isNotEmpty ? _str(_memberData?['name']) : "";
 
   String _memberVibesText() {
-    if (_vibeNames.isNotEmpty) return _vibeNames.join(' � ');
+    if (_vibeNames.isNotEmpty) return _vibeNames.join(' · ');
     final hobbies = _toList(_memberData?['hobbies'])
         .map((e) => _str(e))
         .where((e) => e.isNotEmpty)
         .toList();
-    if (hobbies.isNotEmpty) return hobbies.join(' � ');
+    if (hobbies.isNotEmpty) return hobbies.join(' · ');
     return "";
   }
 
@@ -212,11 +214,32 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   Future<void> _submitSwipeAction(String action) async {
     final userId = _targetUserId();
     if (userId.isEmpty) return;
+    final normalizedAction = _str(action).toLowerCase();
+    if (normalizedAction != 'left' && normalizedAction != 'right') return;
 
     _swipeResult = {
-      'action': action, // left | right
+      'action': normalizedAction, // left | right
       'targetUserId': userId,
     };
+
+    if (widget.deferSwipeActionToParent) {
+      Navigator.pop(context, _swipeResult);
+      return;
+    }
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final isSuccess = await homeController.swipeUserAction(
+      context,
+      targetUserId: userId,
+      action: normalizedAction,
+    );
+    if (!mounted || !isSuccess) return;
+
+    if (_memberData != null) {
+      _memberData = Map<String, dynamic>.from(_memberData!)
+        ..['is_liked'] = normalizedAction == 'right';
+    }
+
     Navigator.pop(context, _swipeResult);
   }
 
@@ -1207,54 +1230,65 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
 
                                                       // Text + spacing (with Flexible for proper width handling)
                                                       Flexible(
-                                                        child: Column(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .center,
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          children: [
-                                                            Text(
-                                                              AppLanguage
-                                                                      .instagramText[
-                                                                  language],
-                                                              style: TextStyle(
-                                                                fontSize: 13,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context),
+                                                        child: Container(
+                                                          width: MediaQuery.of(
+                                                                      context)
+                                                                  .size
+                                                                  .width *
+                                                              54 /
+                                                              100,
+                                                          child: Column(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .center,
+                                                            crossAxisAlignment:
+                                                                CrossAxisAlignment
+                                                                    .start,
+                                                            children: [
+                                                              Text(
+                                                                AppLanguage
+                                                                        .instagramText[
+                                                                    language],
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontSize: 13,
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColor
+                                                                      .secondryColor(
+                                                                          context),
+                                                                ),
                                                               ),
-                                                            ),
-                                                            Text(
-                                                              _str(_memberData?[
-                                                                          'instagram_url'])
-                                                                      .isEmpty
-                                                                  ? ""
-                                                                  : _str(_memberData?[
-                                                                      'instagram_url']),
-                                                              style:
-                                                                  const TextStyle(
-                                                                fontSize: 12,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .buttonColor,
+                                                              Text(
+                                                                _str(_memberData?[
+                                                                            'instagram_url'])
+                                                                        .isEmpty
+                                                                    ? ""
+                                                                    : _str(_memberData?[
+                                                                        'instagram_url']),
+                                                                style:
+                                                                    const TextStyle(
+                                                                  fontSize: 12,
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColor
+                                                                      .buttonColor,
+                                                                ),
+                                                                maxLines: 1,
+                                                                overflow:
+                                                                    TextOverflow
+                                                                        .ellipsis,
                                                               ),
-                                                              maxLines: 1,
-                                                              overflow:
-                                                                  TextOverflow
-                                                                      .ellipsis,
-                                                            ),
-                                                          ],
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
 
@@ -1465,9 +1499,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                 },
                                               ),
                                             ),
-                                          SizedBox(
-                                            height: size.height * 3 / 100,
-                                          ),
+                                          if (_recentVenues.isNotEmpty)
+                                            SizedBox(
+                                              height: size.height * 3 / 100,
+                                            ),
                                           Container(
                                             child: Text(
                                               AppLanguage

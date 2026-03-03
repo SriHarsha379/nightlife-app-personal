@@ -467,7 +467,7 @@ class _MyVenueState extends State<MyVenue> {
                         child: Image.asset(
                           AppImage.liked_heart_icon,
                           fit: BoxFit.cover,
-                          color: AppColor.secondryColor(context),
+                          // color: AppColor.secondryColor(context),
                         ),
                       ),
                     ],

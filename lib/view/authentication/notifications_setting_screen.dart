@@ -1,7 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:provider/provider.dart';
 
+import '../../controller/notification/notification_setting_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -20,36 +22,51 @@ class NotificationSettingScreen extends StatefulWidget {
 class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
   List<dynamic> notifications = <dynamic>[
     {
+      "type": "event_reminder_notify",
       "image": AppImage.eventRemaindericon,
       "notification": "Event Reminders",
       "message": "Get notified about upcoming\nevents you're interested in.",
     },
     {
+      "type": "friend_invites_notify",
       "image": AppImage.friendsInviteIcon,
       "notification": "Friend Invites",
       "message": "Receive notifications when friends\ninvite you to events.",
     },
     {
+      "type": "msg_chats_notify",
       "image": AppImage.messageChatsicon,
       "notification": "Messages & Chats",
       "message": "Get notified about new messages\nand chats. ",
     },
     {
+      "type": "club_organizer_notify",
       "image": AppImage.updatesIcon,
       "notification": "Club/Organizer Updates",
       "message": "Stay informed about updates from\nclubs and organizers.",
     },
     {
+      "type": "promotion_offers_notify",
       "image": AppImage.giftIcon,
       "notification": "Promotions & Offers",
       "message": "Receive notifications about special\noffers and promotions.",
     },
   ];
-  List<bool> switches = [false, false, false, false, false];
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      context
+          .read<NotificationSettingController>()
+          .fetchNotificationSettings(context);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle( SystemUiOverlayStyle(
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor(context),
         statusBarBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light));
@@ -92,26 +109,51 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 1 / 100,
                     ),
-                    ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: notifications.length,
-                      itemBuilder: (BuildContext context, int index) {
-                        List<Widget> widgets = [];
-      
-                        widgets.add(notificationCard(
-                            context, notifications[index], index));
-      
-                        //  Add headings conditionally
-                        if (index == 0) {
-                          widgets.add(sectionHeading("Social"));
-                        } else if (index == 2) {
-                          widgets.add(sectionHeading("Updates"));
-                        } else if (index == 3) {
-                          widgets.add(sectionHeading("Promotions"));
-                        }
-      
-                        return Column(children: widgets);
+                    Consumer<NotificationSettingController>(
+                      builder: (context, controller, _) {
+                        return ListView.builder(
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: notifications.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            List<Widget> widgets = [];
+                            final Map<String, dynamic> item =
+                                notifications[index] as Map<String, dynamic>;
+                            final String type = item['type']?.toString() ?? '';
+                            final bool switchValue =
+                                controller.settings[type] ?? false;
+                            final bool isUpdating =
+                                controller.isUpdatingType(type);
+
+                            widgets.add(
+                              notificationCard(
+                                context,
+                                item,
+                                switchValue,
+                                isUpdating,
+                                (value) async {
+                                  await context
+                                      .read<NotificationSettingController>()
+                                      .updateNotificationSetting(
+                                        context,
+                                        type: type,
+                                        value: value,
+                                      );
+                                },
+                              ),
+                            );
+
+                            if (index == 0) {
+                              widgets.add(sectionHeading("Social"));
+                            } else if (index == 2) {
+                              widgets.add(sectionHeading("Updates"));
+                            } else if (index == 3) {
+                              widgets.add(sectionHeading("Promotions"));
+                            }
+
+                            return Column(children: widgets);
+                          },
+                        );
                       },
                     ),
                   ],
@@ -143,7 +185,12 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
   }
 
   Widget notificationCard(
-      BuildContext context, Map<String, dynamic> notification, int index) {
+    BuildContext context,
+    Map<String, dynamic> notification,
+    bool switchValue,
+    bool isUpdating,
+    ValueChanged<bool> onChanged,
+  ) {
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -189,7 +236,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                       textHeightBehavior: const TextHeightBehavior(
                         applyHeightToFirstAscent: false,
                       ),
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.secondryColor(context),
                         fontSize: 16,
                         fontFamily: AppFont.fontFamily,
@@ -202,7 +249,7 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
                     ),
                     Text(
                       notification['message'],
-                      style:  TextStyle(
+                      style: TextStyle(
                         color: AppColor.notificationtextColor(context),
                         fontSize: 15.6,
                         fontFamily: AppFont.fontFamily,
@@ -220,12 +267,8 @@ class _NotificationSettingScreenState extends State<NotificationSettingScreen> {
             child: Transform.scale(
               scale: 0.90,
               child: CupertinoSwitch(
-                value: switches[index],
-                onChanged: (value) {
-                  setState(() {
-                    switches[index] = value;
-                  });
-                },
+                value: switchValue,
+                onChanged: isUpdating ? null : onChanged,
                 activeColor: AppColor.pinkColor,
                 thumbColor: Colors.white,
                 trackColor: AppColor.toggleColor(context),

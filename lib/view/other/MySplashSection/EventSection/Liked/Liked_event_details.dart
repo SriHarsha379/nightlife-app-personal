@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import '/controller/eventDetails/events_details_controller.dart';
 import '/utilities/app_color.dart';
 import '/utilities/app_constant.dart';
@@ -16,7 +17,6 @@ import 'package:readmore/readmore.dart';
 import '../../../../../utilities/app_config_provider.dart';
 import '../../../../../commonWidget/event_types_bottomsheet.dart';
 import '../../../../../utilities/app_image_media_viewer.dart';
-import '../../../../../utilities/app_loader.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:intl/intl.dart';
 import '../../VenuesSection/book_event.dart';
@@ -235,15 +235,42 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final isLoading = context.watch<EventDetailsController>().getIsLoading;
-    final eventDetails =
-        context.watch<EventDetailsController>().getEventDetails;
+    final controller = context.watch<EventDetailsController>();
+    final isLoading = controller.getIsLoading;
+    final eventDetails = controller.getEventDetails;
+
+    if (isLoading) {
+      return Scaffold(
+        backgroundColor: AppColor.primaryColor(context),
+        body: Center(
+          child: CircularProgressIndicator(
+            color: AppColor.buttonColor,
+          ),
+        ),
+      );
+    }
+
+    if (eventDetails is! Map || eventDetails.isEmpty) {
+      return Scaffold(
+        backgroundColor: AppColor.primaryColor(context),
+        body: Center(
+          child: Text(
+            'Failed to load event details',
+            style: TextStyle(
+              color: AppColor.secondryColor(context),
+              fontSize: 16,
+              fontFamily: AppFont.fontFamily,
+            ),
+          ),
+        ),
+      );
+    }
+
     final isLiked = _toBool(eventDetails['is_liked']);
     final showDislikeOnly = widget.forceDislikeOnly || isLiked;
     final targetEventId = _targetEventId(eventDetails['_id']);
-    return ProgressHUD(
-        isLoading: isLoading,
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
           value: SystemUiOverlayStyle(
             statusBarColor: AppColor.primaryColor(context),
             statusBarIconBrightness: Brightness.light,
@@ -1395,6 +1422,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                           GestureDetector(
                                                             onTap: () {
                                                               if (isEnded) {
+                                                                SnackBarToastMessage
+                                                                    .info(
+                                                                        context,
+                                                                        "This event has ended");
                                                                 return;
                                                               }
                                                               Navigator.push(
@@ -1537,12 +1568,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                 ),
               ),
             ),
-          ),
-        ));
+     ) );
   }
 
-  void eventstypebottomsheet(BuildContext context) =>
-      showEventTypesBottomSheet(
+  void eventstypebottomsheet(BuildContext context) => showEventTypesBottomSheet(
         context,
         type: 'event',
         id: _str(widget.eventId),

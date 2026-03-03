@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'package:app_links/app_links.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,13 +12,29 @@ import 'provider/darkmode_provider.dart';
 import 'utilities/app_theme.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
+import 'view/authentication/notification_screen.dart';
+import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
 import 'view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'view/other/MySplashSection/MembersSection/member_liked_details.dart';
+import 'view/other/MySplashSection/VenuesSection/venue_booking_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
+import 'view/other/chats/chat_message_screen.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
+  await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
+  final String? title = message.notification?.title?.trim();
+  final String? body = message.notification?.body?.trim();
+  final bool hasSystemContent =
+      (title != null && title.isNotEmpty) || (body != null && body.isNotEmpty);
+
+  // If system notification is missing title/body (common with data-only),
+  // show a local notification so users still see content.
+  if (!hasSystemContent) {
+    await LocalNotificationService.showFromRemoteMessage(message);
+  }
 }
 
 Future<void> main() async {
@@ -50,6 +67,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     _initDeepLinks();
+    _initNotificationRedirections();
   }
 
   @override
@@ -66,6 +84,204 @@ class _MyAppState extends State<MyApp> {
         }
       },
       onError: (_) {},
+    );
+  }
+
+  Future<void> _initNotificationRedirections() async {
+    LocalNotificationService.setOnNotificationTapHandler(
+      _handleLocalNotificationTapPayload,
+    );
+    final String? pendingLocalPayload =
+        LocalNotificationService.consumePendingLaunchPayload();
+    if (pendingLocalPayload != null && pendingLocalPayload.trim().isNotEmpty) {
+      _handleLocalNotificationTapPayload(pendingLocalPayload);
+    }
+    FcmTokenService.setupNotificationTapRedirection(_handlePushRedirect);
+
+    final RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+    if (initialMessage != null) {
+      _handlePushRedirect(initialMessage);
+    }
+  }
+
+  void _handleLocalNotificationTapPayload(String? payload) {
+    if (payload == null || payload.trim().isEmpty) {
+      _openNotificationScreen();
+      return;
+    }
+
+    try {
+      final dynamic decoded = jsonDecode(payload);
+      if (decoded is Map) {
+        final map = decoded.map(
+          (key, value) => MapEntry(key.toString(), value),
+        );
+        _routeFromNotificationData(map);
+        return;
+      }
+    } catch (_) {}
+
+    _openNotificationScreen();
+  }
+
+  void _handlePushRedirect(RemoteMessage message) {
+    _routeFromNotificationData(message.data);
+  }
+
+  String _str(dynamic value) => (value ?? '').toString().trim();
+
+  String _firstNonEmpty(Map<String, dynamic> map, List<String> keys) {
+    for (final String key in keys) {
+      final String value = _str(map[key]);
+      if (value.isNotEmpty) return value;
+    }
+    return '';
+  }
+
+  Map<String, dynamic> _extractActionJson(Map<String, dynamic> data) {
+    final dynamic raw = data['action_json'];
+    if (raw is Map<String, dynamic>) return raw;
+    if (raw is Map) {
+      return raw.map((key, value) => MapEntry(key.toString(), value));
+    }
+    if (raw is String && raw.trim().isNotEmpty) {
+      try {
+        final decoded = jsonDecode(raw);
+        if (decoded is Map) {
+          return decoded.map((key, value) => MapEntry(key.toString(), value));
+        }
+      } catch (_) {}
+    }
+    return <String, dynamic>{};
+  }
+
+  void _routeFromNotificationData(Map<String, dynamic> data) {
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _routeFromNotificationData(data);
+      });
+      return;
+    }
+
+    final String action = _str(data['action']).toLowerCase();
+    final String type = _str(data['type']).toLowerCase();
+    final Map<String, dynamic> actionJson = _extractActionJson(data);
+
+    if (action == 'new_message' || type == 'new_message') {
+      final Map<String, dynamic> src = actionJson.isNotEmpty ? actionJson : data;
+      final String otherUserId = _firstNonEmpty(
+        src,
+        <String>['other_user_id', 'sender_id', 'senderId'],
+      );
+      final String conversationId = _firstNonEmpty(
+        src,
+        <String>['conversation_id', 'conversationId'],
+      );
+      final String senderName = _firstNonEmpty(
+        src,
+        <String>['sender_name', 'title', 'name'],
+      );
+      final String senderImage = _firstNonEmpty(
+        src,
+        <String>['sender_image', 'profile_image', 'image'],
+      );
+
+      if (otherUserId.isEmpty) {
+        _openNotificationScreen();
+        return;
+      }
+
+      navigator.push(
+        MaterialPageRoute(
+          builder: (_) => ChatMessageScreen(
+            name: senderName.isEmpty ? 'User' : senderName,
+            image: senderImage,
+            receiverId: otherUserId,
+            conversationId: conversationId.isEmpty ? null : conversationId,
+          ),
+        ),
+      );
+      return;
+    }
+
+    if (action == 'someone_liked_you' || action == 'its_match') {
+      final String memberId = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['senderId', 'other_user_id', 'target_user_id', 'user_id'],
+      );
+      if (memberId.isEmpty) {
+        _openNotificationScreen();
+        return;
+      }
+      navigator.push(
+        MaterialPageRoute(
+          builder: (_) => LikedMemberDetail(memberId: memberId),
+        ),
+      );
+      return;
+    }
+
+    if (action == 'event_booking_confirmed') {
+      final String bookingId = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['booking_id', 'event_booking_id'],
+      );
+      if (bookingId.isNotEmpty) {
+        navigator.push(
+          MaterialPageRoute(
+            builder: (_) => BookedEventDetails(bookingId: bookingId),
+          ),
+        );
+        return;
+      }
+
+      final String eventId = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['event_id'],
+      );
+      if (eventId.isNotEmpty) {
+        navigator.push(
+          MaterialPageRoute(
+            builder: (_) => LikedEventDetail(eventId: eventId),
+          ),
+        );
+        return;
+      }
+
+      _openNotificationScreen();
+      return;
+    }
+
+    if (action == 'venue_booking_confirmed' || action == 'venue_booking_details') {
+      final String bookingId = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['booking_id', 'venue_booking_id', 'venue_id'],
+      );
+      if (bookingId.isEmpty) {
+        _openNotificationScreen();
+        return;
+      }
+      navigator.push(
+        MaterialPageRoute(
+          builder: (_) => VenueBookedDetails(venueId: bookingId),
+        ),
+      );
+      return;
+    }
+
+    // welcome / signup / unknown actions -> Notifications screen
+    _openNotificationScreen();
+  }
+
+  void _openNotificationScreen() {
+    final navigator = _navigatorKey.currentState;
+    if (navigator == null) return;
+    navigator.push(
+      MaterialPageRoute(
+        builder: (_) => const Notifications(),
+      ),
     );
   }
 
