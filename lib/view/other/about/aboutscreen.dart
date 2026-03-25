@@ -4,8 +4,10 @@ import 'package:flutter/widgets.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../provider/content_service.dart';
+import '../../../provider/darkmode_provider.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_header.dart';
@@ -101,11 +103,12 @@ class _AboutScreenState extends State<AboutScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      systemNavigationBarColor: AppColor.primaryColor(context),
-      systemNavigationBarIconBrightness: Brightness.light,
-      statusBarColor: AppColor.primaryColor(context),
-      statusBarIconBrightness: Brightness.light,
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
     ));
 
     final h = MediaQuery.of(context).size.height;
@@ -134,6 +137,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       AppImage.hii,
                       width: w * 0.35,
                       fit: BoxFit.contain,
+                      color: AppColor.secondryColor(context),
                     ),
 
                     SizedBox(height: h * 0.02),
@@ -231,7 +235,10 @@ class _AboutScreenState extends State<AboutScreen> {
                             ),
                             SizedBox(
                               width: w * 0.08,
-                              child: Image.asset(AppImage.frontArrowIcon),
+                              child: Image.asset(
+                                AppImage.frontArrowIcon,
+                                color: AppColor.secondryColor(context),
+                              ),
                             ),
                           ],
                         ),
@@ -254,6 +261,7 @@ class _AboutScreenState extends State<AboutScreen> {
                       AppImage.amblogo,
                       width: w * 0.40,
                       fit: BoxFit.contain,
+                      color: AppColor.secondryColor(context),
                     ),
 
                     SizedBox(height: h * 0.01),

@@ -8,6 +8,7 @@ import '/utilities/app_language.dart';
 import '/view/other/MySplashSection/VenuesSection/reviewbooking_details_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../controller/eventDetails/events_details_controller.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
@@ -16,15 +17,41 @@ import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 
 class BookEvent extends StatefulWidget {
-  const BookEvent({super.key,  this.eventId});
+  const BookEvent({super.key, this.eventId});
 
-  final String ?eventId;
+  final String? eventId;
 
   @override
   State<BookEvent> createState() => _BookEventState();
 }
 
 class _BookEventState extends State<BookEvent> {
+  Future<void> _openEventLocationInMaps(Map<String, dynamic> eventData) async {
+    final latitude = eventData['latitude'];
+    final longitude = eventData['longitude'];
+    final address = (eventData['address'] ?? '').toString().trim();
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -189,6 +216,21 @@ class _BookEventState extends State<BookEvent> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     //! Event Name
+
+                                    Text(
+                                      "Book Event",
+                                      style: TextStyle(
+                                          fontSize: 24,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w700,
+                                          color:
+                                              AppColor.secondryColor(context)),
+                                    ),
+
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+
                                     Consumer<EventDetailsController>(
                                       builder: (BuildContext context,
                                           controller, _) {
@@ -196,58 +238,55 @@ class _BookEventState extends State<BookEvent> {
                                             controller.getEventDetails[
                                                     'event_name'] ??
                                                 "";
-                                        return Text(
-                                          eventName,
-                                          style: TextStyle(
-                                              fontSize: 24,
+                                        return Container(
+                                          width: size.width * 75 / 100,
+                                          child: Text(
+                                            eventName,
+                                            style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w700,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 12,
                                               color: AppColor.secondryColor(
-                                                  context)),
+                                                  context),
+                                            ),
+                                          ),
                                         );
                                       },
-                                    ),
-                                    SizedBox(
-                                      height: size.height * 2 / 100,
-                                    ),
-
-                                    SizedBox(
-                                      width: size.width * 75 / 100,
-                                      child: Text(
-                                        AppLanguage
-                                            .BassDropFridaytext[language],
-                                        style: TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                          color:
-                                              AppColor.secondryColor(context),
-                                        ),
-                                      ),
                                     ),
 
                                     //! Addrss and Distance
                                     Consumer<EventDetailsController>(
                                       builder: (BuildContext context,
                                           controller, _) {
-                                        String eventAddress = controller
-                                                .getEventDetails['address'] ??
-                                            "";
-                                        return SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              70 /
-                                              100,
-                                          child: Text(
-                                            eventAddress,
-                                            maxLines: 2,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: const TextStyle(
-                                              fontSize: 13,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w500,
-                                              color: AppColor.buttonColor,
+                                        final eventDetails =
+                                            Map<String, dynamic>.from(
+                                          controller.getEventDetails,
+                                        );
+                                        final eventAddress =
+                                            (eventDetails['address'] ?? '')
+                                                .toString();
+                                        return GestureDetector(
+                                          onTap: eventAddress.trim().isEmpty
+                                              ? null
+                                              : () => _openEventLocationInMaps(
+                                                    eventDetails,
+                                                  ),
+                                          child: SizedBox(
+                                            width: MediaQuery.of(context)
+                                                    .size
+                                                    .width *
+                                                70 /
+                                                100,
+                                            child: Text(
+                                              eventAddress,
+                                              maxLines: 2,
+                                              overflow: TextOverflow.ellipsis,
+                                              style: const TextStyle(
+                                                fontSize: 13,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                                color: AppColor.buttonColor,
+                                              ),
                                             ),
                                           ),
                                         );
@@ -512,6 +551,8 @@ class _BookEventState extends State<BookEvent> {
                                           controller.getTicketCount(ticketId);
                                       final int availableTickets =
                                           item['available_tickets'] ?? 0;
+                                      final bool isSoldOut =
+                                          availableTickets <= 0;
 
                                       return Column(
                                         children: [
@@ -583,136 +624,173 @@ class _BookEventState extends State<BookEvent> {
                                                 ],
                                               ),
                                               GestureDetector(
-                                                onTap: () {
-                                                  if (!isSelected) {
-                                                    controller.addTicket(
-                                                        ticketId,
-                                                        basePrice: double
-                                                                .tryParse(item[
-                                                                        'price']
-                                                                    .toString()) ??
-                                                            0.0,
-                                                        ticketTitle:
-                                                            item['title'] ?? "",
-                                                        isOneDay:
-                                                            selectedPassIndex);
-                                                  }
-                                                },
+                                                onTap: isSoldOut
+                                                    ? null
+                                                    : () {
+                                                        if (!isSelected) {
+                                                          controller.addTicket(
+                                                              ticketId,
+                                                              basePrice: double
+                                                                      .tryParse(
+                                                                          item['price']
+                                                                              .toString()) ??
+                                                                  0.0,
+                                                              ticketTitle: item[
+                                                                      'title'] ??
+                                                                  "",
+                                                              isOneDay:
+                                                                  selectedPassIndex);
+                                                        }
+                                                      },
                                                 child: Container(
                                                   height: size.height * 4 / 100,
                                                   width: isSelected
                                                       ? size.width * 26 / 100
                                                       : size.width * 20 / 100,
                                                   decoration: BoxDecoration(
-                                                    color: isSelected
+                                                    color: isSoldOut
                                                         ? AppColor
                                                             .logoutContainerColor(
                                                                 context)
-                                                        : AppColor
-                                                            .secondryColor(
-                                                                context),
+                                                        : isSelected
+                                                            ? AppColor
+                                                                .logoutContainerColor(
+                                                                    context)
+                                                            : AppColor
+                                                                .secondryColor(
+                                                                    context),
                                                     border: Border.all(
                                                       width: 1,
-                                                      color: isSelected
-                                                          ? AppColor.pinkColor
-                                                          : AppColor
-                                                              .secondryColor(
-                                                                  context),
+                                                      color: isSoldOut
+                                                          ? AppColor
+                                                              .greyLightColor(context)
+                                                          : isSelected
+                                                              ? AppColor
+                                                                  .pinkColor
+                                                              : AppColor
+                                                                  .secondryColor(
+                                                                      context),
                                                     ),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             10),
                                                   ),
-                                                  child: isSelected
-                                                      ? Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            //! Decrease button
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                controller
-                                                                    .removeTicket(
-                                                                        ticketId);
-                                                              },
-                                                              child: Container(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical: 4,
-                                                                    horizontal:
-                                                                        6),
-                                                                child: Icon(
-                                                                  Icons.remove,
-                                                                  color: AppColor
-                                                                      .secondryColor(
-                                                                          context),
-                                                                  size: 16,
-                                                                ),
-                                                              ),
-                                                            ),
-
-                                                            //! Count display
-                                                            Text(
-                                                              ticketCount
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontSize: 14,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w600,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context),
-                                                              ),
-                                                            ),
-
-                                                            //! Increase button
-                                                            GestureDetector(
-                                                              onTap: () {
-                                                                controller
-                                                                    .increaseTicketCount(
-                                                                  ticketId,
-                                                                  availableTickets,
-                                                                );
-                                                              },
-                                                              child: Container(
-                                                                padding: const EdgeInsets
-                                                                    .symmetric(
-                                                                    vertical: 4,
-                                                                    horizontal:
-                                                                        6),
-                                                                child: Icon(
-                                                                  Icons.add,
-                                                                  color: AppColor
-                                                                      .secondryColor(
-                                                                          context),
-                                                                  size: 16,
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ],
-                                                        )
-                                                      : Center(
+                                                  child: isSoldOut
+                                                      ? Center(
                                                           child: Text(
-                                                            AppLanguage
-                                                                    .selectText[
-                                                                language],
+                                                            'Sold Out',
                                                             style: TextStyle(
                                                               fontFamily: AppFont
                                                                   .fontFamily,
-                                                              fontSize: 14,
+                                                              fontSize: 13,
                                                               fontWeight:
                                                                   FontWeight
-                                                                      .w500,
+                                                                      .w600,
                                                               color: AppColor
-                                                                  .primaryColor(
-                                                                      context),
+                                                                  .greyLightColor(context),
                                                             ),
                                                           ),
-                                                        ),
+                                                        )
+                                                      : isSelected
+                                                          ? Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                //! Decrease button
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    controller
+                                                                        .removeTicket(
+                                                                            ticketId);
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            4,
+                                                                        horizontal:
+                                                                            6),
+                                                                    child: Icon(
+                                                                      Icons
+                                                                          .remove,
+                                                                      color: AppColor
+                                                                          .secondryColor(
+                                                                              context),
+                                                                      size: 16,
+                                                                    ),
+                                                                  ),
+                                                                ),
+
+                                                                //! Count display
+                                                                Text(
+                                                                  ticketCount
+                                                                      .toString(),
+                                                                  style:
+                                                                      TextStyle(
+                                                                    fontFamily:
+                                                                        AppFont
+                                                                            .fontFamily,
+                                                                    fontSize:
+                                                                        14,
+                                                                    fontWeight:
+                                                                        FontWeight
+                                                                            .w600,
+                                                                    color: AppColor
+                                                                        .secondryColor(
+                                                                            context),
+                                                                  ),
+                                                                ),
+
+                                                                //! Increase button
+                                                                GestureDetector(
+                                                                  onTap: () {
+                                                                    controller
+                                                                        .increaseTicketCount(
+                                                                      ticketId,
+                                                                      availableTickets,
+                                                                    );
+                                                                  },
+                                                                  child:
+                                                                      Container(
+                                                                    padding: const EdgeInsets
+                                                                        .symmetric(
+                                                                        vertical:
+                                                                            4,
+                                                                        horizontal:
+                                                                            6),
+                                                                    child: Icon(
+                                                                      Icons.add,
+                                                                      color: AppColor
+                                                                          .secondryColor(
+                                                                              context),
+                                                                      size: 16,
+                                                                    ),
+                                                                  ),
+                                                                ),
+                                                              ],
+                                                            )
+                                                          : Center(
+                                                              child: Text(
+                                                                AppLanguage
+                                                                        .selectText[
+                                                                    language],
+                                                                style:
+                                                                    TextStyle(
+                                                                  fontFamily:
+                                                                      AppFont
+                                                                          .fontFamily,
+                                                                  fontSize: 14,
+                                                                  fontWeight:
+                                                                      FontWeight
+                                                                          .w500,
+                                                                  color: AppColor
+                                                                      .primaryColor(
+                                                                          context),
+                                                                ),
+                                                              ),
+                                                            ),
                                                 ),
                                               ),
                                             ],

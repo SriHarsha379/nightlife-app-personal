@@ -4,9 +4,11 @@ import 'package:night_life/view/bottom%20navigation/profile1.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:night_life/view/bottom%20navigation/search_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
 import '../view/other/MySplashSection/EventSection/my_events.dart';
 import '../view/other/MySplashSection/MembersSection/Members.dart';
 import '../view/other/MySplashSection/VenuesSection/my_venue.dart';
+import '../provider/socket_provider.dart';
 import 'app_color.dart';
 import 'app_constant.dart';
 import 'app_font.dart';
@@ -26,11 +28,20 @@ class MyAppFooterState extends State<MyAppFooter> {
   PageController pageController = PageController(initialPage: 0);
   int selectedIndex = 0;
   int _previousIndex = 0;
+
   @override
   void initState() {
     pageController = PageController(initialPage: AppConstant.selectFooterIndex);
     selectedIndex = widget.initialIndex;
     _previousIndex = widget.initialIndex;
+
+    // FIX: removed _ensureSocketReady from initState.
+    // Socket is managed by post_api_provider (login → forceReconnect)
+    // and ChatScreen (on open → initSocket).
+    // Calling initSocket here was causing a race condition where the footer
+    // connected the socket BEFORE the login flow's forceReconnect finished
+    // setting the new user's token, resulting in the old/stale socket session
+    // being reused for the new user.
 
     super.initState();
   }
@@ -117,77 +128,73 @@ class MyAppFooterState extends State<MyAppFooter> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: List.generate(iconList.length, (index) {
-                // Define icon sizes for each index
-                double getIconWidth(int index) {
-                  switch (index) {
-                    case 0:
-                      return MediaQuery.of(context).size.width * 8 / 100;
-                    case 1:
-                      return MediaQuery.of(context).size.width * 7 / 100;
-                    case 2:
-                      return MediaQuery.of(context).size.width * 7 / 100;
-                    case 3:
-                      return MediaQuery.of(context).size.width * 5.5 / 100;
-                    default:
-                      return MediaQuery.of(context).size.width * 5 / 100;
-                  }
-                }
+                    double getIconWidth(int index) {
+                      switch (index) {
+                        case 0:
+                          return MediaQuery.of(context).size.width * 8 / 100;
+                        case 1:
+                          return MediaQuery.of(context).size.width * 7 / 100;
+                        case 2:
+                          return MediaQuery.of(context).size.width * 7 / 100;
+                        case 3:
+                          return MediaQuery.of(context).size.width * 5.5 / 100;
+                        default:
+                          return MediaQuery.of(context).size.width * 5 / 100;
+                      }
+                    }
 
-                double getIconHeight(int index) {
-                  switch (index) {
-                    case 0:
-                      return MediaQuery.of(context).size.width * 7 / 100;
-                    case 1:
-                      return MediaQuery.of(context).size.width * 6 / 100;
-                    case 2:
-                      return MediaQuery.of(context).size.width * 6 / 100;
-                    case 3:
-                      return MediaQuery.of(context).size.width * 6 / 100;
-                    default:
-                      return MediaQuery.of(context).size.width * 5 / 100;
-                  }
-                }
+                    double getIconHeight(int index) {
+                      switch (index) {
+                        case 0:
+                          return MediaQuery.of(context).size.width * 7 / 100;
+                        case 1:
+                          return MediaQuery.of(context).size.width * 6 / 100;
+                        case 2:
+                          return MediaQuery.of(context).size.width * 6 / 100;
+                        case 3:
+                          return MediaQuery.of(context).size.width * 6 / 100;
+                        default:
+                          return MediaQuery.of(context).size.width * 5 / 100;
+                      }
+                    }
 
-                return GestureDetector(
-                  onTap: () {
-                    onItemTapped(index);
-                  },
-                  child: Container(
-                    width: selectedIndex == index
-                        ? MediaQuery.of(context).size.width *
-                            12.4 /
-                            100 // smaller circle
-                        : MediaQuery.of(context).size.width *
-                            12.4 /
-                            100, // normal
-                    height: selectedIndex == index
-                        ? MediaQuery.of(context).size.width * 10 / 100
-                        : MediaQuery.of(context).size.width * 12.4 / 100,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: selectedIndex == index
-                          ? const Color.fromRGBO(255, 28, 192, 0.6)
-                          : Colors.transparent,
-                      boxShadow: selectedIndex == index
-                          ? [
-                              BoxShadow(
-                                color: AppColor.buttonColor.withOpacity(1.0),
-                                blurRadius: 20,
-                                spreadRadius: 3,
-                                offset: const Offset(0, 1),
-                              ),
-                            ]
-                          : [],
-                    ),
-                    alignment: Alignment.center,
-                    child: Image.asset(
-                      iconList[index]['icon'],
-                      width: getIconWidth(index),
-                      height: getIconHeight(index),
-                      color: Colors.white,
-                    ),
-                  ),
-                );
+                    return GestureDetector(
+                      onTap: () {
+                        onItemTapped(index);
+                      },
+                      child: Container(
+                        width: selectedIndex == index
+                            ? MediaQuery.of(context).size.width * 12.4 / 100
+                            : MediaQuery.of(context).size.width * 12.4 / 100,
+                        height: selectedIndex == index
+                            ? MediaQuery.of(context).size.width * 10 / 100
+                            : MediaQuery.of(context).size.width * 12.4 / 100,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: selectedIndex == index
+                              ? const Color.fromRGBO(255, 28, 192, 0.6)
+                              : Colors.transparent,
+                          boxShadow: selectedIndex == index
+                              ? [
+                                  BoxShadow(
+                                    color:
+                                        AppColor.buttonColor.withOpacity(1.0),
+                                    blurRadius: 20,
+                                    spreadRadius: 3,
+                                    offset: const Offset(0, 1),
+                                  ),
+                                ]
+                              : [],
+                        ),
+                        alignment: Alignment.center,
+                        child: Image.asset(
+                          iconList[index]['icon'],
+                          width: getIconWidth(index),
+                          height: getIconHeight(index),
+                          color: Colors.white,
+                        ),
+                      ),
+                    );
                   }),
                 ),
               ),
@@ -198,7 +205,6 @@ class MyAppFooterState extends State<MyAppFooter> {
     );
   }
 
-// Helper method to get current page
   Widget _getCurrentPage() {
     switch (selectedIndex) {
       case 0:
@@ -215,8 +221,6 @@ class MyAppFooterState extends State<MyAppFooter> {
         return const Home();
     }
   }
-
-// int _previousIndex = 0;
 
   Widget _getPreviousPage() {
     switch (_previousIndex) {
@@ -235,13 +239,17 @@ class MyAppFooterState extends State<MyAppFooter> {
 
   void onItemTapped(int index) {
     if (index == 2) {
-      //  Don't change selectedIndex, just open bottom sheet
       documenttypebottomsheet(context);
     } else {
       setState(() {
         _previousIndex = selectedIndex;
         selectedIndex = index;
       });
+      // FIX: removed _ensureSocketReady() call here.
+      // ChatScreen handles its own socket init on open.
+      // Calling it from the footer was connecting the socket
+      // before ChatScreen could properly set up its listeners,
+      // causing the onConnect event to be missed.
     }
   }
 
@@ -271,7 +279,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                         child: Container(
                           decoration: BoxDecoration(
                             gradient: AppColor.backgroundGradientcolor(context),
-                            borderRadius: BorderRadius.only(
+                            borderRadius: const BorderRadius.only(
                               topLeft: Radius.circular(45),
                               topRight: Radius.circular(45),
                             ),
@@ -284,8 +292,6 @@ class MyAppFooterState extends State<MyAppFooter> {
                                 width: size.width * 0.88,
                                 child: Column(
                                   children: [
-                                    // First Image
-
                                     Align(
                                       alignment: Alignment.center,
                                       child: Image.asset(
@@ -293,6 +299,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                         height: size.height * 0.5 / 100,
                                         width: size.width * 22 / 100,
                                         fit: BoxFit.fill,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 4 / 100),
@@ -326,7 +333,6 @@ class MyAppFooterState extends State<MyAppFooter> {
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.04),
-
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(
@@ -354,10 +360,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                                         ),
                                       ),
                                     ),
-                                    SizedBox(
-                                        height: size.height *
-                                            0.02), // spacing between images
-                                    // Second Image
+                                    SizedBox(height: size.height * 0.02),
                                     GestureDetector(
                                       onTap: () {
                                         Navigator.push(

@@ -54,8 +54,8 @@ class VenuesBookingDetailsController with ChangeNotifier {
         _isVenuesDetailLoading = false;
         notifyListeners();
       } else if (response != null) {
-        CommonHelper.handleInactiveUserRedirect(context, response);
-        _isVenuesDetailLoading = false;
+        // CommonHelper.handleInactiveUserRedirect(context, response);
+        // _isVenuesDetailLoading = false;
         notifyListeners();
       }
     } catch (e) {

@@ -84,7 +84,7 @@ class ProfileController with ChangeNotifier {
       } else {
         _profileData = null;
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

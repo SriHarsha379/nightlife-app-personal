@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'provider/app_providers.dart';
 import 'provider/darkmode_provider.dart';
 import 'utilities/app_theme.dart';
@@ -30,8 +31,6 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   final bool hasSystemContent =
       (title != null && title.isNotEmpty) || (body != null && body.isNotEmpty);
 
-  // If system notification is missing title/body (common with data-only),
-  // show a local notification so users still see content.
   if (!hasSystemContent) {
     await LocalNotificationService.showFromRemoteMessage(message);
   }
@@ -40,6 +39,11 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
   await LocalNotificationService.initialize();
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   await FcmTokenService.generateAndStoreToken();
@@ -59,6 +63,10 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _deepLinkSub;
+  Uri? _lastHandledDeepLink;
+  static const String _handledInitialRedirectsKey =
+      'handled_initial_redirects_v1';
+  static const int _maxHandledInitialRedirects = 40;
 
   static final GlobalKey<NavigatorState> _navigatorKey =
       GlobalKey<NavigatorState>();
@@ -77,14 +85,32 @@ class _MyAppState extends State<MyApp> {
   }
 
   Future<void> _initDeepLinks() async {
+    try {
+      final Uri? initialUri = await _appLinks.getInitialLink();
+      if (initialUri != null) {
+        final bool shouldHandle = await _markInitialRedirectIfNew(
+          'deeplink:${initialUri.toString()}',
+        );
+        if (shouldHandle) {
+          _dispatchDeepLink(initialUri);
+        }
+      }
+    } catch (_) {}
+
     _deepLinkSub = _appLinks.uriLinkStream.listen(
       (Uri? uri) {
         if (uri != null) {
-          _handleDeepLink(uri);
+          _dispatchDeepLink(uri);
         }
       },
       onError: (_) {},
     );
+  }
+
+  void _dispatchDeepLink(Uri uri) {
+    if (_lastHandledDeepLink?.toString() == uri.toString()) return;
+    _lastHandledDeepLink = uri;
+    _handleDeepLink(uri);
   }
 
   Future<void> _initNotificationRedirections() async {
@@ -94,15 +120,51 @@ class _MyAppState extends State<MyApp> {
     final String? pendingLocalPayload =
         LocalNotificationService.consumePendingLaunchPayload();
     if (pendingLocalPayload != null && pendingLocalPayload.trim().isNotEmpty) {
-      _handleLocalNotificationTapPayload(pendingLocalPayload);
+      final bool shouldHandle = await _markInitialRedirectIfNew(
+        'local:${pendingLocalPayload.trim()}',
+      );
+      if (shouldHandle) {
+        _handleLocalNotificationTapPayload(pendingLocalPayload);
+      }
     }
     FcmTokenService.setupNotificationTapRedirection(_handlePushRedirect);
 
     final RemoteMessage? initialMessage =
         await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
-      _handlePushRedirect(initialMessage);
+      final bool shouldHandle = await _markInitialRedirectIfNew(
+        _buildInitialMessageKey(initialMessage),
+      );
+      if (shouldHandle) {
+        _handlePushRedirect(initialMessage);
+      }
     }
+  }
+
+  String _buildInitialMessageKey(RemoteMessage message) {
+    final String id = (message.messageId ?? '').trim();
+    if (id.isNotEmpty) return 'fcm_id:$id';
+    return 'fcm_data:${jsonEncode(message.data)}';
+  }
+
+  Future<bool> _markInitialRedirectIfNew(String key) async {
+    final String normalized = key.trim();
+    if (normalized.isEmpty) return false;
+
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final List<String> handled =
+        prefs.getStringList(_handledInitialRedirectsKey) ?? <String>[];
+    if (handled.contains(normalized)) {
+      return false;
+    }
+
+    handled.add(normalized);
+    if (handled.length > _maxHandledInitialRedirects) {
+      final int removeCount = handled.length - _maxHandledInitialRedirects;
+      handled.removeRange(0, removeCount);
+    }
+    await prefs.setStringList(_handledInitialRedirectsKey, handled);
+    return true;
   }
 
   void _handleLocalNotificationTapPayload(String? payload) {
@@ -170,7 +232,8 @@ class _MyAppState extends State<MyApp> {
     final Map<String, dynamic> actionJson = _extractActionJson(data);
 
     if (action == 'new_message' || type == 'new_message') {
-      final Map<String, dynamic> src = actionJson.isNotEmpty ? actionJson : data;
+      final Map<String, dynamic> src =
+          actionJson.isNotEmpty ? actionJson : data;
       final String otherUserId = _firstNonEmpty(
         src,
         <String>['other_user_id', 'sender_id', 'senderId'],
@@ -200,6 +263,7 @@ class _MyAppState extends State<MyApp> {
             image: senderImage,
             receiverId: otherUserId,
             conversationId: conversationId.isEmpty ? null : conversationId,
+            autoSendSharedEvent: false,
           ),
         ),
       );
@@ -254,7 +318,8 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    if (action == 'venue_booking_confirmed' || action == 'venue_booking_details') {
+    if (action == 'venue_booking_confirmed' ||
+        action == 'venue_booking_details') {
       final String bookingId = _firstNonEmpty(
         actionJson.isNotEmpty ? actionJson : data,
         <String>['booking_id', 'venue_booking_id', 'venue_id'],

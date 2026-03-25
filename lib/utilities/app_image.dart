@@ -122,6 +122,8 @@ class AppImage {
   static const verifiedIcon = "./assets/icons/verifiedIcon.png";
   static const brewandbloomIcon = "./assets/icons/brewAndbloomIcon.png";
   static const calenderPinkIcon = "./assets/icons/ic_calenderPinkIcon.png";
+  static const newCalenderPinkIcon = "./assets/icons/new_calender_icon.png";
+
   static const locationIcon = "./assets/icons/locationIcon.png";
   static const pinkclock = "./assets/icons/clock.png";
 //  assets\icons\men_img.png
@@ -227,18 +229,7 @@ class AppImage {
   static const snapchatIcon = "./assets/icons/snapChaticon.png";
   static const instagramIcon = "./assets/icons/instagramIcon.png";
   static const spotifyIcon = "./assets/icons/spotifyIcon.png";
-  static const GenreCard1 = "./assets/icons/GenreCard1.png";
-  static const GenreCard2 = "./assets/icons/GenreCard2.png";
-  static const GenreCard3 = "./assets/icons/GenreCard3.png";
-  static const GenreCard4 = "./assets/icons/GenreCard4.png";
-  static const GenreCard5 = "./assets/icons/GenreCard5.png";
-  static const GenreCard6 = "./assets/icons/GenreCard6.png";
-  static const GenreCard7 = "./assets/icons/GenreCard7.png";
-  static const GenreCard8 = "./assets/icons/GenreCard8.png";
-  static const GenreCard9 = "./assets/icons/GenreCard9.png";
-  static const GenreCard10 = "./assets/icons/GenreCard10.png";
-  static const GenreCard11 = "./assets/icons/GenreCard11.png";
-  static const GenreCard12 = "./assets/icons/GenreCard12.png";
+
   //Pritam--31-10-2025
   static const rupeesIcon = "./assets/icons/rupees_icon.png";
   static const debitCardIcon = "./assets/icons/debit_icon.png";
@@ -378,6 +369,8 @@ class AppImage {
   static const placeHolderIcon = "./assets/icons/Icon_placeholder.png";
   // static const placeHolder1Icon = "./assets/icons/Profile_2.png";
   static const placeHolder2Icon = "./assets/icons/icon_placeHolder1.jpg";
-    static const dummyImageIcon = "./assets/icons/dummy_image.jpg";
+  static const dummyImageIcon = "./assets/icons/dummy_image.jpg";
 
+  static const googleLight = "./assets/icons/ic_light_google.png";
+  static const appleLight = "./assets/icons/iclight_apple.png";
 }

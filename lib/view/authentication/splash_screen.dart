@@ -67,8 +67,12 @@ class _SplashState extends State<Splash> {
           }
           AppConstant.token = token;
           log("app token----->>>>${AppConstant.token}");
+          final authUserId =
+              ((data['user'] is Map ? data['user']['_id'] : data['_id']) ?? '')
+                  .toString()
+                  .trim();
           Provider.of<SocketProvider>(context, listen: false)
-              .setToken(AppConstant.token);
+              .setToken(AppConstant.token, authUserId: authUserId);
           if (data['player_id'] != null) {
             AppConstant.playerID = data['player_id'].toString();
           }

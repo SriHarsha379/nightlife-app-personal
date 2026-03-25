@@ -12,18 +12,46 @@ import '../utilities/app_image.dart';
 import '../utilities/app_language.dart';
 import '../view/other/chats/chat_message_screen.dart';
 
-void showInviteMembersTypeBottomSheet(BuildContext context) {
-  showModalBottomSheet<void>(
+Future<Map<String, dynamic>?> showInviteMembersTypeBottomSheet(
+  BuildContext context, {
+  required String receiverId,
+  required String receiverName,
+  required String receiverImage,
+  String? conversationId,
+  bool returnSelectionOnly = false,
+}) {
+  return showModalBottomSheet<Map<String, dynamic>>(
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(),
     context: context,
-    builder: (_) => const _InviteMembersTypeBottomSheet(),
+    builder: (_) => _InviteMembersTypeBottomSheet(
+      parentContext: context,
+      receiverId: receiverId,
+      receiverName: receiverName,
+      receiverImage: receiverImage,
+      conversationId: conversationId,
+      returnSelectionOnly: returnSelectionOnly,
+    ),
   );
 }
 
 class _InviteMembersTypeBottomSheet extends StatefulWidget {
-  const _InviteMembersTypeBottomSheet();
+  final BuildContext parentContext;
+  final String receiverId;
+  final String receiverName;
+  final String receiverImage;
+  final String? conversationId;
+  final bool returnSelectionOnly;
+
+  const _InviteMembersTypeBottomSheet({
+    required this.parentContext,
+    required this.receiverId,
+    required this.receiverName,
+    required this.receiverImage,
+    this.conversationId,
+    this.returnSelectionOnly = false,
+  });
 
   @override
   State<_InviteMembersTypeBottomSheet> createState() =>
@@ -69,6 +97,68 @@ class _InviteMembersTypeBottomSheetState
   }
 
   String _str(dynamic value) => (value ?? '').toString().trim();
+
+  String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final resolved = _str(value);
+      if (resolved.isNotEmpty) return resolved;
+    }
+    return '';
+  }
+
+  Map<String, dynamic> _sharedItemPayload(
+    Map<String, dynamic> item, {
+    required bool isEvent,
+  }) {
+    final id = _firstNonEmpty(<dynamic>[
+      item['_id'],
+      item['id'],
+      item[isEvent ? 'event_id' : 'venue_id'],
+    ]);
+    final name = _firstNonEmpty(<dynamic>[
+      item['name'],
+      item['title'],
+      item[isEvent ? 'event_name' : 'venue_name'],
+    ]);
+    final image = _firstNonEmpty(<dynamic>[
+      item['image'],
+      item[isEvent ? 'event_image' : 'venue_image'],
+    ]);
+    final time = _firstNonEmpty(<dynamic>[
+      item['time'],
+      item['date'],
+      item['timing'],
+      item[isEvent ? 'date' : 'timing'],
+    ]);
+    final address = _firstNonEmpty(<dynamic>[
+      item['address'],
+      item['location'],
+      item[isEvent ? 'address' : 'address'],
+    ]);
+    return <String, dynamic>{
+      ...item,
+      'type': isEvent ? 'event' : 'venue',
+      'entity_type': isEvent ? 'event' : 'venue',
+      '_id': id,
+      'id': id,
+      'name': name,
+      'image': image,
+      'time': time,
+      'address': address,
+      if (isEvent) 'event_id': id,
+      if (isEvent) 'event_name': name,
+      if (isEvent) 'event_image': image,
+      if (isEvent) 'event_time': time,
+      if (isEvent) 'event_address': address,
+      if (!isEvent) 'venue_id': id,
+      if (!isEvent) 'venue_name': name,
+      if (!isEvent) 'venue_image': image,
+      if (!isEvent) 'venue_time': time,
+      if (!isEvent) 'venue_address': address,
+      if (isEvent) 'date': time,
+      if (!isEvent) 'timing': time,
+    };
+  }
 
   String _fullImage(String path) {
     final p = _str(path);
@@ -238,20 +328,39 @@ class _InviteMembersTypeBottomSheetState
                                     trailing: GestureDetector(
                                       onTap: () {
                                         setState(() => _sentIds.add(key));
+                                        final sharedItem = _sharedItemPayload(
+                                          item,
+                                          isEvent: isEvent,
+                                        );
+                                        print(
+                                          '[InviteMembersTypeBottomSheet] itemTap => '
+                                          'receiverId=${widget.receiverId}, receiverName=${widget.receiverName}, '
+                                          'shareItem=$sharedItem',
+                                        );
+                                        if (widget.returnSelectionOnly) {
+                                          Navigator.of(context).pop(sharedItem);
+                                          return;
+                                        }
+                                        Navigator.of(context).pop();
                                         Future.delayed(
                                             const Duration(milliseconds: 200),
                                             () {
+                                          if (!widget.parentContext.mounted) {
+                                            return;
+                                          }
                                           Navigator.push(
-                                            context,
+                                            widget.parentContext,
                                             PageTransition(
                                               type: PageTransitionType
                                                   .bottomToTop,
                                               child: ChatMessageScreen(
-                                                name: name,
-                                                image: resolved
-                                                        .startsWith('http')
-                                                    ? AppImage.dummyImageIcon
-                                                    : resolved,
+                                                name: widget.receiverName,
+                                                image: widget.receiverImage,
+                                                receiverId: widget.receiverId,
+                                                conversationId:
+                                                    widget.conversationId,
+                                                sharedEventData: sharedItem,
+                                                autoSendSharedEvent: true,
                                               ),
                                             ),
                                           );
@@ -329,7 +438,8 @@ class _InviteMembersTypeBottomSheetState
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                 color: selected
                     ? AppColor.secondryColor(context)
-                    : AppColor.greyLightColor,
+                    : AppColor
+                                                        .greyLightColor(context),
                 fontSize: selected ? 16 : 15,
                 fontFamily: AppFont.fontFamily,
               ),
@@ -364,7 +474,8 @@ class _InviteMembersTypeBottomSheetState
           Container(
             width: MediaQuery.of(context).size.width,
             height: 2,
-            color: AppColor.greyLightColor.withOpacity(0.3),
+            color: AppColor
+                                                        .greyLightColor(context).withOpacity(0.3),
           ),
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),

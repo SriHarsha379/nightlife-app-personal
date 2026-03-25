@@ -258,7 +258,8 @@ class _ModernPopupDialogState extends State<ModernPopupDialog>
       widget.isDanger ? AppColor.thirdColor : AppColor.themeColor;
 
   Color get _confirmButtonColor => widget.confirmColor ?? _primaryColor;
-  Color get _cancelButtonColor => widget.cancelColor ?? AppColor.greyLightColor;
+  Color get _cancelButtonColor => widget.cancelColor ?? AppColor
+                                                        .greyLightColor(context);
   Color get _iconColor => widget.iconColor ?? _primaryColor;
 
   void _handleConfirm() {

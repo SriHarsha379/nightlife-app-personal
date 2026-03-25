@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import '../../../../controller/home/home_controller.dart';
 import '../../../../controller/my_profile/get_my_profile.dart';
 import '../../../../controller/venues/my_venues_controller.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';
@@ -56,6 +57,48 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
     super.dispose();
   }
 
+  bool _isDarkMode(BuildContext context) {
+    return context.read<ThemeProvider>().isDarkMode;
+  }
+
+  BoxDecoration _venueCardDecoration(
+    BuildContext context, {
+    double radius = 15,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: AppColor.primaryColor(context),
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: isDark
+              ? Colors.black.withOpacity(0.35)
+              : Colors.black.withOpacity(0.13),
+          blurRadius: isDark ? 10 : 18,
+          spreadRadius: isDark ? 0 : 1,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  BoxDecoration _venueActionButtonDecoration(
+    BuildContext context, {
+    double radius = 10,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: isDark
+          ? AppColor.secondryColor(context).withOpacity(0.08)
+          : AppColor.pinkColor.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: AppColor.pinkColor.withOpacity(isDark ? 0.3 : 0.6),
+        width: 1.2,
+      ),
+    );
+  }
+
   Future<void> _handleVenueDetailResult(dynamic result) async {
     if (result is! Map) return;
 
@@ -84,13 +127,14 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -102,7 +146,7 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SizedBox(height: size.height * 4 / 100),
+                SizedBox(height: size.height * 5 / 100),
                 AppHeader(
                   onPress: () => Navigator.pop(context),
                   text: AppLanguage.likedVenues1text[language],
@@ -199,18 +243,17 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
       },
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _venueCardDecoration(context),
         child: Column(
           children: [
-            // ── Venue image ───────────────────────────────────────────────
+            // Venue image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15)),
                 child: CachedNetworkImage(
                   imageUrl:
                       "${AppConfigProvider.imageUrl}${venue['venue_image']}",
@@ -234,8 +277,7 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
                 ),
               ),
             ),
-
-            // ── Details ───────────────────────────────────────────────────
+            // Details
             Padding(
               padding: EdgeInsets.symmetric(
                 horizontal: size.width * 3 / 100,
@@ -266,21 +308,19 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
                         child: Image.asset(
                           AppImage.liked_heart_icon,
                           fit: BoxFit.cover,
-                          color: AppColor.secondryColor(context),
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: size.height * 0.4 / 100),
-
-                  // Date / Time
+                  // Time
                   Row(
                     children: [
                       SizedBox(
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -297,8 +337,7 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
                     ],
                   ),
                   SizedBox(height: size.height * 1 / 100),
-
-                  // Location
+                  // Address
                   Row(
                     children: [
                       SizedBox(
@@ -325,13 +364,19 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
                     ],
                   ),
                   SizedBox(height: size.height * 1.5 / 100),
-
                   // Reserve table button
                   Container(
                     height: size.height * 6 / 100,
                     decoration: BoxDecoration(
-                      color: AppColor.secondryColor(context),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.10),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(

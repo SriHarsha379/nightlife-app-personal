@@ -115,7 +115,8 @@ class _OtpVerifyState extends State<OtpVerify> {
         body: Container(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration: BoxDecoration(gradient: AppColor.backgroundGradientcolor(context)),
+          decoration: BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor(context)),
           child: SingleChildScrollView(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -139,7 +140,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                       child: Text(
                         AppLanguage.otpVerificationText[language],
                         textAlign: TextAlign.center,
-                        style:  TextStyle(
+                        style: TextStyle(
                           color: AppColor.secondryColor(context),
                           fontSize: 24,
                           fontWeight: FontWeight.w600,
@@ -175,7 +176,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                           Text(
                             "+91 ${widget.mobile}",
                             textAlign: TextAlign.center,
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: AppColor.secondryColor(context),
                               fontSize: 17,
                               fontWeight: FontWeight.normal,
@@ -199,7 +200,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                       defaultPinTheme: PinTheme(
                         width: MediaQuery.of(context).size.width * 15.8 / 100,
                         height: MediaQuery.of(context).size.width * 14 / 100,
-                        textStyle:  TextStyle(
+                        textStyle: TextStyle(
                           fontFamily: AppFont.fontFamily,
                           fontSize: 26,
                           fontWeight: FontWeight.w700,
@@ -293,7 +294,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                         children: [
                           TextSpan(
                             text: "${AppLanguage.cantacessthis[language]} ",
-                            style:  TextStyle(
+                            style: TextStyle(
                               color: AppColor.secondryColor(context),
                               fontSize: 12,
                               fontWeight: FontWeight.w400,
@@ -318,7 +319,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                                   fontSize: 12,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: AppFont.fontFamily,
-                                  decoration: TextDecoration.underline,
+                                  // decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../provider/content_service.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -116,7 +117,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
               ),
               SizedBox(height: size.height * 0.008),
               Text(
-                "Share your referral code and invite friends to join Nightlife.",
+                "Share your referral code and invite friends to join Hii.",
                 style: TextStyle(
                   color: AppColor.notificationtextColor(context),
                   fontSize: 13,
@@ -188,11 +189,14 @@ class _ReferAFriendState extends State<ReferAFriend> {
     final userController = Provider.of<UserController>(context);
     referralCode = userController.getDisplayReferralCode;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
@@ -244,7 +248,9 @@ class _ReferAFriendState extends State<ReferAFriend> {
                 width: size.width * 0.88,
                 padding: EdgeInsets.all(size.width * 3 / 100),
                 decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 36, 29, 36),
+                  color: isDark
+                      ? const Color.fromARGB(255, 36, 29, 36)
+                      : Colors.white,
                   borderRadius: BorderRadius.circular(16),
                 ),
                 child: Column(
@@ -418,7 +424,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                   child: Text(
                     "Invite a Friend",
                     style: TextStyle(
-                      color: AppColor.secondryColor(context),
+                      color: Colors.white,
                       fontSize: size.width * 0.042,
                       fontWeight: FontWeight.w600,
                       fontFamily: AppFont.fontFamily,

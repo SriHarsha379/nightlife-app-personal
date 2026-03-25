@@ -125,11 +125,12 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                 child: Text(
                   textAlign: TextAlign.center,
                   AppLanguage.skip[language],
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontFamily: AppFont.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.greyLightColor,
+                    color: AppColor
+                                                        .greyLightColor(context),
                   ),
                 ),
               ),
@@ -289,10 +290,11 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
 
                 // ===== DROPDOWN LIST (VISIBLE WHEN CLICKED) =====
                 if (isDropdownOpen)
-                  const Divider(
+                   Divider(
                     height: 0.2,
                     thickness: 0.5,
-                    color: AppColor.greyLightColor,
+                    color: AppColor
+                                                        .greyLightColor(context),
                     indent: 30,
                     endIndent: 30,
                   ),

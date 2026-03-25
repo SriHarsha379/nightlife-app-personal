@@ -6,6 +6,8 @@ import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:night_life/controller/book_venue/book_venue_details_controller.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
@@ -51,6 +53,34 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
     return [dateStr, ''];
   }
 
+  Future<void> _openVenueLocationInMaps(Map<String, dynamic> venueData) async {
+    final latitude = venueData['latitude'];
+    final longitude = venueData['longitude'];
+    final addressParts = [
+      (venueData['city_name'] ?? '').toString().trim(),
+      (venueData['address'] ?? '').toString().trim(),
+    ]..removeWhere((value) => value.isEmpty);
+    final address = addressParts.join(', ');
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+    if (uri == null) return;
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -91,7 +121,8 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
               final timeAmPm = timeParts.length > 1 ? timeParts[1] : '';
 
               // ── Discount ─────────────────────────────────────────────────
-              final discountPercent = d?['cover_charge_percentage']?.toString() ?? '0';
+              final discountPercent =
+                  d?['cover_charge_percentage']?.toString() ?? '0';
 
               final pills = [
                 {
@@ -199,16 +230,20 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                 ),
                               ),
                               SizedBox(height: size.height * 0.5 / 100),
-                              SizedBox(
-                                width: size.width * 70 / 100,
-                                child: Text(
-                                  // show city + address
-                                  '${d?['city_name'] ?? ''}, ${d?['address'] ?? ''}',
-                                  style: const TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w500,
-                                    fontSize: 14.5,
-                                    color: AppColor.buttonColor,
+                              GestureDetector(
+                                onTap: () => _openVenueLocationInMaps(
+                                  Map<String, dynamic>.from(d ?? {}),
+                                ),
+                                child: SizedBox(
+                                  width: size.width * 70 / 100,
+                                  child: Text(
+                                    '${d?['city_name'] ?? ''}, ${d?['address'] ?? ''}',
+                                    style: const TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontWeight: FontWeight.w500,
+                                      fontSize: 14.5,
+                                      color: AppColor.buttonColor,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -442,117 +477,147 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
                                 ),
                                 SizedBox(height: size.height * 0.2 / 100),
 
+                                // ─── Document 14 (reservation_booking_fees) ───
                                 if (showDetails) ...[
                                   SizedBox(height: size.height * 0.2 / 100),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Base Price",
-                                        style: TextStyle(
-                                          fontSize: 7.30,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                      Text(
-                                        "₹${d?['sub_total'] ?? ''}",
-                                        style: const TextStyle(
-                                          fontSize: 7.30,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: size.height * 0.6 / 100),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      const Text(
-                                        "Cover Charge",
-                                        style: TextStyle(
-                                          fontSize: 7.30,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                      Text(
-                                        "₹${d?['cover_charge'] ?? ''}",
-                                        style: const TextStyle(
-                                          fontSize: 7.30,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white70,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: size.height * 0.6 / 100),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Text(
-                                        "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
-                                        style: const TextStyle(
+                                  // Base Price
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 3 / 100,
+                                        right: size.width * 3 / 100),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Base Price",
+                                          style: TextStyle(
                                             fontSize: 7.30,
-                                            color: Colors.white70),
-                                      ),
-                                      Text(
-                                        "₹${d?['gst_amount'] ?? ''}",
-                                        style: const TextStyle(
-                                            fontSize: 7.30,
-                                            color: Colors.white70),
-                                      ),
-                                    ],
-                                  ),
-                                  SizedBox(height: size.height * 0.6 / 100),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Text(
-                                            "Coupon Discount",
-                                            style: TextStyle(
-                                                fontSize: 7.30,
-                                                color: Colors.white70),
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white70,
                                           ),
-                                          // if (_appliedCouponCode.isNotEmpty)
-                                          Padding(
-                                            padding:
-                                                const EdgeInsets.only(left: 6),
-                                            child: Container(
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 2),
-                                              decoration: BoxDecoration(
-                                                color: AppColor.themeColor
-                                                    .withOpacity(0.15),
-                                                borderRadius:
-                                                    BorderRadius.circular(6),
-                                                border: Border.all(
-                                                  color: AppColor.themeColor,
-                                                  width: 0.5,
+                                        ),
+                                        Text(
+                                          "₹${d?['reservation_booking_fees'] ?? ''}",
+                                          style: const TextStyle(
+                                            fontSize: 7.30,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: size.height * 0.6 / 100),
+                                  // Cover Charge
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 3 / 100,
+                                        right: size.width * 3 / 100),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        const Text(
+                                          "Cover Charge",
+                                          style: TextStyle(
+                                            fontSize: 7.30,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                        Text(
+                                          "₹${d?['cover_charge'] ?? ''}",
+                                          style: const TextStyle(
+                                            fontSize: 7.30,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: size.height * 0.6 / 100),
+                                  // GST
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 3 / 100,
+                                        right: size.width * 3 / 100),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
+                                          style: const TextStyle(
+                                            fontSize: 7.30,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                        Text(
+                                          "₹${d?['gst_amount'] ?? ''}",
+                                          style: const TextStyle(
+                                            fontSize: 7.30,
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(height: size.height * 0.6 / 100),
+                                  // Coupon Discount
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        left: size.width * 3 / 100,
+                                        right: size.width * 3 / 100),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Row(
+                                          children: [
+                                            const Text(
+                                              "Coupon Discount",
+                                              style: TextStyle(
+                                                fontSize: 7.30,
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  left: size.width * 3 / 100,
+                                                  right: size.width * 3 / 100),
+                                              child: Container(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 2,
+                                                ),
+                                                decoration: BoxDecoration(
+                                                  color: AppColor.themeColor
+                                                      .withOpacity(0.15),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6),
+                                                  border: Border.all(
+                                                    color: AppColor.themeColor,
+                                                    width: 0.5,
+                                                  ),
                                                 ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                      Text(
-                                        "-₹${d?['discount'] ?? ''}",
-                                        style: const TextStyle(
+                                          ],
+                                        ),
+                                        Text(
+                                          "-₹${d?['discount'] ?? ''}",
+                                          style: const TextStyle(
                                             fontSize: 7.30,
-                                            color: Colors.white70),
-                                      ),
-                                    ],
+                                            color: Colors.white70,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                   SizedBox(height: size.height * 0.01),
                                 ],

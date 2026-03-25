@@ -12,6 +12,8 @@ import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venue_payment_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 import '../../../../provider/user_controller.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
@@ -41,6 +43,8 @@ class ReviewBooking2Details extends StatefulWidget {
 }
 
 class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
+  bool _noteExpanded = false;
+
   List<Map<String, String>> termsList = [
     {
       'id': '1',
@@ -65,6 +69,31 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
   ];
   int select = 0;
   bool isOpen = false;
+  Future<void> _openVenueLocationInMaps(Map<String, dynamic> venueData) async {
+    final latitude = venueData['latitude'];
+    final longitude = venueData['longitude'];
+    final address = (venueData['address'] ?? '').toString().trim();
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
 
   // Text Editing Controllers
   final TextEditingController nameController = TextEditingController();
@@ -91,9 +120,8 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
     phoneController.text = userController.getUserMobile;
     emailController.text = userController.getUserEmail;
     cityName = userController.getCityData['city_name'];
-    countryCode = (userController.getUserData['country_code'] ?? '+91')
-        .toString()
-        .trim();
+    countryCode =
+        (userController.getUserData['country_code'] ?? '+91').toString().trim();
   }
 
   @override
@@ -303,28 +331,47 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                           SizedBox(
                             height: size.height * 2 / 100,
                           ),
-                          Row(
-                            children: [
-                              Image.asset(
+                          // State variable upar add karo:
+
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _noteExpanded = !_noteExpanded;
+                              });
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  AppImage.infoIcon,
                                   height: size.width * 6 / 100,
                                   width: size.width * 6 / 100,
-                                  AppImage.infoIcon),
-                              SizedBox(
-                                width: size.width * 5 / 100,
-                              ),
-                              Expanded(
-                                child: ExpandableText(
-                                  text: AppLanguage.noteMsgText[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16,
-                                    color: AppColor.secondryColor(context),
+                                  color: AppColor.secondryColor(context),
+                                ),
+                                SizedBox(width: size.width * 5 / 100),
+                                Expanded(
+                                  child: AnimatedSize(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeInOut,
+                                    child: Text(
+                                      AppLanguage.noteMsgText[language],
+                                      maxLines: _noteExpanded ? null : 1,
+                                      overflow: _noteExpanded
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
+
                           SizedBox(
                             height: size.height * 5 / 100,
                           ),
@@ -341,115 +388,121 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                   eventData['venue_image'] ?? "";
                               // String eventDate = eventData['event_date'] ?? "";
                               String address = eventData['address'] ?? "";
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        bookingSummary,
-                                        style: const TextStyle(
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                            fontSize: 13.5,
-                                            color: AppColor.pinkColor),
-                                      ),
-                                      SizedBox(
-                                        height: size.height * 0.1 / 100,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                45 /
-                                                100,
-                                        child: Text(
-                                          eventName,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w700,
-                                              fontSize: 16,
-                                              color: AppColor.secondryColor(
-                                                  context)),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: size.height * 0.1 / 100,
-                                      ),
-                                      Container(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                45 /
-                                                100,
-                                        // color: AppColor.pinkColor,
-                                        child: Text(
-                                          address,
-                                          maxLines: 1,
+                              return GestureDetector(
+                                onTap: address.trim().isEmpty
+                                    ? null
+                                    : () => _openVenueLocationInMaps(eventData),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          bookingSummary,
                                           style: const TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w400,
-                                              fontSize: 14,
+                                              fontSize: 13.5,
                                               color: AppColor.pinkColor),
                                         ),
-                                      ),
-                                    ],
-                                  ),
-                                  Consumer<VenuesDetailsController>(
-                                    builder:
-                                        (BuildContext context, controller, _) {
-                                      return SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                35 /
-                                                100,
-                                        height:
-                                            MediaQuery.of(context).size.height *
-                                                10 /
-                                                100,
-                                        child: ClipRRect(
-                                          borderRadius:
-                                              BorderRadius.circular(20),
-                                          child: CachedNetworkImage(
-                                            imageBuilder:
-                                                (context, imageProvider) =>
-                                                    Container(
-                                              decoration: BoxDecoration(
-                                                image: DecorationImage(
-                                                  image: imageProvider,
-                                                  fit: BoxFit.cover,
+                                        SizedBox(
+                                          height: size.height * 0.1 / 100,
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              45 /
+                                              100,
+                                          child: Text(
+                                            eventName,
+                                            maxLines: 1,
+                                            style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 16,
+                                                color: AppColor.secondryColor(
+                                                    context)),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: size.height * 0.1 / 100,
+                                        ),
+                                        Container(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              45 /
+                                              100,
+                                          // color: AppColor.pinkColor,
+                                          child: Text(
+                                            address,
+                                            maxLines: 2,
+                                            style: const TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                overflow: TextOverflow.ellipsis,
+                                                color: AppColor.pinkColor),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    Consumer<VenuesDetailsController>(
+                                      builder: (BuildContext context,
+                                          controller, _) {
+                                        return SizedBox(
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              35 /
+                                              100,
+                                          height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                              10 /
+                                              100,
+                                          child: ClipRRect(
+                                            borderRadius:
+                                                BorderRadius.circular(20),
+                                            child: CachedNetworkImage(
+                                              imageBuilder:
+                                                  (context, imageProvider) =>
+                                                      Container(
+                                                decoration: BoxDecoration(
+                                                  image: DecorationImage(
+                                                    image: imageProvider,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                ),
+                                              ),
+                                              imageUrl:
+                                                  "${AppConfigProvider.imageUrl}$eventImage",
+                                              fit: BoxFit.cover,
+                                              errorWidget:
+                                                  (context, url, error) =>
+                                                      Image.asset(
+                                                AppImage.dummyImageIcon,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              placeholder: (context, url) =>
+                                                  Center(
+                                                child: LoadingAnimationWidget
+                                                    .dotsTriangle(
+                                                  color: AppColor.themeColor,
+                                                  size: 35,
                                                 ),
                                               ),
                                             ),
-                                            imageUrl:
-                                                "${AppConfigProvider.imageUrl}$eventImage",
-                                            fit: BoxFit.cover,
-                                            errorWidget:
-                                                (context, url, error) =>
-                                                    Image.asset(
-                                              AppImage.dummyImageIcon,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            placeholder: (context, url) =>
-                                                Center(
-                                              child: LoadingAnimationWidget
-                                                  .dotsTriangle(
-                                                color: AppColor.themeColor,
-                                                size: 35,
-                                              ),
-                                            ),
                                           ),
-                                        ),
-                                      );
-                                    },
-                                  ),
-                            
-                            
-                            
-                            
-                                ],
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
                               );
                             },
                           ),
@@ -723,6 +776,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                                     height: size.height * 2 / 100,
                                     width: size.width * 4 / 100,
                                     fit: BoxFit.cover,
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                               ],

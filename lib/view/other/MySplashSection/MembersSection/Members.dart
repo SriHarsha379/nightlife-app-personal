@@ -13,6 +13,7 @@ import 'package:page_transition/page_transition.dart';
 import '../../../../controller/home/home_controller.dart';
 import '../../../../controller/members/conversion_list_controller.dart';
 import '../../../../controller/members/members_controller.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_footer.dart';
@@ -75,7 +76,6 @@ class _splashMembersState extends State<splashMembers> {
   String _buildMemberImage(dynamic rawPath) {
     dynamic source = rawPath;
 
-    // Some APIs return `profile_image` as map/list instead of plain string.
     if (source is Map) {
       source = source['url'] ??
           source['path'] ??
@@ -100,7 +100,6 @@ class _splashMembersState extends State<splashMembers> {
       return path;
     }
 
-    // Normalize known relative variants from backend.
     if (path.startsWith('/')) path = path.substring(1);
     if (path.startsWith('uploads/')) path = path.substring('uploads/'.length);
     if (path.startsWith('app/server/uploads/')) {
@@ -112,11 +111,7 @@ class _splashMembersState extends State<splashMembers> {
 
   String _memberAddress(Map member) {
     final city = _str(member['address']);
-    if (city.isNotEmpty && city.isNotEmpty) {
-      return '$city';
-    }
     if (city.isNotEmpty) return city;
-    if (city.isNotEmpty) return '$city ';
     return '';
   }
 
@@ -246,18 +241,32 @@ class _splashMembersState extends State<splashMembers> {
     );
   }
 
+  // ✅ White button decoration — same as MyVenue / MyEvents
+  BoxDecoration _memberActionButtonDecoration({double radius = 10}) {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.10),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final membersController = Provider.of<MembersController>(context);
-
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         body: Container(
@@ -267,15 +276,14 @@ class _splashMembersState extends State<splashMembers> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 4 / 100,
-              ),
+              SizedBox(height: size.height * 4 / 100),
+
+              // ── App bar ──────────────────────────────────────────────────
               Center(
                 child: SizedBox(
-                  width: MediaQuery.of(context).size.width * 90 / 100,
-                  height: MediaQuery.of(context).size.height * 7 / 100,
+                  width: size.width * 90 / 100,
+                  height: size.height * 7 / 100,
                   child: Row(
-                    // mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       GestureDetector(
                         onTap: () {
@@ -289,24 +297,20 @@ class _splashMembersState extends State<splashMembers> {
                           );
                         },
                         child: Container(
-                          height: MediaQuery.of(context).size.height * 7 / 100,
+                          height: size.height * 7 / 100,
                           alignment: Alignment.center,
                           child: Image.asset(
                             AppImage.backarrow,
                             fit: BoxFit.cover,
                             color: AppColor.secondryColor(context),
-                            height: MediaQuery.of(context).size.width * 5 / 100,
-                            width: MediaQuery.of(context).size.width * 5 / 100,
+                            height: size.width * 5 / 100,
+                            width: size.width * 5 / 100,
                           ),
                         ),
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 26 / 100,
-                      ),
+                      SizedBox(width: size.width * 26 / 100),
                       GestureDetector(
-                        onTap: () {
-                          documenttypebottomsheet(context);
-                        },
+                        onTap: () => documenttypebottomsheet(context),
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
@@ -323,106 +327,32 @@ class _splashMembersState extends State<splashMembers> {
                       ),
                       SizedBox(width: size.width * 2 / 100),
                       GestureDetector(
-                        onTap: () {
-                          documenttypebottomsheet(context);
-                        },
+                        onTap: () => documenttypebottomsheet(context),
                         child: Image.asset(
                           AppImage.downArrow,
                           fit: BoxFit.cover,
                           color: AppColor.secondryColor(context),
-                          height: MediaQuery.of(context).size.width * 5 / 100,
+                          height: size.width * 5 / 100,
                         ),
                       ),
                     ],
                   ),
                 ),
               ),
+
               SizedBox(height: size.height * 2 / 100),
+
+              // ── Tab bar ──────────────────────────────────────────────────
               Container(
                 color: AppColor.primaryColor(context),
-                width: MediaQuery.of(context).size.width * 100 / 100,
-                height: MediaQuery.of(context).size.height * 8 / 100,
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = 0;
-                          });
-                          Provider.of<MembersController>(context, listen: false)
-                              .fetchMyMembers(
-                            context,
-                            type: 'liked',
-                            page: 1,
-                            limit: 10,
-                          );
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 50 / 100,
-                          // height:
-                          //     MediaQuery.of(context).size.height * 6 / 100,
-                          child: Center(
-                            child: Text(
-                              AppLanguage.likedText[language],
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: selectedIndex == 0
-                                    ? AppColor.pinkColor
-                                    : AppColor.secondryColor(context),
-                                fontSize: 15,
-                                fontFamily: AppFont.fontFamily,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          setState(() {
-                            selectedIndex = 1;
-                          });
-                          Provider.of<MembersController>(context, listen: false)
-                              .fetchMyMembers(
-                            context,
-                            type: 'connected',
-                            page: 1,
-                            limit: 10,
-                          );
-                        },
-                        child: Container(
-                          width: MediaQuery.of(context).size.width * 50 / 100,
-                          // height:
-                          //     MediaQuery.of(context).size.height * 6 / 100,
-                          child: Center(
-                            child: Text(
-                              AppLanguage.myconectionstext[language],
-                              style: TextStyle(
-                                fontWeight: FontWeight.w500,
-                                color: selectedIndex == 1
-                                    ? AppColor.pinkColor
-                                    : AppColor.secondryColor(context),
-                                fontSize: 15,
-                                fontFamily: AppFont.fontFamily,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              Container(
+                width: size.width * 100 / 100,
+                height: size.height * 8 / 100,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          selectedIndex = 0;
-                        });
+                        setState(() => selectedIndex = 0);
                         Provider.of<MembersController>(context, listen: false)
                             .fetchMyMembers(
                           context,
@@ -432,18 +362,25 @@ class _splashMembersState extends State<splashMembers> {
                         );
                       },
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 50 / 100,
-                        height: MediaQuery.of(context).size.height * 0.3 / 100,
-                        color: selectedIndex == 0
-                            ? AppColor.pinkColor
-                            : AppColor.secondryColor(context),
+                        width: size.width * 50 / 100,
+                        child: Center(
+                          child: Text(
+                            AppLanguage.likedText[language],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: selectedIndex == 0
+                                  ? AppColor.pinkColor
+                                  : AppColor.secondryColor(context),
+                              fontSize: 15,
+                              fontFamily: AppFont.fontFamily,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                     GestureDetector(
                       onTap: () {
-                        setState(() {
-                          selectedIndex = 1;
-                        });
+                        setState(() => selectedIndex = 1);
                         Provider.of<MembersController>(context, listen: false)
                             .fetchMyMembers(
                           context,
@@ -453,19 +390,73 @@ class _splashMembersState extends State<splashMembers> {
                         );
                       },
                       child: Container(
-                        width: MediaQuery.of(context).size.width * 50 / 100,
-                        height: MediaQuery.of(context).size.height * 0.3 / 100,
-                        color: selectedIndex == 1
-                            ? AppColor.pinkColor
-                            : AppColor.secondryColor(context),
+                        width: size.width * 50 / 100,
+                        child: Center(
+                          child: Text(
+                            AppLanguage.myconectionstext[language],
+                            style: TextStyle(
+                              fontWeight: FontWeight.w500,
+                              color: selectedIndex == 1
+                                  ? AppColor.pinkColor
+                                  : AppColor.secondryColor(context),
+                              fontSize: 15,
+                              fontFamily: AppFont.fontFamily,
+                            ),
+                          ),
+                        ),
                       ),
                     ),
                   ],
                 ),
               ),
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 2 / 100,
+
+              // ── Tab indicator ────────────────────────────────────────────
+              Row(
+                children: [
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => selectedIndex = 0);
+                      Provider.of<MembersController>(context, listen: false)
+                          .fetchMyMembers(
+                        context,
+                        type: 'liked',
+                        page: 1,
+                        limit: 10,
+                      );
+                    },
+                    child: Container(
+                      width: size.width * 50 / 100,
+                      height: size.height * 0.3 / 100,
+                      color: selectedIndex == 0
+                          ? AppColor.pinkColor
+                          : AppColor.secondryColor(context),
+                    ),
+                  ),
+                  GestureDetector(
+                    onTap: () {
+                      setState(() => selectedIndex = 1);
+                      Provider.of<MembersController>(context, listen: false)
+                          .fetchMyMembers(
+                        context,
+                        type: 'connected',
+                        page: 1,
+                        limit: 10,
+                      );
+                    },
+                    child: Container(
+                      width: size.width * 50 / 100,
+                      height: size.height * 0.3 / 100,
+                      color: selectedIndex == 1
+                          ? AppColor.pinkColor
+                          : AppColor.secondryColor(context),
+                    ),
+                  ),
+                ],
               ),
+
+              SizedBox(height: size.height * 2 / 100),
+
+              // ── Tab content ──────────────────────────────────────────────
               Expanded(
                 child: SingleChildScrollView(
                   controller: _scrollController,
@@ -474,6 +465,7 @@ class _splashMembersState extends State<splashMembers> {
                       width: size.width * 90 / 100,
                       child: Column(
                         children: [
+                          // ── LIKED TAB ──────────────────────────────────
                           if (selectedIndex == 0)
                             if (membersController.isLikedMembersLoading &&
                                 membersController.likedMembers.isEmpty)
@@ -484,6 +476,7 @@ class _splashMembersState extends State<splashMembers> {
                                   color: AppColor.buttonColor,
                                 ),
                               ),
+
                           if (selectedIndex == 0)
                             membersController.likedMembers.isEmpty
                                 ? Container(
@@ -515,6 +508,7 @@ class _splashMembersState extends State<splashMembers> {
                                             _memberAddress(member);
                                         final memberImage = _buildMemberImage(
                                             member['profile_image']);
+
                                         return GestureDetector(
                                           onTap: () {},
                                           child: Container(
@@ -524,32 +518,30 @@ class _splashMembersState extends State<splashMembers> {
                                                   context),
                                               borderRadius:
                                                   BorderRadius.circular(15),
+                                              border: Border.all(
+                                                color:
+                                                    AppColor.purpleScreenColor,
+                                                width: .7,
+                                              ),
                                             ),
                                             child: Column(
                                               children: [
-                                                SizedBox(
-                                                  width: size.width * 3 / 100,
-                                                ),
-                                                Container(
-                                                  width: size.width * 90 / 100,
-                                                  height: size.width * 42 / 100,
-                                                  decoration:
-                                                      const BoxDecoration(),
-                                                  child: ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                        topLeft:
-                                                            Radius.circular(15),
-                                                        topRight:
-                                                            Radius.circular(15),
-                                                      ),
-                                                      child: _memberCardImage(
-                                                        memberImage,
-                                                      )),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 3 / 100,
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(13),
+                                                    topRight:
+                                                        Radius.circular(13),
+                                                  ),
+                                                  child: SizedBox(
+                                                    width:
+                                                        size.width * 90 / 100,
+                                                    height:
+                                                        size.width * 53 / 100,
+                                                    child: _memberCardImage(
+                                                        memberImage),
+                                                  ),
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -560,6 +552,7 @@ class _splashMembersState extends State<splashMembers> {
                                                   ),
                                                   child: Column(
                                                     children: [
+                                                      // Name + Heart
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -570,142 +563,125 @@ class _splashMembersState extends State<splashMembers> {
                                                                 ? ''
                                                                 : memberName,
                                                             style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
-                                                          ),
-                                                          Container(
-                                                            width: size.width *
-                                                                8 /
-                                                                100,
-                                                            height: size.width *
-                                                                8 /
-                                                                100,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    boxShadow: []),
-                                                            child: ClipRRect(
-                                                                child:
-                                                                    Image.asset(
-                                                              AppImage
-                                                                  .liked_heart_icon,
-                                                              fit: BoxFit.cover,
-                                                              // color: AppColor
-                                                              //     .secondryColor(
-                                                              //         context),
-                                                            )),
-                                                          ),
-                                                        ],
-                                                      ),
-                                                      SizedBox(
-                                                        height: size.height *
-                                                            0.4 /
-                                                            100,
-                                                      ),
-                                                      Row(
-                                                        children: [
-                                                          Container(
-                                                            width: size.width *
-                                                                4.5 /
-                                                                100,
-                                                            height: size.width *
-                                                                4.5 /
-                                                                100,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    boxShadow: []),
-                                                            child: ClipRRect(
-                                                              child:
-                                                                  Image.asset(
-                                                                AppImage
-                                                                    .calenderPinkIcon,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
+                                                              fontSize: 18,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
                                                             ),
                                                           ),
                                                           SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                1 /
+                                                            width: size.width *
+                                                                8 /
                                                                 100,
-                                                          ),
-                                                          Text(
-                                                            "Member since $memberSince",
-                                                            style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                            height: size.width *
+                                                                8 /
+                                                                100,
+                                                            child: Image.asset(
+                                                              AppImage
+                                                                  .liked_heart_icon,
+                                                              fit: BoxFit.cover,
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
+
                                                       SizedBox(
-                                                        height: size.height *
-                                                            1 /
-                                                            100,
-                                                      ),
+                                                          height: size.height *
+                                                              0.4 /
+                                                              100),
+
+                                                      // Member since
                                                       Row(
                                                         children: [
-                                                          Container(
+                                                          SizedBox(
+                                                            width: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            height: size.width *
+                                                                4.5 /
+                                                                100,
+                                                            child: Image.asset(
+                                                              AppImage
+                                                                  .newCalenderPinkIcon,
+                                                              fit: BoxFit.cover,
+                                                            ),
+                                                          ),
+                                                          SizedBox(
+                                                              width:
+                                                                  size.width *
+                                                                      1.5 /
+                                                                      100),
+                                                          Text(
+                                                            "Member since $memberSince",
+                                                            style: TextStyle(
+                                                              fontSize: 15,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+
+                                                      SizedBox(
+                                                          height: size.height *
+                                                              1 /
+                                                              100),
+
+                                                      // Address
+                                                      Row(
+                                                        children: [
+                                                          SizedBox(
                                                             width: size.width *
                                                                 5 /
                                                                 100,
                                                             height: size.width *
                                                                 5 /
                                                                 100,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    boxShadow: []),
-                                                            child: ClipRRect(
-                                                                child:
-                                                                    Image.asset(
+                                                            child: Image.asset(
                                                               AppImage
                                                                   .locationIcon,
                                                               fit: BoxFit.cover,
-                                                            )),
+                                                            ),
                                                           ),
                                                           SizedBox(
-                                                            width: size.width *
-                                                                0.8 /
-                                                                100,
-                                                          ),
+                                                              width:
+                                                                  size.width *
+                                                                      0.8 /
+                                                                      100),
                                                           Text(
                                                             memberAddress,
                                                             style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                              fontSize: 14,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
+
                                                       SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            1.5 /
-                                                            100,
-                                                      ),
+                                                          height: size.height *
+                                                              1.5 /
+                                                              100),
+
+                                                      // ✅ View Profile button — white
                                                       GestureDetector(
                                                         onTap: () async {
                                                           final result =
@@ -734,35 +710,27 @@ class _splashMembersState extends State<splashMembers> {
                                                               result);
                                                         },
                                                         child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
+                                                          height: size.height *
                                                               6 /
                                                               100,
-                                                          decoration: BoxDecoration(
-                                                              color: AppColor
-                                                                  .secondryColor(
-                                                                      context),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
+                                                          decoration:
+                                                              _memberActionButtonDecoration(),
                                                           child: Center(
                                                             child: Text(
                                                               AppLanguage
                                                                       .viewProfiletext[
                                                                   language],
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: AppColor
-                                                                      .pinkColor),
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .pinkColor,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -777,6 +745,7 @@ class _splashMembersState extends State<splashMembers> {
                                       },
                                     ),
                                   ),
+
                           if (selectedIndex == 0 &&
                               membersController.isLikedMembersLoadingMore)
                             const Padding(
@@ -786,10 +755,10 @@ class _splashMembersState extends State<splashMembers> {
                                 strokeWidth: 2,
                               ),
                             ),
-                          SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 3 / 100,
-                          ),
+
+                          SizedBox(height: size.height * 3 / 100),
+
+                          // ── CONNECTED TAB ──────────────────────────────
                           if (selectedIndex == 1)
                             if (membersController.isConnectedMembersLoading &&
                                 membersController.connectedMembers.isEmpty)
@@ -800,6 +769,7 @@ class _splashMembersState extends State<splashMembers> {
                                   color: AppColor.buttonColor,
                                 ),
                               ),
+
                           if (selectedIndex == 1)
                             membersController.connectedMembers.isEmpty
                                 ? Container(
@@ -832,40 +802,41 @@ class _splashMembersState extends State<splashMembers> {
                                         final memberImage = _buildMemberImage(
                                             member['profile_image']);
                                         final chatImage = memberImage;
+
                                         return GestureDetector(
                                           onTap: () {},
                                           child: Container(
                                             width: size.width * 90 / 100,
+                                            // ✅ Card same — border wala
                                             decoration: BoxDecoration(
                                               color: AppColor.primaryColor(
                                                   context),
                                               borderRadius:
                                                   BorderRadius.circular(15),
+                                              border: Border.all(
+                                                color:
+                                                    AppColor.purpleScreenColor,
+                                                width: .7,
+                                              ),
                                             ),
                                             child: Column(
                                               children: [
-                                                SizedBox(
-                                                  width: size.width * 3 / 100,
-                                                ),
-                                                Container(
-                                                  width: size.width * 90 / 100,
-                                                  height: size.width * 42 / 100,
-                                                  decoration:
-                                                      const BoxDecoration(),
-                                                  child: ClipRRect(
-                                                      borderRadius:
-                                                          const BorderRadius
-                                                              .only(
-                                                        topLeft:
-                                                            Radius.circular(15),
-                                                        topRight:
-                                                            Radius.circular(15),
-                                                      ),
-                                                      child: _memberCardImage(
-                                                          memberImage)),
-                                                ),
-                                                SizedBox(
-                                                  width: size.width * 3 / 100,
+                                                ClipRRect(
+                                                  borderRadius:
+                                                      const BorderRadius.only(
+                                                    topLeft:
+                                                        Radius.circular(13),
+                                                    topRight:
+                                                        Radius.circular(13),
+                                                  ),
+                                                  child: SizedBox(
+                                                    width:
+                                                        size.width * 90 / 100,
+                                                    height:
+                                                        size.width * 53 / 100,
+                                                    child: _memberCardImage(
+                                                        memberImage),
+                                                  ),
                                                 ),
                                                 Padding(
                                                   padding: EdgeInsets.symmetric(
@@ -876,6 +847,7 @@ class _splashMembersState extends State<splashMembers> {
                                                   ),
                                                   child: Column(
                                                     children: [
+                                                      // Name row
                                                       Row(
                                                         mainAxisAlignment:
                                                             MainAxisAlignment
@@ -886,144 +858,120 @@ class _splashMembersState extends State<splashMembers> {
                                                                 ? 'Unknown'
                                                                 : memberName,
                                                             style: TextStyle(
-                                                                fontSize: 18,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w700,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                              fontSize: 18,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w700,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            ),
                                                           ),
-                                                          // Container(
-                                                          //   width: size.width * 8 / 100,
-                                                          //   height:
-                                                          //       size.width * 8 / 100,
-                                                          //   decoration:
-                                                          //       const BoxDecoration(
-                                                          //           boxShadow: []),
-                                                          //   child: ClipRRect(
-                                                          //       child: Image.asset(
-                                                          //     AppImage.liked_heart_icon,
-                                                          //     fit: BoxFit.cover,
-                                                          //     color: AppColor
-                                                          //         .secondryColor,
-                                                          //   )),
-                                                          // ),
                                                         ],
                                                       ),
+
                                                       SizedBox(
-                                                        height: size.height *
-                                                            0.4 /
-                                                            100,
-                                                      ),
+                                                          height: size.height *
+                                                              0.4 /
+                                                              100),
+
+                                                      // Member since
                                                       Row(
                                                         children: [
-                                                          Container(
+                                                          SizedBox(
                                                             width: size.width *
                                                                 4.5 /
                                                                 100,
                                                             height: size.width *
                                                                 4.5 /
                                                                 100,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    boxShadow: []),
-                                                            child: ClipRRect(
-                                                              child:
-                                                                  Image.asset(
-                                                                AppImage
-                                                                    .calenderPinkIcon,
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
+                                                            child: Image.asset(
+                                                              AppImage
+                                                                  .newCalenderPinkIcon,
+                                                              fit: BoxFit.cover,
                                                             ),
                                                           ),
                                                           SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                1 /
-                                                                100,
-                                                          ),
+                                                              width:
+                                                                  size.width *
+                                                                      1.5 /
+                                                                      100),
                                                           Text(
                                                             "Member since $memberSince",
                                                             style: TextStyle(
-                                                                fontSize: 15,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                              fontSize: 15,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
+
                                                       SizedBox(
-                                                        height: size.height *
-                                                            1 /
-                                                            100,
-                                                      ),
+                                                          height: size.height *
+                                                              1 /
+                                                              100),
+
+                                                      // Address
                                                       Row(
                                                         children: [
-                                                          Container(
+                                                          SizedBox(
                                                             width: size.width *
                                                                 5 /
                                                                 100,
                                                             height: size.width *
                                                                 5 /
                                                                 100,
-                                                            decoration:
-                                                                const BoxDecoration(
-                                                                    boxShadow: []),
-                                                            child: ClipRRect(
-                                                                child:
-                                                                    Image.asset(
+                                                            child: Image.asset(
                                                               AppImage
                                                                   .locationIcon,
                                                               fit: BoxFit.cover,
-                                                            )),
+                                                            ),
                                                           ),
                                                           SizedBox(
-                                                            width: size.width *
-                                                                0.8 /
-                                                                100,
-                                                          ),
+                                                              width:
+                                                                  size.width *
+                                                                      0.8 /
+                                                                      100),
                                                           Text(
                                                             memberAddress,
                                                             style: TextStyle(
-                                                                fontSize: 14,
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                              fontSize: 14,
+                                                              fontFamily: AppFont
+                                                                  .fontFamily,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w500,
+                                                              color: AppColor
+                                                                  .secondryColor(
+                                                                      context),
+                                                            ),
                                                           ),
                                                         ],
                                                       ),
+
                                                       SizedBox(
-                                                        height: MediaQuery.of(
-                                                                    context)
-                                                                .size
-                                                                .height *
-                                                            1.5 /
-                                                            100,
-                                                      ),
+                                                          height: size.height *
+                                                              1.5 /
+                                                              100),
+
+                                                      // ✅ Message button — white
                                                       GestureDetector(
                                                         onTap: () async {
                                                           final conversationController =
                                                               Provider.of<
-                                                                      ConversionListController>(
-                                                                  context,
-                                                                  listen:
-                                                                      false);
+                                                                  ConversionListController>(
+                                                            context,
+                                                            listen: false,
+                                                          );
 
                                                           final conversationId =
                                                               await conversationController
@@ -1032,9 +980,8 @@ class _splashMembersState extends State<splashMembers> {
                                                                 memberId,
                                                           );
 
-                                                          if (!context.mounted) {
+                                                          if (!context.mounted)
                                                             return;
-                                                          }
 
                                                           Navigator.push(
                                                             context,
@@ -1056,6 +1003,8 @@ class _splashMembersState extends State<splashMembers> {
                                                                             .isEmpty
                                                                         ? null
                                                                         : conversationId,
+                                                                autoSendSharedEvent:
+                                                                    false,
                                                               ),
                                                               duration:
                                                                   const Duration(
@@ -1065,35 +1014,27 @@ class _splashMembersState extends State<splashMembers> {
                                                           );
                                                         },
                                                         child: Container(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
+                                                          height: size.height *
                                                               6 /
                                                               100,
-                                                          decoration: BoxDecoration(
-                                                              color: AppColor
-                                                                  .secondryColor(
-                                                                      context),
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          10)),
+                                                          decoration:
+                                                              _memberActionButtonDecoration(),
                                                           child: Center(
                                                             child: Text(
                                                               AppLanguage
                                                                       .messageText[
                                                                   language],
-                                                              style: const TextStyle(
-                                                                  fontSize: 16,
-                                                                  fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w500,
-                                                                  color: AppColor
-                                                                      .pinkColor),
+                                                              style:
+                                                                  const TextStyle(
+                                                                fontSize: 16,
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .w500,
+                                                                color: AppColor
+                                                                    .pinkColor,
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
@@ -1108,6 +1049,7 @@ class _splashMembersState extends State<splashMembers> {
                                       },
                                     ),
                                   ),
+
                           if (selectedIndex == 1 &&
                               membersController.isConnectedMembersLoadingMore)
                             const Padding(
@@ -1117,10 +1059,8 @@ class _splashMembersState extends State<splashMembers> {
                                 strokeWidth: 2,
                               ),
                             ),
-                          SizedBox(
-                            height:
-                                MediaQuery.of(context).size.height * 3 / 100,
-                          ),
+
+                          SizedBox(height: size.height * 3 / 100),
                         ],
                       ),
                     ),
@@ -1182,6 +1122,7 @@ class _splashMembersState extends State<splashMembers> {
                                         height: size.height * 0.5 / 100,
                                         width: size.width * 22 / 100,
                                         fit: BoxFit.fill,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 4 / 100),

@@ -58,6 +58,8 @@ class BookingEventDetails extends ChangeNotifier {
   Future<double?> fetchCouponDiscountPercentage(
     BuildContext context, {
     required String couponCode,
+    String? eventId,
+    String? vendoreId,
   }) async {
     final token = AppConstant.token;
     final sanitizedCode = couponCode.trim();
@@ -70,7 +72,7 @@ class BookingEventDetails extends ChangeNotifier {
 
     try {
       final response = await getData(
-        'booking/get_coupon_percentage?coupon_code=$sanitizedCode',
+        'booking/get_coupon_percentage?coupon_code=$sanitizedCode&vendor_id=$vendoreId&event_id=$eventId',
         context,
         headers: {
           'authorization': 'Bearer $token',
@@ -322,7 +324,8 @@ class BookingEventDetails extends ChangeNotifier {
 
   /// Validates the coupon code and applies discount if valid
   /// Validates the coupon code and applies discount if valid
-  Future<void> validateAndApplyCoupon(BuildContext context, String code) async {
+  Future<void> validateAndApplyCoupon(BuildContext context, String code,
+      String vendorId, String eventId) async {
     if (code.isEmpty) {
       _couponErrorMessage = "Please enter a coupon code";
       notifyListeners();
@@ -330,11 +333,11 @@ class BookingEventDetails extends ChangeNotifier {
     }
 
     // Fetch the discount percentage from API
-    final double? percent =
-        await fetchCouponDiscountPercentage(context, couponCode: code);
+    final double? percent = await fetchCouponDiscountPercentage(context,
+        couponCode: code, vendoreId: vendorId, eventId: eventId);
 
     if (percent == null || percent <= 0) {
-      _couponErrorMessage = "Invalid coupon code";
+      // _couponErrorMessage = "";
       _isCouponApplied = false;
       _appliedCouponPercent = 0;
       _appliedCouponCode = '';
@@ -347,7 +350,7 @@ class BookingEventDetails extends ChangeNotifier {
     _couponErrorMessage = null;
     _isCouponApplied = true;
     _appliedCouponPercent = percent;
-    _appliedCouponCode = code; // Store the code for popup display
+    _appliedCouponCode = code;
     recalculatePricing();
     notifyListeners();
   }
@@ -403,7 +406,7 @@ class BookingEventDetails extends ChangeNotifier {
         _singleDayPassList = [];
         _multiDayPassList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

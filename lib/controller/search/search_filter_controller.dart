@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../provider/common_api_helper.dart';
+import '../../utilities/app_constant.dart';
 
 class SearchFilterController with ChangeNotifier {
   bool _isVenueLoading = false;
@@ -40,9 +41,7 @@ class SearchFilterController with ChangeNotifier {
     }
     notifyListeners();
 
-    // final token = AppConstant.token;
-    final token =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5ODZkNDlhYzc2NjMyNjNkMWQ0OTc1MiIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc3MDQ0NDE5MywiZXhwIjoxNzczMDM2MTkzfQ.K79Th_-_o7nt3MHLLuoFJK4j-EYxjcARUzY4IcTuhnc";
+    final token = AppConstant.token;
 
     final headers = <String, String>{};
     if (token.isNotEmpty) {

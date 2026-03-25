@@ -203,7 +203,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
             isEmail: true,
             email: email,
           ),
-          duration: const Duration(milliseconds: 600),
+          duration: const Duration(milliseconds: 400),
         ),
       );
     });
@@ -237,6 +237,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
         PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           child: const MyAppFooter(initialIndex: 0),
+          duration: const Duration(milliseconds: 400),
         ),
       );
       return;
@@ -440,8 +441,10 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: provider.loading
-                            ? AppColor.greyLightColor.withOpacity(0.5)
-                            : AppColor.greyLightColor,
+                            ? AppColor
+                                                        .greyLightColor(context).withOpacity(0.5)
+                            : AppColor
+                                                        .greyLightColor(context),
                       ),
                     ),
                   );

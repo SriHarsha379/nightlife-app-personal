@@ -10,6 +10,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controller/support/faq_controller.dart';
 import '../../provider/content_service.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -46,13 +47,14 @@ class _SupportScreenState extends State<SupportScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         body: Container(
@@ -176,6 +178,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                         AppImage.downArrow,
                                         height: size.width * 5 / 100,
                                         width: size.width * 5 / 100,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                   ],
@@ -578,6 +581,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                         height: size.height * 0.5 / 100,
                                         width: size.width * 22 / 100,
                                         fit: BoxFit.fill,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 4 / 100),
@@ -635,15 +639,18 @@ class _SupportScreenState extends State<SupportScreen> {
                                                   height: size.width * 5 / 100,
                                                   width: size.width * 6 / 100,
                                                   fit: BoxFit.contain,
-                                                  color: Colors.white,
+                                                  color: AppColor.secondryColor(
+                                                      context),
                                                 ),
                                                 SizedBox(
                                                     width:
                                                         size.width * 3 / 100),
                                                 Text(
                                                   "Mail Id: ${supportEmail.isEmpty ? "-" : supportEmail}",
-                                                  style: const TextStyle(
-                                                    color: Colors.white,
+                                                  style: TextStyle(
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context),
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.w600,
                                                     fontFamily:
@@ -688,8 +695,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                               AppLanguage
                                                   .contactSupportText[language],
                                               style: TextStyle(
-                                                  color: AppColor.secondryColor(
-                                                      context),
+                                                  color: Colors.white,
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily:
                                                       AppFont.fontFamily,

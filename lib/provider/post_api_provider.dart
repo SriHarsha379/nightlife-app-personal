@@ -1,4 +1,5 @@
 // ignore_for_file: avoid_print, use_build_context_synchronously
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -28,7 +29,6 @@ import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
 
 import 'socket_provider.dart';
-import 'user_chat_socket_provider.dart';
 import 'user_controller.dart';
 
 class PostApiProvider with ChangeNotifier {
@@ -37,6 +37,7 @@ class PostApiProvider with ChangeNotifier {
   bool get loading => _loading;
   bool get secondaryLoading => _secondaryLoading;
   List<String> favouriteClub = [];
+
   void setLoading(bool value) {
     _loading = value;
     notifyListeners();
@@ -71,6 +72,66 @@ class PostApiProvider with ChangeNotifier {
       return Map<String, dynamic>.from(data);
     }
     return <String, dynamic>{};
+  }
+
+  // FIX: safe token extractor — never falls back to a hardcoded string.
+  // '12345' / '123456' fallbacks were causing token corruption:
+  // AppConstant.token would be set to '12345' + userId = '1234569bbbdc...'
+  String _extractToken(dynamic data) {
+    if (data == null) return '';
+    if (data is Map) {
+      final t = (data['token'] ?? '').toString().trim();
+      if (t.isNotEmpty) return t;
+      // Some responses nest token inside 'user'
+      if (data['user'] is Map) {
+        final t2 = (data['user']['token'] ?? '').toString().trim();
+        if (t2.isNotEmpty) return t2;
+      }
+    }
+    return '';
+  }
+
+  Future<void> _syncAuthSession(
+    BuildContext context,
+    dynamic authPayload,
+  ) async {
+    final authData = authPayload is Map
+        ? Map<String, dynamic>.from(authPayload)
+        : <String, dynamic>{};
+    final userData =
+        authData.isNotEmpty ? _extractUserData(authData) : <String, dynamic>{};
+
+    // FIX: use safe extractor — no '12345' fallback
+    final token = _extractToken(authData);
+    final authUserId =
+        (userData['_id'] ?? authData['_id'] ?? '').toString().trim();
+
+    log('_syncAuthSession token=${token.isEmpty ? "EMPTY" : token.substring(0, token.length.clamp(0, 20))}... userId=$authUserId');
+
+    if (!context.mounted) return;
+
+    // Step 1 — clear old session state FIRST
+    _clearSessionState(context);
+
+    // Step 2 — save new user to cache and UserController BEFORE reconnecting
+    // socket so ChatScreen reads the NEW user's id, not the old one.
+    final cachePayload = authData.isNotEmpty ? authData : userData;
+    await CacheHelper.save("user_details", jsonEncode(cachePayload));
+
+    if (!context.mounted) return;
+    if (userData.isNotEmpty) {
+      Provider.of<UserController>(context, listen: false).setUserFromMap(
+        Map<String, dynamic>.from(userData),
+      );
+    }
+
+    // Step 3 — reconnect socket with new token AFTER user state is set.
+    if (token.isNotEmpty) {
+      AppConstant.token = token;
+      final socketProvider =
+          Provider.of<SocketProvider>(context, listen: false);
+      await socketProvider.forceReconnect(token, authUserId: authUserId);
+    }
   }
 
   void _navigateFromAuthState(
@@ -125,7 +186,7 @@ class PostApiProvider with ChangeNotifier {
         PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           child: const MyAppFooter(initialIndex: 0),
-          duration: const Duration(milliseconds: 400),
+          duration: const Duration(milliseconds: 500),
         ),
       );
     } else if (signupStep >= 3) {
@@ -186,13 +247,13 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true) {
         final data = res['data'] ?? <String, dynamic>{};
 
-        AppConstant.token = data['token'] ?? '12345';
-        Provider.of<SocketProvider>(context, listen: false)
-            .setToken(AppConstant.token);
-        // final usersocketProvider =
-        //     Provider.of<UserChatSocketProvider>(context, listen: false);
-        // usersocketProvider.initSocket(AppConstant.token);
-        await CacheHelper.save("user_details", jsonEncode(data));
+        await _syncAuthSession(context, data);
+
+        if (!context.mounted) {
+          setLoading(false);
+          return;
+        }
+
         TopNotification.success(context, res['message'][language]);
 
         final dynamic userData =
@@ -226,12 +287,6 @@ class PostApiProvider with ChangeNotifier {
           return;
         }
 
-        // Ensure old user's in-memory state never flashes for the new session.
-        _clearSessionState(context);
-        Provider.of<UserController>(context, listen: false)
-            .setUserFromMap(Map<String, dynamic>.from(userData));
-
-        // If additional email OTP is pending after step 3, go to stay-connected OTP.
         if (signupStep >= 3 &&
             anotherEmail.trim().isNotEmpty &&
             !isAnotherEmailVerify) {
@@ -299,11 +354,8 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-// =============social Api=================//
-  socialLoginApiCalling(
-    BuildContext context,
-    user,
-  ) async {
+  // =============social Api=================//
+  socialLoginApiCalling(BuildContext context, user) async {
     setLoading(true);
 
     final String fullName =
@@ -332,22 +384,23 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true) {
         final data = res['data'] ?? <String, dynamic>{};
         final userData = _extractUserData(data);
-
-        AppConstant.token = data['token'] ?? '12345';
-        Provider.of<SocketProvider>(context, listen: false)
-            .setToken(AppConstant.token);
-        await CacheHelper.save("user_details", jsonEncode(data));
-        TopNotification.success(context, res['message'][language]);
+        final bool shouldShowSuccessToast = !(userData['is_new_user'] == true);
 
         if (!context.mounted) {
           setLoading(false);
           return;
         }
 
-        _clearSessionState(context);
-        Provider.of<UserController>(context, listen: false).setUserFromMap(
-          Map<String, dynamic>.from(userData),
-        );
+        await _syncAuthSession(context, data);
+
+        if (!context.mounted) {
+          setLoading(false);
+          return;
+        }
+
+        if (shouldShowSuccessToast) {
+          TopNotification.success(context, res['message'][language]);
+        }
         _navigateFromAuthState(
           context,
           userData,
@@ -401,8 +454,6 @@ class PostApiProvider with ChangeNotifier {
       fields['password'] = '123456';
     }
 
-    print("Line 105 $fields");
-
     Map<String, XFile>? files;
     if (profileImage != null) {
       files = {'profile_image': profileImage};
@@ -412,32 +463,19 @@ class PostApiProvider with ChangeNotifier {
       'auth/signup_step_one',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
     if (res != null) {
       if (!context.mounted) return;
-
       setLoading(false);
 
       if (res['success'] == true) {
         TopNotification.success(context, res['message'][language]);
-        AppConstant.token = res['data']['token'] ?? '12345';
-        final socketProvider =
-            Provider.of<SocketProvider>(context, listen: false);
-        socketProvider.initSocket(AppConstant.token);
-        final usersocketProvider =
-            Provider.of<UserChatSocketProvider>(context, listen: false);
-        usersocketProvider.initSocket(AppConstant.token);
-        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        await _syncAuthSession(context, res['data']);
+        if (!context.mounted) return;
         final userData = _extractUserData(res['data']);
-        _clearSessionState(context);
-        Provider.of<UserController>(context, listen: false).setUserFromMap(
-          Map<String, dynamic>.from(userData),
-        );
 
         if (isSocialSignup) {
           _navigateFromAuthState(context, userData);
@@ -446,9 +484,7 @@ class PostApiProvider with ChangeNotifier {
             context,
             PageTransition(
               type: PageTransitionType.rightToLeftWithFade,
-              child: OtpVerify(
-                mobile: mobile,
-              ),
+              child: OtpVerify(mobile: mobile),
               duration: const Duration(milliseconds: 500),
             ),
           );
@@ -472,27 +508,19 @@ class PostApiProvider with ChangeNotifier {
       'otp': otp.toString(),
     };
 
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/otp_verify',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
-
-    print("Line 105 $fields");
 
     if (res != null) {
       if (res['success'] == true && res['data'] != "NA") {
         setLoading(false);
-        AppConstant.token = res['data']['token'] ?? '12345';
-        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        await _syncAuthSession(context, res['data']);
+        if (!context.mounted) return;
         TopNotification.success(context, res['message'][language]);
-
-        // Navigate to next screen
         Navigator.push(
           context,
           PageTransition(
@@ -507,26 +535,15 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-//=============== Resend Otp Api=================//
-
-  resendotpApiCalling(
-    BuildContext context,
-  ) async {
+  // =============== Resend Otp Api =================//
+  resendotpApiCalling(BuildContext context) async {
     setSecondaryLoading(true);
-
-    final Map<String, String> fields = {
-      // 'phone_number': mobile.toString(),
-    };
-
-    print("Line 105 $fields");
 
     final res = await postJsonData(
       'auth/resend_otp',
-      fields,
+      {},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -539,15 +556,17 @@ class PostApiProvider with ChangeNotifier {
     setSecondaryLoading(false);
   }
 
-  // ================Signup Api================//
+  // ================Signup Step Two Api================//
   signupStepTwoUserApi(
-      BuildContext context,
-      List<Map<String, dynamic>>? preferredCities,
-      String bio,
-      String instagramAccount,
-      String spotify,
-      String snapchat,
-      List<String> hobbies) async {
+    BuildContext context,
+    List<Map<String, dynamic>>? preferredCities,
+    String bio,
+    String instagramAccount,
+    String spotify,
+    String snapchat,
+    List<String> hobbies,
+    int? status,
+  ) async {
     setLoading(true);
 
     final Map<String, dynamic> fields = {
@@ -559,28 +578,23 @@ class PostApiProvider with ChangeNotifier {
       'hobbies': hobbies,
     };
 
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/signup_step_two',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
       if (!context.mounted) return;
-
       setLoading(false);
 
       if (res['success'] == true) {
-        TopNotification.success(context, res['message'][language]);
-        AppConstant.token = res['data']['token'] ?? '12345';
-        await CacheHelper.save("user_details", jsonEncode(res['data']));
-        TopNotification.success(context, res['message'][language]);
-
+        if (status == 1) {
+          TopNotification.success(context, res['message'][language]);
+        }
+        await _syncAuthSession(context, res['data']);
+        if (!context.mounted) return;
         Navigator.push(
           context,
           PageTransition(
@@ -595,7 +609,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-// ================Signup Step Three Api================//
+  // ================Signup Step Three Api================//
   signupStepThreeUserApi(
     BuildContext context, {
     required String musicGenre,
@@ -616,17 +630,12 @@ class PostApiProvider with ChangeNotifier {
     setLoading(true);
 
     try {
-      // Create multipart request
       final Uri url =
           Uri.parse("${AppConfigProvider.apiUrl}auth/signup_step_three");
-      print('Signup Step Three URL: $url');
 
       var request = http.MultipartRequest('POST', url);
-
-      // Add headers
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
 
-      // Add text fields
       Map<String, String> fields = {
         'music_genre': musicGenre,
         'event_preferences': eventPreferences,
@@ -636,72 +645,52 @@ class PostApiProvider with ChangeNotifier {
         'pronouns': pronouns,
       };
 
-      // Add optional fields
-      if (customMusicGenres != null && customMusicGenres.isNotEmpty) {
+      if (customMusicGenres != null && customMusicGenres.isNotEmpty)
         fields['custom_music_genres'] = customMusicGenres;
-      }
-      if (customEventPreferences != null && customEventPreferences.isNotEmpty) {
+      if (customEventPreferences != null && customEventPreferences.isNotEmpty)
         fields['custom_event_preferences'] = customEventPreferences;
-      }
-      if (customVibes != null && customVibes.isNotEmpty) {
+      if (customVibes != null && customVibes.isNotEmpty)
         fields['custom_vibes'] = customVibes;
-      }
-      if (anotherEmail != null && anotherEmail.isNotEmpty) {
+      if (anotherEmail != null && anotherEmail.isNotEmpty)
         fields['another_email'] = anotherEmail;
-      }
 
-      // Add vibe_checks as JSON string
       fields['vibe_checks'] = jsonEncode(vibeChecks);
-
       request.fields.addAll(fields);
-      print("Signup Step Three Fields: $fields");
 
-      // Add images
       for (int i = 0; i < images.length; i++) {
-        List<int> imageBytes = await images[i].readAsBytes();
-        String fileName = images[i].path.split('/').last;
-        http.MultipartFile imageFile = http.MultipartFile.fromBytes(
+        final imageBytes = await images[i].readAsBytes();
+        final fileName = images[i].path.split('/').last;
+        request.files.add(http.MultipartFile.fromBytes(
           'images',
           imageBytes,
           filename: fileName,
           contentType: http_parser.MediaType.parse('image/jpeg'),
-        );
-        request.files.add(imageFile);
-        print("Image ${i + 1} added: $fileName");
+        ));
       }
 
-      // Add videos and thumbnails
       for (int i = 0; i < videos.length; i++) {
-        // Add video
-        List<int> videoBytes = await videos[i].readAsBytes();
-        String videoFileName = videos[i].path.split('/').last;
-
-        // Get proper MIME type based on file extension
-        String mimeType = 'video/mp4'; // default
-        if (videoFileName.toLowerCase().endsWith('.mov')) {
+        final videoBytes = await videos[i].readAsBytes();
+        final videoFileName = videos[i].path.split('/').last;
+        String mimeType = 'video/mp4';
+        if (videoFileName.toLowerCase().endsWith('.mov'))
           mimeType = 'video/quicktime';
-        } else if (videoFileName.toLowerCase().endsWith('.avi')) {
+        else if (videoFileName.toLowerCase().endsWith('.avi'))
           mimeType = 'video/x-msvideo';
-        } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
+        else if (videoFileName.toLowerCase().endsWith('.mkv'))
           mimeType = 'video/x-matroska';
-        } else if (videoFileName.toLowerCase().endsWith('.webm')) {
+        else if (videoFileName.toLowerCase().endsWith('.webm'))
           mimeType = 'video/webm';
-        }
 
-        http.MultipartFile videoFile = http.MultipartFile.fromBytes(
+        request.files.add(http.MultipartFile.fromBytes(
           'videos',
           videoBytes,
           filename: videoFileName,
           contentType: http_parser.MediaType.parse(mimeType),
-        );
-        request.files.add(videoFile);
-        print("Video ${i + 1} added: $videoFileName (MIME: $mimeType)");
+        ));
 
-        // Add corresponding thumbnail
         if (i < thumbnails.length) {
-          List<int> thumbnailBytes = await thumbnails[i].readAsBytes();
+          final thumbnailBytes = await thumbnails[i].readAsBytes();
           String thumbnailFileName;
-
           if (thumbnails[i].path.isNotEmpty &&
               (thumbnails[i].path.endsWith('.jpg') ||
                   thumbnails[i].path.endsWith('.jpeg') ||
@@ -711,44 +700,24 @@ class PostApiProvider with ChangeNotifier {
             thumbnailFileName =
                 'thumbnail_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.jpg';
           }
-
-          http.MultipartFile thumbnailFile = http.MultipartFile.fromBytes(
+          request.files.add(http.MultipartFile.fromBytes(
             'thumbnails',
             thumbnailBytes,
             filename: thumbnailFileName,
             contentType: http_parser.MediaType.parse('image/jpeg'),
-          );
-          request.files.add(thumbnailFile);
-          print("Thumbnail ${i + 1} added: $thumbnailFileName");
+          ));
         }
       }
 
-      print("request.fields: ${request.fields}");
-      print(
-          "request.files: ${request.files.map((f) => '${f.field}: ${f.filename}')}");
-
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
-
-      print("Status Code: ${response.statusCode}");
-      print("Response Body: ${response.body}");
-
-      // Handle response
       final result = _handleStatusCode(response, context);
 
       if (result != null && result['success'] == true) {
-        AppConstant.token = result['data']['token'] ?? '12345';
-        final socketProvider =
-            Provider.of<SocketProvider>(context, listen: false);
-        socketProvider.initSocket(AppConstant.token);
-        final usersocketProvider =
-            Provider.of<UserChatSocketProvider>(context, listen: false);
-        usersocketProvider.initSocket(AppConstant.token);
-        await CacheHelper.save("user_details", jsonEncode(result['data']));
+        await _syncAuthSession(context, result['data']);
+        if (!context.mounted) return null;
         TopNotification.success(context, result['message'][language]);
-
         setLoading(false);
-
         return result;
       }
 
@@ -769,9 +738,7 @@ class PostApiProvider with ChangeNotifier {
   }) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      'otp': otp.trim(),
-    };
+    final Map<String, String> fields = {'otp': otp.trim()};
     if (email != null && email.trim().isNotEmpty) {
       fields['another_email'] = email.trim();
     }
@@ -780,28 +747,13 @@ class PostApiProvider with ChangeNotifier {
       'auth/verify_email_otp',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
       final dynamic data = res['data'];
       if (data is Map) {
-        final mapData = Map<String, dynamic>.from(data);
-
-        AppConstant.token = mapData['token'] ?? AppConstant.token;
-        final socketProvider =
-            Provider.of<SocketProvider>(context, listen: false);
-        socketProvider.initSocket(AppConstant.token);
-        final usersocketProvider =
-            Provider.of<UserChatSocketProvider>(context, listen: false);
-        usersocketProvider.initSocket(AppConstant.token);
-        await CacheHelper.save("user_details", jsonEncode(mapData));
-        if (context.mounted) {
-          Provider.of<UserController>(context, listen: false)
-              .setUserFromMap(mapData);
-        }
+        await _syncAuthSession(context, Map<String, dynamic>.from(data));
       }
       if (context.mounted) {
         TopNotification.success(context, res['message'][language]);
@@ -829,9 +781,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_email_otp',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -846,50 +796,7 @@ class PostApiProvider with ChangeNotifier {
     return null;
   }
 
-  // ================setup profile Api================//
-  setupProfileApi(
-    BuildContext context,
-    String bio,
-    XFile? profileImage,
-  ) async {
-    setLoading(true);
-
-    String clubIdsString = favouriteClub.join(',');
-
-    Map<String, String> fields = {
-      'bio': bio,
-      'favourite_clubs': clubIdsString,
-    };
-
-    Map<String, XFile>? files;
-    if (profileImage != null) {
-      files = {'profileImage': profileImage};
-    }
-
-    final res = await postMultipartData(
-      'auth/profile_setup',
-      fields,
-      context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
-      files: files,
-    );
-
-    log("token: ${AppConstant.token}");
-    log("favourite_clubs: $clubIdsString");
-
-    if (res != null && res['success'] == true) {
-      await CacheHelper.save("user_details", jsonEncode(res['data']));
-      TopNotification.success(context, res['message'][language]);
-      // Get.to(() => WoroAppFooter());
-    }
-
-    setLoading(false);
-  }
-
-//======================forgot password===============//
-
+  // ===================== forgot password =====================//
   Future<Map<String, dynamic>?> forgotPasswordApiCalling(
     BuildContext context, {
     String? email,
@@ -907,33 +814,25 @@ class PostApiProvider with ChangeNotifier {
       return null;
     }
 
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/forgot_password',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
       if (!context.mounted) return res;
-
       setLoading(false);
-
       if (res['success'] == true) {
         TopNotification.success(context, res['message'][language]);
       }
-
       return res;
     }
     setLoading(false);
     return null;
   }
 
-  // ---------------forgot Otp Verification -----------
   Future<Map<String, dynamic>?> forgotOtpVerificationApiCalling(
     BuildContext context, {
     required String otp,
@@ -952,35 +851,28 @@ class PostApiProvider with ChangeNotifier {
       return null;
     }
 
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/verify_forgot_otp',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
-    print("Line 105 $fields");
-
-    if (res != null) {
-      if (res['success'] == true) {
-        setLoading(false);
-
-        AppConstant.token = res['data']['token'] ?? '12345';
-        await CacheHelper.save("user_details", jsonEncode(res['data']));
-        TopNotification.success(context, res['message'][language]);
-        return res;
+    if (res != null && res['success'] == true) {
+      setLoading(false);
+      // FIX: use safe extractor — never fall back to '12345'
+      final token = _extractToken(res['data'] ?? {});
+      if (token.isNotEmpty) {
+        AppConstant.token = token;
       }
+      await CacheHelper.save("user_details", jsonEncode(res['data']));
+      TopNotification.success(context, res['message'][language]);
+      return res;
     }
 
     setLoading(false);
     return null;
   }
-
-//=============== Resend FORGOT Otp Api=================//
 
   Future<Map<String, dynamic>?> forgotResendotpApiCalling(
     BuildContext context, {
@@ -999,30 +891,23 @@ class PostApiProvider with ChangeNotifier {
       return null;
     }
 
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/resend_forgot_otp',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
-    if (res != null) {
-      if (res['success'] == true) {
-        setSecondaryLoading(false);
-        TopNotification.success(context, res['message'][language]);
-        return res;
-      }
+    if (res != null && res['success'] == true) {
+      setSecondaryLoading(false);
+      TopNotification.success(context, res['message'][language]);
+      return res;
     }
 
     setSecondaryLoading(false);
     return null;
   }
 
-  // ---------------reset password api -----------
   resetPasswordApiCalling(
     BuildContext context,
     String newPassword,
@@ -1030,52 +915,33 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      'new_password': newPassword.toString(),
-      'email': email.toString(),
-    };
-
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'auth/reset_password',
-      fields,
+      {'new_password': newPassword.toString(), 'email': email.toString()},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
-
-    print("Line 105 $fields");
 
     if (res != null) {
       if (res['success'] == true && res['data'] != "NA") {
         setLoading(false);
         TopNotification.success(context, res['message'][language]);
-        // Get.to(() => Login());
       }
     }
     setLoading(false);
   }
 
-  // ---------------confirm forgot password api -----------
   Future<Map<String, dynamic>?> confirmPasswordApiCalling(
     BuildContext context, {
     required String newPassword,
   }) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      'new_password': newPassword.trim(),
-    };
-
     final res = await postJsonData(
       'auth/confirm_password',
-      fields,
+      {'new_password': newPassword.trim()},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -1088,7 +954,6 @@ class PostApiProvider with ChangeNotifier {
     return null;
   }
 
-  // ---------------chnage password api -----------
   chnagePasswordApiCalling(
     BuildContext context,
     String currentPassword,
@@ -1096,30 +961,20 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      "old_password": currentPassword.toString(),
-      "new_password": newPassword.toString(),
-    };
-
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'user/change_password',
-      fields,
-      context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
+      {
+        "old_password": currentPassword.toString(),
+        "new_password": newPassword.toString(),
       },
+      context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
-
-    print("Line 105 $fields");
 
     if (res != null) {
       if (res['success'] == true && res['data'] != "NA") {
         TopNotification.success(context, res['message'][language]);
-        Navigator.pop(
-          context,
-        );
+        Navigator.pop(context);
       }
     }
     setLoading(false);
@@ -1166,9 +1021,7 @@ class PostApiProvider with ChangeNotifier {
       'user/edit_profile',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
@@ -1176,14 +1029,19 @@ class PostApiProvider with ChangeNotifier {
 
     if (res != null && res['success'] == true) {
       await CacheHelper.save("user_details", jsonEncode(res['data']));
-      AppConstant.token = res['data']['token'] ?? "123456";
+      // FIX: use safe extractor — never fall back to '123456'
+      final newToken = _extractToken(res['data'] ?? {});
+      if (newToken.isNotEmpty) {
+        AppConstant.token = newToken;
+      }
+      final authUserId = (res['data']?['_id'] ?? '').toString().trim();
+      Provider.of<SocketProvider>(context, listen: false)
+          .setToken(AppConstant.token, authUserId: authUserId);
       TopNotification.success(context, res['message'][language]);
       Navigator.pushAndRemoveUntil(
         context,
         MaterialPageRoute(
-            builder: (context) => const MyAppFooter(
-                  initialIndex: 4,
-                )),
+            builder: (context) => const MyAppFooter(initialIndex: 4)),
         (route) => false,
       );
     }
@@ -1208,9 +1066,7 @@ class PostApiProvider with ChangeNotifier {
         .toSet()
         .toList();
 
-    final Map<String, dynamic> fields = {
-      'event_preferences': ids,
-    };
+    final Map<String, dynamic> fields = {'event_preferences': ids};
     final List<String> custom = (customEventPreferences ?? [])
         .map((e) => e.trim())
         .where((e) => e.isNotEmpty)
@@ -1219,15 +1075,12 @@ class PostApiProvider with ChangeNotifier {
     if (custom.isNotEmpty) {
       fields['custom_event_preferences'] = custom;
     }
-    print("addEventPreferences payload: $fields");
 
     final res = await postJsonData(
       'user/add_event_preferences',
       fields,
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1237,7 +1090,6 @@ class PostApiProvider with ChangeNotifier {
           context, "Event Preferenece Updated Successfully");
       return true;
     }
-
     return false;
   }
 
@@ -1258,18 +1110,11 @@ class PostApiProvider with ChangeNotifier {
         .toSet()
         .toList();
 
-    final Map<String, dynamic> fields = {
-      'vibes': ids,
-    };
-    print("addVibes payload: $fields");
-
     final res = await postJsonData(
       'user/add_vibes',
-      fields,
+      {'vibes': ids},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1278,7 +1123,6 @@ class PostApiProvider with ChangeNotifier {
       TopNotification.success(context, "Vibe Updated Successfully");
       return true;
     }
-
     return false;
   }
 
@@ -1289,18 +1133,11 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     setLoading(true);
 
-    final Map<String, dynamic> fields = {
-      'hobbies': hobbies,
-    };
-    print("updateHobbies payload: $fields");
-
     final res = await postJsonData(
       'user/update_hobbies',
-      fields,
+      {'hobbies': hobbies},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1311,15 +1148,15 @@ class PostApiProvider with ChangeNotifier {
       }
       if (res['data'] is Map) {
         await CacheHelper.save("user_details", jsonEncode(res['data']));
-        AppConstant.token = res['data']['token'] ?? "123456";
-        TopNotification.success(context, res['message'][language]);
+        // FIX: safe token extraction
+        final newToken = _extractToken(res['data'] ?? {});
+        if (newToken.isNotEmpty) AppConstant.token = newToken;
         if (context.mounted) {
           Provider.of<UserController>(context, listen: false)
               .setUserFromMap(Map<String, dynamic>.from(res['data']));
         }
       }
     }
-
     return res;
   }
 
@@ -1330,18 +1167,11 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     setLoading(true);
 
-    final Map<String, dynamic> fields = {
-      'url': url,
-    };
-    print("deleteGalleryItem payload: $fields");
-
     final res = await postJsonData(
       'user/delete_gallery_item',
-      fields,
+      {'url': url},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1351,7 +1181,6 @@ class PostApiProvider with ChangeNotifier {
         TopNotification.success(context, res['message']);
       }
     }
-
     return res;
   }
 
@@ -1384,8 +1213,8 @@ class PostApiProvider with ChangeNotifier {
                 "base_price": ticket["base_price"],
                 "total_price": ticket["total_price"],
                 "title": ticket["title"],
-                "isOneDay": ticket["isOneDay"] == 1 ||
-                    ticket["isOneDay"] == true, // ✅ force bool
+                "isOneDay":
+                    ticket["isOneDay"] == 1 || ticket["isOneDay"] == true,
               })
           .toList(),
       "quantity": numberOfGuests,
@@ -1398,18 +1227,15 @@ class PostApiProvider with ChangeNotifier {
       "phone_number": phoneNumber.toString(),
       "email": email.toString(),
       "full_name": fullName.toString(),
-      "city_name": cityName
+      "city_name": cityName,
     };
 
-    print(jsonEncode(fields));
     try {
       final response = await postJsonData(
         'booking/event_booking',
         fields,
         context,
-        headers: {
-          'authorization': 'Bearer $token',
-        },
+        headers: {'authorization': 'Bearer $token'},
       );
       log("bookingEventApi fields: $fields");
       return response;
@@ -1420,34 +1246,60 @@ class PostApiProvider with ChangeNotifier {
     }
   }
 
-// ====================log out API=============//
-
+  // ==================== log out API ====================//
   logOutApiCalling(BuildContext context) async {
     if (!context.mounted) return;
 
     setSecondaryLoading(true);
+    final String logoutToken = AppConstant.token;
 
-    final res = await postData(
-      'auth/logout',
-      context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
-    );
+    // FIX: disconnect() clears _activeSocketToken + _authUserId properly
+    Provider.of<SocketProvider>(context, listen: false).disconnect();
+    AppConstant.token = '';
+
+    final res = logoutToken.trim().isEmpty
+        ? null
+        : await postData(
+            'auth/logout',
+            context,
+            headers: {'authorization': 'Bearer $logoutToken'},
+          );
 
     _clearSessionState(context);
-    AppConstant.token = '';
-    Provider.of<SocketProvider>(context, listen: false).disconnect();
-
+    await Provider.of<UserController>(context, listen: false)
+        .clearSelectedSearchLocation(notify: false);
     await CacheHelper.clearAll();
     setSecondaryLoading(false);
-
-    if (res != null && res['success'] == true) {
-      // TopNotification.success(context, res['message'][language]);
-    }
   }
 
-// ================Report Problem Api================//
+  // --------------- check Number -----------
+  checkNumberApiCalling(BuildContext context, String mobile) async {
+    setLoading(true);
+
+    final res = await postJsonData(
+      'auth/check_phone_number',
+      {'phone_number': mobile.toString()},
+      context,
+    );
+
+    if (res != null) {
+      if (res['success'] == true && res['data'] != "NA") {
+        setLoading(false);
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: ProfileDetailsScreen(mobile: mobile),
+            duration: const Duration(milliseconds: 600),
+          ),
+        );
+      }
+    }
+
+    setLoading(false);
+  }
+
+  // ================Report Problem Api================//
   Future<Map<String, dynamic>?> reportProblemApi(
     BuildContext context, {
     required String description,
@@ -1455,6 +1307,17 @@ class PostApiProvider with ChangeNotifier {
     required List<XFile> videos,
     required List<XFile> thumbnails,
   }) async {
+    final trimmedDescription = description.trim();
+    final totalMedia = images.length + videos.length;
+    if (trimmedDescription.isEmpty) {
+      TopNotification.error(context, "Please enter description");
+      return null;
+    }
+    if (totalMedia > 6) {
+      TopNotification.error(context, "You can upload up to 6 media files only");
+      return null;
+    }
+
     setLoading(true);
 
     try {
@@ -1462,115 +1325,130 @@ class PostApiProvider with ChangeNotifier {
           Uri.parse("${AppConfigProvider.apiUrl}user/report_problem");
       var request = http.MultipartRequest('POST', url);
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
-      request.fields['description'] = description;
+      request.fields['description'] = trimmedDescription;
 
       for (final image in images) {
-        final imageBytes = await image.readAsBytes();
         final fileName = image.path.split('/').last;
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'images',
-            imageBytes,
-            filename: fileName,
-            contentType: http_parser.MediaType.parse('image/jpeg'),
-          ),
-        );
+        request.files.add(await http.MultipartFile.fromPath(
+          'images',
+          image.path,
+          filename: fileName,
+          contentType: http_parser.MediaType.parse('image/jpeg'),
+        ));
       }
 
       for (final video in videos) {
-        final videoBytes = await video.readAsBytes();
         final videoFileName = video.path.split('/').last;
         String mimeType = 'video/mp4';
-        if (videoFileName.toLowerCase().endsWith('.mov')) {
+        if (videoFileName.toLowerCase().endsWith('.mov'))
           mimeType = 'video/quicktime';
-        } else if (videoFileName.toLowerCase().endsWith('.avi')) {
+        else if (videoFileName.toLowerCase().endsWith('.avi'))
           mimeType = 'video/x-msvideo';
-        } else if (videoFileName.toLowerCase().endsWith('.mkv')) {
+        else if (videoFileName.toLowerCase().endsWith('.mkv'))
           mimeType = 'video/x-matroska';
-        } else if (videoFileName.toLowerCase().endsWith('.webm')) {
+        else if (videoFileName.toLowerCase().endsWith('.webm'))
           mimeType = 'video/webm';
-        }
 
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'videos',
-            videoBytes,
-            filename: videoFileName,
-            contentType: http_parser.MediaType.parse(mimeType),
-          ),
-        );
+        request.files.add(await http.MultipartFile.fromPath(
+          'videos',
+          video.path,
+          filename: videoFileName,
+          contentType: http_parser.MediaType.parse(mimeType),
+        ));
       }
 
       for (final thumbnail in thumbnails) {
-        final thumbnailBytes = await thumbnail.readAsBytes();
         final thumbName = thumbnail.path.split('/').last;
-        request.files.add(
-          http.MultipartFile.fromBytes(
-            'thumbnails',
-            thumbnailBytes,
-            filename: thumbName,
-            contentType: http_parser.MediaType.parse('image/jpeg'),
-          ),
-        );
+        request.files.add(await http.MultipartFile.fromPath(
+          'thumbnails',
+          thumbnail.path,
+          filename: thumbName,
+          contentType: http_parser.MediaType.parse('image/jpeg'),
+        ));
       }
 
-      final streamedResponse = await request.send();
-      final response = await http.Response.fromStream(streamedResponse);
+      final streamedResponse =
+          await request.send().timeout(const Duration(seconds: 90));
+      final response = await http.Response.fromStream(streamedResponse)
+          .timeout(const Duration(seconds: 90));
       final result = _handleStatusCode(response, context);
 
       if (result != null && result['success'] == true) {
         TopNotification.success(context,
-            "Report submitted successfully.Our team will review it soon");
+            "Report submitted successfully. Our team will review it soon");
       }
-      setLoading(false);
       return result;
+    } on TimeoutException {
+      TopNotification.error(
+          context, "Upload is taking too long. Please try smaller media files");
+      return null;
     } catch (e) {
       print("Report Problem Error: $e");
       TopNotification.error(context, "Failed to submit problem report");
-      setLoading(false);
       return null;
+    } finally {
+      setLoading(false);
     }
   }
 
-// Helper method to handle status codes (if not already in your code)
+  Future<Map<String, dynamic>?> reportUserApi(
+    BuildContext context, {
+    required String otherUserId,
+  }) async {
+    final targetUserId = otherUserId.trim();
+    final token = AppConstant.token.trim();
+    if (targetUserId.isEmpty || token.isEmpty) {
+      return null;
+    }
+
+    setLoading(true);
+    try {
+      final response = await postJsonData(
+        'feed/report_user',
+        <String, dynamic>{
+          'other_user_id': targetUserId,
+        },
+        context,
+        headers: <String, String>{
+          'authorization': 'Bearer $token',
+        },
+      );
+
+      if (response != null && response['success'] == true && context.mounted) {
+        TopNotification.success(
+          context,
+          response['message'] is List
+              ? response['message'][language].toString()
+              : (response['message']?.toString() ??
+                  'User reported successfully'),
+        );
+      }
+      return response;
+    } catch (e) {
+      print('Report User Error: $e');
+      if (context.mounted) {
+        TopNotification.error(context, 'Failed to report user');
+      }
+      return null;
+    } finally {
+      setLoading(false);
+    }
+  }
+
   Map<String, dynamic>? _handleStatusCode(
       http.Response response, BuildContext? context) {
     final statusCode = response.statusCode;
-
     try {
       final body = jsonDecode(response.body);
-
-      // Success
-      if (statusCode == 200) {
-        return body;
-      }
-
-      String errorMessage = _getErrorMessage(body);
-
-      if (statusCode == 400) {
-        if (context != null) {
-          TopNotification.error(context, errorMessage);
-        }
-        return null;
-      }
-
-      if (statusCode == 401 || statusCode == 403 || statusCode == 423) {
-        if (context != null) {
-          TopNotification.error(context, errorMessage);
-        }
-        return null;
-      }
-
-      if (statusCode == 500) {
-        if (context != null) {
+      if (statusCode == 200) return body;
+      final String errorMessage = _getErrorMessage(body);
+      if (context != null) {
+        if (statusCode == 500) {
           TopNotification.error(
               context, "Server error. Please try again later.");
+        } else {
+          TopNotification.error(context, errorMessage);
         }
-        return null;
-      }
-
-      if (context != null) {
-        TopNotification.error(context, errorMessage);
       }
       return null;
     } catch (e) {
@@ -1579,10 +1457,8 @@ class PostApiProvider with ChangeNotifier {
     }
   }
 
-// Helper method to get error message
   String _getErrorMessage(dynamic body) {
     if (body == null) return "An error occurred";
-
     if (body['message'] != null) {
       if (body['message'] is List && body['message'].length > language) {
         return body['message'][language].toString();
@@ -1592,7 +1468,6 @@ class PostApiProvider with ChangeNotifier {
       }
       return body['message'].toString();
     }
-
     return "An error occurred";
   }
 
@@ -1605,24 +1480,42 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     setLoading(true);
 
-    final Map<String, String> fields = {
-      // 'full_name': name.toString(),
-      // 'email': email.toString(),
-      'description': message.toString(),
-    };
-
-    print("Line 105 $fields");
-
     final res = await postJsonData(
       'common/send_messageTo_admin',
-      fields,
+      {'description': message.toString()},
       context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
+      if (!context.mounted) return;
+      setLoading(false);
+      if (res['success'] == true) {
+        TopNotification.success(context, res['message'][language]);
+      }
+      Navigator.pop(context);
+    }
+
+    setLoading(false);
+  }
+
+  //============ delete account api===========//
+  deleteAccountApiCalling(BuildContext context, String message) async {
+    setLoading(true);
+
+    final res = await postJsonData(
+      'user/delete_account',
+      {'reason': message.toString()},
+      context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
+    );
+
+    if (res != null) {
+      _clearSessionState(context);
+      AppConstant.token = '';
+      await Provider.of<UserController>(context, listen: false)
+          .clearSelectedSearchLocation(notify: false);
+      await CacheHelper.clearAll();
       if (!context.mounted) return;
 
       setLoading(false);
@@ -1631,55 +1524,11 @@ class PostApiProvider with ChangeNotifier {
         TopNotification.success(context, res['message'][language]);
       }
 
-      Navigator.pop(
-        context,
-      );
-    }
-
-    setLoading(false);
-  }
-
-//============ delete account api===========//
-  deleteAccountApiCalling(
-    BuildContext context,
-    String message,
-  ) async {
-    setLoading(true);
-
-    final Map<String, String> fields = {
-      'reason': message.toString(),
-    };
-
-    print("Line 105 $fields");
-
-    final res = await postJsonData(
-      'user/delete_account',
-      fields,
-      context,
-      headers: {
-        'authorization': 'Bearer ${AppConstant.token}',
-      },
-    );
-
-    if (res != null) {
-      _clearSessionState(context);
-      AppConstant.token = '';
-      await CacheHelper.clearAll();
-      if (!context.mounted) return;
-
-      setLoading(false);
-
-      if (res != null && res['success'] == true) {
-        TopNotification.success(context, res['message'][language]);
-      }
-
       Navigator.pushAndRemoveUntil(
         context,
         PageTransition(
           type: PageTransitionType.bottomToTop,
-          child: const PurpleScreen(
-            nextScreen: LoginScreen(),
-          ),
+          child: const PurpleScreen(nextScreen: LoginScreen()),
           duration: const Duration(milliseconds: 400),
         ),
         (route) => false,
@@ -1690,8 +1539,7 @@ class PostApiProvider with ChangeNotifier {
   }
 }
 
-//=======Content Screen Cache-----------
-
+//======= Content Screen Cache -----------
 class AppContentCache {
   static final AppContentCache _instance = AppContentCache._internal();
   factory AppContentCache() => _instance;
@@ -1705,3 +1553,4 @@ class AppContentCache {
 
   bool get hasData => contentArr != null && contentArr!.isNotEmpty;
 }
+

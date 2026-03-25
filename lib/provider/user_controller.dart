@@ -4,10 +4,14 @@ import '../../provider/common_sharedpreferences.dart';
 
 class UserController with ChangeNotifier {
   static final UserController _instance = UserController._internal();
+  static const String _userDetailsCacheKey = 'user_details';
+  static const String _selectedSearchLocationCacheKey =
+      'selected_search_location';
   factory UserController() => _instance;
   UserController._internal();
 
   Map<String, dynamic> _userData = {};
+  Map<String, dynamic> _selectedSearchLocation = {};
 
   Map<String, dynamic> get getUserData => Map<String, dynamic>.from(_userData);
 
@@ -72,6 +76,7 @@ class UserController with ChangeNotifier {
     if (myCode.isNotEmpty) return myCode;
     return getReferralCode.trim();
   }
+
   String get getToken => _str(_userData['token']);
   String get getCreatedAt => _str(_userData['createdAt']);
   String get getUpdatedAt => _str(_userData['updatedAt']);
@@ -104,6 +109,15 @@ class UserController with ChangeNotifier {
       int.tryParse(_str(_userData['total_friends'])) ?? 0;
 
   Map<String, dynamic> get getCityData => _map(_userData['city_id']);
+  Map<String, dynamic> get getSelectedSearchLocation =>
+      Map<String, dynamic>.from(_selectedSearchLocation);
+  Map<String, dynamic> get getEffectiveSearchCityData {
+    if (_selectedSearchLocation.isNotEmpty) {
+      return Map<String, dynamic>.from(_selectedSearchLocation);
+    }
+    return getCityData;
+  }
+
   Map<String, dynamic> get getProfileVisibility =>
       _map(_userData['profile_visibility']);
 
@@ -144,35 +158,96 @@ class UserController with ChangeNotifier {
   }
 
   Future<void> getUserDetails() async {
-    final userDetails = await CacheHelper.get('user_details');
+    final userDetails = await CacheHelper.get(_userDetailsCacheKey);
+    final selectedSearchLocation =
+        await CacheHelper.get(_selectedSearchLocationCacheKey);
+
+    _selectedSearchLocation = _decodeJsonMap(selectedSearchLocation);
+
     if (userDetails == null) {
-      _clearUserData();
+      _clearUserData(notify: false);
+      notifyListeners();
       return;
     }
 
     try {
       final decoded = json.decode(userDetails);
       if (decoded is Map<String, dynamic>) {
-        setUserFromMap(decoded);
+        _userData = _extractUserMap(decoded);
+        notifyListeners();
       } else {
-        _clearUserData();
+        _clearUserData(notify: false);
+        notifyListeners();
       }
     } catch (_) {
-      _clearUserData();
+      _clearUserData(notify: false);
+      notifyListeners();
     }
   }
 
-  void _clearUserData() {
-    _userData = {};
+  Map<String, dynamic> _decodeJsonMap(String? rawValue) {
+    if (rawValue == null || rawValue.trim().isEmpty) {
+      return <String, dynamic>{};
+    }
+
+    try {
+      final decoded = json.decode(rawValue);
+      if (decoded is Map<String, dynamic>) {
+        return decoded;
+      }
+      if (decoded is Map) {
+        return Map<String, dynamic>.from(decoded);
+      }
+    } catch (_) {}
+    return <String, dynamic>{};
+  }
+
+  Future<void> saveSelectedSearchLocation({
+    required String cityName,
+    required double latitude,
+    required double longitude,
+    required double radius,
+  }) async {
+    _selectedSearchLocation = {
+      'city_name': cityName.trim(),
+      'latitude': latitude,
+      'longitude': longitude,
+      'radius': radius,
+    };
+    await CacheHelper.save(
+      _selectedSearchLocationCacheKey,
+      jsonEncode(_selectedSearchLocation),
+    );
     notifyListeners();
   }
 
-  void reset() {
-    _clearUserData();
+  Future<void> clearSelectedSearchLocation({bool notify = true}) async {
+    _selectedSearchLocation = {};
+    await CacheHelper.remove(_selectedSearchLocationCacheKey);
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+  void _clearUserData({bool notify = true}) {
+    _userData = {};
+    if (notify) {
+      notifyListeners();
+    }
+  }
+
+  void reset({bool clearSearchLocation = true}) {
+    _clearUserData(notify: false);
+    if (clearSearchLocation) {
+      _selectedSearchLocation = {};
+    }
+    notifyListeners();
   }
 
   Future<void> clearCache() async {
-    await CacheHelper.remove('user_details');
-    _clearUserData();
+    await CacheHelper.remove(_userDetailsCacheKey);
+    await clearSelectedSearchLocation(notify: false);
+    _clearUserData(notify: false);
+    notifyListeners();
   }
 }

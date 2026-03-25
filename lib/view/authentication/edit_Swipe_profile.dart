@@ -293,7 +293,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -337,7 +338,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -381,7 +383,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -425,7 +428,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -469,7 +473,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -637,7 +642,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 activeTrackColor: AppColor.pinkColor,
                                 inactiveThumbColor:
                                     AppColor.secondryColor(context),
-                                inactiveTrackColor: AppColor.greyLightColor,
+                                inactiveTrackColor: AppColor
+                                                        .greyLightColor(context),
                               ),
                             ),
                           )
@@ -712,7 +718,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )
@@ -1173,7 +1180,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         inactiveThumbColor:
                                             AppColor.secondryColor(context),
                                         inactiveTrackColor:
-                                            AppColor.greyLightColor,
+                                            AppColor
+                                                        .greyLightColor(context),
                                       ),
                                     ),
                                   ),
@@ -1289,7 +1297,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                         inactiveThumbColor:
                                             AppColor.secondryColor(context),
                                         inactiveTrackColor:
-                                            AppColor.greyLightColor,
+                                            AppColor
+                                                        .greyLightColor(context),
                                       ),
                                     ),
                                   ),
@@ -1402,7 +1411,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 ),
@@ -1498,7 +1508,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       inactiveThumbColor:
                                           AppColor.secondryColor(context),
                                       inactiveTrackColor:
-                                          AppColor.greyLightColor,
+                                          AppColor
+                                                        .greyLightColor(context),
                                     ),
                                   ),
                                 )

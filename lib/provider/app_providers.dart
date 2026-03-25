@@ -3,6 +3,7 @@ import 'package:provider/single_child_widget.dart';
 
 import '../controller/book_venue/book_venue_controller.dart';
 import '../controller/book_venue/book_venue_details_controller.dart';
+import '../controller/blocked_users/blocked_users_controller.dart';
 import '../controller/bookingEvent/booking_event_controller.dart';
 import '../controller/city/city_preference.dart';
 import '../controller/eventBookingDetails/event_booking_details_controller.dart';
@@ -73,5 +74,6 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => NotificationController()),
     ChangeNotifierProvider(create: (_) => NotificationSettingController()),
     ChangeNotifierProvider(create: (_) => MyProfleCompltetionController()),
+    ChangeNotifierProvider(create: (_) => BlockedUsersController()),
   ];
 }

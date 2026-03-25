@@ -56,7 +56,7 @@ class EventPreferenceController with ChangeNotifier {
       } else {
         _eventsList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

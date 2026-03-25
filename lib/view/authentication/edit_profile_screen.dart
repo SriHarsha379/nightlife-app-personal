@@ -17,6 +17,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
 import '../other/edit_hobbies.dart';
 
@@ -138,6 +139,17 @@ class _EditProfileState extends State<EditProfile> {
   Future<void> _updateProfile() async {
     final firstName = firstNameController.text.trim();
     final lastName = lastNameController.text.trim();
+
+    if (Validation.isFieldEmpty(context,
+        value: firstName, fieldName: AppLanguage.firstNameText[language])) {
+      return;
+    }
+
+    if (Validation.isFieldEmpty(context,
+        value: lastName, fieldName: AppLanguage.lastNameText[language])) {
+      return;
+    }
+
     final combinedName = '$firstName $lastName'.trim();
 
     await Provider.of<PostApiProvider>(context, listen: false).editProfileApi(

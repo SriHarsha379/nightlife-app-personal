@@ -1,8 +1,8 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/utilities/app_constant.dart';
-import 'package:night_life/utilities/local_notification_service.dart';
+import '/utilities/app_constant.dart';
+import '/utilities/local_notification_service.dart';
 
 class FcmTokenService {
   static Future<void> generateAndStoreToken() async {

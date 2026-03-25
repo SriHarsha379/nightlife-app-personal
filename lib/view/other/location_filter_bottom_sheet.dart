@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -83,7 +85,9 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
     );
 
     final cities = <Map<String, dynamic>>[];
-    if (response != null && response['success'] == true && response['data'] is List) {
+    if (response != null &&
+        response['success'] == true &&
+        response['data'] is List) {
       final rawList = (response['data'] as List).whereType<Map>();
       for (final item in rawList) {
         cities.add(Map<String, dynamic>.from(item));
@@ -162,9 +166,8 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final filteredCities = _filteredCities();
-    final visibleCities = _showAllCities
-        ? filteredCities
-        : filteredCities.take(6).toList();
+    final visibleCities =
+        _showAllCities ? filteredCities : filteredCities.take(6).toList();
 
     return SafeArea(
       child: Padding(
@@ -307,7 +310,9 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                         ),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: selected ? AppColor.pinkColor.withOpacity(0.15) : null,
+                          color: selected
+                              ? AppColor.pinkColor.withOpacity(0.15)
+                              : null,
                           border: Border.all(
                             color: selected
                                 ? AppColor.pinkColor
@@ -316,11 +321,11 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                         ),
                         child: Text(
                           cityName,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 14,
                             fontWeight: FontWeight.w400,
-                            color: AppColor.secondryColor(context),
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -362,11 +367,11 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                       padding: const EdgeInsets.only(left: 18),
                       child: Text(
                         "Up to ${_currentDistance.toInt()} kilometres away",
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w500,
                           fontSize: 16,
-                          color: AppColor.secondryColor(context),
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -394,7 +399,7 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
                               fontSize: 10,
-                              color: AppColor.secondryColor(context),
+                              color: Colors.white,
                             ),
                           ),
                           Text(
@@ -403,7 +408,7 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                               fontFamily: AppFont.fontFamily,
                               fontWeight: FontWeight.w500,
                               fontSize: 10,
-                              color: AppColor.secondryColor(context),
+                              color: Colors.white,
                             ),
                           ),
                         ],

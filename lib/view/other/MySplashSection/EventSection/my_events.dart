@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '/controller/home/home_controller.dart';
 import '/controller/likedAndBookedEvents/like_booked_event_controller.dart';
 import '/utilities/app_color.dart';
@@ -54,7 +55,6 @@ class _MyEventsState extends State<MyEvents> {
   ];
   bool isDropdownOpen = false;
 
-  // ── Scroll controllers for load more ──────────────────────────────────────
   late final ScrollController _likedScrollController;
   late final ScrollController _bookedScrollController;
   late final ScrollController _pastHorizontalScrollController;
@@ -62,7 +62,6 @@ class _MyEventsState extends State<MyEvents> {
   @override
   void initState() {
     super.initState();
-
     _likedScrollController = ScrollController()..addListener(_onLikedScroll);
     _bookedScrollController = ScrollController()..addListener(_onBookedScroll);
     _pastHorizontalScrollController = ScrollController()
@@ -82,8 +81,6 @@ class _MyEventsState extends State<MyEvents> {
       limit: 10,
     );
   }
-
-
 
   void _fetchBooked() {
     Provider.of<LikedBookedEventController>(context, listen: false)
@@ -146,7 +143,6 @@ class _MyEventsState extends State<MyEvents> {
     super.dispose();
   }
 
-  // ── Helper: format date string ─────────────────────────────────────────────
   String _formatSlotTime(String? isoDate) {
     if (isoDate == null || isoDate.isEmpty) return '';
     try {
@@ -157,17 +153,61 @@ class _MyEventsState extends State<MyEvents> {
     }
   }
 
+  bool _isDarkMode(BuildContext context) {
+    return context.read<ThemeProvider>().isDarkMode;
+  }
+
+  // ✅ Card decoration — same as MyVenue
+  BoxDecoration _eventCardDecoration(
+    BuildContext context, {
+    double radius = 15,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: AppColor.primaryColor(context),
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: isDark
+              ? Colors.black.withOpacity(0.35)
+              : Colors.black.withOpacity(0.13),
+          blurRadius: isDark ? 10 : 18,
+          spreadRadius: isDark ? 0 : 1,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  // ✅ White button decoration — same as MyVenue
+  BoxDecoration _eventActionButtonDecoration({double radius = 12}) {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.10),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
+
+
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -179,7 +219,6 @@ class _MyEventsState extends State<MyEvents> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Status bar spacer ────────────────────────────────────────
                 SizedBox(height: size.height * 4.5 / 100),
 
                 // ── App bar ──────────────────────────────────────────────────
@@ -189,7 +228,6 @@ class _MyEventsState extends State<MyEvents> {
                     height: size.height * 7 / 100,
                     child: Row(
                       children: [
-                        // Back button
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -216,7 +254,6 @@ class _MyEventsState extends State<MyEvents> {
                           ),
                         ),
                         SizedBox(width: size.width * 25 / 100),
-                        // Title
                         GestureDetector(
                           onTap: () => documenttypebottomsheet(context),
                           child: Align(
@@ -234,7 +271,6 @@ class _MyEventsState extends State<MyEvents> {
                           ),
                         ),
                         SizedBox(width: size.width * 2 / 100),
-                        // Down arrow
                         GestureDetector(
                           onTap: () => documenttypebottomsheet(context),
                           child: Image.asset(
@@ -307,7 +343,6 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-  // ── Tab widget ─────────────────────────────────────────────────────────────
   Widget _buildTab(
     BuildContext context, {
     required String label,
@@ -337,7 +372,6 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-  // ── Tab indicator bar ──────────────────────────────────────────────────────
   Widget _buildTabIndicator(
     BuildContext context, {
     required int tabIndex,
@@ -387,7 +421,6 @@ class _MyEventsState extends State<MyEvents> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
           itemCount: events.length + (controller.isLikedLoadingMore ? 1 : 0),
           itemBuilder: (context, index) {
-            // Load more indicator at the bottom
             if (index == events.length) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: size.height * 2 / 100),
@@ -411,40 +444,24 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-
-
-
   Widget _buildLikedVenueCard(
       BuildContext context, Map<String, dynamic> event, Size size) {
     return GestureDetector(
-      onTap: () async {
-        // final result = await Navigator.push(
-        //   context,
-        //   PageTransition(
-        //     type: PageTransitionType.rightToLeftWithFade,
-        //     child: VenuePages(
-        //       venueId: event['_id'].toString(),
-        //       forceDislikeOnly: true,
-        //     ),
-        //     duration: const Duration(milliseconds: 500),
-        //   ),
-        // );
-        // await _handleVenueDetailResult(result);
-      },
+      onTap: () async {},
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _eventCardDecoration(context),
         child: Column(
           children: [
-            // Venue image
+            // Event image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
                 child: CachedNetworkImage(
                   imageUrl:
                       "${AppConfigProvider.imageUrl}${event['event_image']}",
@@ -499,7 +516,6 @@ class _MyEventsState extends State<MyEvents> {
                         child: Image.asset(
                           AppImage.liked_heart_icon,
                           fit: BoxFit.cover,
-                          // color: AppColor.secondryColor(context),
                         ),
                       ),
                     ],
@@ -512,11 +528,11 @@ class _MyEventsState extends State<MyEvents> {
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(width: size.width * 1 / 100),
+                      SizedBox(width: size.width * 1.5 / 100),
                       Text(
                         event['date'] ?? '',
                         style: TextStyle(
@@ -541,24 +557,22 @@ class _MyEventsState extends State<MyEvents> {
                         ),
                       ),
                       Expanded(
-                        child: SizedBox(
-                          child: Text(
-                            event['address'] ?? '',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.secondryColor(context),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        child: Text(
+                          event['address'] ?? '',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.secondryColor(context),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: size.height * 1.5 / 100),
-                  // Events button
+                  // View Details button
                   InkWell(
                     onTap: () async {
                       final result = await Navigator.push(
@@ -575,10 +589,7 @@ class _MyEventsState extends State<MyEvents> {
                     },
                     child: Container(
                       height: size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.secondryColor(context),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      decoration: _eventActionButtonDecoration(),
                       child: Center(
                         child: Text(
                           AppLanguage.viewDetailstext[language],
@@ -603,8 +614,9 @@ class _MyEventsState extends State<MyEvents> {
 
 
 
+
   // ══════════════════════════════════════════════════════════════════════════
-  // Booked TAB
+  // BOOKED TAB
   // ══════════════════════════════════════════════════════════════════════════
   Widget _buildBookedTab(BuildContext context, Size size) {
     return Consumer<LikedBookedEventController>(
@@ -626,7 +638,6 @@ class _MyEventsState extends State<MyEvents> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Description ──────────────────────────────────────────
                   if (controller.upcomingEvents.isNotEmpty)
                     Text(
                       AppLanguage.confirmBookeddetailsText[language],
@@ -638,8 +649,6 @@ class _MyEventsState extends State<MyEvents> {
                       ),
                     ),
                   SizedBox(height: size.height * 1.5 / 100),
-
-                  // ── Upcoming events heading ─────────────────────────
                   if (controller.upcomingEvents.isNotEmpty)
                     Text(
                       AppLanguage.upcomingEventstext[language],
@@ -651,8 +660,6 @@ class _MyEventsState extends State<MyEvents> {
                       ),
                     ),
                   SizedBox(height: size.height * 2 / 100),
-
-                  // ── Upcoming list (NO load more) ──────────────────────────
                   if (controller.upcomingEvents.isEmpty)
                     SizedBox(
                       height: size.height * 30 / 100,
@@ -675,8 +682,6 @@ class _MyEventsState extends State<MyEvents> {
                         child: _buildUpcomingCard(context, booking, size),
                       ),
                     ),
-
-                  // ── Past reservations heading ─────────────────────────────
                   if (controller.pastBookings.isNotEmpty ||
                       controller.isPastLoadingMore) ...[
                     SizedBox(height: size.height * 1 / 100),
@@ -690,8 +695,6 @@ class _MyEventsState extends State<MyEvents> {
                       ),
                     ),
                     SizedBox(height: size.height * 2 / 100),
-
-                    // ── Past list (horizontal scroll with load more) ──────────
                     SizedBox(
                       width: size.width,
                       height: size.height * 28 / 100,
@@ -701,7 +704,6 @@ class _MyEventsState extends State<MyEvents> {
                         itemCount: controller.pastBookings.length +
                             (controller.isPastLoadingMore ? 1 : 0),
                         itemBuilder: (context, index) {
-                          // Loading indicator at end of horizontal list
                           if (index == controller.pastBookings.length) {
                             return Padding(
                               padding: EdgeInsets.symmetric(
@@ -727,10 +729,8 @@ class _MyEventsState extends State<MyEvents> {
                         },
                       ),
                     ),
-
                     SizedBox(height: size.height * 3 / 100),
                   ] else if (controller.upcomingEvents.isEmpty) ...[
-                    // Show past empty state only if upcoming is also empty
                     SizedBox(height: size.height * 1 / 100),
                     Text(
                       AppLanguage.pastEventsText[language],
@@ -761,7 +761,7 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-  // ── Upcoming events card ──────────────────────────────────────────────
+  // ── Upcoming events card ───────────────────────────────────────────────────
   Widget _buildUpcomingCard(
       BuildContext context, Map<String, dynamic> booking, Size size) {
     return GestureDetector(
@@ -779,17 +779,14 @@ class _MyEventsState extends State<MyEvents> {
       },
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _eventCardDecoration(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Venue image
+            // Event image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
@@ -828,7 +825,6 @@ class _MyEventsState extends State<MyEvents> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -849,18 +845,18 @@ class _MyEventsState extends State<MyEvents> {
                   ),
                   SizedBox(height: size.height * 0.8 / 100),
 
-                  // Slot time
+                  // Date
                   Row(
                     children: [
                       SizedBox(
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(width: size.width * 1 / 100),
+                      SizedBox(width: size.width * 1.5 / 100),
                       Text(
                         _formatSlotTime(booking['date']),
                         style: TextStyle(
@@ -900,38 +896,12 @@ class _MyEventsState extends State<MyEvents> {
                       ),
                     ],
                   ),
-                  SizedBox(height: size.height * 0.8 / 100),
-
-                  // Guests count
-                  // Row(
-                  //   children: [
-                  //     Icon(
-                  //       Icons.people_outline,
-                  //       size: size.width * 4.5 / 100,
-                  //       color: AppColor.pinkColor,
-                  //     ),
-                  //     SizedBox(width: size.width * 1 / 100),
-                  //     Text(
-                  //       '${booking['number_of_guests'] ?? 0} guests',
-                  //       style: TextStyle(
-                  //         fontSize: 14,
-                  //         fontFamily: AppFont.fontFamily,
-                  //         fontWeight: FontWeight.w500,
-                  //         color: AppColor.secondryColor(context),
-                  //       ),
-                  //     ),
-                  //   ],
-                  // ),
-
                   SizedBox(height: size.height * 1.5 / 100),
 
                   // View details button
                   Container(
                     height: size.height * 6 / 100,
-                    decoration: BoxDecoration(
-                      color: AppColor.secondryColor(context),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                    decoration: _eventActionButtonDecoration(),
                     child: Center(
                       child: Text(
                         AppLanguage.viewDetailstext[language],
@@ -953,16 +923,12 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-  // ── Past event card ────────────────────────────────────
+  // ── Past event card ────────────────────────────────────────────────────────
   Widget _buildPastCard(
       BuildContext context, Map<String, dynamic> pastEvent, Size size) {
     return Container(
       width: size.width * 37 / 100,
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor(context),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColor.startingscreenColor),
-      ),
+      decoration: _eventCardDecoration(context, radius: 10),
       child: Column(
         children: [
           // Image
@@ -1013,6 +979,7 @@ class _MyEventsState extends State<MyEvents> {
             ),
           ),
           SizedBox(height: size.height * 0.5 / 100),
+
           // Date
           Container(
             width: size.width * 30 / 100,
@@ -1022,7 +989,7 @@ class _MyEventsState extends State<MyEvents> {
                   width: size.width * 2.5 / 100,
                   height: size.width * 2.5 / 100,
                   child: Image.asset(
-                    AppImage.calenderPinkIcon,
+                    AppImage.newCalenderPinkIcon,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -1040,6 +1007,7 @@ class _MyEventsState extends State<MyEvents> {
             ),
           ),
           SizedBox(height: size.height * 0.5 / 100),
+
           // Address
           Container(
             width: size.width * 30 / 100,
@@ -1071,6 +1039,7 @@ class _MyEventsState extends State<MyEvents> {
             ),
           ),
           SizedBox(height: size.height * 2 / 100),
+
           // Review button
           GestureDetector(
             onTap: () {
@@ -1089,10 +1058,7 @@ class _MyEventsState extends State<MyEvents> {
             child: Container(
               height: size.height * 4.5 / 100,
               width: size.width * 35 / 100,
-              decoration: BoxDecoration(
-                color: AppColor.secondryColor(context),
-                borderRadius: BorderRadius.circular(8),
-              ),
+              decoration: _eventActionButtonDecoration(radius: 8),
               child: const Center(
                 child: Text(
                   "Review",
@@ -1321,7 +1287,7 @@ class _MyEventsState extends State<MyEvents> {
           style: TextStyle(
             color: isActive
                 ? AppColor.secondryColor(context)
-                : AppColor.greyLightColor,
+                : AppColor.greyLightColor(context),
             fontSize: 16,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),

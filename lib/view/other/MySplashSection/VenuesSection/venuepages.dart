@@ -7,9 +7,12 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_t
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../../utilities/app_color.dart';
+import '../../../../commonWidget/artist_image_preview.dart';
 import '../../../../commonWidget/event_types_bottomsheet.dart';
 import '../../../../commonWidget/show_images_bottomsheet.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
@@ -47,6 +50,32 @@ class _VenuePagesState extends State<VenuePages> {
     return value.toString();
   }
 
+  Future<void> _openVenueLocationInMaps(Map<String, dynamic> venueData) async {
+    final latitude = venueData['latitude'];
+    final longitude = venueData['longitude'];
+    final address = _str(venueData['address']).trim();
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
+
   // Helper method to build image URL
   String _asUploadUrl(String? path) {
     if (path == null || path.isEmpty) return '';
@@ -79,6 +108,21 @@ class _VenuePagesState extends State<VenuePages> {
     return [];
   }
 
+  void _openLineupImagePreview(
+    BuildContext context,
+    String imagePath,
+  ) {
+    if (imagePath.trim().isEmpty) return;
+
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        child: LineupArtistPreviewScreen(imagePath: imagePath),
+      ),
+    );
+  }
+
   // Build adaptive image (network or asset fallback)
   Widget _buildAdaptiveImage(String url,
       {BoxFit fit = BoxFit.cover, String? fallbackAsset}) {
@@ -106,86 +150,7 @@ class _VenuePagesState extends State<VenuePages> {
     );
   }
 
-  List chats = [
-    {
-      'id': 1,
-      'image': 'assets/icons/ProfilePhoto.png',
-      'name': 'Smith Mathew',
-      'lastMessage': 'Hi, David. Hope you\'re doing...',
-      'time': '09:18',
-    },
-    {
-      'id': 2,
-      'image': 'assets/icons/arjunrampalIcon.png',
-      'name': 'Merry An.',
-      'lastMessage': 'Are you ready for today\'s part..',
-      'time': '12:44',
-    },
-    {
-      'id': 3,
-      'image': 'assets/icons/galleryIcon.png',
-      'name': 'John Walton',
-      'lastMessage': 'I\'am sending you a parcel rece..',
-      'time': '08:06',
-    },
-    {
-      'id': 4,
-      'image': 'assets/icons/girlImage.png',
-      'name': 'Monica Randawa',
-      'lastMessage': 'Hope you\'re doing well today..',
-      'time': '09:32',
-    },
-  ];
-
-  List<dynamic> recent = <dynamic>[
-    {
-      "image": AppImage.calenderPinkIcon,
-      "recent": "Royal Club",
-    },
-    {
-      "image": AppImage.pinkclock,
-      "recent": "Arjun Rampal",
-    },
-    {
-      "image": AppImage.locationIcon,
-      "recent": "Music Fest",
-    },
-  ];
-
   int selectedId = 2;
-
-  List Orders = [
-    {'id': 1, 'title': 'Cafe'},
-    {'id': 2, 'title': 'Desserts'},
-    {'id': 3, 'title': 'Coffee'},
-  ];
-
-  List Location = [
-    {'id': 1, 'title': 'Delhi NCR'},
-    {'id': 2, 'title': 'Mumbai'},
-    {'id': 3, 'title': 'Banglore'},
-    {'id': 4, 'title': 'Goa'},
-    {'id': 5, 'title': 'Chennai'},
-    {'id': 6, 'title': 'Kolkata'},
-  ];
-
-  List Trending = [
-    {
-      'id': 1,
-      'title': 'Royal Club ',
-      "image": AppImage.zigzagArrow,
-    },
-    {
-      'id': 2,
-      'title': 'Arjun Rampal',
-      "image": AppImage.zigzagArrow,
-    },
-    {
-      'id': 3,
-      'title': 'Music Fest',
-      "image": AppImage.zigzagArrow,
-    },
-  ];
 
   List shareIcons = [
     "assets/icons/shareIcon.png",
@@ -329,13 +294,15 @@ class _VenuePagesState extends State<VenuePages> {
         final showDislikeOnly = widget.forceDislikeOnly || isLiked;
         final targetVenueId = _targetVenueId(venueData['_id']);
 
+        final themeProvider = Provider.of<ThemeProvider>(context);
+        final isDark = themeProvider.isDarkMode;
         return AnnotatedRegion<SystemUiOverlayStyle>(
             value: SystemUiOverlayStyle(
-              statusBarColor: AppColor.primaryColor(context),
-              statusBarIconBrightness: Brightness.light,
-              statusBarBrightness: Brightness.dark,
-              systemNavigationBarColor: Colors.transparent,
-              systemNavigationBarIconBrightness: Brightness.light,
+              statusBarColor: Colors.transparent,
+              statusBarIconBrightness:
+                  isDark ? Brightness.light : Brightness.dark,
+              statusBarBrightness:
+                  isDark ? Brightness.dark : Brightness.light, // iOS
             ),
             child: WillPopScope(
               onWillPop: () async {
@@ -388,7 +355,11 @@ class _VenuePagesState extends State<VenuePages> {
                         SizedBox(width: size.width * 3 / 100),
                         GestureDetector(
                           onTap: () {
-                            documenttypebottomsheet(context);
+                            documenttypebottomsheet(
+                              context,
+                              sharedVenueData:
+                                  Map<String, dynamic>.from(venueData),
+                            );
                           },
                           child: Container(
                             width: size.width * 30 / 100,
@@ -435,7 +406,7 @@ class _VenuePagesState extends State<VenuePages> {
                                     AppImage.heartImg,
                                     height: 20,
                                     width: 20,
-                                    color: AppColor.secondryColor(context),
+                                    color: Colors.white,
                                   ),
                                   Text(
                                     AppLanguage.likeText[language],
@@ -443,7 +414,7 @@ class _VenuePagesState extends State<VenuePages> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor(context),
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ],
@@ -462,24 +433,32 @@ class _VenuePagesState extends State<VenuePages> {
                       physics: BouncingScrollPhysics(),
                       child: Column(
                         children: [
-                          SizedBox(height: size.height * 3 / 100),
+                          SizedBox(height: size.height * 4 / 100),
                           Stack(
                             children: [
-                              Container(
-                                width: size.width * 100 / 100,
-                                height: size.height * 28 / 100,
-                                child: ClipRRect(
-                                  child: venueImage.isNotEmpty
-                                      ? _buildAdaptiveImage(
-                                          venueImage,
-                                          fit: BoxFit.fill,
-                                          fallbackAsset:
-                                              AppImage.dummyImageIcon,
-                                        )
-                                      : Image.asset(
-                                          AppImage.dummyImageIcon,
-                                          fit: BoxFit.fill,
-                                        ),
+                              GestureDetector(
+                                onTap: () {
+                                  _openLineupImagePreview(
+                                    context,
+                                    (venueImage).toString(),
+                                  );
+                                },
+                                child: Container(
+                                  width: size.width * 100 / 100,
+                                  height: size.height * 28 / 100,
+                                  child: ClipRRect(
+                                    child: venueImage.isNotEmpty
+                                        ? _buildAdaptiveImage(
+                                            venueImage,
+                                            fit: BoxFit.fill,
+                                            fallbackAsset:
+                                                AppImage.dummyImageIcon,
+                                          )
+                                        : Image.asset(
+                                            AppImage.dummyImageIcon,
+                                            fit: BoxFit.fill,
+                                          ),
+                                  ),
                                 ),
                               ),
                               Positioned(
@@ -666,50 +645,56 @@ class _VenuePagesState extends State<VenuePages> {
                             ),
                           ),
                           SizedBox(height: size.height * 2 / 100),
-                          SizedBox(
-                            width: size.width * 92 / 100,
-                            child: Row(
-                              children: [
-                                Container(
-                                  width: size.width * 4.5 / 100,
-                                  height: size.width * 4.5 / 100,
-                                  child: ClipRRect(
-                                    child: Image.asset(
-                                      AppImage.locationIcon,
-                                      fit: BoxFit.cover,
+                          GestureDetector(
+                            onTap: address.trim().isEmpty
+                                ? null
+                                : () => _openVenueLocationInMaps(venueData),
+                            child: SizedBox(
+                              width: size.width * 92 / 100,
+                              child: Row(
+                                children: [
+                                  Container(
+                                    width: size.width * 4.5 / 100,
+                                    height: size.width * 4.5 / 100,
+                                    child: ClipRRect(
+                                      child: Image.asset(
+                                        AppImage.locationIcon,
+                                        fit: BoxFit.cover,
+                                      ),
                                     ),
                                   ),
-                                ),
-                                SizedBox(width: size.width * 2 / 100),
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        address,
-                                        style: TextStyle(
-                                          fontSize: 15,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          color:
-                                              AppColor.secondryColor(context),
-                                        ),
-                                      ),
-                                      if (distanceKm != null)
+                                  SizedBox(width: size.width * 2 / 100),
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
                                         Text(
-                                          "$distanceKm km away",
-                                          style: const TextStyle(
+                                          address,
+                                          style: TextStyle(
                                             fontSize: 15,
                                             fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                            color: AppColor.greyLightColor,
+                                            fontWeight: FontWeight.w500,
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
-                                    ],
+                                        if (distanceKm != null)
+                                          Text(
+                                            "$distanceKm km away",
+                                            style: TextStyle(
+                                              fontSize: 15,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.greyLightColor(
+                                                  context),
+                                            ),
+                                          ),
+                                      ],
+                                    ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(height: size.height * 3 / 100),
@@ -829,12 +814,12 @@ class _VenuePagesState extends State<VenuePages> {
                                 trimLines: 3,
                                 trimMode: TrimMode.Line,
                                 trimCollapsedText: 'Read More',
-                                trimExpandedText: ' Show Less',
-                                style: const TextStyle(
+                                trimExpandedText: ' Read Less',
+                                style: TextStyle(
                                   fontSize: 15,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.normal,
-                                  color: AppColor.greyLightColor,
+                                  color: AppColor.greyLightColor(context),
                                 ),
                                 moreStyle: const TextStyle(
                                   fontSize: 15,
@@ -870,8 +855,9 @@ class _VenuePagesState extends State<VenuePages> {
                             child: ListView.builder(
                               scrollDirection: Axis.horizontal,
                               padding: EdgeInsets.only(left: 19),
-                              itemCount:
-                                  _recentEvents.isEmpty ? 1 : _recentEvents.length,
+                              itemCount: _recentEvents.isEmpty
+                                  ? 1
+                                  : _recentEvents.length,
                               itemBuilder: (context, index) {
                                 if (_recentEvents.isEmpty) {
                                   return _recentEventCard(
@@ -950,8 +936,7 @@ class _VenuePagesState extends State<VenuePages> {
                                                 fontSize: 13,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
-                                                color: AppColor.secondryColor(
-                                                    context),
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -963,8 +948,7 @@ class _VenuePagesState extends State<VenuePages> {
                                                 fontSize: 24,
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w600,
-                                                color: AppColor.secondryColor(
-                                                    context),
+                                                color: Colors.white,
                                               ),
                                             ),
                                           ),
@@ -992,8 +976,7 @@ class _VenuePagesState extends State<VenuePages> {
                                         child: Container(
                                           width: size.width * 45 / 100,
                                           decoration: BoxDecoration(
-                                            color:
-                                                AppColor.secondryColor(context),
+                                            color: Colors.white,
                                             borderRadius:
                                                 BorderRadius.circular(40),
                                           ),
@@ -1036,7 +1019,7 @@ class _VenuePagesState extends State<VenuePages> {
                                         fontSize: 14,
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w400,
-                                        color: AppColor.secondryColor(context),
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
@@ -1196,10 +1179,14 @@ class _VenuePagesState extends State<VenuePages> {
     );
   }
 
-  void documenttypebottomsheet(BuildContext context) =>
+  void documenttypebottomsheet(
+    BuildContext context, {
+    Map<String, dynamic>? sharedVenueData,
+  }) =>
       showEventTypesBottomSheet(
         context,
         type: 'venue',
         id: _str(widget.venueId),
+        sharedEventData: sharedVenueData,
       );
 }

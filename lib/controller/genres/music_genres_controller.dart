@@ -57,7 +57,7 @@ class MusicGenresController with ChangeNotifier {
       } else {
         _genresList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

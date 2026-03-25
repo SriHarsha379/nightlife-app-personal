@@ -421,14 +421,14 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                 Text(
                                                   AppLanguage.awaylocationText[
                                                       language],
-                                                  style: const TextStyle(
+                                                  style:  TextStyle(
                                                       fontSize: 15,
                                                       fontFamily:
                                                           AppFont.fontFamily,
                                                       fontWeight:
                                                           FontWeight.w400,
                                                       color: AppColor
-                                                          .greyLightColor),
+                                                          .greyLightColor(context)),
                                                 ),
                                               ],
                                             ),
@@ -530,11 +530,12 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                     child: Text(
                                       AppLanguage.brewBloomstatement[
                                           language],
-                                      style: const TextStyle(
+                                      style:  TextStyle(
                                           fontSize: 16,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.normal,
-                                          color: AppColor.greyLightColor),
+                                          color: AppColor
+                                                        .greyLightColor(context)),
                                     ),
                                   ),
                                   SizedBox(

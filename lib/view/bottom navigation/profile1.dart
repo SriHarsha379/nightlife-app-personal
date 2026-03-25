@@ -1,14 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/view_all_events.dart';
 import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../controller/home/home_controller.dart';
 import '../../controller/my_profile/get_my_profile.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_config_provider.dart';
@@ -35,6 +38,8 @@ class Profile1 extends StatefulWidget {
 class _Profile1State extends State<Profile1> {
   List<Map<String, String>> _selectedMediaList = [];
   final Set<String> _hiddenRemoteGalleryUrls = {};
+  static const String _galleryLimitMessage =
+      "Failed to upload media. (You can upload up to 9 images/videos in total.)";
 
   Future<bool> _confirmDeleteMedia() async {
     final result = await showDialog<bool>(
@@ -62,13 +67,7 @@ class _Profile1State extends State<Profile1> {
 
   void _openMediaPicker() {
     if (_selectedMediaList.length >= MediaPickerHelper.maxMediaItems) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(
-              "Maximum ${MediaPickerHelper.maxMediaItems} items can be selected"),
-          backgroundColor: AppColor.pinkColor,
-        ),
-      );
+      SnackBarToastMessage.error(context, _galleryLimitMessage);
       return;
     }
 
@@ -97,12 +96,7 @@ class _Profile1State extends State<Profile1> {
           setState(() {
             _selectedMediaList.remove(imageData);
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to upload media"),
-              backgroundColor: AppColor.pinkColor,
-            ),
-          );
+          SnackBarToastMessage.error(context, _galleryLimitMessage);
         });
       },
       onVideoFromCamera: (videoData) {
@@ -122,12 +116,7 @@ class _Profile1State extends State<Profile1> {
           setState(() {
             _selectedMediaList.remove(videoData);
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to upload media"),
-              backgroundColor: AppColor.pinkColor,
-            ),
-          );
+          SnackBarToastMessage.error(context, _galleryLimitMessage);
         });
       },
       onMediaFromGallery: (mediaList) {
@@ -139,6 +128,20 @@ class _Profile1State extends State<Profile1> {
             ? remainingSlots
             : mediaList.length;
         final toAdd = mediaList.take(itemsToAdd).toList();
+
+        if (toAdd.isEmpty) {
+          SnackBarToastMessage.error(context, _galleryLimitMessage);
+          return;
+        }
+
+        if (mediaList.length > remainingSlots) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(_galleryLimitMessage),
+              backgroundColor: AppColor.pinkColor,
+            ),
+          );
+        }
 
         setState(() {
           _selectedMediaList.addAll(toAdd);
@@ -155,12 +158,7 @@ class _Profile1State extends State<Profile1> {
           setState(() {
             _selectedMediaList.removeWhere((item) => toAdd.contains(item));
           });
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text("Failed to upload media"),
-              backgroundColor: AppColor.pinkColor,
-            ),
-          );
+          SnackBarToastMessage.error(context, _galleryLimitMessage);
         });
       },
     );
@@ -227,13 +225,14 @@ class _Profile1State extends State<Profile1> {
     final size = MediaQuery.of(context).size;
     final profileController = Provider.of<ProfileController>(context);
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: PopScope(
         canPop: false,
@@ -388,7 +387,7 @@ class _Profile1State extends State<Profile1> {
                                     children: [
                                       SizedBox(height: size.height * 0.03),
                                       Text(
-                                        profileController.name ,
+                                        profileController.name,
                                         style: TextStyle(
                                           fontSize: 20,
                                           fontWeight: FontWeight.w700,
@@ -503,19 +502,17 @@ class _Profile1State extends State<Profile1> {
                                             AppImage.editIcon,
                                             height: 20,
                                             width: 20,
-                                            color:
-                                                AppColor.secondryColor(context),
+                                            color: Colors.white,
                                           ),
                                           SizedBox(width: size.width * 0.01),
                                           Text(
                                             AppLanguage
                                                 .editDetailsText[language],
-                                            style: TextStyle(
+                                            style: const TextStyle(
                                               fontSize: 14,
                                               fontWeight: FontWeight.w500,
                                               fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor(
-                                                  context),
+                                              color: Colors.white,
                                             ),
                                           ),
                                         ],
@@ -567,12 +564,11 @@ class _Profile1State extends State<Profile1> {
                                         child: Text(
                                           AppLanguage
                                               .editSwipeprofileText[language],
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.w500,
                                             fontFamily: AppFont.fontFamily,
-                                            color:
-                                                AppColor.secondryColor(context),
+                                            color: Colors.white,
                                           ),
                                         ),
                                       ),
@@ -637,7 +633,8 @@ class _Profile1State extends State<Profile1> {
                                   fontSize: 16,
                                   fontFamily: AppFont.fontFamily,
                                   fontWeight: FontWeight.w400,
-                                  color: AppColor.greyLightColor),
+                                  color: AppColor
+                                                        .greyLightColor(context)),
                             ),
                             profileController.bio.isNotEmpty
                                 ? SizedBox(height: size.height * 0.01)
@@ -720,14 +717,14 @@ class _Profile1State extends State<Profile1> {
                             ),
                             SizedBox(height: size.height * 0.02),
                             _buildGallerySection(context, profileController),
-                            SizedBox(height: size.height * 0.03),
+                            SizedBox(height: size.height * 0.035),
 
                             //! Social Media Section (Instagram)
                             if (profileController.hasInstagram)
                               _buildInstagramSection(
                                   context, profileController),
 
-                            SizedBox(height: size.height * 0.02),
+                            SizedBox(height: size.height * 0.025),
 
                             //! Liked Events Section
                             if (profileController.hasLikedEvents) ...[
@@ -898,7 +895,8 @@ class _Profile1State extends State<Profile1> {
                 borderRadius: BorderRadius.circular(50),
                 border: Border.all(
                   color: isAddNew
-                      ? AppColor.greyLightColor
+                      ? AppColor
+                                                        .greyLightColor(context)
                       : (isSelected
                           ? AppColor.buttonColor
                           : AppColor.buttonColor),
@@ -1341,83 +1339,119 @@ class _Profile1State extends State<Profile1> {
   Widget _buildInstagramSection(
       BuildContext context, ProfileController controller) {
     final size = MediaQuery.of(context).size;
-    return Container(
-      height: size.height * 0.07,
-      width: double.infinity,
-      decoration: BoxDecoration(
-        color: AppColor.capsuleColor(context),
-        boxShadow: [
-          BoxShadow(
-            color: AppColor.grayColor.withOpacity(0.4),
-            blurRadius: 2,
-            offset: const Offset(1, 1),
+    return GestureDetector(
+        onTap: _openInstagramProfile,
+        child: Container(
+          height: size.height * 0.07,
+          width: double.infinity,
+          decoration: BoxDecoration(
+            color: AppColor.capsuleColor(context),
+            boxShadow: [
+              BoxShadow(
+                color: AppColor.grayColor.withOpacity(0.4),
+                blurRadius: 2,
+                offset: const Offset(1, 1),
+              ),
+            ],
+            borderRadius: BorderRadius.circular(200),
           ),
-        ],
-        borderRadius: BorderRadius.circular(200),
-      ),
-      child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
-        child: Row(
-          children: [
-            Image.asset(
-              AppImage.instagramIcon,
-              color: AppColor.secondryColor(context),
-              width: size.width * 0.05,
-              height: size.height * 0.06,
-            ),
-            SizedBox(width: size.width * 0.02),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    AppLanguage.instagramText[language],
-                    style: TextStyle(
-                      fontSize: 13,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.secondryColor(context),
-                    ),
-                  ),
-                  Text(
-                    controller.instagram,
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.w500,
-                      color: AppColor.buttonColor,
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
-              decoration: BoxDecoration(
-                color: AppColor.buttonColor,
-                borderRadius: BorderRadius.circular(50),
-                border: Border.all(color: AppColor.transparentColor),
-              ),
-              child: Text(
-                AppLanguage.connectedText[language],
-                style: TextStyle(
-                  fontSize: 10,
-                  fontWeight: FontWeight.w600,
-                  fontFamily: AppFont.fontFamily,
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: size.width * 0.04),
+            child: Row(
+              children: [
+                Image.asset(
+                  AppImage.instagramIcon,
                   color: AppColor.secondryColor(context),
+                  width: size.width * 0.05,
+                  height: size.height * 0.06,
                 ),
-              ),
+                SizedBox(width: size.width * 0.02),
+                Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppLanguage.instagramText[language],
+                        style: TextStyle(
+                          fontSize: 13,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      ),
+                      Text(
+                        controller.instagram,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w500,
+                          color: AppColor.buttonColor,
+                        ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+                ),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  decoration: BoxDecoration(
+                    color: AppColor.buttonColor,
+                    borderRadius: BorderRadius.circular(50),
+                    border: Border.all(color: AppColor.transparentColor),
+                  ),
+                  child: Text(
+                    AppLanguage.connectedText[language],
+                    style: const TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w600,
+                      fontFamily: AppFont.fontFamily,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   String _str(dynamic value) => (value ?? '').toString().trim();
+
+  Uri? _instagramUriFromValue(dynamic rawValue) {
+    final raw = _str(rawValue);
+    if (raw.isEmpty) return null;
+
+    final cleaned = raw.replaceFirst('@', '').trim();
+    if (cleaned.isEmpty) return null;
+
+    final parsed = Uri.tryParse(cleaned);
+    if (parsed != null && parsed.hasScheme) {
+      return parsed;
+    }
+
+    if (cleaned.contains('/') || cleaned.contains('.')) {
+      return Uri.tryParse('https://$cleaned');
+    }
+
+    return Uri.parse('https://www.instagram.com/$cleaned/');
+  }
+
+  Future<void> _openInstagramProfile() async {
+    final profileController =
+        Provider.of<ProfileController>(context, listen: false);
+    final uri = _instagramUriFromValue(profileController.instagram);
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open Instagram profile.')),
+      );
+    }
+  }
 
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
@@ -1596,8 +1630,8 @@ class _Profile1State extends State<Profile1> {
 
               // Event Name and Time at Bottom
               Positioned(
-                left: 14,
-                right: 14,
+                left: 8,
+                right: 8,
                 bottom: 14,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -1621,12 +1655,12 @@ class _Profile1State extends State<Profile1> {
                           size: 14,
                           color: AppColor.buttonColor,
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 4),
                         Text(
                           time.isEmpty ? "-" : time,
                           style: const TextStyle(
                             color: AppColor.buttonColor,
-                            fontSize: 12,
+                            fontSize: 11,
                             fontFamily: AppFont.fontFamily,
                             fontWeight: FontWeight.w500,
                           ),

@@ -134,7 +134,8 @@ class _VibeCheckScreen3State extends State<VibeCheckScreen3> {
                     fontFamily: AppFont.fontFamily,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: AppColor.greyLightColor,
+                    color: AppColor
+                                                        .greyLightColor(context),
                   ),
                 ),
               ),

@@ -65,7 +65,7 @@ class VibePreferenceController with ChangeNotifier {
       } else {
         _vibesList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

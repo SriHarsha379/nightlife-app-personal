@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:page_transition/page_transition.dart';
+import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
+import '../../provider/post_api_provider.dart';
 import '../../utilities/app_button.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -23,12 +26,19 @@ class SignUp extends StatefulWidget {
   State<SignUp> createState() => _SignUpState();
 }
 
-TextEditingController mobileNumberTextEditingController =
-    TextEditingController();
-
 class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
+  static final Uri _organizerWebsite = Uri.parse('https://hii.life/');
+
+  final TextEditingController mobileNumberTextEditingController =
+      TextEditingController();
   late AnimationController _overlayController;
   late Animation<Offset> _overlaySlideAnimation;
+  Future<void> _openOrganizerWebsite() async {
+    await launchUrl(
+      _organizerWebsite,
+      mode: LaunchMode.externalApplication,
+    );
+  }
 
   @override
   void initState() {
@@ -51,6 +61,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     );
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
       signupBottomSheet(context);
       _overlayController.forward();
     });
@@ -68,19 +79,9 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
     if (!Validation.isMobilValid(
         context, mobileNumberTextEditingController.text)) return;
 
-    Navigator.push(
-      context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: ProfileDetailsScreen(
-          mobile: mobileNumberTextEditingController.text,
-        ),
-        duration: const Duration(milliseconds: 600),
-      ),
-    );
-
-    // final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    // apiProvider.loginUserApiCall(context, mobileNumberTextEditingController.text);
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    apiProvider.checkNumberApiCalling(
+        context, mobileNumberTextEditingController.text);
   }
 
   @override
@@ -315,16 +316,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                             width: MediaQuery.of(context).size.width * 1 / 100,
                           ),
                           GestureDetector(
-                            onTap: () {
-                              // Navigator.push(
-                              //   context,
-                              //   PageTransition(
-                              //     type: PageTransitionType.rightToLeftWithFade,
-                              //     child: LoginScreen(),
-                              //     duration: const Duration(milliseconds: 500),
-                              //   ),
-                              // );
-                            },
+                            onTap: _openOrganizerWebsite,
                             child: Text(
                               AppLanguage.clickhereText[language],
                               style: const TextStyle(

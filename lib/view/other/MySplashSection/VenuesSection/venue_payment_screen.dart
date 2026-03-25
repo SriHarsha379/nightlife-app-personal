@@ -6,12 +6,15 @@ import 'package:night_life/commonWidget/booking_success_dialog.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../../controller/book_venue/book_venue_controller.dart';
 import '../../../../controller/venues/venues_details_controller.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';
+import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_snack_bar_toast_message.dart';
 
@@ -154,23 +157,29 @@ class _CompletePayment2State extends State<CompletePayment2>
       builder: (ctx) => BookingSuccessDialog(
         message: message,
         onDone: () {
-          Navigator.of(ctx).pop();
-          Navigator.popUntil(context, (route) => route.isFirst);
+          Navigator.push(
+            context,
+            PageTransition(
+              type: PageTransitionType.rightToLeftWithFade,
+              child: const MyAppFooter(initialIndex: 0),
+              duration: const Duration(milliseconds: 400),
+            ),
+          );
         },
       ),
     );
   }
 
-
-
-
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.primaryColor(context),
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light));
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
+    SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+      statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
+    );
 
     final size = MediaQuery.of(context).size;
     final venuesController = context.watch<VenuesDetailsController>();
@@ -196,6 +205,8 @@ class _CompletePayment2State extends State<CompletePayment2>
     final double clampedDiscount =
         discountAmount > basePrice ? basePrice : discountAmount;
     final double payableAmount = subtotal - clampedDiscount;
+    final String vendorId = venueData['vendor_id'].toString();
+    final String venueId = venueData['_id'].toString();
 
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -260,8 +271,7 @@ class _CompletePayment2State extends State<CompletePayment2>
                         fullName: widget.fullName.trim(),
                         gstPercent: taxPercentage,
                         gstAmount: (gstAmount),
-                        couponDiscountPercent:
-                              (_appliedDiscountPercent),
+                        couponDiscountPercent: (_appliedDiscountPercent),
                       );
 
               if (!mounted) return;
@@ -429,9 +439,6 @@ class _CompletePayment2State extends State<CompletePayment2>
                                           ),
                                         ),
                                       ),
-                                   
-                                   
-                                   
                                     ],
                                   );
                                 },
@@ -761,22 +768,29 @@ class _CompletePayment2State extends State<CompletePayment2>
                                         Expanded(
                                           child: TextField(
                                             controller: couponController,
+                                            readOnly:
+                                                _appliedCouponCode.isNotEmpty,
                                             maxLength: 15,
-                                            style: const TextStyle(
-                                              color: Colors.white,
+                                            style: TextStyle(
+                                              color: isDark
+                                                  ? Colors.white
+                                                  : const Color(0xff1E1A24),
                                               fontSize: 14,
                                             ),
                                             decoration: InputDecoration(
                                               hintText: "Enter Coupon Code",
-                                              hintStyle: const TextStyle(
-                                                color: Color(0xffB7AFC9),
+                                              hintStyle: TextStyle(
+                                                color: isDark
+                                                    ? const Color(0xffB7AFC9)
+                                                    : const Color(0xff8A82A0),
                                                 fontSize: 14,
                                                 fontWeight: FontWeight.w400,
                                               ),
                                               filled: true,
                                               counterText: '',
-                                              fillColor:
-                                                  const Color(0xff1E1A24),
+                                              fillColor: isDark
+                                                  ? const Color(0xff1E1A24)
+                                                  : const Color(0xffF3F0F7),
                                               contentPadding:
                                                   const EdgeInsets.symmetric(
                                                       vertical: 14,
@@ -789,17 +803,30 @@ class _CompletePayment2State extends State<CompletePayment2>
                                               enabledBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(15),
-                                                borderSide: BorderSide.none,
+                                                borderSide: isDark
+                                                    ? BorderSide.none
+                                                    : const BorderSide(
+                                                        color: Color(
+                                                            0xffC5BDD6), // subtle purple border
+                                                        width: 1.2,
+                                                      ),
                                               ),
                                               focusedBorder: OutlineInputBorder(
                                                 borderRadius:
                                                     BorderRadius.circular(15),
-                                                borderSide: BorderSide.none,
+                                                borderSide: isDark
+                                                    ? BorderSide.none
+                                                    : const BorderSide(
+                                                        color: Color(
+                                                            0xff7C5CBF), // stronger purple when focused
+                                                        width: 1.5,
+                                                      ),
                                               ),
                                             ),
                                           ),
                                         ),
                                         const SizedBox(width: 10),
+
                                         // ── Apply / Remove toggle ──
                                         AnimatedSwitcher(
                                           duration:
@@ -867,6 +894,10 @@ class _CompletePayment2State extends State<CompletePayment2>
                                                                     context,
                                                                     couponCode:
                                                                         code,
+                                                                    venueId:
+                                                                        venueId,
+                                                                    vendoreId:
+                                                                        vendorId,
                                                                   );
                                                           if (!mounted) return;
                                                           if (discountPercent !=

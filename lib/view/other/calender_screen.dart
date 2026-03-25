@@ -145,7 +145,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   ],
                                 ),
                                 selectedTextStyle: TextStyle(
-                                  color: AppColor.secondryColor(context),
+                                  color: Colors.white,
                                   fontWeight: FontWeight.w600,
                                 ),
                                 todayDecoration: BoxDecoration(
@@ -381,9 +381,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                             fontSize: 14,
                                                             fontWeight:
                                                                 FontWeight.w600,
-                                                            color: AppColor
-                                                                .secondryColor(
-                                                                    context),
+                                                            color: Colors.white,
                                                           ),
                                                         ),
                                                       ),
@@ -420,9 +418,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                                         fontSize: 14,
                                                         fontWeight:
                                                             FontWeight.w600,
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context),
+                                                        color: Colors.white,
                                                       ),
                                                     ),
                                                   ),

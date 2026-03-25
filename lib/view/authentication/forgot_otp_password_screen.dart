@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -47,7 +48,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     if (Validation.isFieldEmpty(
       context,
       value: input,
-      fieldName: AppLanguage.usernameemailIdPhonenumberText[language],
+      fieldName: AppLanguage.usernameemailIdPhonenumberText1[language],
     )) {
       return;
     }
@@ -102,13 +103,18 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 width: MediaQuery.of(context).size.width * 90 / 100,
                 child: Row(
                   children: [
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 5 / 100,
-                      height: MediaQuery.of(context).size.width * 5 / 100,
-                      child: Image.asset(
-                        AppImage.backarrow,
-                        color: AppColor.secondryColor(context),
-                        fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 5 / 100,
+                        height: MediaQuery.of(context).size.width * 5 / 100,
+                        child: Image.asset(
+                          AppImage.backarrow,
+                          color: AppColor.secondryColor(context),
+                          fit: BoxFit.cover,
+                        ),
                       ),
                     ),
                     SizedBox(

@@ -57,7 +57,7 @@ class EventsBookingDetailsController with ChangeNotifier {
         _isEventsDetailLoading = false;
         notifyListeners();
       } else if (response != null) {
-        CommonHelper.handleInactiveUserRedirect(context, response);
+        // CommonHelper.handleInactiveUserRedirect(context, response);
         _isEventsDetailLoading = false;
         notifyListeners();
       }

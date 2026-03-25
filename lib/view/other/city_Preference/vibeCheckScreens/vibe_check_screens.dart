@@ -176,11 +176,12 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                   child: Text(
                     textAlign: TextAlign.center,
                     AppLanguage.skip[language],
-                    style: const TextStyle(
+                    style:  TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColor.greyLightColor,
+                      color: AppColor
+                                                        .greyLightColor(context),
                     ),
                   ),
                 ),

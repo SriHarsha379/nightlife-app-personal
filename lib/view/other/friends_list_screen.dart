@@ -519,6 +519,7 @@ class _FriendsListState extends State<FriendsList> {
                                               ChatMessageScreen(
                                             name: chat['name'],
                                             image: chat['image'],
+                                            autoSendSharedEvent: false,
                                           ),
                                         ),
                                       );

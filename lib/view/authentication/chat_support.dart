@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'dart:convert';
 import '../../helper/ImagePreviewScreen.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/socket_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
@@ -48,7 +49,10 @@ class _ChatSupportState extends State<ChatSupport> {
   String _supportName = '';
   String _supportImage = '';
 
+  // conversationId ONLY set from admin_details API or from a conversation
+  // item whose sender/receiver is the known admin. Never from list.first.
   String _conversationId = '';
+
   bool _isBootstrapping = true;
   bool _joined = false;
   bool _conversationListRequested = false;
@@ -60,10 +64,15 @@ class _ChatSupportState extends State<ChatSupport> {
   SocketProvider? _socketProvider;
   UserController? _userController;
 
+  String _raw(dynamic value) => (value ?? '').toString().trim();
+
   @override
   void initState() {
     super.initState();
     _scrollController.addListener(_onChatScroll);
+
+    // Only accept a pre-supplied conversationId if it was explicitly passed in.
+    // Never inherit one from widget defaults.
     _supportUserId = widget.supportUserId?.trim() ?? '';
     _conversationId = widget.conversationId?.trim() ?? '';
     _supportName =
@@ -79,8 +88,7 @@ class _ChatSupportState extends State<ChatSupport> {
   }
 
   // ─────────────────────────────────────────────────────────────────
-  // Bootstrap — load user + admin details, then init socket once
-  // All socket work happens in _handleSocketStateChanged
+  // Bootstrap
   // ─────────────────────────────────────────────────────────────────
   Future<void> _bootstrapChat() async {
     await _loadUserFromController();
@@ -89,16 +97,15 @@ class _ChatSupportState extends State<ChatSupport> {
     if (!mounted) return;
 
     debugPrint(
-      'ChatSupport bootstrap => userId=$_userId supportUserId=$_supportUserId conversationId=$_conversationId',
+      'ChatSupport bootstrap => userId=$_userId '
+      'supportUserId=$_supportUserId conversationId=$_conversationId',
     );
 
-    // initSocket is safe — SocketProvider skips if already connected
     await Provider.of<SocketProvider>(context, listen: false)
         .initSocket(AppConstant.token);
 
     if (mounted) setState(() => _isBootstrapping = false);
 
-    // If socket already connected by the time we get here, trigger work manually
     if (mounted && _socketProvider!.isConnected) {
       _handleSocketStateChanged();
     }
@@ -114,6 +121,9 @@ class _ChatSupportState extends State<ChatSupport> {
     _userImage = _userController!.getUserImage.trim();
   }
 
+  /// Fetches admin details and sets _supportUserId / _conversationId.
+  /// _conversationId is ONLY set here if the API returns a non-null value.
+  /// It is NEVER resolved from the conversation list fallback.
   Future<void> _resolveAdminDetailsFromApi() async {
     if (_userId.isEmpty || AppConstant.token.trim().isEmpty) return;
     try {
@@ -134,20 +144,28 @@ class _ChatSupportState extends State<ChatSupport> {
         final adminName =
             (admin['name'] ?? admin['user_name'] ?? '').toString().trim();
         final adminImage = (admin['profile_image'] ?? '').toString().trim();
-        if (adminId.isNotEmpty && _supportUserId.isEmpty)
+
+        if (adminId.isNotEmpty && _supportUserId.isEmpty) {
           _supportUserId = adminId;
+        }
         if (adminName.isNotEmpty &&
             (_supportName.isEmpty || _supportName == 'Support')) {
           _supportName = adminName;
         }
-        if (adminImage.isNotEmpty && _supportImage.isEmpty)
+        if (adminImage.isNotEmpty && _supportImage.isEmpty) {
           _supportImage = adminImage;
+        }
       }
 
-      if (_conversationId.isEmpty) {
-        final apiConvId = (payload['conversation_id'] ?? '').toString().trim();
-        if (apiConvId.isNotEmpty) {
-          _conversationId = apiConvId;
+      // ONLY set conversationId from API if it is truly non-null & non-empty.
+      // If API returns null, we leave _conversationId empty intentionally.
+      final apiConvId = payload['conversation_id'];
+      if (apiConvId != null) {
+        final convIdStr = apiConvId.toString().trim();
+        if (convIdStr.isNotEmpty &&
+            convIdStr.toLowerCase() != 'null' &&
+            _conversationId.isEmpty) {
+          _conversationId = convIdStr;
           _joined = false;
         }
       }
@@ -157,7 +175,7 @@ class _ChatSupportState extends State<ChatSupport> {
   }
 
   // ─────────────────────────────────────────────────────────────────
-  // Socket state listener — called on every notifyListeners()
+  // Socket state handler
   // ─────────────────────────────────────────────────────────────────
   void _handleSocketStateChanged() {
     if (!mounted || _socketProvider == null) return;
@@ -175,32 +193,45 @@ class _ChatSupportState extends State<ChatSupport> {
       if (sent) _conversationListRequested = true;
     }
 
-    // 2. Resolve conversationId from conversation list
-    if (_socketProvider!.conversationList.isNotEmpty) {
+    // 2. Resolve conversationId from conversation list — ONLY match by admin ID.
+    //    Never fall back to list.first or any unrelated conversation.
+    if (_conversationId.isEmpty &&
+        _socketProvider!.conversationList.isNotEmpty) {
       final item =
           _resolveSupportConversationItem(_socketProvider!.conversationList);
       if (item != null) {
         final resolvedConvId = _extractConversationId(item);
-        if (resolvedConvId.isNotEmpty && _conversationId.isEmpty) {
+        if (resolvedConvId.isNotEmpty) {
           _conversationId = resolvedConvId;
           _joined = false;
-          debugPrint('ChatSupport resolved conversationId=$_conversationId');
-        }
-        if (_supportUserId.isEmpty) {
-          final resolvedSupportId = _extractSupportUserId(item);
-          if (resolvedSupportId.isNotEmpty) _supportUserId = resolvedSupportId;
+          debugPrint(
+              'ChatSupport resolved conversationId from list=$_conversationId');
         }
       }
     }
 
-    // 3. Resolve conversationId from lastConversation (after first send)
+    // 3. Resolve conversationId from lastConversation ONLY if it involves admin.
     if (_conversationId.isEmpty && _socketProvider!.lastConversation != null) {
       final convData = _socketProvider!.lastConversation!['conversation_data'];
       if (convData is Map) {
         final convId = (convData['conversation_id'] ?? convData['_id'] ?? '')
             .toString()
             .trim();
-        if (convId.isNotEmpty) {
+
+        // Extract sender/receiver IDs robustly (may be Map or String)
+        final senderRaw = convData['sender_id'];
+        final receiverRaw = convData['receiver_id'];
+        final senderId = senderRaw is Map
+            ? (senderRaw['_id'] ?? senderRaw['id'] ?? '').toString().trim()
+            : senderRaw?.toString().trim() ?? '';
+        final receiverId = receiverRaw is Map
+            ? (receiverRaw['_id'] ?? receiverRaw['id'] ?? '').toString().trim()
+            : receiverRaw?.toString().trim() ?? '';
+
+        final involvesAdmin = _supportUserId.isNotEmpty &&
+            (senderId == _supportUserId || receiverId == _supportUserId);
+
+        if (convId.isNotEmpty && involvesAdmin) {
           _conversationId = convId;
           _joined = false;
           debugPrint(
@@ -209,54 +240,64 @@ class _ChatSupportState extends State<ChatSupport> {
       }
     }
 
-    // 4. Join conversation
+    // 4. Join only if we have a valid admin conversationId
     _joinConversationIfReady();
   }
 
   // ─────────────────────────────────────────────────────────────────
   // Conversation helpers
   // ─────────────────────────────────────────────────────────────────
+
+  /// Returns the conversation item that belongs to the admin/support user.
+  /// Returns null if no matching item is found — never falls back to list.first.
   Map<String, dynamic>? _resolveSupportConversationItem(
       List<Map<String, dynamic>> list) {
-    if (list.isEmpty) return null;
+    if (list.isEmpty || _supportUserId.isEmpty) return null;
 
-    // Match by conversationId first
+    // Match by exact conversationId first (fastest path)
     if (_conversationId.isNotEmpty) {
       for (final item in list) {
         if (_extractConversationId(item) == _conversationId) return item;
       }
     }
 
-    // Match by supportUserId
-    if (_supportUserId.isNotEmpty) {
-      for (final item in list) {
-        if (_extractSupportUserId(item) == _supportUserId) return item;
-      }
+    // Match by admin userId — check both sender_id and receiver_id
+    for (final item in list) {
+      if (_isAdminConversationItem(item)) return item;
     }
 
-    return list.first;
+    // No admin conversation found — return null, do NOT fall back
+    return null;
+  }
+
+  /// Returns true only if this conversation item has the admin as a participant.
+  bool _isAdminConversationItem(Map<String, dynamic> item) {
+    if (_supportUserId.isEmpty) return false;
+
+    for (final key in ['sender_id', 'receiver_id']) {
+      final value = item[key];
+      if (value == null) continue;
+      final id = value is Map
+          ? (value['_id'] ?? value['user_id'] ?? value['id'] ?? '')
+              .toString()
+              .trim()
+          : value.toString().trim();
+      if (id == _supportUserId) return true;
+    }
+    return false;
   }
 
   String _extractConversationId(Map<String, dynamic> item) =>
       (item['conversation_id'] ?? item['_id'] ?? '').toString().trim();
-
-  String _extractSupportUserId(Map<String, dynamic> item) {
-    for (final key in ['receiver_id', 'user_id', 'admin_id', 'other_user_id']) {
-      final value = item[key];
-      if (value == null) continue;
-      final id = value is Map
-          ? (value['_id'] ?? value['user_id'] ?? value['id'] ?? '').toString()
-          : value.toString().trim();
-      if (id.isNotEmpty && id != _userId) return id;
-    }
-    return '';
-  }
 
   void _joinConversationIfReady() {
     if (!mounted || _socketProvider == null) return;
     if (_joined) return;
     if (_userId.isEmpty || _conversationId.isEmpty) return;
     if (!_socketProvider!.isConnected) return;
+
+    // Extra safety: don't join if we still don't know the admin
+    if (_supportUserId.isEmpty) return;
 
     debugPrint(
         'ChatSupport join => userId=$_userId conversationId=$_conversationId');
@@ -317,6 +358,43 @@ class _ChatSupportState extends State<ChatSupport> {
         .map((e) => e?.toString().trim() ?? '')
         .where((e) => e.isNotEmpty)
         .toList();
+  }
+
+  String _supportMessageRenderKey(Map<String, dynamic> message) {
+    final signature = [
+      _extractUserId(message['sender_id'] ?? message['senderId']),
+      _extractUserId(message['receiver_id'] ?? message['receiverId']),
+      _raw(message['conversation_id'] ?? message['conversationId']),
+      _messageText(message),
+      _raw(message['type']),
+      _messageFiles(message).join(','),
+      _raw(message['date']),
+      _raw(message['time']),
+    ].join('|');
+    if (signature.replaceAll('|', '').isNotEmpty) return 'sig:$signature';
+    final id = _raw(message['_id']);
+    if (id.isNotEmpty) return 'id:$id';
+    return 'fallback:${message.hashCode}';
+  }
+
+  List<Map<String, dynamic>> _dedupeVisibleMessages(
+      List<Map<String, dynamic>> messages) {
+    final byKey = <String, Map<String, dynamic>>{};
+    for (final message in messages) {
+      final key = _supportMessageRenderKey(message);
+      final existing = byKey[key];
+      if (existing == null) {
+        byKey[key] = message;
+        continue;
+      }
+
+      final existingId = _raw(existing['_id']);
+      final nextId = _raw(message['_id']);
+      if (existingId.isEmpty && nextId.isNotEmpty) {
+        byKey[key] = message;
+      }
+    }
+    return byKey.values.toList();
   }
 
   String _fileUrl(String raw) {
@@ -385,7 +463,7 @@ class _ChatSupportState extends State<ChatSupport> {
             'type': _isVideoFile(f) ? 'video' : 'image',
             'url': _fileUrl(f),
             'thumbnail': _isVideoFile(f) ? _fileUrl(f) : '',
-            'source': _isVideoFile(f) ? _fileUrl(f) : _fileUrl(f),
+            'source': _fileUrl(f),
           },
         )
         .toList();
@@ -413,19 +491,28 @@ class _ChatSupportState extends State<ChatSupport> {
     );
   }
 
+  /// Filters messages so only those belonging to the current admin
+  /// conversation are shown. If conversationId is empty, shows nothing.
   bool _belongsToCurrentConversation(Map<String, dynamic> message) {
+    // If we don't have a conversationId yet, show nothing
+    if (_conversationId.isEmpty) return false;
+
     final msgConvId =
         (message['conversation_id'] ?? message['conversationId'] ?? '')
             .toString()
             .trim();
-    if (_conversationId.isNotEmpty && msgConvId.isNotEmpty) {
+
+    // Must match our conversationId exactly
+    if (msgConvId.isNotEmpty) {
       return msgConvId == _conversationId;
     }
-    // Fallback for first-message (no conversationId yet)
+
+    // Fallback for first optimistic message (no conversationId assigned yet)
+    // Only valid if we know both user and admin IDs
+    if (_supportUserId.isEmpty || _userId.isEmpty) return false;
     final sender = _extractUserId(message['sender_id'] ?? message['senderId']);
     final receiver =
         _extractUserId(message['receiver_id'] ?? message['receiverId']);
-    if (_supportUserId.isEmpty || _userId.isEmpty) return false;
     return (sender == _userId && receiver == _supportUserId) ||
         (sender == _supportUserId && receiver == _userId);
   }
@@ -471,6 +558,7 @@ class _ChatSupportState extends State<ChatSupport> {
       message: text,
       senderModel: 'User',
       receiverModel: 'Admin',
+      isuser: false,
     );
 
     messageTextEditingController.clear();
@@ -507,6 +595,7 @@ class _ChatSupportState extends State<ChatSupport> {
       localFilePaths: imageOnlyPaths,
       senderModel: 'User',
       receiverModel: 'Admin',
+      isuser: false,
     );
 
     if (!mounted) return;
@@ -601,18 +690,25 @@ class _ChatSupportState extends State<ChatSupport> {
     final int total = files.length;
     final int visibleCount = total > 4 ? 4 : total;
     final List<String> visible = files.take(visibleCount).toList();
+    final messageKey = [
+      _raw(message['_id']),
+      _raw(message['conversation_id']),
+      _raw(message['date']),
+      _raw(message['time']),
+      files.join(','),
+    ].join('|');
 
     Widget tile(String filePath, {int index = 0, int extraCount = 0}) {
       final url = _fileUrl(filePath);
       final isVideo = _isVideoFile(filePath);
       return GestureDetector(
-        onTap: () {
-          _openMediaPreviewFromMessage(message, tappedIndex: index);
-        },
+        key: ValueKey('support-media-tile-$messageKey-$index-$filePath'),
+        onTap: () => _openMediaPreviewFromMessage(message, tappedIndex: index),
         child: Stack(
           fit: StackFit.expand,
           children: [
             Image.network(url,
+                key: ValueKey('support-media-image-$messageKey-$index-$url'),
                 fit: BoxFit.cover,
                 errorBuilder: (_, __, ___) => Container(
                       color: Colors.black26,
@@ -686,6 +782,7 @@ class _ChatSupportState extends State<ChatSupport> {
     }
 
     return Container(
+      key: ValueKey('support-media-box-$messageKey'),
       width: boxSize,
       height: boxSize,
       decoration: BoxDecoration(
@@ -722,11 +819,14 @@ class _ChatSupportState extends State<ChatSupport> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
@@ -744,10 +844,16 @@ class _ChatSupportState extends State<ChatSupport> {
                           color: AppColor.buttonColor))
                   : Consumer<SocketProvider>(
                       builder: (context, socketProvider, child) {
+                        // Only show messages that belong to the admin conversation.
+                        // If _conversationId is empty, messages list will be empty.
                         final messages = socketProvider.messages
                             .where(_belongsToCurrentConversation)
+                            .map((m) => Map<String, dynamic>.from(m))
                             .toList();
-                        _maybeAutoScroll(messages.length);
+                        final visibleMessages =
+                            _dedupeVisibleMessages(messages).toList();
+
+                        _maybeAutoScroll(visibleMessages.length);
 
                         if (_userId.isEmpty) {
                           return const Center(
@@ -758,13 +864,14 @@ class _ChatSupportState extends State<ChatSupport> {
                           );
                         }
 
-                        if (messages.isEmpty) {
+                        if (visibleMessages.isEmpty) {
                           return const Center(
                             child: Text(
-                                'No previous messages. Start chatting with support.',
-                                style: TextStyle(
-                                    color: Colors.white70,
-                                    fontFamily: AppFont.fontFamily)),
+                              'No previous messages. Start chatting with support.',
+                              style: TextStyle(
+                                  color: Colors.white70,
+                                  fontFamily: AppFont.fontFamily),
+                            ),
                           );
                         }
 
@@ -774,7 +881,7 @@ class _ChatSupportState extends State<ChatSupport> {
                             horizontal: size.width * 4 / 100,
                             vertical: size.height * 1 / 100,
                           ),
-                          itemCount: messages.length +
+                          itemCount: visibleMessages.length +
                               (socketProvider.isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
                             if (socketProvider.isLoadingMore && index == 0) {
@@ -794,17 +901,19 @@ class _ChatSupportState extends State<ChatSupport> {
                                 ? index - 1
                                 : index;
                             if (actualIndex < 0 ||
-                                actualIndex >= messages.length) {
+                                actualIndex >= visibleMessages.length) {
                               return const SizedBox.shrink();
                             }
 
-                            final message = messages[actualIndex];
+                            final message = visibleMessages[actualIndex];
                             final mine = _isMineMessage(message);
                             final text = _messageText(message);
                             final files = _messageFiles(message);
                             final hasMedia = files.isNotEmpty;
 
                             return Align(
+                              key: ValueKey(
+                                  'support-msg-${_raw(message['_id']).isNotEmpty ? _raw(message['_id']) : '${_raw(message['conversation_id'])}-$actualIndex-${files.join(',')}'}'),
                               alignment: mine
                                   ? Alignment.centerRight
                                   : Alignment.centerLeft,
@@ -848,6 +957,7 @@ class _ChatSupportState extends State<ChatSupport> {
                       },
                     ),
             ),
+
             // ── Input bar ──
             SizedBox(
               width: size.width * 90 / 100,
@@ -897,18 +1007,24 @@ class _ChatSupportState extends State<ChatSupport> {
                       ],
                     ),
                   ),
-                  border: const OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.washpressColor),
+                  border: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              isDark ? AppColor.washpressColor : Colors.white),
                       borderRadius: BorderRadius.all(Radius.circular(40))),
-                  enabledBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.washpressColor),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              isDark ? AppColor.washpressColor : Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(40))),
-                  focusedBorder: const OutlineInputBorder(
-                      borderSide: BorderSide(color: AppColor.washpressColor),
+                  focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                          color:
+                              isDark ? AppColor.washpressColor : Colors.black),
                       borderRadius: BorderRadius.all(Radius.circular(40))),
                   contentPadding:
                       const EdgeInsets.symmetric(vertical: 16, horizontal: 15),
-                  fillColor: AppColor.washpressColor,
+                  fillColor: isDark ? AppColor.washpressColor : Colors.white,
                   filled: true,
                   counterText: '',
                   hintText: AppLanguage.messageText[language],
@@ -920,7 +1036,7 @@ class _ChatSupportState extends State<ChatSupport> {
                 ),
               ),
             ),
-            SizedBox(height: size.height * 2 / 100),
+            SizedBox(height: size.height * 3 / 100),
           ],
         ),
       ),

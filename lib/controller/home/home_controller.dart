@@ -102,7 +102,7 @@ class HomeController with ChangeNotifier {
           _notificationStatus =
               (response['data']['notification_status'] ?? false) == true;
 
-          List<dynamic> list = response['data']['list'] ?? [];
+          List<dynamic> list = _normalizeHomeList(response['data']['list']);
 
           final int totalPages =
               int.tryParse('${response['data']['total_pages']}') ?? 0;
@@ -151,7 +151,7 @@ class HomeController with ChangeNotifier {
           _clearListByType(type);
         }
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
       notifyListeners();
@@ -234,6 +234,20 @@ class HomeController with ChangeNotifier {
         _venuesList = append ? [..._venuesList, ...list] : list;
         break;
     }
+  }
+
+  List<dynamic> _normalizeHomeList(dynamic rawList) {
+    if (rawList is! List) return <dynamic>[];
+
+    return rawList.map((item) {
+      if (item is! Map) return item;
+      final normalized = Map<String, dynamic>.from(item);
+      final type = (normalized['type'] ?? '').toString().trim().toLowerCase();
+      if (type == 'ad') {
+        normalized['type'] = 'ad';
+      }
+      return normalized;
+    }).toList(growable: false);
   }
 
   // Clear list based on type
@@ -360,7 +374,7 @@ class HomeController with ChangeNotifier {
         _memberDetailsModel = null;
         notifyListeners();
       } else if (response != null) {
-        CommonHelper.handleInactiveUserRedirect(context, response);
+        // CommonHelper.handleInactiveUserRedirect(context, response);
       }
     } catch (e) {
       log("fetchMemberDetail error: $e");
@@ -463,7 +477,7 @@ class HomeController with ChangeNotifier {
       return true;
     }
     if (res != null && allowRedirectOnFailure && context != null) {
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
   }
@@ -497,7 +511,7 @@ class HomeController with ChangeNotifier {
       return true;
     }
     if (res != null && allowRedirectOnFailure && context != null) {
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
   }
@@ -529,7 +543,7 @@ class HomeController with ChangeNotifier {
       return true;
     }
     if (res != null && allowRedirectOnFailure && context != null) {
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
   }

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../../provider/common_api_helper.dart';
+import '../../provider/common_sharedpreferences.dart';
 import '../../utilities/app_constant.dart';
+import 'dart:convert';
 
 class VibeCheckController with ChangeNotifier {
   List<dynamic> _vibeCheckList = [];
@@ -16,8 +18,20 @@ class VibeCheckController with ChangeNotifier {
   // Fetch vibe check questions from API
   Future<void> fetchVibeCheckData(BuildContext context) async {
     String token = AppConstant.token;
-    // String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ2NDhjNzUzMDc2MDY5MDg0ZmIzNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTIzNjUzOSwiZXhwIjoxNzcxODI4NTM5fQ.AC6BJrsvAvqoAFhwWWDR8AuKkaVr5k4ShjdNlFWDw2A";
+    if (token.isEmpty) {
+      final userDetailsRaw = await CacheHelper.get('user_details');
+      if (userDetailsRaw != null && userDetailsRaw.isNotEmpty) {
+        try {
+          final decoded = jsonDecode(userDetailsRaw);
+          if (decoded is Map) {
+            token = (decoded['token'] ?? '').toString().trim();
+            if (token.isNotEmpty) {
+              AppConstant.token = token;
+            }
+          }
+        } catch (_) {}
+      }
+    }
     if (token.isEmpty) {
       print("Token is missing!");
       return;
@@ -54,7 +68,7 @@ class VibeCheckController with ChangeNotifier {
       } else {
         _vibeCheckList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

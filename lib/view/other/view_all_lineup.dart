@@ -2,8 +2,10 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:page_transition/page_transition.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_header.dart';
+import '../../commonWidget/artist_image_preview.dart';
 import '../../utilities/app_config_provider.dart';
 import '../../utilities/app_image.dart';
 
@@ -17,6 +19,20 @@ class ViewAllLinupScreen extends StatefulWidget {
 
 class _ViewAllLinupScreenState extends State<ViewAllLinupScreen> {
   List viewAllLineUpList = [];
+  void _openLineupImagePreview(
+    BuildContext context,
+    String imagePath,
+  ) {
+    if (imagePath.trim().isEmpty) return;
+
+    Navigator.push(
+      context,
+      PageTransition(
+        type: PageTransitionType.fade,
+        child: LineupArtistPreviewScreen(imagePath: imagePath),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,29 +81,40 @@ class _ViewAllLinupScreenState extends State<ViewAllLinupScreen> {
                                   height: size.height * 8.5 / 100,
                                   child: ListTile(
                                     contentPadding: EdgeInsets.zero,
-                                    leading: Container(
-                                      height: size.width * 16 / 100,
-                                      width: size.width * 16 / 100,
-                                      decoration: const BoxDecoration(
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: CachedNetworkImage(
-                                          imageUrl:
-                                              "${AppConfigProvider.imageUrl}${artistDetails['image']}",
-                                          fit: BoxFit.cover,
-                                          errorWidget: (context, url, error) =>
-                                              Image.asset(
-                                            AppImage.placeHolderIcon,
+                                    leading: GestureDetector(
+                                      onTap: () {
+                                        _openLineupImagePreview(
+                                          context,
+                                          (artistDetails['image'] ?? "")
+                                              .toString(),
+                                        );
+                                      },
+                                      child: Container(
+                                        height: size.width * 16 / 100,
+                                        width: size.width * 16 / 100,
+                                        decoration: const BoxDecoration(
+                                          shape: BoxShape.circle,
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                              BorderRadius.circular(100),
+                                          child: CachedNetworkImage(
+                                            imageUrl:
+                                                "${AppConfigProvider.imageUrl}${artistDetails['image']}",
                                             fit: BoxFit.cover,
-                                          ),
-                                          placeholder: (context, url) => Center(
-                                            child: LoadingAnimationWidget
-                                                .dotsTriangle(
-                                              color: AppColor.themeColor,
-                                              size: 35,
+                                            errorWidget:
+                                                (context, url, error) =>
+                                                    Image.asset(
+                                              AppImage.placeHolderIcon,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            placeholder: (context, url) =>
+                                                Center(
+                                              child: LoadingAnimationWidget
+                                                  .dotsTriangle(
+                                                color: AppColor.themeColor,
+                                                size: 35,
+                                              ),
                                             ),
                                           ),
                                         ),

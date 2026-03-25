@@ -2,9 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
-import 'package:night_life/view/authentication/edit_profile_screen.dart';
-import 'package:night_life/view/other/city_Preference/music_genres.dart';
-import 'package:page_transition/page_transition.dart';
+
 import 'package:provider/provider.dart';
 import '../../../provider/darkmode_provider.dart';
 import '../../../provider/post_api_provider.dart';
@@ -14,7 +12,6 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
-import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
@@ -107,12 +104,12 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
   void _addHobby(String hobby) {
     if (hobby.trim().isEmpty) {
-      _showSnackBar("Please enter a hobby");
+      SnackBarToastMessage.showSnackBar(context, "Please enter a hobby");
       return;
     }
 
     if (hobbies.contains(hobby.trim())) {
-      _showSnackBar("This hobby already exists");
+      SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
 
@@ -125,7 +122,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
   void _editHobby(int index, String newHobby) {
     if (newHobby.trim().isEmpty) {
-      _showSnackBar("Please enter a hobby");
+      SnackBarToastMessage.showSnackBar(context, "Please enter a hobby");
       return;
     }
 
@@ -134,7 +131,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
         .asMap()
         .entries
         .any((entry) => entry.key != index && entry.value == newHobby.trim())) {
-      _showSnackBar("This hobby already exists");
+      SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
 
@@ -152,98 +149,75 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     });
   }
 
-  void _showSnackBar(String message) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        backgroundColor: AppColor.pinkColor,
-        duration: const Duration(seconds: 2),
-      ),
-    );
-  }
-
   void AdditionalInfoValidation() {
-    // Instagram validation (required field)
-    // if (Validation.isFieldEmpty(context,
-    //     value: instagramTextEditingController.text,
-    //     fieldName: "Instagram profile link")) {
-    //   return;
-    // }
+    // ✅ Bio validation
+    if (BioTextEditingController.text.trim().isEmpty) {
+      SnackBarToastMessage.showSnackBar(context, "Please enter your bio");
+      return;
+    }
 
-    // // Spotify validation (required field)
-    // if (Validation.isFieldEmpty(context,
-    //     value: spotifyTextEditingController.text,
-    //     fieldName: "Spotify account")) {
-    //   return;
-    // }
+    // ✅ Instagram validation
+    if (instagramTextEditingController.text.trim().isEmpty) {
+      SnackBarToastMessage.showSnackBar(
+          context, "Please enter your Instagram profile");
+      return;
+    }
 
-    // // Snapchat validation (required field)
-    // if (Validation.isFieldEmpty(context,
-    //     value: snapchattexteditingController.text,
-    //     fieldName: "Snapchat account")) {
-    //   return;
-    // }
-    // if (Validation.isFieldEmpty(context,
-    //     value: hobbiesTextController.text, fieldName: "Your hobbies")) {
-    //   return;
-    // }
-    // // Instagram username length validation
-    // if (instagramTextEditingController.text.length > 30) {
-    //   SnackBarToastMessage.info(
-    //       context, "Instagram username cannot exceed 30 characters");
-    //   return;
-    // }
+    final instagramRegex = RegExp(r'^[A-Za-z0-9._]+$');
+    if (!instagramRegex.hasMatch(instagramTextEditingController.text.trim())) {
+      SnackBarToastMessage.error(context,
+          "Instagram username can only contain letters, numbers, dots, and underscores");
+      return;
+    }
 
-    // // Instagram username format validation
-    // final instagramRegex = RegExp(r'^[A-Za-z0-9._]+$');
-    // if (!instagramRegex.hasMatch(instagramTextEditingController.text)) {
-    //   SnackBarToastMessage.info(context,
-    //       "Instagram username can only contain letters, numbers, dots, and underscores");
-    //   return;
-    // }
+    // ✅ Spotify validation
+    if (spotifyTextEditingController.text.trim().isEmpty) {
+      SnackBarToastMessage.showSnackBar(
+          context, "Please enter your Spotify account");
+      return;
+    }
+    if (spotifyTextEditingController.text.trim().length > 100) {
+      SnackBarToastMessage.error(context, "Spotify link is too long");
+      return;
+    }
 
-    // // Spotify length validation
-    // if (spotifyTextEditingController.text.length > 100) {
-    //   SnackBarToastMessage.info(context, "Spotify link is too long");
-    //   return;
-    // }
+    // ✅ Snapchat validation
+    if (snapchattexteditingController.text.trim().isEmpty) {
+      SnackBarToastMessage.showSnackBar(
+          context, "Please enter your Snapchat account");
+      return;
+    }
+    if (snapchattexteditingController.text.trim().length < 3 ||
+        snapchattexteditingController.text.trim().length > 15) {
+      SnackBarToastMessage.showSnackBar(
+          context, "Snapchat username should be 3-15 characters");
+      return;
+    }
+    final snapchatRegex = RegExp(r'^[A-Za-z0-9._-]+$');
+    if (!snapchatRegex.hasMatch(snapchattexteditingController.text.trim())) {
+      SnackBarToastMessage.showSnackBar(context,
+          "Snapchat username can only contain letters, numbers, dots, underscores, and hyphens");
+      return;
+    }
 
-    // // Basic validation for Spotify
-    // final spotifyRegex = RegExp(r'^[A-Za-z0-9-_]+$');
-    // if (!spotifyRegex.hasMatch(
-    //     spotifyTextEditingController.text.replaceAll('spotify:', ''))) {
-    //   SnackBarToastMessage.info(
-    //       context, "Please enter a valid Spotify username or link");
-    //   return;
-    // }
+    // ✅ Hobbies validation
+    if (hobbies.isEmpty) {
+      SnackBarToastMessage.showSnackBar(
+          context, "Please add at least one hobby");
+      return;
+    }
 
-    // // Snapchat username length validation
-    // if (snapchattexteditingController.text.length < 3 ||
-    //     snapchattexteditingController.text.length > 15) {
-    //   SnackBarToastMessage.info(
-    //       context, "Snapchat username should be 3-15 characters");
-    //   return;
-    // }
-
-    // // Snapchat username format validation
-    // final snapchatRegex = RegExp(r'^[A-Za-z0-9._-]+$');
-    // if (!snapchatRegex.hasMatch(snapchattexteditingController.text)) {
-    //   SnackBarToastMessage.info(context,
-    //       "Snapchat username can only contain letters, numbers, dots, underscores, and hyphens");
-    //   return;
-    // }
-
-    // All validations passed - navigate to next screen
-
+    // ✅ All validations passed - API call
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     apiProvider.signupStepTwoUserApi(
       context,
       widget.preferredCities,
-      BioTextEditingController.text,
-      instagramTextEditingController.text,
-      spotifyTextEditingController.text,
-      snapchattexteditingController.text,
+      BioTextEditingController.text.trim(),
+      instagramTextEditingController.text.trim(),
+      spotifyTextEditingController.text.trim(),
+      snapchattexteditingController.text.trim(),
       hobbies,
+      1,
     );
   }
 
@@ -261,6 +235,66 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
+          floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+          floatingActionButton: Consumer<PostApiProvider>(
+            builder: (context, apiprovider, child) {
+              return Padding(
+                padding: const EdgeInsets.only(bottom: 24),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    apiprovider.loading
+                        ? const CircularProgressIndicator(
+                            color: AppColor.pinkColor,
+                          )
+                        : AppButton(
+                            text: AppLanguage.continueText[language],
+                            onPress: () {
+                              FocusScope.of(context).unfocus();
+                              AdditionalInfoValidation();
+                            },
+                          ),
+                    const SizedBox(height: 16),
+                    GestureDetector(
+                      onTap: () {
+                        if (apiprovider.loading) return;
+                        final apiProvider = Provider.of<PostApiProvider>(
+                          context,
+                          listen: false,
+                        );
+                        apiProvider.signupStepTwoUserApi(
+                          context,
+                          widget.preferredCities,
+                          "",
+                          "",
+                          "",
+                          "",
+                          <String>[],
+                          0,
+                        );
+                      },
+                      child: SizedBox(
+                        width: MediaQuery.of(context).size.width * 80 / 100,
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            AppLanguage.skip[language],
+                            style: const TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.textcolor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
           body: Container(
             width: MediaQuery.of(context).size.width * 100 / 100,
             height: MediaQuery.of(context).size.height * 100 / 100,
@@ -273,7 +307,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 ),
                 Expanded(
                   child: SingleChildScrollView(
-                    physics: NeverScrollableScrollPhysics(),
                     child: Column(
                       children: [
                         SizedBox(
@@ -399,7 +432,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                                   .width *
                                               6 /
                                               100,
-                                          color: AppColor.greyLightColor,
+                                          color: AppColor
+                                                        .greyLightColor(context),
                                         ),
                                         SizedBox(
                                             width: MediaQuery.of(context)
@@ -422,7 +456,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       borderSide: BorderSide(
                                         color: isDark
                                             ? AppColor.buttonColor
-                                            : AppColor.greyLightColor,
+                                            : AppColor
+                                                        .greyLightColor(context),
                                         width: 1,
                                       ),
                                     ),
@@ -484,7 +519,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                             MediaQuery.of(context).size.width *
                                                 6 /
                                                 100,
-                                        color: AppColor.greyLightColor,
+                                        color: AppColor
+                                                        .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
@@ -507,7 +543,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     borderSide: BorderSide(
                                       color: isDark
                                           ? AppColor.buttonColor
-                                          : AppColor.greyLightColor,
+                                          : AppColor
+                                                        .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -568,7 +605,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                             MediaQuery.of(context).size.width *
                                                 6 /
                                                 100,
-                                        color: AppColor.greyLightColor,
+                                        color: AppColor
+                                                        .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
@@ -591,7 +629,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     borderSide: BorderSide(
                                       color: isDark
                                           ? AppColor.buttonColor
-                                          : AppColor.greyLightColor,
+                                          : AppColor
+                                                        .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -651,7 +690,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                             MediaQuery.of(context).size.width *
                                                 6 /
                                                 100,
-                                        color: AppColor.greyLightColor,
+                                        color: AppColor
+                                                        .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
@@ -674,7 +714,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     borderSide: BorderSide(
                                       color: isDark
                                           ? AppColor.buttonColor
-                                          : AppColor.greyLightColor,
+                                          : AppColor
+                                                        .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -774,70 +815,15 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                 ),
 
                               SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      0.38),
+                                height:
+                                    MediaQuery.of(context).size.height * 0.22,
+                              ),
                             ],
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-
-                //! Continue Button
-
-                Consumer<PostApiProvider>(
-                  builder: (context, apiprovider, child) {
-                    return apiprovider.loading
-                        ? const CircularProgressIndicator(
-                            color: AppColor.pinkColor)
-                        : AppButton(
-                            text: AppLanguage.continueText[language],
-                            onPress: () {
-                              FocusScope.of(context).unfocus();
-                              AdditionalInfoValidation();
-                            },
-                          );
-                  },
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 2 / 100,
-                ),
-
-                //! Skip Button
-                GestureDetector(
-                  onTap: () {
-                    final apiProvider =
-                        Provider.of<PostApiProvider>(context, listen: false);
-                    if (apiProvider.loading) return;
-                    apiProvider.signupStepTwoUserApi(
-                      context,
-                      widget.preferredCities,
-                      "",
-                      "",
-                      "",
-                      "",
-                      <String>[],
-                    );
-                  },
-                  child: SizedBox(
-                    width: MediaQuery.of(context).size.width * 80 / 100,
-                    child: Center(
-                      child: Text(
-                        textAlign: TextAlign.center,
-                        AppLanguage.skip[language],
-                        style: const TextStyle(
-                          fontFamily: AppFont.fontFamily,
-                          fontSize: 12,
-                          fontWeight: FontWeight.w600,
-                          color: AppColor.textcolor,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
               ],
             ),

@@ -52,7 +52,7 @@ class MyProfleCompltetionController with ChangeNotifier {
         notifyListeners();
         return;
       }
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
 
     _hasLoadedOnce = true;

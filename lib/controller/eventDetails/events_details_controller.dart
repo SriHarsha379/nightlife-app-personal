@@ -25,8 +25,7 @@ class EventDetailsController with ChangeNotifier {
     // }
 
     String token = AppConstant.token;
-    // String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ2NDhjNzUzMDc2MDY5MDg0ZmIzNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTIzNjUzOSwiZXhwIjoxNzcxODI4NTM5fQ.AC6BJrsvAvqoAFhwWWDR8AuKkaVr5k4ShjdNlFWDw2A";
+   
     if (token.isEmpty) {
       print("Token is missing!");
       return;
@@ -66,7 +65,7 @@ class EventDetailsController with ChangeNotifier {
       } else {
         _eventDetails = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

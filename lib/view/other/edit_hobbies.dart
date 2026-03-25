@@ -230,7 +230,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                         0.06,
                                     height: MediaQuery.of(context).size.width *
                                         0.06,
-                                    color: AppColor.greyLightColor,
+                                    color: AppColor
+                                                        .greyLightColor(context),
                                   ),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *

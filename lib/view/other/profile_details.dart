@@ -471,7 +471,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         AppLanguage.emailAddressText[language],
                                     maxLength: AppConstant.emailMaxLength,
                                     controller: emailController,
-                                    readOnly: false,
+                                    readOnly: _isSocialSignup,
                                   ),
                                 ),
                               ),
@@ -587,7 +587,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                                   .width *
                                               5 /
                                               100,
-                                          color: AppColor.greyLightColor,
+                                          color: AppColor
+                                                        .greyLightColor(context),
                                         ),
                                       ),
                                       suffixIconConstraints:
@@ -685,7 +686,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                                       .width *
                                                   1 /
                                                   100,
-                                              color: AppColor.greyLightColor,
+                                              color: AppColor
+                                                        .greyLightColor(context),
                                             ),
                                           ),
                                           suffixIconConstraints:
@@ -855,7 +857,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     AppImage.downArrowicon,
                     width: MediaQuery.of(context).size.width * 3 / 100,
                     height: MediaQuery.of(context).size.width * 1 / 100,
-                    color: AppColor.greyLightColor,
+                    color: AppColor
+                                                        .greyLightColor(context),
                   ),
                 ),
                 suffixIconConstraints: const BoxConstraints(

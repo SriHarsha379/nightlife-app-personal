@@ -20,6 +20,8 @@ class BookVenueController with ChangeNotifier {
   Future<double?> fetchCouponDiscountPercentage(
     BuildContext context, {
     required String couponCode,
+    required String venueId,
+    required String vendoreId,
   }) async {
     final token = AppConstant.token;
     final sanitizedCode = couponCode.trim();
@@ -32,7 +34,7 @@ class BookVenueController with ChangeNotifier {
 
     try {
       final response = await getData(
-        'booking/get_coupon_percentage?coupon_code=$sanitizedCode',
+        'booking/get_coupon_percentage?coupon_code=$sanitizedCode&vendor_id=$vendoreId&venue_id=$venueId',
         context,
         headers: {
           'authorization': 'Bearer $token',

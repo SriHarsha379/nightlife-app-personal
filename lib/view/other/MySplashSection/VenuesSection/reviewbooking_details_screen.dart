@@ -13,6 +13,7 @@ import '/utilities/app_snack_bar_toast_message.dart';
 import '/utilities/app_validation.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';
@@ -57,6 +58,33 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
   String userName = '';
   String userPhone = '';
   String userEmail = '';
+  bool _noteExpanded = false;
+
+  Future<void> _openEventLocationInMaps(Map<String, dynamic> eventData) async {
+    final latitude = eventData['latitude'];
+    final longitude = eventData['longitude'];
+    final address = (eventData['address'] ?? '').toString().trim();
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
 
   // Text Editing Controllers
   final TextEditingController nameController = TextEditingController();
@@ -260,28 +288,44 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                           SizedBox(
                             height: size.height * 2 / 100,
                           ),
-                          Row(
-                            children: [
-                              Image.asset(
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _noteExpanded = !_noteExpanded;
+                              });
+                            },
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Image.asset(
+                                  AppImage.infoIcon,
                                   height: size.width * 6 / 100,
                                   width: size.width * 6 / 100,
-                                  AppImage.infoIcon),
-                              SizedBox(
-                                width: size.width * 5 / 100,
-                              ),
-                              Expanded(
-                                child: ExpandableText(
-                                  text: AppLanguage.noteMsgText[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 16,
-                                    color: AppColor.secondryColor(context),
+                                ),
+                                SizedBox(width: size.width * 5 / 100),
+                                Expanded(
+                                  child: AnimatedSize(
+                                    duration: const Duration(milliseconds: 200),
+                                    curve: Curves.easeInOut,
+                                    child: Text(
+                                      AppLanguage.noteMsgText[language],
+                                      maxLines: _noteExpanded ? null : 1,
+                                      overflow: _noteExpanded
+                                          ? TextOverflow.visible
+                                          : TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 16,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
                                   ),
                                 ),
-                              )
-                            ],
+                              ],
+                            ),
                           ),
+
                           SizedBox(
                             height: size.height * 5 / 100,
                           ),
@@ -347,20 +391,28 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                       SizedBox(
                                         height: size.height * 0.1 / 100,
                                       ),
-                                      SizedBox(
-                                        width:
-                                            MediaQuery.of(context).size.width *
-                                                50 /
-                                                100,
-                                        child: Text(
-                                          address,
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                          style: const TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 14,
-                                              color: AppColor.pinkColor),
+                                      GestureDetector(
+                                        onTap: address.trim().isEmpty
+                                            ? null
+                                            : () => _openEventLocationInMaps(
+                                                  Map<String, dynamic>.from(
+                                                      eventData),
+                                                ),
+                                        child: SizedBox(
+                                          width:
+                                              MediaQuery.of(context).size.width *
+                                                  50 /
+                                                  100,
+                                          child: Text(
+                                            address,
+                                            maxLines: 2,
+                                            overflow: TextOverflow.ellipsis,
+                                            style: const TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: AppColor.pinkColor),
+                                          ),
                                         ),
                                       ),
                                     ],

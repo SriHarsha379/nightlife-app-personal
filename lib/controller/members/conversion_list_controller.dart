@@ -26,8 +26,9 @@ class ConversionListController with ChangeNotifier {
       return '';
     }
 
-    if (_conversationIdByUserId.containsKey(userId)) {
-      _lastConversationId = _conversationIdByUserId[userId] ?? '';
+    final cachedConversationId = _conversationIdByUserId[userId] ?? '';
+    if (cachedConversationId.isNotEmpty) {
+      _lastConversationId = cachedConversationId;
       return _lastConversationId;
     }
 
@@ -45,7 +46,7 @@ class ConversionListController with ChangeNotifier {
       final response = await postJsonData(
         'user/user_convertion_details',
         <String, dynamic>{
-          'user_id': userId,
+          'other_user_id': userId,
         },
         null,
         headers: <String, String>{
@@ -72,12 +73,29 @@ class ConversionListController with ChangeNotifier {
       resolvedConversationId = '';
     } finally {
       _lastConversationId = resolvedConversationId;
-      _conversationIdByUserId[userId] = resolvedConversationId;
+      if (resolvedConversationId.isNotEmpty) {
+        _conversationIdByUserId[userId] = resolvedConversationId;
+      } else {
+        _conversationIdByUserId.remove(userId);
+      }
       _isFetchingConversation = false;
       notifyListeners();
     }
 
     return resolvedConversationId;
+  }
+
+  void cacheConversationId({
+    required String otherUserId,
+    required String conversationId,
+  }) {
+    final userId = otherUserId.trim();
+    final resolvedConversationId = conversationId.trim();
+    if (userId.isEmpty || resolvedConversationId.isEmpty) return;
+
+    _conversationIdByUserId[userId] = resolvedConversationId;
+    _lastConversationId = resolvedConversationId;
+    notifyListeners();
   }
 
   void clearCache() {

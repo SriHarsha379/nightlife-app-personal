@@ -11,6 +11,8 @@ import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_font.dart';
@@ -38,6 +40,32 @@ class _BookTableState extends State<BookTable> {
   final GlobalKey _guestDropdownAnchorKey = GlobalKey();
   Offset? _guestTapPosition;
   String currentMonth = '';
+
+  Future<void> _openVenueLocationInMaps(Map<String, dynamic> venueData) async {
+    final latitude = venueData['latitude'];
+    final longitude = venueData['longitude'];
+    final address = (venueData['address'] ?? '').toString().trim();
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
 
   String _formatBookingDate(String fullDate) {
     try {
@@ -238,13 +266,13 @@ class _BookTableState extends State<BookTable> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final bool hasSelectedTime = selectedSlotIndex >= 0;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -256,7 +284,7 @@ class _BookTableState extends State<BookTable> {
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  SizedBox(height: size.height * 1 / 100),
+                  // SizedBox(height: size.height * 1 / 100),
                   Stack(
                     children: [
                       Consumer<VenuesDetailsController>(
@@ -356,17 +384,28 @@ class _BookTableState extends State<BookTable> {
                                 Consumer<VenuesDetailsController>(
                                   builder: (BuildContext context, controller,
                                       Widget? child) {
-                                    return SizedBox(
-                                      width: size.width * 75 / 100,
-                                      child: Text(
-                                        controller
-                                                .getVenuesDetail?['address'] ??
-                                            "",
-                                        style: const TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 12,
-                                          color: AppColor.buttonColor,
+                                    final venueDetails =
+                                        Map<String, dynamic>.from(
+                                      controller.getVenuesDetail ?? {},
+                                    );
+                                    final address =
+                                        (venueDetails['address'] ?? '')
+                                            .toString();
+                                    return GestureDetector(
+                                      onTap: address.trim().isEmpty
+                                          ? null
+                                          : () => _openVenueLocationInMaps(
+                                              venueDetails),
+                                      child: SizedBox(
+                                        width: size.width * 75 / 100,
+                                        child: Text(
+                                          address,
+                                          style: const TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 12,
+                                            color: AppColor.buttonColor,
+                                          ),
                                         ),
                                       ),
                                     );
@@ -481,10 +520,11 @@ class _BookTableState extends State<BookTable> {
                                           ),
                                           SizedBox(width: size.width * 3 / 100),
                                           Image.asset(
-                                            height: size.width * 3 / 100,
-                                            width: size.width * 3 / 100,
-                                            AppImage.downArrow,
-                                          ),
+                                              height: size.width * 3 / 100,
+                                              width: size.width * 3 / 100,
+                                              AppImage.downArrow,
+                                              color: AppColor.secondryColor(
+                                                  context)),
                                         ],
                                       ),
                                     ),
@@ -582,7 +622,7 @@ class _BookTableState extends State<BookTable> {
                                         ),
                                         decoration: BoxDecoration(
                                           color: isSelected
-                                              ? AppColor.secondryColor(context)
+                                              ? Colors.white
                                               : AppColor.primaryColor(context),
                                           borderRadius:
                                               BorderRadius.circular(15),
@@ -929,7 +969,7 @@ class _BookTableState extends State<BookTable> {
                                                           fontFamily: AppFont
                                                               .fontFamily1,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                              FontWeight.w600,
                                                           fontSize: 14,
                                                           color: AppColor
                                                               .secondryColor(
@@ -1028,7 +1068,7 @@ class _BookTableState extends State<BookTable> {
                                                             fontFamily: AppFont
                                                                 .fontFamily1,
                                                             fontWeight:
-                                                                FontWeight.w500,
+                                                                FontWeight.w600,
                                                             fontSize: 14,
                                                             color: AppColor
                                                                 .secondryColor(

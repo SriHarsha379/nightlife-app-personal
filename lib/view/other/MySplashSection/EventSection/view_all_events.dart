@@ -7,6 +7,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../../../controller/likedAndBookedEvents/like_booked_event_controller.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';
@@ -24,30 +25,6 @@ class ViewAllEventsScreen extends StatefulWidget {
 }
 
 class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
-  List Likedlist = [
-    {
-      'image': AppImage.roofimg,
-      'title': 'Rustic Rooftop Lounge',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-    {
-      'image': AppImage.brewandbloomIcon,
-      'title': 'The Brew Corner',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-    {
-      'image': AppImage.img3,
-      'title': 'Summer Music Festival 2025',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-  ];
-
   late final ScrollController _likedScrollController;
 
   @override
@@ -79,6 +56,46 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
     }
   }
 
+  bool _isDarkMode(BuildContext context) {
+    return context.read<ThemeProvider>().isDarkMode;
+  }
+
+  BoxDecoration _eventCardDecoration(
+    BuildContext context, {
+    double radius = 15,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: AppColor.primaryColor(context),
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: isDark
+              ? Colors.black.withOpacity(0.35)
+              : Colors.black.withOpacity(0.13),
+          blurRadius: isDark ? 10 : 18,
+          spreadRadius: isDark ? 0 : 1,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  // ✅ White button decoration — same as MyVenue
+  BoxDecoration _eventActionButtonDecoration({double radius = 12}) {
+    return BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.black.withOpacity(0.10),
+          blurRadius: 8,
+          offset: const Offset(0, 2),
+        ),
+      ],
+    );
+  }
+
   Future<void> _handleEventDetailResult(dynamic result) async {
     if (result is! Map) return;
 
@@ -108,14 +125,14 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -128,7 +145,7 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 4 / 100,
+                  height: MediaQuery.of(context).size.height * 5 / 100,
                 ),
                 AppHeader(
                   onPress: () => Navigator.pop(context),
@@ -178,7 +195,6 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
           itemCount: events.length + (controller.isLikedLoadingMore ? 1 : 0),
           itemBuilder: (context, index) {
-            // Load more indicator at the bottom
             if (index == events.length) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: size.height * 2 / 100),
@@ -205,34 +221,21 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
   Widget _buildLikedVenueCard(
       BuildContext context, Map<String, dynamic> event, Size size) {
     return GestureDetector(
-      onTap: () async {
-        // final result = await Navigator.push(
-        //   context,
-        //   PageTransition(
-        //     type: PageTransitionType.rightToLeftWithFade,
-        //     child: VenuePages(
-        //       venueId: event['_id'].toString(),
-        //       forceDislikeOnly: true,
-        //     ),
-        //     duration: const Duration(milliseconds: 500),
-        //   ),
-        // );
-        // await _handleVenueDetailResult(result);
-      },
+      onTap: () async {},
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _eventCardDecoration(context),
         child: Column(
           children: [
-            // Venue image
+            // Event image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  topRight: Radius.circular(15),
+                ),
                 child: CachedNetworkImage(
                   imageUrl:
                       "${AppConfigProvider.imageUrl}${event['event_image']}",
@@ -287,7 +290,6 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
                         child: Image.asset(
                           AppImage.liked_heart_icon,
                           fit: BoxFit.cover,
-                          // color: AppColor.secondryColor(context),
                         ),
                       ),
                     ],
@@ -300,11 +302,11 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(width: size.width * 1 / 100),
+                      SizedBox(width: size.width * 1.5 / 100),
                       Text(
                         event['date'] ?? '',
                         style: TextStyle(
@@ -329,24 +331,22 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
                         ),
                       ),
                       Expanded(
-                        child: SizedBox(
-                          child: Text(
-                            event['address'] ?? '',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.secondryColor(context),
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
+                        child: Text(
+                          event['address'] ?? '',
+                          style: TextStyle(
+                            fontSize: 14,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.secondryColor(context),
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: size.height * 1.5 / 100),
-                  // Events button
+                  // View Details button
                   InkWell(
                     onTap: () async {
                       final result = await Navigator.push(
@@ -363,10 +363,7 @@ class _ViewAllEventsScreenState extends State<ViewAllEventsScreen> {
                     },
                     child: Container(
                       height: size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.secondryColor(context),
-                        borderRadius: BorderRadius.circular(10),
-                      ),
+                      decoration: _eventActionButtonDecoration(),
                       child: Center(
                         child: Text(
                           AppLanguage.viewDetailstext[language],

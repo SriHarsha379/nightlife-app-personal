@@ -6,6 +6,7 @@ import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../controller/members/conversion_list_controller.dart';
 import '../controller/invite/invite_event_venue_list_controller.dart';
 import '../utilities/app_color.dart';
 import '../utilities/app_config_provider.dart';
@@ -17,23 +18,33 @@ void showEventTypesBottomSheet(
   BuildContext context, {
   required String type,
   required String id,
+  Map<String, dynamic>? sharedEventData,
 }) {
   showModalBottomSheet<void>(
     backgroundColor: Colors.transparent,
     isScrollControlled: true,
     shape: const RoundedRectangleBorder(),
     context: context,
-    builder: (_) => _InviteMembersBottomSheet(type: type, id: id),
+    builder: (_) => _InviteMembersBottomSheet(
+      parentContext: context,
+      type: type,
+      id: id,
+      sharedEventData: sharedEventData,
+    ),
   );
 }
 
 class _InviteMembersBottomSheet extends StatefulWidget {
+  final BuildContext parentContext;
   final String type;
   final String id;
+  final Map<String, dynamic>? sharedEventData;
 
   const _InviteMembersBottomSheet({
+    required this.parentContext,
     required this.type,
     required this.id,
+    this.sharedEventData,
   });
 
   @override
@@ -97,6 +108,96 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
   }
 
   String _str(dynamic value) => (value ?? '').toString().trim();
+
+  String _firstNonEmpty(List<dynamic> values) {
+    for (final value in values) {
+      final resolved = _str(value);
+      if (resolved.isNotEmpty) return resolved;
+    }
+    return '';
+  }
+
+  Map<String, dynamic> _sharedItemPayload() {
+    final source = widget.sharedEventData == null
+        ? <String, dynamic>{}
+        : Map<String, dynamic>.from(widget.sharedEventData!);
+    final isVenue = widget.type.toLowerCase() == 'venue';
+    final type = isVenue ? 'venue' : 'event';
+    final id = _firstNonEmpty(<dynamic>[
+      source['_id'],
+      source['id'],
+      source[isVenue ? 'venue_id' : 'event_id'],
+      widget.id,
+    ]);
+    final name = _firstNonEmpty(<dynamic>[
+      source['name'],
+      source['title'],
+      source[isVenue ? 'venue_name' : 'event_name'],
+    ]);
+    final image = _firstNonEmpty(<dynamic>[
+      source['image'],
+      source[isVenue ? 'venue_image' : 'event_image'],
+      source['profile_image'],
+    ]);
+    final time = _firstNonEmpty(<dynamic>[
+      source['time'],
+      source['date'],
+      source['timing'],
+      source[isVenue ? 'venue_time' : 'event_time'],
+      source['event_date'],
+    ]);
+    final address = _firstNonEmpty(<dynamic>[
+      source['address'],
+      source['location'],
+      source[isVenue ? 'venue_address' : 'event_address'],
+      source['venue_location'],
+    ]);
+    final about = _firstNonEmpty(<dynamic>[source['about'], source['description']]);
+    final categories = source['categories'];
+
+    return <String, dynamic>{
+      ...source,
+      'type': type,
+      'entity_type': type,
+      'id': id,
+      '_id': id,
+      'name': name,
+      'image': image,
+      'time': time,
+      'address': address,
+      if (about.isNotEmpty) 'about': about,
+      if (categories != null) 'categories': categories,
+      if (isVenue) 'venue_id': id,
+      if (isVenue) 'venue_name': name,
+      if (isVenue) 'venue_image': image,
+      if (isVenue) 'venue_time': time,
+      if (isVenue) 'timing': time,
+      if (isVenue) 'venue_address': address,
+      if (!isVenue) 'event_id': id,
+      if (!isVenue) 'event_name': name,
+      if (!isVenue) 'event_image': image,
+      if (!isVenue) 'event_time': time,
+      if (!isVenue) 'date': time,
+      if (!isVenue) 'event_address': address,
+    };
+  }
+
+  String _memberId(Map<String, dynamic> item) =>
+      _str(item['id'].toString() == 'null' ? '' : item['id']).isNotEmpty
+          ? _str(item['id'])
+          : _str(item['user_id']).isNotEmpty
+              ? _str(item['user_id'])
+              : _str(item['_id']);
+
+  String _memberName(Map<String, dynamic> item) =>
+      _str(item['full_name']).isNotEmpty
+          ? _str(item['full_name'])
+          : _str(item['name']);
+
+  String _memberImage(Map<String, dynamic> item) =>
+      _str(item['profile_image']).isNotEmpty
+          ? _str(item['profile_image'])
+          : _str(item['image']);
 
   String _fullImage(String path) {
     final p = _str(path);
@@ -242,13 +343,12 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
                           ...List.generate(controller.memberItems.length,
                               (index) {
                             final item = controller.memberItems[index];
-                            final id = _str(item['id']);
+                            final id = _memberId(item);
                             final key = id.isEmpty ? index.toString() : id;
                             final isSend = _sentIds.contains(key);
-                            final name = _str(item['full_name']);
+                            final name = _memberName(item);
                             final username = _str(item['username']);
-                            final image =
-                                _fullImage(_str(item['profile_image']));
+                            final image = _fullImage(_memberImage(item));
                             final resolved =
                                 image.isEmpty ? AppImage.dummyImageIcon : image;
                             return Column(
@@ -294,22 +394,47 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     trailing: GestureDetector(
-                                      onTap: () {
+                                      onTap: () async {
                                         setState(() => _sentIds.add(key));
+                                        print(
+                                          '[EventShareBottomSheet] memberTap => '
+                                          'memberId=$id, memberName=$name, memberImage=$resolved, '
+                                          'shareType=${widget.type}, sharedEventData=${widget.sharedEventData}',
+                                        );
+                                        final conversationController =
+                                            Provider.of<ConversionListController>(
+                                          context,
+                                          listen: false,
+                                        );
+                                        final conversationId =
+                                            await conversationController
+                                                .fetchConversationIdByUserId(
+                                          otherUserId: id,
+                                        );
+                                        if (!mounted) return;
+                                        final sharedItem = _sharedItemPayload();
+                                        Navigator.of(context).pop();
                                         Future.delayed(
                                           const Duration(milliseconds: 200),
                                           () {
+                                            if (!widget.parentContext.mounted) {
+                                              return;
+                                            }
                                             Navigator.push(
-                                              context,
+                                              widget.parentContext,
                                               PageTransition(
                                                 type: PageTransitionType
                                                     .bottomToTop,
                                                 child: ChatMessageScreen(
                                                   name: name,
-                                                  image: resolved
-                                                          .startsWith('http')
-                                                      ? AppImage.dummyImageIcon
-                                                      : resolved,
+                                                  image: resolved,
+                                                  receiverId: id,
+                                                  conversationId:
+                                                      conversationId.isEmpty
+                                                          ? null
+                                                          : conversationId,
+                                                  sharedEventData: sharedItem,
+                                                  autoSendSharedEvent: true,
                                                 ),
                                               ),
                                             );

@@ -51,7 +51,7 @@ class VenuesDetailsController with ChangeNotifier {
         _isVenuesDetailLoading = false;
         notifyListeners();
       } else if (response != null) {
-        CommonHelper.handleInactiveUserRedirect(context, response);
+        // CommonHelper.handleInactiveUserRedirect(context, response);
         _isVenuesDetailLoading = false;
         notifyListeners();
       }
@@ -98,7 +98,7 @@ class VenuesDetailsController with ChangeNotifier {
         _isSlotsLoading = false;
         notifyListeners();
       } else if (response != null) {
-        CommonHelper.handleInactiveUserRedirect(context, response);
+        // CommonHelper.handleInactiveUserRedirect(context, response);
         _isSlotsLoading = false;
         notifyListeners();
       }

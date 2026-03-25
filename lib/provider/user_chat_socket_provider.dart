@@ -27,15 +27,24 @@ class UserChatSocketProvider extends ChangeNotifier {
 
   List<Map<String, dynamic>> get messages => _socket.messages;
 
+  void clearLocalMessages() => _socket.clearLocalMessages();
+
   List<Map<String, dynamic>> get conversationList => _socket.conversationList;
+  bool get hasConversationListLoaded => _socket.hasConversationListLoaded;
 
   Map<String, dynamic>? get lastConversation => _socket.lastConversation;
+  dynamic get recentFriendsList => _socket.recentFriendsList;
 
   bool? get isCheckedUserOnline => _socket.isCheckedUserOnline;
 
   String get checkedUserId => _socket.checkedUserId;
+  String get authUserId => _socket.authUserId;
 
   Future<void> initSocket(String jwtToken) => _socket.initSocket(jwtToken);
+  Future<void> forceReconnect(String jwtToken, {String? authUserId}) =>
+      _socket.forceReconnect(jwtToken, authUserId: authUserId);
+  void forceDisconnect({bool clearStoredToken = false}) =>
+      _socket.forceDisconnect(clearStoredToken: clearStoredToken);
 
   bool emitUserStatus({required String userId, required String checkUserId}) =>
       _socket.emitUserStatus(userId: userId, checkUserId: checkUserId);
@@ -44,8 +53,23 @@ class UserChatSocketProvider extends ChangeNotifier {
     required String userId,
     int page = 1,
     int limit = 50,
+    String userType = 'User',
   }) =>
-      _socket.getConversationList(userId: userId, page: page, limit: limit);
+      _socket.getConversationList(
+          userId: userId, page: page, limit: limit, userType: userType);
+
+  bool emitRecendFirendsList({required String userId}) =>
+      _socket.emitRecendFirendsList(userId: userId);
+
+  void markConversationSeenLocal({
+    required String conversationId,
+  }) =>
+      _socket.markConversationSeenLocal(conversationId: conversationId);
+
+  // FIX: delegate to SocketProvider instead of accessing private fields directly.
+  // Previously this tried to set _hasConversationListLoaded, _conversationList etc.
+  // which are private to SocketProvider and caused compile errors.
+  void resetConversationListState() => _socket.resetConversationListState();
 
   void joinConversationChat({
     required String userId,
@@ -89,6 +113,12 @@ class UserChatSocketProvider extends ChangeNotifier {
     String receiverModel = 'User',
     String type = 'message',
     List<dynamic> files = const [],
+    bool isEvent = false,
+    bool approveEvent = false,
+    bool rejectEvent = false,
+    bool requiresApproval = false,
+    Map<String, dynamic>? eventObject,
+    bool isuser = true,
   }) =>
       _socket.sendConversationMessage(
         senderId: senderId,
@@ -103,6 +133,23 @@ class UserChatSocketProvider extends ChangeNotifier {
         receiverModel: receiverModel,
         type: type,
         files: files,
+        isEvent: isEvent,
+        approveEvent: approveEvent,
+        rejectEvent: rejectEvent,
+        requiresApproval: requiresApproval,
+        eventObject: eventObject,
+        isuser: isuser,
+      );
+
+  bool emitEventUpdate({
+    required String userId,
+    required String messageId,
+    required bool isApprove,
+  }) =>
+      _socket.emitEventUpdate(
+        userId: userId,
+        messageId: messageId,
+        isApprove: isApprove,
       );
 
   Future<bool> sendConversationMediaMessage({
@@ -116,6 +163,7 @@ class UserChatSocketProvider extends ChangeNotifier {
     required List<String> localFilePaths,
     String senderModel = 'User',
     String receiverModel = 'User',
+    bool isuser = true,
     String uploadEndpoint =
         'https://hii.life/app/server/api/v1/admin/user/image_uplod',
   }) =>
@@ -130,6 +178,7 @@ class UserChatSocketProvider extends ChangeNotifier {
         localFilePaths: localFilePaths,
         senderModel: senderModel,
         receiverModel: receiverModel,
+        isuser: isuser,
         uploadEndpoint: uploadEndpoint,
       );
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../controller/eventBookingDetails/event_booking_details_controller.dart';
 import '../../../../../utilities/app_button.dart';
@@ -12,7 +13,6 @@ import '../../../../../utilities/app_constant.dart';
 import '../../../../../utilities/app_font.dart';
 import '../../../../../utilities/app_image.dart';
 import '../../../../../utilities/app_language.dart';
-
 
 class BookedEventDetails extends StatefulWidget {
   final String? bookingId;
@@ -29,6 +29,36 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
   List<dynamic> multiDayTickets = [];
   int selectedEmoji = -1;
   TextEditingController feedbackController = TextEditingController();
+
+  Future<void> _openEventLocationInMaps(Map<String, dynamic> eventData) async {
+    final latitude = eventData['latitude'];
+    final longitude = eventData['longitude'];
+    final addressParts = [
+      (eventData['city_name'] ?? '').toString().trim(),
+      (eventData['address'] ?? '').toString().trim(),
+    ]..removeWhere((value) => value.isEmpty);
+    final address = addressParts.join(', ');
+
+    Uri? uri;
+    if (latitude != null && longitude != null) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=$latitude,$longitude',
+      );
+    } else if (address.isNotEmpty) {
+      uri = Uri.parse(
+        'https://www.google.com/maps/search/?api=1&query=${Uri.encodeComponent(address)}',
+      );
+    }
+
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Unable to open location')),
+      );
+    }
+  }
 
   List<String> emojis = ["", "😡", "😞", "😐", "😊", "🤩"];
 
@@ -207,16 +237,20 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                   ),
                                 ),
                                 SizedBox(height: size.height * 0.5 / 100),
-                                SizedBox(
-                                  width: size.width * 70 / 100,
-                                  child: Text(
-                                    // show city + address
-                                    '${d?['city_name'] ?? ''}, ${d?['address'] ?? ''}',
-                                    style: const TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 14.5,
-                                      color: AppColor.buttonColor,
+                                GestureDetector(
+                                  onTap: () => _openEventLocationInMaps(
+                                    Map<String, dynamic>.from(d ?? {}),
+                                  ),
+                                  child: SizedBox(
+                                    width: size.width * 70 / 100,
+                                    child: Text(
+                                      '${d?['city_name'] ?? ''}, ${d?['address'] ?? ''}',
+                                      style: const TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 14.5,
+                                        color: AppColor.buttonColor,
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -485,99 +519,121 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
 
                                   if (showDetails) ...[
                                     SizedBox(height: size.height * 0.2 / 100),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        const Text(
-                                          "Base Price",
-                                          style: TextStyle(
-                                            fontSize: 7.30,
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white70,
-                                          ),
-                                        ),
-                                        Text(
-                                          "₹${d?['sub_total'] ?? ''}",
-                                          style: const TextStyle(
-                                            fontSize: 7.30,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.white70,
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: size.height * 0.6 / 100),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
-                                          style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70),
-                                        ),
-                                        Text(
-                                          "₹${d?['gst_amount'] ?? ''}",
-                                          style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70),
-                                        ),
-                                      ],
-                                    ),
-                                    SizedBox(height: size.height * 0.6 / 100),
-                                    if (d?['discount'] > 0) ...[
-                                      Row(
+                                    // Base Price
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width * 3 / 100,
+                                          right: size.width * 3 / 100),
+                                      child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                "Coupon Discount",
-                                                style: TextStyle(
+                                          const Text(
+                                            "Base Price",
+                                            style: TextStyle(
+                                              fontSize: 7.30,
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          Text(
+                                            "₹${d?['sub_total'] ?? ''}",
+                                            style: const TextStyle(
+                                              fontSize: 7.30,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.6 / 100),
+                                    // GST
+                                    Padding(
+                                      padding: EdgeInsets.only(
+                                          left: size.width * 3 / 100,
+                                          right: size.width * 3 / 100),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
+                                            style: const TextStyle(
+                                              fontSize: 7.30,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                          Text(
+                                            "₹${d?['gst_amount'] ?? ''}",
+                                            style: const TextStyle(
+                                              fontSize: 7.30,
+                                              color: Colors.white70,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(height: size.height * 0.6 / 100),
+                                    if (d?['discount'] > 0) ...[
+                                      // Coupon Discount
+                                      Padding(
+                                        padding: EdgeInsets.only(
+                                            left: size.width * 3 / 100,
+                                            right: size.width * 3 / 100),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Row(
+                                              children: [
+                                                const Text(
+                                                  "Coupon Discount",
+                                                  style: TextStyle(
                                                     fontSize: 7.30,
-                                                    color: Colors.white70),
-                                              ),
-                                              // if (_appliedCouponCode.isNotEmpty)
-                                              Padding(
-                                                padding: const EdgeInsets.only(
-                                                    left: 6),
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
+                                                    color: Colors.white70,
+                                                  ),
+                                                ),
+                                                Padding(
+                                                  padding:
+                                                      const EdgeInsets.only(
+                                                          left: 6),
+                                                  child: Container(
+                                                    padding: const EdgeInsets
+                                                        .symmetric(
                                                       horizontal: 8,
-                                                      vertical: 2),
-                                                  decoration: BoxDecoration(
-                                                    color: AppColor.themeColor
-                                                        .withOpacity(0.15),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                      color:
-                                                          AppColor.themeColor,
-                                                      width: 0.5,
+                                                      vertical: 2,
+                                                    ),
+                                                    decoration: BoxDecoration(
+                                                      color: AppColor.themeColor
+                                                          .withOpacity(0.15),
+                                                      borderRadius:
+                                                          BorderRadius.circular(
+                                                              6),
+                                                      border: Border.all(
+                                                        color:
+                                                            AppColor.themeColor,
+                                                        width: 0.5,
+                                                      ),
                                                     ),
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                          Text(
-                                            "-₹${d?['discount'] ?? ''}",
-                                            style: const TextStyle(
+                                              ],
+                                            ),
+                                            Text(
+                                              "-₹${d?['discount'] ?? ''}",
+                                              style: const TextStyle(
                                                 fontSize: 7.30,
-                                                color: Colors.white70),
-                                          ),
-                                        ],
+                                                color: Colors.white70,
+                                              ),
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                       SizedBox(height: size.height * 0.01),
                                     ],
                                   ],
-
                                   SizedBox(height: size.height * 2 / 100),
 
                                   // Discount

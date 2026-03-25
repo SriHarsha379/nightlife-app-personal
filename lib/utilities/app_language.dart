@@ -460,7 +460,7 @@ class AppLanguage {
   static const completeBio = ["Complete Bio"];
   static const connectInstagramtext = ["Connect Instagram"];
   static const addFivevedios = ["Add 5 Videos"];
-    static const addHobbyText = ["Add Hobby"];
+  static const addHobbyText = ["Add Hobby"];
 
   static const royalClub = ["Royal Club"];
   static const moneyFesttext = ["Money Fest"];
@@ -653,7 +653,7 @@ class AppLanguage {
 //31/10
   static const heightOptionalText = ["Height (Optional)"];
   static const additionalInfoText = ["Additional Info"];
-  static const bioOptionalText = ["Bio (optional)"];
+  static const bioOptionalText = ["Enter your Bio"];
   static const yourInstagramProfileText = ["Your instagram profile link"];
   static const yourSpotifyaccountText = ["Your Spotify account"];
   static const yourSnapchataccountText = ["Your Snapchat account"];
@@ -677,6 +677,9 @@ class AppLanguage {
   ];
   static const usernameemailIdPhonenumberText = [
     "Username or Email Id or Phone Number"
+  ];
+    static const usernameemailIdPhonenumberText1 = [
+    "Phone Number or Email Id"
   ];
   static const passwordtext = ['Password'];
 
@@ -856,6 +859,6 @@ class AppLanguage {
   static const selectoptionText = ["Select option"];
   static const uploadPhotoText = ['Upload Photo'];
 
-    static const cameraText = ["Camera"];
+  static const cameraText = ["Camera"];
   static const galleryText = ["Gallery"];
 }

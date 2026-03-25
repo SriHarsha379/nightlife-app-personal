@@ -124,7 +124,7 @@ class MembersController with ChangeNotifier {
             _likedHasMore = false;
           }
         }
-        CommonHelper.handleInactiveUserRedirect(context, response);
+        // CommonHelper.handleInactiveUserRedirect(context, response);
       }
     } catch (_) {
       if (isConnectedType) {

@@ -117,7 +117,8 @@ class CustomDescriptionBox extends StatelessWidget {
                         children: [
                           Image.asset(
                             prefixIcon!,
-                            color: AppColor.greyLightColor,
+                            color: AppColor
+                                                        .greyLightColor(context),
                             width: MediaQuery.of(context).size.width * 10 / 100,
                             height:
                                 MediaQuery.of(context).size.height * 3 / 100,
@@ -273,7 +274,8 @@ class _CustomTextFieldState extends State<CustomTextField> {
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(40),
           borderSide: BorderSide(
-            color: isDark ? AppColor.buttonColor : AppColor.greyLightColor,
+            color: isDark ? AppColor.buttonColor : AppColor
+                                                        .greyLightColor(context),
             width: 1,
           ),
         ),

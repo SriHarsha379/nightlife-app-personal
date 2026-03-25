@@ -102,6 +102,7 @@ class InviteEventVenueListController extends ChangeNotifier {
             if (item is! Map) continue;
             final map = Map<String, dynamic>.from(item);
             parsed.add({
+              ...map,
               'id': _str(map['event_id'] ?? map['venue_id'] ?? map['_id']),
               'name': _str(
                 map['event_name'] ?? map['venue_name'] ?? map['name'],
@@ -109,6 +110,10 @@ class InviteEventVenueListController extends ChangeNotifier {
               'image': _str(
                 map['event_image'] ?? map['venue_image'] ?? map['image'],
               ),
+              'address': _str(map['address']),
+              'time': _str(map['date'] ?? map['timing'] ?? map['time']),
+              'date': _str(map['date']),
+              'timing': _str(map['timing']),
               'categories': _categoryText(map['categories']),
             });
           }

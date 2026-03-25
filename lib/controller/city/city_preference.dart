@@ -87,8 +87,16 @@ class CityPreferenceController with ChangeNotifier {
   }
 
   // Update distance
+// Update distance
   void updateDistance(double distance) {
     _currentDistance = distance;
+
+    if (distance >= 60.0) {
+      _isBroadened = true;
+    } else if (distance < 60.0) {
+      _isBroadened = false;
+    }
+
     notifyListeners();
   }
 
@@ -137,7 +145,7 @@ class CityPreferenceController with ChangeNotifier {
       } else {
         _cityList = [];
         if (response != null) {
-          CommonHelper.handleInactiveUserRedirect(context, response);
+          // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
     } catch (e) {

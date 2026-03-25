@@ -56,7 +56,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration:  BoxDecoration(
+      decoration: BoxDecoration(
         gradient: AppColor.backgroundGradientcolor(context),
         borderRadius: BorderRadius.only(
           topLeft: Radius.circular(24),
@@ -71,12 +71,12 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColor.greyLightColor.withOpacity(0.5),
+              color: AppColor.greyLightColor(context).withOpacity(0.5),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
 
-           Padding(
+          Padding(
             padding: EdgeInsets.all(16.0),
             child: Text(
               'Select Your City',
@@ -99,12 +99,12 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
               decoration: InputDecoration(
                 hintText: 'Search cities...',
                 hintStyle: TextStyle(
-                  color: AppColor.greyLightColor.withOpacity(0.7),
+                  color: AppColor.greyLightColor(context).withOpacity(0.7),
                   fontFamily: AppFont.fontFamily,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: AppColor.greyLightColor,
+                  color: AppColor.greyLightColor(context),
                 ),
                 filled: true,
                 fillColor: AppColor.themeColor,
@@ -134,7 +134,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                   vertical: 12,
                 ),
               ),
-              style:  TextStyle(
+              style: TextStyle(
                 color: AppColor.secondryColor(context),
                 fontFamily: AppFont.fontFamily,
               ),
@@ -151,8 +151,8 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                       searchController.text.isEmpty
                           ? 'No cities available'
                           : 'No cities found',
-                      style: const TextStyle(
-                        color: AppColor.greyLightColor,
+                      style: TextStyle(
+                        color: AppColor.greyLightColor(context),
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,
                       ),
@@ -214,11 +214,12 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                                           cityName.isNotEmpty
                                               ? cityName[0].toUpperCase()
                                               : '?',
-                                          style:  TextStyle(
+                                          style: TextStyle(
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
-                                            color: AppColor.secondryColor(context),
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
                                       );
@@ -230,7 +231,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                                     cityName.isNotEmpty
                                         ? cityName[0].toUpperCase()
                                         : '?',
-                                    style:  TextStyle(
+                                    style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
@@ -238,8 +239,6 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                                     ),
                                   ),
                                 ),
-                       
-                       
                         ),
                         title: Text(
                           cityName,

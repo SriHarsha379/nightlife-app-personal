@@ -5,13 +5,13 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:night_life/utilities/app_language.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_font.dart';
-import '../../utilities/app_image.dart';
 import '../../utilities/media_picker_helper.dart';
 
 class ReportProblemScreen extends StatefulWidget {
@@ -23,6 +23,7 @@ class ReportProblemScreen extends StatefulWidget {
 }
 
 class _ReportProblemScreenState extends State<ReportProblemScreen> {
+  static const int _maxReportMediaItems = 6;
   TextEditingController messageTextEditingController = TextEditingController();
   final List<Map<String, String>> selectedMediaList = [];
 
@@ -33,9 +34,9 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   }
 
   void _openMediaPicker() {
-    if (selectedMediaList.length >= MediaPickerHelper.maxMediaItems) {
-      SnackBarToastMessage.error(context,
-          "Maximum ${MediaPickerHelper.maxMediaItems} items can be selected");
+    if (selectedMediaList.length >= _maxReportMediaItems) {
+      SnackBarToastMessage.error(
+          context, "Maximum $_maxReportMediaItems media files can be selected");
       return;
     }
 
@@ -50,33 +51,33 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
       onImageFromCamera: (media) {
         if (!mounted) return;
         setState(() {
-          selectedMediaList.add(media);
+          if (selectedMediaList.length < _maxReportMediaItems) {
+            selectedMediaList.add(media);
+          }
         });
       },
       onVideoFromCamera: (media) {
         if (!mounted) return;
         setState(() {
-          selectedMediaList.add(media);
+          if (selectedMediaList.length < _maxReportMediaItems) {
+            selectedMediaList.add(media);
+          }
         });
       },
       onMediaFromGallery: (mediaFromGallery) {
         if (!mounted) return;
         setState(() {
           final remainingSlots =
-              MediaPickerHelper.maxMediaItems - selectedMediaList.length;
+              _maxReportMediaItems - selectedMediaList.length;
           final itemsToAdd = mediaFromGallery.length > remainingSlots
               ? remainingSlots
               : mediaFromGallery.length;
           selectedMediaList.addAll(mediaFromGallery.take(itemsToAdd));
 
           if (mediaFromGallery.length > remainingSlots) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text(
-                  "Only $itemsToAdd items added. Maximum ${MediaPickerHelper.maxMediaItems} items allowed.",
-                ),
-                backgroundColor: AppColor.pinkColor,
-              ),
+            SnackBarToastMessage.error(
+              context,
+              "Only $itemsToAdd items added. Maximum $_maxReportMediaItems media files allowed.",
             );
           }
         });
@@ -94,6 +95,11 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
     final description = messageTextEditingController.text.trim();
     if (description.isEmpty) {
       SnackBarToastMessage.info(context, "Please enter description");
+      return;
+    }
+    if (selectedMediaList.length > _maxReportMediaItems) {
+      SnackBarToastMessage.error(
+          context, "Maximum $_maxReportMediaItems media files allowed");
       return;
     }
 
@@ -137,11 +143,14 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
@@ -224,9 +233,9 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       SizedBox(height: size.height * 0.1 / 100),
 
                       Text(
-                        AppLanguage.addScreenshotsHintText[language],
-                        style: const TextStyle(
-                          color: Colors.white,
+                        'Add screenshots or videos to help us understand the issue better.',
+                        style: TextStyle(
+                          color: AppColor.secondryColor(context),
                           fontSize: 12,
                           fontFamily: AppFont.fontFamily,
                           fontWeight: FontWeight.w400,
@@ -239,8 +248,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                         spacing: size.width * 3 / 100,
                         runSpacing: size.height * 1.6 / 100,
                         children: List.generate(
-                          selectedMediaList.length <
-                                  MediaPickerHelper.maxMediaItems
+                          selectedMediaList.length < _maxReportMediaItems
                               ? selectedMediaList.length + 1
                               : selectedMediaList.length,
                           (index) {
@@ -255,12 +263,21 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                           },
                         ),
                       ),
+
                       SizedBox(height: size.height * 1 / 100),
                       Text(
-                        "${selectedMediaList.length} media selected",
-                        style: const TextStyle(
-                          color: Colors.white,
+                        "${selectedMediaList.length}/$_maxReportMediaItems media selected",
+                        style: TextStyle(
+                          color: AppColor.secondryColor(context),
                           fontSize: 12,
+                          fontFamily: AppFont.fontFamily,
+                        ),
+                      ),
+                      Text(
+                        "Tip: videos take longer to upload. Short clips work best.",
+                        style: TextStyle(
+                          color: AppColor.spancolor(context),
+                          fontSize: 11,
                           fontFamily: AppFont.fontFamily,
                         ),
                       ),
@@ -377,7 +394,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       //   ),
                       // ),
 
-                      SizedBox(height: size.height * 2 / 100),
+                      SizedBox(height: size.height * 4 / 100),
 
                       /// Footer Text
                     ],
@@ -464,19 +481,19 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
         height: size.width * 32 / 100,
         width: size.width * 26 / 100,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(15),
+          color: AppColor.transparentColor,
+          borderRadius: BorderRadius.circular(21),
           border: Border.all(
-            // color: AppColor.buttonColor,
-            width: .4,
+            color: AppColor.pinkColor,
+            width: 1,
           ),
         ),
         child: isAdd
-            ? ClipRRect(
-                borderRadius: BorderRadius.circular(15),
-                child: Image.asset(
-                  AppImage.rectanglePlusicon,
-                  fit: BoxFit.fill,
-                  color: AppColor.buttonColor,
+            ? Center(
+                child: Icon(
+                  Icons.add,
+                  size: size.width * 7 / 100,
+                  color: AppColor.secondryColor(context),
                 ),
               )
             : null,

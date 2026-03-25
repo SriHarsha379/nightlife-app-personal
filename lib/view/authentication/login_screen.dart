@@ -5,7 +5,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../provider/content_service.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_button.dart';
 import '../../utilities/app_color.dart';
@@ -37,6 +39,7 @@ TextEditingController emailController = TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
+  static final Uri _organizerWebsite = Uri.parse('https://hii.life/');
   late AnimationController _bottomSheetController;
   late Animation<Offset> _bottomSheetAnimation;
 
@@ -44,6 +47,14 @@ class _LoginScreenState extends State<LoginScreen>
   late Animation<Offset> _overlaySlideAnimation;
   String privacypolicytype = '';
   String termsandconditionstype = '';
+
+  Future<void> _openOrganizerWebsite() async {
+    await launchUrl(
+      _organizerWebsite,
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -103,10 +114,6 @@ class _LoginScreenState extends State<LoginScreen>
     passwordController.clear();
   }
 
-
-
-
-
   // ---- Google Login ------
   void loginGoogle(BuildContext context) async {
     final user = await AuthService.signInWithGoogle();
@@ -157,6 +164,8 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final isLoading = context.watch<PostApiProvider>().loading;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return ProgressHUD(
       isLoading: isLoading,
@@ -282,7 +291,9 @@ class _LoginScreenState extends State<LoginScreen>
                                   loginGoogle(context);
                                 },
                                 child: Image.asset(
-                                  AppImage.google,
+                                  isDark
+                                      ? AppImage.google
+                                      : AppImage.googleLight,
                                   width: size.width * 0.14,
                                   height: size.width * 0.14,
                                 ),
@@ -290,7 +301,7 @@ class _LoginScreenState extends State<LoginScreen>
                               if (AppConstant.deviceType == "ios") ...[
                                 SizedBox(width: size.width * 0.02),
                                 Image.asset(
-                                  AppImage.apple,
+                                  isDark ? AppImage.apple : AppImage.appleLight,
                                   width: size.width * 0.15,
                                   height: size.width * 0.15,
                                 ),
@@ -352,7 +363,7 @@ class _LoginScreenState extends State<LoginScreen>
                                       100,
                                 ),
                                 GestureDetector(
-                                  onTap: () {},
+                                  onTap: _openOrganizerWebsite,
                                   child: Text(
                                     AppLanguage.clickhereText[language],
                                     style: const TextStyle(

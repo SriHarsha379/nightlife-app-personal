@@ -263,6 +263,12 @@ class AppColor {
         : const Color(0xFFffffff);
   }
 
+  static Color greyLightColor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? const  Color(0xffa7a7a7)
+        : Color.fromARGB(255, 87, 86, 86);
+  }
+
   /// Get chat container gradient based on theme
   static LinearGradient chatContainerColor(BuildContext context) {
     if (Theme.of(context).brightness == Brightness.dark) {
@@ -332,7 +338,7 @@ class AppColor {
   static const Color homeOfferColor = Color(0xfffef1e8);
   static const Color textfieldfillColor = Color(0xffE5E7EB);
   static const Color textfieldborderColor = Color.fromARGB(255, 189, 190, 191);
-  static const Color greyLightColor = Color(0xffa7a7a7);
+  // static const Color greyLightColor = Color(0xffa7a7a7);
   static const Color greygreyLightColor = Color.fromARGB(255, 239, 240, 241);
   static const Color textfilledColor = Color(0xff888686);
   static const Color thirdColor = Colors.red;

@@ -5,12 +5,14 @@ import 'package:night_life/controller/home/home_controller.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:night_life/controller/venues/my_venues_controller.dart';
 import 'package:night_life/utilities/app_color.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/my_events.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/past_venue_screeen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
@@ -31,7 +33,6 @@ class MyVenue extends StatefulWidget {
 class _MyVenueState extends State<MyVenue> {
   int selectedIndex = 0;
 
-  // ── Scroll controllers for load more ──────────────────────────────────────
   late final ScrollController _likedScrollController;
   late final ScrollController _reservedScrollController;
   late final ScrollController _pastHorizontalScrollController;
@@ -39,7 +40,6 @@ class _MyVenueState extends State<MyVenue> {
   @override
   void initState() {
     super.initState();
-
     _likedScrollController = ScrollController()..addListener(_onLikedScroll);
     _reservedScrollController = ScrollController()
       ..addListener(_onReservedScroll);
@@ -97,7 +97,6 @@ class _MyVenueState extends State<MyVenue> {
     super.dispose();
   }
 
-  // ── Helper: format date string ─────────────────────────────────────────────
   String _formatSlotTime(String? isoDate) {
     if (isoDate == null || isoDate.isEmpty) return '';
     try {
@@ -107,6 +106,51 @@ class _MyVenueState extends State<MyVenue> {
       return isoDate;
     }
   }
+
+  bool _isDarkMode(BuildContext context) {
+    return context.read<ThemeProvider>().isDarkMode;
+  }
+
+  BoxDecoration _venueCardDecoration(
+    BuildContext context, {
+    double radius = 15,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: AppColor.primaryColor(context),
+      borderRadius: BorderRadius.circular(radius),
+      boxShadow: [
+        BoxShadow(
+          color: isDark
+              ? Colors.black.withOpacity(0.35)
+              : Colors.black.withOpacity(0.13),
+          blurRadius: isDark ? 10 : 18,
+          spreadRadius: isDark ? 0 : 1,
+          offset: const Offset(0, 4),
+        ),
+      ],
+    );
+  }
+
+  BoxDecoration _venueActionButtonDecoration(
+    BuildContext context, {
+    double radius = 10,
+  }) {
+    final isDark = _isDarkMode(context);
+    return BoxDecoration(
+      color: isDark
+          ? AppColor.secondryColor(context).withOpacity(0.08)
+          : AppColor.pinkColor.withOpacity(0.08),
+      borderRadius: BorderRadius.circular(radius),
+      border: Border.all(
+        color: AppColor.pinkColor.withOpacity(isDark ? 0.3 : 0.6),
+        width: 1.2,
+      ),
+    );
+  }
+
+
+
 
   Future<void> _handleVenueDetailResult(dynamic result) async {
     if (result is! Map) return;
@@ -131,14 +175,14 @@ class _MyVenueState extends State<MyVenue> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -150,7 +194,6 @@ class _MyVenueState extends State<MyVenue> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ── Status bar spacer ────────────────────────────────────────
                 SizedBox(height: size.height * 4.5 / 100),
 
                 // ── App bar ──────────────────────────────────────────────────
@@ -160,7 +203,6 @@ class _MyVenueState extends State<MyVenue> {
                     height: size.height * 7 / 100,
                     child: Row(
                       children: [
-                        // Back button
                         GestureDetector(
                           onTap: () {
                             Navigator.push(
@@ -187,7 +229,6 @@ class _MyVenueState extends State<MyVenue> {
                           ),
                         ),
                         SizedBox(width: size.width * 25 / 100),
-                        // Title
                         GestureDetector(
                           onTap: () => documenttypebottomsheet(context),
                           child: Align(
@@ -205,7 +246,6 @@ class _MyVenueState extends State<MyVenue> {
                           ),
                         ),
                         SizedBox(width: size.width * 2 / 100),
-                        // Down arrow
                         GestureDetector(
                           onTap: () => documenttypebottomsheet(context),
                           child: Image.asset(
@@ -278,7 +318,6 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
-  // ── Tab widget ─────────────────────────────────────────────────────────────
   Widget _buildTab(
     BuildContext context, {
     required String label,
@@ -308,7 +347,6 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
-  // ── Tab indicator bar ──────────────────────────────────────────────────────
   Widget _buildTabIndicator(
     BuildContext context, {
     required int tabIndex,
@@ -358,7 +396,6 @@ class _MyVenueState extends State<MyVenue> {
           padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
           itemCount: venues.length + (controller.isLikedLoadingMore ? 1 : 0),
           itemBuilder: (context, index) {
-            // Load more indicator at the bottom
             if (index == venues.length) {
               return Padding(
                 padding: EdgeInsets.symmetric(vertical: size.height * 2 / 100),
@@ -401,18 +438,17 @@ class _MyVenueState extends State<MyVenue> {
       },
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _venueCardDecoration(context),
         child: Column(
           children: [
             // Venue image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
-                borderRadius: BorderRadius.circular(15),
+                borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(15),
+                    topRight: Radius.circular(15)),
                 child: CachedNetworkImage(
                   imageUrl:
                       "${AppConfigProvider.imageUrl}${venue['venue_image']}",
@@ -467,7 +503,6 @@ class _MyVenueState extends State<MyVenue> {
                         child: Image.asset(
                           AppImage.liked_heart_icon,
                           fit: BoxFit.cover,
-                          // color: AppColor.secondryColor(context),
                         ),
                       ),
                     ],
@@ -480,7 +515,7 @@ class _MyVenueState extends State<MyVenue> {
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -528,8 +563,15 @@ class _MyVenueState extends State<MyVenue> {
                   Container(
                     height: size.height * 6 / 100,
                     decoration: BoxDecoration(
-                      color: AppColor.secondryColor(context),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.10),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(
@@ -551,6 +593,10 @@ class _MyVenueState extends State<MyVenue> {
       ),
     );
   }
+
+
+
+
 
   // ══════════════════════════════════════════════════════════════════════════
   // RESERVED TAB
@@ -575,7 +621,6 @@ class _MyVenueState extends State<MyVenue> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // ── Description ──────────────────────────────────────────
                   if (controller.upcomingReservations.isNotEmpty)
                     Text(
                       AppLanguage.ReserveddetailsText[language],
@@ -587,8 +632,6 @@ class _MyVenueState extends State<MyVenue> {
                       ),
                     ),
                   SizedBox(height: size.height * 1.5 / 100),
-
-                  // ── Upcoming reservations heading ─────────────────────────
                   if (controller.upcomingReservations.isNotEmpty)
                     Text(
                       AppLanguage.upcomingReservationsText[language],
@@ -600,8 +643,6 @@ class _MyVenueState extends State<MyVenue> {
                       ),
                     ),
                   SizedBox(height: size.height * 2 / 100),
-
-                  // ── Upcoming list (NO load more) ──────────────────────────
                   if (controller.upcomingReservations.isEmpty)
                     SizedBox(
                       height: size.height * 30 / 100,
@@ -624,8 +665,6 @@ class _MyVenueState extends State<MyVenue> {
                         child: _buildUpcomingCard(context, booking, size),
                       ),
                     ),
-
-                  // ── Past reservations heading ─────────────────────────────
                   if (controller.pastReservations.isNotEmpty ||
                       controller.isPastLoadingMore) ...[
                     SizedBox(height: size.height * 1 / 100),
@@ -639,8 +678,6 @@ class _MyVenueState extends State<MyVenue> {
                       ),
                     ),
                     SizedBox(height: size.height * 2 / 100),
-
-                    // ── Past list (horizontal scroll with load more) ──────────
                     SizedBox(
                       width: size.width,
                       height: size.height * 28 / 100,
@@ -650,7 +687,6 @@ class _MyVenueState extends State<MyVenue> {
                         itemCount: controller.pastReservations.length +
                             (controller.isPastLoadingMore ? 1 : 0),
                         itemBuilder: (context, index) {
-                          // Loading indicator at end of horizontal list
                           if (index == controller.pastReservations.length) {
                             return Padding(
                               padding: EdgeInsets.symmetric(
@@ -676,10 +712,8 @@ class _MyVenueState extends State<MyVenue> {
                         },
                       ),
                     ),
-
-                    SizedBox(height: size.height * 3 / 100),
+                    SizedBox(height: size.height * 2 / 100),
                   ] else if (controller.upcomingReservations.isEmpty) ...[
-                    // Show past empty state only if upcoming is also empty
                     SizedBox(height: size.height * 1 / 100),
                     Text(
                       AppLanguage.pastReservationsText[language],
@@ -728,17 +762,14 @@ class _MyVenueState extends State<MyVenue> {
       },
       child: Container(
         width: size.width * 90 / 100,
-        decoration: BoxDecoration(
-          color: AppColor.primaryColor(context),
-          borderRadius: BorderRadius.circular(15),
-        ),
+        decoration: _venueCardDecoration(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Venue image
             SizedBox(
               width: size.width * 90 / 100,
-              height: size.width * 42 / 100,
+              height: size.height * 26 / 100,
               child: ClipRRect(
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(15),
@@ -777,7 +808,6 @@ class _MyVenueState extends State<MyVenue> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  // Name
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -805,7 +835,7 @@ class _MyVenueState extends State<MyVenue> {
                         width: size.width * 4.5 / 100,
                         height: size.width * 4.5 / 100,
                         child: Image.asset(
-                          AppImage.calenderPinkIcon,
+                          AppImage.newCalenderPinkIcon,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -878,8 +908,15 @@ class _MyVenueState extends State<MyVenue> {
                   Container(
                     height: size.height * 6 / 100,
                     decoration: BoxDecoration(
-                      color: AppColor.secondryColor(context),
-                      borderRadius: BorderRadius.circular(10),
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(12),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.10),
+                          blurRadius: 8,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
                     ),
                     child: Center(
                       child: Text(
@@ -902,16 +939,12 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
-  // ── Past event card ────────────────────────────────────
+  // ── Past event card ────────────────────────────────────────────────────────
   Widget _buildPastCard(
       BuildContext context, Map<String, dynamic> pastEvent, Size size) {
     return Container(
       width: size.width * 37 / 100,
-      decoration: BoxDecoration(
-        color: AppColor.primaryColor(context),
-        borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: AppColor.startingscreenColor),
-      ),
+      decoration: _venueCardDecoration(context, radius: 10),
       child: Column(
         children: [
           // Image
@@ -962,6 +995,7 @@ class _MyVenueState extends State<MyVenue> {
             ),
           ),
           SizedBox(height: size.height * 0.5 / 100),
+
           // Date
           Container(
             width: size.width * 30 / 100,
@@ -971,13 +1005,13 @@ class _MyVenueState extends State<MyVenue> {
                   width: size.width * 2.5 / 100,
                   height: size.width * 2.5 / 100,
                   child: Image.asset(
-                    AppImage.calenderPinkIcon,
+                    AppImage.newCalenderPinkIcon,
                     fit: BoxFit.cover,
                   ),
                 ),
                 SizedBox(width: size.width * 1.5 / 100),
                 Text(
-                  pastEvent['date'] ?? "",
+                  pastEvent['slot_time'] ?? "",
                   style: TextStyle(
                     fontSize: 7,
                     fontFamily: AppFont.fontFamily,
@@ -989,6 +1023,7 @@ class _MyVenueState extends State<MyVenue> {
             ),
           ),
           SizedBox(height: size.height * 0.5 / 100),
+
           // Address
           Container(
             width: size.width * 30 / 100,
@@ -1020,6 +1055,7 @@ class _MyVenueState extends State<MyVenue> {
             ),
           ),
           SizedBox(height: size.height * 2 / 100),
+
           // Review button
           GestureDetector(
             onTap: () {
@@ -1038,8 +1074,15 @@ class _MyVenueState extends State<MyVenue> {
               height: size.height * 4.5 / 100,
               width: size.width * 35 / 100,
               decoration: BoxDecoration(
-                color: AppColor.secondryColor(context),
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.10),
+                    blurRadius: 8,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
               ),
               child: const Center(
                 child: Text(
@@ -1107,6 +1150,7 @@ class _MyVenueState extends State<MyVenue> {
                                         height: size.height * 0.5 / 100,
                                         width: size.width * 22 / 100,
                                         fit: BoxFit.fill,
+                                        color: AppColor.secondryColor(context),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 4 / 100),
@@ -1207,7 +1251,7 @@ class _MyVenueState extends State<MyVenue> {
                                           PageTransition(
                                             type: PageTransitionType
                                                 .rightToLeftWithFade,
-                                            child: MyVenue(),
+                                            child: MyEvents(),
                                             duration: const Duration(
                                                 milliseconds: 500),
                                           ),
@@ -1269,7 +1313,7 @@ class _MyVenueState extends State<MyVenue> {
           style: TextStyle(
             color: isActive
                 ? AppColor.secondryColor(context)
-                : AppColor.greyLightColor,
+                : AppColor.greyLightColor(context),
             fontSize: 16,
             fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
           ),

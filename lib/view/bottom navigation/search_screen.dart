@@ -82,7 +82,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (!mounted) return;
         final userController = context.read<UserController>();
         await userController.getUserDetails();
-        final cityData = userController.getCityData;
+        final cityData = userController.getEffectiveSearchCityData;
 
         if (!mounted) return;
         setState(() {
@@ -418,19 +418,51 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  Color _featuredCardBorderColor(BuildContext context) {
+    final isDark = context.read<ThemeProvider>().isDarkMode;
+    return isDark
+        ? AppColor
+                                                        .greyLightColor(context).withOpacity(0.18)
+        : AppColor
+                                                        .greyLightColor(context).withOpacity(0.55);
+  }
+
+  List<BoxShadow> _featuredCardShadow(BuildContext context) {
+    final isDark = context.read<ThemeProvider>().isDarkMode;
+    return [
+      BoxShadow(
+        color: isDark
+            ? Colors.black.withOpacity(0.35)
+            : Colors.black.withOpacity(0.10),
+        blurRadius: isDark ? 10 : 16,
+        offset: const Offset(0, 4),
+      ),
+    ];
+  }
+
+  BoxDecoration _featuredTagDecoration() {
+    return BoxDecoration(
+      borderRadius: BorderRadius.circular(20),
+      color: AppColor.pinkColor.withOpacity(0.18),
+      border: Border.all(
+        color: AppColor.pinkColor,
+        width: 1.2,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final searchFilterProvider = context.watch<SearchFilterController>();
     bool isDark = themeProvider.isDarkMode;
     final size = MediaQuery.of(context).size;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: PopScope(
         canPop: false,
@@ -483,9 +515,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                               100,
                                       child: Image.asset(
                                         AppImage.locationIcon,
-                                        color: isDark
-                                            ? AppColor.secondryColor(context)
-                                            : AppColor.primaryColor(context),
+                                        color: AppColor.secondryColor(context),
                                         fit: BoxFit.cover,
                                       ),
                                     ),
@@ -509,11 +539,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 16,
                                             fontWeight: FontWeight.w600,
-                                            color: isDark
-                                                ? AppColor.secondryColor(
-                                                    context)
-                                                : AppColor.primaryColor(
-                                                    context),
+                                            color:
+                                                AppColor.secondryColor(context),
                                           ),
                                         ),
                                         // Text(
@@ -580,13 +607,18 @@ class _SearchScreenState extends State<SearchScreen> {
                               //  color: AppColor.secondryColor(context),
                               boxShadow: [
                                 BoxShadow(
-                                  offset: const Offset(0, 4),
+                                  offset: const Offset(0, 2),
+                                  spreadRadius: 1,
+                                  blurRadius: 4,
+                                  color:
+                                      AppColor
+                                                        .greyLightColor(context).withOpacity(0.4),
+                                ),
+                                BoxShadow(
+                                  offset: const Offset(0, 1),
                                   spreadRadius: 0,
                                   blurRadius: 4,
-                                  color: isDark
-                                      ? AppColor.primaryColor(context)
-                                          .withOpacity(0.1)
-                                      : AppColor.secondryColor(context),
+                                  color: Colors.black.withOpacity(0.15),
                                 ),
                               ],
                             ),
@@ -600,13 +632,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                     type:
                                         tapBarStatus == 1 ? 'venue' : 'event');
                               },
-                              cursorColor: isDark
-                                  ? AppColor.secondryColor(context)
-                                  : AppColor.primaryColor(context),
+                              cursorColor: AppColor.secondryColor(context),
                               style: TextStyle(
-                                  color: isDark
-                                      ? AppColor.secondryColor(context)
-                                      : AppColor.primaryColor(context),
+                                  color: AppColor.secondryColor(context),
                                   fontWeight: FontWeight.w400,
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 14),
@@ -628,9 +656,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     width: MediaQuery.of(context).size.width *
                                         4 /
                                         100,
-                                    color: isDark
-                                        ? AppColor.secondryColor(context)
-                                        : AppColor.primaryColor(context),
+                                    color: AppColor.secondryColor(context),
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
@@ -900,13 +926,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               BorderRadius
                                                                   .circular(25),
                                                           border: Border.all(
-                                                              color: isDark
-                                                                  ? AppColor
-                                                                      .textTapColor(
-                                                                          context)
-                                                                  : AppColor
-                                                                      .primaryColor(
-                                                                          context))),
+                                                            color: AppColor
+                                                                .secondryColor(
+                                                                    context),
+                                                          )),
                                                       child: Padding(
                                                         padding:
                                                             const EdgeInsets
@@ -925,13 +948,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                 fontWeight:
                                                                     FontWeight
                                                                         .w400,
-                                                                color: isDark
-                                                                    ? AppColor
-                                                                        .secondryColor(
-                                                                            context)
-                                                                    : AppColor
-                                                                        .primaryColor(
-                                                                            context),
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context),
                                                               ),
                                                             ),
                                                             Container(
@@ -953,13 +972,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     .upgradeIcon,
                                                                 fit: BoxFit
                                                                     .cover,
-                                                                color: isDark
-                                                                    ? AppColor
-                                                                        .secondryColor(
-                                                                            context)
-                                                                    : AppColor
-                                                                        .primaryColor(
-                                                                            context),
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context),
                                                               ),
                                                             ),
                                                           ],
@@ -1055,14 +1070,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           return Container(
                                                                               margin: const EdgeInsets.symmetric(horizontal: 8),
                                                                               decoration: BoxDecoration(
-                                                                                borderRadius: BorderRadius.circular(25),
-                                                                                border: const Border(
-                                                                                  bottom: BorderSide(
+                                                                                  borderRadius: BorderRadius.circular(25),
+                                                                                  border: Border.all(
                                                                                     color: AppColor.pinkColor,
                                                                                     width: 0.5,
-                                                                                  ),
-                                                                                ),
-                                                                              ),
+                                                                                  )),
                                                                               child: GestureDetector(
                                                                                 onTap: () async {
                                                                                   await _openVenueDetail(
@@ -1076,13 +1088,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                         Container(
                                                                                           width: MediaQuery.of(context).size.width * 55 / 100,
                                                                                           height: MediaQuery.of(context).size.height * 28 / 100,
-                                                                                          decoration: BoxDecoration(boxShadow: [
-                                                                                            BoxShadow(
-                                                                                              color: Colors.black,
-                                                                                              blurRadius: 10,
-                                                                                              offset: const Offset(0, 4),
-                                                                                            )
-                                                                                          ], borderRadius: BorderRadius.circular(25), border: Border.all()),
+                                                                                          decoration: BoxDecoration(
+                                                                                            boxShadow: _featuredCardShadow(context),
+                                                                                            borderRadius: BorderRadius.circular(25),
+                                                                                            // border: Border.all(
+                                                                                            //     // color: _featuredCardBorderColor(context),
+                                                                                            //     ),
+                                                                                          ),
                                                                                           child: ClipRRect(
                                                                                             borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
                                                                                             child: _buildCachedSearchImage(
@@ -1103,11 +1115,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                                     horizontal: 10,
                                                                                                     vertical: 5,
                                                                                                   ),
-                                                                                                  decoration: BoxDecoration(
-                                                                                                    borderRadius: BorderRadius.circular(20),
-                                                                                                    color: AppColor.themeColor.withOpacity(.7),
-                                                                                                    border: Border.all(color: const Color(0xFF9C27B0), width: 2),
-                                                                                                  ),
+                                                                                                  decoration: _featuredTagDecoration(),
                                                                                                   child: Text(
                                                                                                     tag,
                                                                                                     style: const TextStyle(
@@ -1132,7 +1140,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                         padding: EdgeInsets.symmetric(horizontal: 10),
                                                                                         child: Text(
                                                                                           venueFeaturedList[index]['title'] ?? "",
-                                                                                          style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 16, fontWeight: FontWeight.w700, color: isDark ? AppColor.secondryColor(context) : AppColor.primaryColor(context)),
+                                                                                          style: TextStyle(
+                                                                                            fontFamily: AppFont.fontFamily,
+                                                                                            fontSize: 16,
+                                                                                            fontWeight: FontWeight.w700,
+                                                                                            color: AppColor.secondryColor(context),
+                                                                                          ),
                                                                                         ),
                                                                                       ),
                                                                                     ),
@@ -1312,7 +1325,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               fontFamily: AppFont.fontFamily,
                                                                               fontSize: 13.5,
                                                                               fontWeight: FontWeight.w600,
-                                                                              color: isDark ? AppColor.secondryColor(context) : AppColor.primaryColor(context),
+                                                                              color: AppColor.secondryColor(context),
                                                                             ),
                                                                           ),
                                                                         ),
@@ -1423,7 +1436,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           type:
                                                                               PageTransitionType.rightToLeftWithFade,
                                                                           child:
-                                                                              BookTable(
+                                                                              VenuePages(
                                                                             venueId:
                                                                                 items[i1]['id'].toString(),
                                                                           ),
@@ -1439,8 +1452,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                           0.42,
                                                                       decoration:
                                                                           BoxDecoration(
-                                                                        color: Colors
-                                                                            .black,
+                                                                        color: isDark
+                                                                            ? Colors.black
+                                                                            : Colors.white10,
                                                                         borderRadius:
                                                                             BorderRadius.circular(14),
                                                                       ),
@@ -1467,7 +1481,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 Text(
                                                                               items[i1]["title"] ?? "",
                                                                               style: TextStyle(
-                                                                                color: Colors.white,
+                                                                                color: isDark ? Colors.white : Colors.black,
                                                                                 fontSize: 14,
                                                                                 fontWeight: FontWeight.w600,
                                                                               ),
@@ -1485,7 +1499,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               items[i1]["location"] ?? "",
                                                                               style: TextStyle(
                                                                                 fontSize: 12,
-                                                                                color: Colors.white60,
+                                                                                color: isDark ? Colors.white60 : Colors.black54,
                                                                               ),
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
@@ -1539,8 +1553,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             0.42,
                                                                         decoration:
                                                                             BoxDecoration(
-                                                                          color:
-                                                                              Colors.black,
+                                                                          color: isDark
+                                                                              ? Colors.black
+                                                                              : Colors.white10,
                                                                           borderRadius:
                                                                               BorderRadius.circular(14),
                                                                         ),
@@ -1552,7 +1567,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               context,
                                                                               PageTransition(
                                                                                 type: PageTransitionType.rightToLeftWithFade,
-                                                                                child: BookTable(
+                                                                                child: VenuePages(
                                                                                   venueId: items[i2]['id'].toString(),
                                                                                 ),
                                                                                 duration: const Duration(milliseconds: 500),
@@ -1563,10 +1578,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               Column(
                                                                             children: [
                                                                               ClipRRect(
-                                                                                borderRadius: BorderRadius.only(
-                                                                                  topLeft: Radius.circular(14),
-                                                                                  topRight: Radius.circular(14),
-                                                                                ),
+                                                                                borderRadius: BorderRadius.circular(10),
                                                                                 child: _buildCachedSearchImage(
                                                                                   imageName: items[i2]["image"] ?? "",
                                                                                   height: 100,
@@ -1580,7 +1592,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 child: Text(
                                                                                   items[i2]["title"] ?? "",
                                                                                   style: TextStyle(
-                                                                                    color: Colors.white,
+                                                                                    color: isDark ? Colors.white : Colors.black,
                                                                                     fontSize: 14,
                                                                                     fontWeight: FontWeight.w600,
                                                                                   ),
@@ -1595,7 +1607,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                   items[i2]["location"] ?? "",
                                                                                   style: TextStyle(
                                                                                     fontSize: 12,
-                                                                                    color: Colors.white60,
+                                                                                    color: isDark ? Colors.white60 : Colors.black54,
                                                                                   ),
                                                                                   maxLines: 1,
                                                                                   overflow: TextOverflow.ellipsis,
@@ -1727,14 +1739,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             return Container(
                                                                                 margin: const EdgeInsets.symmetric(horizontal: 8),
                                                                                 decoration: BoxDecoration(
-                                                                                  borderRadius: BorderRadius.circular(15),
-                                                                                  border: const Border(
-                                                                                    bottom: BorderSide(
+                                                                                    borderRadius: BorderRadius.circular(25),
+                                                                                    border: Border.all(
                                                                                       color: AppColor.pinkColor,
-                                                                                      width: 1,
-                                                                                    ),
-                                                                                  ),
-                                                                                ),
+                                                                                      width: 0.5,
+                                                                                    )),
                                                                                 child: GestureDetector(
                                                                                   onTap: () {
                                                                                     Navigator.push(
@@ -1755,7 +1764,13 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                           Container(
                                                                                             width: MediaQuery.of(context).size.width * 55 / 100,
                                                                                             height: MediaQuery.of(context).size.height * 28 / 100,
-                                                                                            decoration: BoxDecoration(borderRadius: BorderRadius.circular(25), border: Border.all()),
+                                                                                            decoration: BoxDecoration(
+                                                                                              boxShadow: _featuredCardShadow(context),
+                                                                                              borderRadius: BorderRadius.circular(25),
+                                                                                              // border: Border.all(
+                                                                                              //   color: _featuredCardBorderColor(context),
+                                                                                              // ),
+                                                                                            ),
                                                                                             child: ClipRRect(
                                                                                               borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
                                                                                               child: _buildCachedSearchImage(
@@ -1776,11 +1791,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                                       horizontal: 10,
                                                                                                       vertical: 5,
                                                                                                     ),
-                                                                                                    decoration: BoxDecoration(
-                                                                                                      borderRadius: BorderRadius.circular(20),
-                                                                                                      color: AppColor.themeColor.withOpacity(.7),
-                                                                                                      border: Border.all(color: const Color(0xFF9C27B0), width: 2),
-                                                                                                    ),
+                                                                                                    decoration: _featuredTagDecoration(),
                                                                                                     child: Text(
                                                                                                       tag,
                                                                                                       style: const TextStyle(
@@ -1805,7 +1816,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                           padding: EdgeInsets.symmetric(horizontal: 10),
                                                                                           child: Text(
                                                                                             eventFeaturedList[index]['title'] ?? "",
-                                                                                            style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 16.5, fontWeight: FontWeight.w700, color: isDark ? AppColor.secondryColor(context) : AppColor.primaryColor(context)),
+                                                                                            style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 16.5, fontWeight: FontWeight.w700, color: AppColor.secondryColor(context)),
                                                                                           ),
                                                                                         ),
                                                                                       ),
@@ -1901,155 +1912,127 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   : eventList.isEmpty
                                                       ? _buildEmptySectionText(
                                                           "No nearby events found")
-                                                      : SizedBox(
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              22 /
-                                                              100,
-                                                          child:
-                                                              ListView.builder(
-                                                            scrollDirection:
-                                                                Axis.horizontal,
-                                                            itemCount: eventList
-                                                                .length,
-                                                            padding:
-                                                                const EdgeInsets
-                                                                    .symmetric(
-                                                                    horizontal:
-                                                                        16),
-                                                            itemBuilder:
-                                                                (context,
-                                                                    index) {
-                                                              final event =
-                                                                  eventList[
-                                                                      index];
-                                                              return GestureDetector(
-                                                                onTap: () {
-                                                                  Navigator
-                                                                      .push(
-                                                                    context,
-                                                                    PageTransition(
-                                                                      type: PageTransitionType
-                                                                          .rightToLeftWithFade,
-                                                                      child:
-                                                                          LikedEventDetail(
-                                                                        eventId:
-                                                                            event["id"],
-                                                                      ),
-                                                                      duration: const Duration(
-                                                                          milliseconds:
-                                                                              500),
-                                                                    ),
-                                                                  );
-                                                                },
-                                                                child:
-                                                                    Container(
-                                                                  width: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
-                                                                      40 /
+                                                      : GestureDetector(
+                                                          onTap: () {},
+                                                          child: SizedBox(
+                                                            width: MediaQuery.of(
+                                                                        context)
+                                                                    .size
+                                                                    .width *
+                                                                90 /
+                                                                100,
+                                                            child: Container(
+                                                              height:
+                                                                  size.height *
+                                                                      22 /
                                                                       100,
-                                                                  margin:
-                                                                      const EdgeInsets
-                                                                          .only(
-                                                                          right:
-                                                                              12),
-                                                                  decoration: BoxDecoration(
-                                                                      borderRadius:
-                                                                          BorderRadius.circular(
-                                                                              14),
-                                                                      color: isDark
-                                                                          ? AppColor.primaryColor(
-                                                                              context)
-                                                                          : AppColor.secondryColor(
-                                                                              context)),
-                                                                  child: Column(
-                                                                    crossAxisAlignment:
-                                                                        CrossAxisAlignment
-                                                                            .start,
-                                                                    children: [
-                                                                      ClipRRect(
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(12),
-                                                                        child:
-                                                                            _buildCachedSearchImage(
-                                                                          imageName:
-                                                                              event["image"] ?? "",
-                                                                          height: MediaQuery.of(context).size.height *
-                                                                              12 /
-                                                                              100,
-                                                                          width:
-                                                                              double.infinity,
-                                                                          fit: BoxFit
-                                                                              .cover,
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                          height: MediaQuery.of(context).size.height *
-                                                                              1 /
-                                                                              100),
-                                                                      Text(
-                                                                        event[
-                                                                            "title"]!,
-                                                                        style:
-                                                                            TextStyle(
-                                                                          color: isDark
-                                                                              ? AppColor.secondryColor(context)
-                                                                              : AppColor.primaryColor(context),
-                                                                          fontWeight:
-                                                                              FontWeight.w600,
-                                                                          fontSize:
-                                                                              13,
-                                                                        ),
-                                                                      ),
-                                                                      SizedBox(
-                                                                          height: MediaQuery.of(context).size.height *
-                                                                              1 /
-                                                                              100),
-                                                                      Row(
+                                                              width: double
+                                                                  .infinity,
+                                                              child: ListView
+                                                                  .builder(
+                                                                scrollDirection:
+                                                                    Axis.horizontal,
+                                                                itemCount:
+                                                                    eventList
+                                                                        .length,
+                                                                itemBuilder:
+                                                                    (context,
+                                                                        index) {
+                                                                  return Padding(
+                                                                    padding: EdgeInsets.only(
+                                                                        right: size.width *
+                                                                            3 /
+                                                                            100),
+                                                                    child:
+                                                                        GestureDetector(
+                                                                      onTap:
+                                                                          () {
+                                                                        Navigator
+                                                                            .push(
+                                                                          context,
+                                                                          PageTransition(
+                                                                            type:
+                                                                                PageTransitionType.rightToLeftWithFade,
+                                                                            child:
+                                                                                LikedEventDetail(
+                                                                              eventId: eventList[index]['id'].toString(),
+                                                                            ),
+                                                                            duration:
+                                                                                const Duration(milliseconds: 500),
+                                                                          ),
+                                                                        );
+                                                                      },
+                                                                      child:
+                                                                          Column(
+                                                                        crossAxisAlignment:
+                                                                            CrossAxisAlignment.start,
                                                                         children: [
-                                                                          Text(
-                                                                            event["distance"]!,
-                                                                            style:
-                                                                                TextStyle(
-                                                                              color: isDark ? AppColor.secondryColor(context) : AppColor.primaryColor(context),
-                                                                              fontSize: 10,
+                                                                          Container(
+                                                                            height: size.height *
+                                                                                12 /
+                                                                                100,
+                                                                            width: size.width *
+                                                                                42 /
+                                                                                100,
+                                                                            decoration:
+                                                                                BoxDecoration(
+                                                                              borderRadius: BorderRadius.circular(12),
+                                                                            ),
+                                                                            child:
+                                                                                _buildCachedSearchImage(
+                                                                              imageName: eventList[index]['image'] ?? "",
+                                                                              fit: BoxFit.cover,
+                                                                              borderRadius: BorderRadius.circular(12),
                                                                             ),
                                                                           ),
-                                                                          const SizedBox(
-                                                                              width: 4),
-                                                                          Icon(
-                                                                            Icons.circle,
-                                                                            size:
-                                                                                4,
-                                                                            color: isDark
-                                                                                ? Colors.white54
-                                                                                : AppColor.primaryColor(context),
-                                                                          ),
-                                                                          const SizedBox(
-                                                                              width: 4),
-                                                                          Expanded(
+                                                                          SizedBox(
+                                                                              height: size.height * 1 / 100),
+                                                                          SizedBox(
+                                                                            width: size.width *
+                                                                                42 /
+                                                                                100,
                                                                             child:
                                                                                 Text(
-                                                                              event["location"]!,
+                                                                              eventList[index]['title'] ?? "",
                                                                               maxLines: 1,
                                                                               overflow: TextOverflow.ellipsis,
                                                                               style: TextStyle(
-                                                                                color: isDark ? AppColor.secondryColor(context) : AppColor.primaryColor(context),
-                                                                                fontSize: 10,
+                                                                                fontFamily: AppFont.fontFamily,
+                                                                                fontSize: 13.5,
+                                                                                fontWeight: FontWeight.w600,
+                                                                                color: AppColor.secondryColor(context),
+                                                                              ),
+                                                                            ),
+                                                                          ),
+                                                                          SizedBox(
+                                                                              height: size.height * 0.5 / 100),
+                                                                          SizedBox(
+                                                                            width: size.width *
+                                                                                42 /
+                                                                                100,
+                                                                            child:
+                                                                                Text(
+                                                                              _locationLabel(
+                                                                                eventList[index]['distance'] ?? "",
+                                                                                eventList[index]['location'] ?? "",
+                                                                              ),
+                                                                              maxLines: 1,
+                                                                              overflow: TextOverflow.ellipsis,
+                                                                              style: TextStyle(
+                                                                                fontFamily: AppFont.fontFamily,
+                                                                                fontSize: 12,
+                                                                                fontWeight: FontWeight.w400,
+                                                                                color: AppColor.listTextColor(context),
                                                                               ),
                                                                             ),
                                                                           ),
                                                                         ],
                                                                       ),
-                                                                    ],
-                                                                  ),
-                                                                ),
-                                                              );
-                                                            },
+                                                                    ),
+                                                                  );
+                                                                },
+                                                              ),
+                                                            ),
                                                           ),
                                                         ),
                                               Container(
@@ -2084,152 +2067,42 @@ class _SearchScreenState extends State<SearchScreen> {
                                                   : items.isEmpty
                                                       ? _buildEmptySectionText(
                                                           "No recommended events found")
-                                                      : ListView.builder(
-                                                          itemCount:
-                                                              (items.length / 2)
-                                                                  .ceil(),
-                                                          shrinkWrap: true,
-                                                          physics:
-                                                              NeverScrollableScrollPhysics(),
-                                                          itemBuilder:
-                                                              (context, index) {
-                                                            final i1 =
-                                                                index * 2;
-                                                            final i2 = i1 + 1;
-                                                            final size =
-                                                                MediaQuery.of(
-                                                                        context)
-                                                                    .size;
+                                                      : Container(
+                                                          width: size.width *
+                                                              90 /
+                                                              100,
+                                                          child:
+                                                              ListView.builder(
+                                                            itemCount:
+                                                                (items.length /
+                                                                        2)
+                                                                    .ceil(),
+                                                            shrinkWrap: true,
+                                                            physics:
+                                                                NeverScrollableScrollPhysics(),
+                                                            itemBuilder:
+                                                                (context,
+                                                                    index) {
+                                                              final i1 =
+                                                                  index * 2;
+                                                              final i2 = i1 + 1;
+                                                              final size =
+                                                                  MediaQuery.of(
+                                                                          context)
+                                                                      .size;
 
-                                                            return Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .only(
-                                                                      bottom:
-                                                                          14),
-                                                              child: Row(
-                                                                // cros
-                                                                mainAxisAlignment:
-                                                                    MainAxisAlignment
-                                                                        .center,
-                                                                children: [
-                                                                  // ---------- FIRST CARD ----------
-                                                                  GestureDetector(
-                                                                    onTap: () {
-                                                                      Navigator
-                                                                          .push(
-                                                                        context,
-                                                                        PageTransition(
-                                                                          type:
-                                                                              PageTransitionType.bottomToTop,
-                                                                          child:
-                                                                              LikedEventDetail(
-                                                                            eventId:
-                                                                                eventRecommendedList[i1]['id'].toString(),
-                                                                          ),
-                                                                          duration:
-                                                                              const Duration(milliseconds: 500),
-                                                                        ),
-                                                                      );
-                                                                    },
-                                                                    child:
-                                                                        Container(
-                                                                      width: size
-                                                                              .width *
-                                                                          0.42,
-                                                                      decoration:
-                                                                          BoxDecoration(
-                                                                        color: Colors
-                                                                            .black,
-                                                                        borderRadius:
-                                                                            BorderRadius.circular(14),
-                                                                      ),
-                                                                      child:
-                                                                          Column(
-                                                                        children: [
-                                                                          ClipRRect(
-                                                                            borderRadius:
-                                                                                BorderRadius.circular(10),
-                                                                            child:
-                                                                                _buildCachedSearchImage(
-                                                                              imageName: items[i1]["image"] ?? "",
-                                                                              height: 100,
-                                                                              width: size.width * 0.42,
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              height: 8),
-                                                                          Align(
-                                                                            alignment:
-                                                                                Alignment.centerLeft,
-                                                                            child:
-                                                                                Text(
-                                                                              items[i1]["title"] ?? "",
-                                                                              style: TextStyle(
-                                                                                color: Colors.white,
-                                                                                fontSize: 14,
-                                                                                fontWeight: FontWeight.w600,
-                                                                              ),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              height: 2),
-                                                                          Align(
-                                                                            alignment:
-                                                                                Alignment.centerLeft,
-                                                                            child:
-                                                                                Text(
-                                                                              items[i1]["location"] ?? "",
-                                                                              style: const TextStyle(
-                                                                                fontSize: 12,
-                                                                                color: Colors.white60,
-                                                                              ),
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              height: 8),
-                                                                          Container(
-                                                                            width:
-                                                                                size.width * 0.41,
-                                                                            height:
-                                                                                32,
-                                                                            decoration:
-                                                                                BoxDecoration(
-                                                                              color: Colors.white,
-                                                                              borderRadius: BorderRadius.circular(8),
-                                                                            ),
-                                                                            child:
-                                                                                const Center(
-                                                                              child: Text(
-                                                                                "Book Now",
-                                                                                style: TextStyle(
-                                                                                  fontSize: 14,
-                                                                                  color: Colors.black,
-                                                                                  fontWeight: FontWeight.w600,
-                                                                                ),
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                              height: 8),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                      width: size
-                                                                              .width *
-                                                                          0.04),
-
-                                                                  // ---------- SECOND CARD (IF EXISTS) ----------
-                                                                  if (i2 <
-                                                                      items
-                                                                          .length)
+                                                              return Padding(
+                                                                padding:
+                                                                    const EdgeInsets
+                                                                        .only(
+                                                                        bottom:
+                                                                            14),
+                                                                child: Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .start,
+                                                                  children: [
+                                                                    // ---------- FIRST CARD ----------
                                                                     GestureDetector(
                                                                       onTap:
                                                                           () {
@@ -2241,7 +2114,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 PageTransitionType.bottomToTop,
                                                                             child:
                                                                                 LikedEventDetail(
-                                                                              eventId: eventRecommendedList[i2]['id'].toString(),
+                                                                              eventId: eventRecommendedList[i1]['id'].toString(),
                                                                             ),
                                                                             duration:
                                                                                 const Duration(milliseconds: 500),
@@ -2254,8 +2127,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             0.42,
                                                                         decoration:
                                                                             BoxDecoration(
-                                                                          color:
-                                                                              Colors.black,
+                                                                          color: isDark
+                                                                              ? Colors.black
+                                                                              : Colors.white10,
                                                                           borderRadius:
                                                                               BorderRadius.circular(14),
                                                                         ),
@@ -2263,11 +2137,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             Column(
                                                                           children: [
                                                                             ClipRRect(
-                                                                              borderRadius: BorderRadius.circular(
-                                                                                10,
-                                                                              ),
+                                                                              borderRadius: BorderRadius.circular(10),
                                                                               child: _buildCachedSearchImage(
-                                                                                imageName: items[i2]["image"] ?? "",
+                                                                                imageName: items[i1]["image"] ?? "",
                                                                                 height: 100,
                                                                                 width: size.width * 0.42,
                                                                                 fit: BoxFit.cover,
@@ -2277,9 +2149,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             Align(
                                                                               alignment: Alignment.centerLeft,
                                                                               child: Text(
-                                                                                items[i2]["title"] ?? "",
+                                                                                items[i1]["title"] ?? "",
                                                                                 style: TextStyle(
-                                                                                  color: Colors.white,
+                                                                                  color: isDark ? Colors.white : Colors.black,
                                                                                   fontSize: 14,
                                                                                   fontWeight: FontWeight.w600,
                                                                                 ),
@@ -2291,10 +2163,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             Align(
                                                                               alignment: Alignment.centerLeft,
                                                                               child: Text(
-                                                                                items[i2]["location"] ?? "",
+                                                                                items[i1]["location"] ?? "",
                                                                                 style: TextStyle(
                                                                                   fontSize: 12,
-                                                                                  color: Colors.white60,
+                                                                                  color: isDark ? Colors.white60 : Colors.black54,
                                                                                 ),
                                                                                 maxLines: 1,
                                                                                 overflow: TextOverflow.ellipsis,
@@ -2324,19 +2196,118 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                         ),
                                                                       ),
                                                                     ),
-                                                                  if (i2 >=
-                                                                      items
-                                                                          .length)
                                                                     SizedBox(
-                                                                      width: size
-                                                                              .width *
-                                                                          0.42,
-                                                                    ),
-                                                                ],
-                                                              ),
-                                                            );
-                                                          },
-                                                        ),
+                                                                        width: size.width *
+                                                                            0.04),
+
+                                                                    // ---------- SECOND CARD (IF EXISTS) ----------
+                                                                    if (i2 <
+                                                                        items
+                                                                            .length)
+                                                                      GestureDetector(
+                                                                        onTap:
+                                                                            () {
+                                                                          Navigator
+                                                                              .push(
+                                                                            context,
+                                                                            PageTransition(
+                                                                              type: PageTransitionType.bottomToTop,
+                                                                              child: LikedEventDetail(
+                                                                                eventId: eventRecommendedList[i2]['id'].toString(),
+                                                                              ),
+                                                                              duration: const Duration(milliseconds: 500),
+                                                                            ),
+                                                                          );
+                                                                        },
+                                                                        child:
+                                                                            Container(
+                                                                          width:
+                                                                              size.width * 0.42,
+                                                                          decoration:
+                                                                              BoxDecoration(
+                                                                            color: isDark
+                                                                                ? Colors.black
+                                                                                : Colors.white10,
+                                                                            borderRadius:
+                                                                                BorderRadius.circular(14),
+                                                                          ),
+                                                                          child:
+                                                                              Column(
+                                                                            children: [
+                                                                              ClipRRect(
+                                                                                borderRadius: BorderRadius.circular(
+                                                                                  10,
+                                                                                ),
+                                                                                child: _buildCachedSearchImage(
+                                                                                  imageName: items[i2]["image"] ?? "",
+                                                                                  height: 100,
+                                                                                  width: size.width * 0.42,
+                                                                                  fit: BoxFit.cover,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(height: 8),
+                                                                              Align(
+                                                                                alignment: Alignment.centerLeft,
+                                                                                child: Text(
+                                                                                  items[i2]["title"] ?? "",
+                                                                                  style: TextStyle(
+                                                                                    color: isDark ? Colors.white : Colors.black,
+                                                                                    fontSize: 14,
+                                                                                    fontWeight: FontWeight.w600,
+                                                                                  ),
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(height: 2),
+                                                                              Align(
+                                                                                alignment: Alignment.centerLeft,
+                                                                                child: Text(
+                                                                                  items[i2]["location"] ?? "",
+                                                                                  style: TextStyle(
+                                                                                    fontSize: 12,
+                                                                                    color: isDark ? Colors.white60 : Colors.black54,
+                                                                                  ),
+                                                                                  maxLines: 1,
+                                                                                  overflow: TextOverflow.ellipsis,
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(height: 8),
+                                                                              Container(
+                                                                                width: size.width * 0.41,
+                                                                                height: 32,
+                                                                                decoration: BoxDecoration(
+                                                                                  color: Colors.white,
+                                                                                  borderRadius: BorderRadius.circular(8),
+                                                                                ),
+                                                                                child: const Center(
+                                                                                  child: Text(
+                                                                                    "Book Now",
+                                                                                    style: TextStyle(
+                                                                                      fontSize: 14,
+                                                                                      color: Colors.black,
+                                                                                      fontWeight: FontWeight.w600,
+                                                                                    ),
+                                                                                  ),
+                                                                                ),
+                                                                              ),
+                                                                              SizedBox(height: 8),
+                                                                            ],
+                                                                          ),
+                                                                        ),
+                                                                      ),
+                                                                    if (i2 >=
+                                                                        items
+                                                                            .length)
+                                                                      SizedBox(
+                                                                        width: size.width *
+                                                                            0.42,
+                                                                      ),
+                                                                  ],
+                                                                ),
+                                                              );
+                                                            },
+                                                          )),
                                             ],
                                           ),
 
@@ -2374,6 +2345,14 @@ class _SearchScreenState extends State<SearchScreen> {
     );
 
     if (result == null || !mounted) return;
+    final userController = context.read<UserController>();
+    await userController.saveSelectedSearchLocation(
+      cityName: result.cityName,
+      latitude: result.latitude,
+      longitude: result.longitude,
+      radius: result.radiusKm,
+    );
+
     setState(() {
       cityName = result.cityName;
       latitude = result.latitude;

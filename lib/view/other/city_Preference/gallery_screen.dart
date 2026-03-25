@@ -395,11 +395,10 @@ class _GalleryScreenState extends State<GalleryScreen> {
             width: 1,
           ),
         ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(21),
-          child: Image.asset(
-            AppImage.rectanglePlusicon,
-            fit: BoxFit.cover,
+        child: Center(
+          child: Icon(
+            Icons.add,
+            size: size.width * 7 / 100,
             color: AppColor.secondryColor(context),
           ),
         ),

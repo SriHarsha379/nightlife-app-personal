@@ -40,7 +40,7 @@ class NotificationSettingController with ChangeNotifier {
         _applySettingsFromResponseNode(data);
       }
     } else if (res != null && context.mounted) {
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
 
     _isLoading = false;
@@ -80,7 +80,7 @@ class NotificationSettingController with ChangeNotifier {
 
     _settings[type] = previousValue;
     if (res != null && context.mounted) {
-      CommonHelper.handleInactiveUserRedirect(context, res);
+      // CommonHelper.handleInactiveUserRedirect(context, res);
     }
 
     _updatingByType[type] = false;
