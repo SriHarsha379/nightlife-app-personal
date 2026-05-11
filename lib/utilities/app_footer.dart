@@ -107,9 +107,9 @@ class MyAppFooterState extends State<MyAppFooter> {
           if (!isVisible) return const SizedBox.shrink();
           return SafeArea(
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 14.0),
+              padding: const EdgeInsets.symmetric(horizontal: 30.0),
               child: Container(
-                width: MediaQuery.of(context).size.width * 85 / 100,
+                width: MediaQuery.of(context).size.width * 78 / 100,
                 height: MediaQuery.of(context).size.height * 8 / 100,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(

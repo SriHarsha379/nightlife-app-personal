@@ -30,7 +30,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
     final size = MediaQuery.of(context).size;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value:  SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: AppColor.primaryColor(context),
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark, // required for iOS
@@ -97,7 +97,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 24,
-                                          color: AppColor.secondryColor(context),
+                                          color:
+                                              AppColor.secondryColor(context),
                                         ),
                                       ),
                                     ),
@@ -233,7 +234,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w600,
                                             fontSize: 14,
-                                            color: AppColor.pasttimecolor(context),
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                         SizedBox(
@@ -244,7 +246,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                             fontFamily: AppFont.fontFamily1,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 12,
-                                            color: AppColor.pasttimecolor(context),
+                                            color:
+                                                AppColor.pasttimecolor(context),
                                           ),
                                         ),
                                       ],
@@ -507,8 +510,8 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                                     fontFamily:
                                                         AppFont.fontFamily,
                                                     fontWeight: FontWeight.w600,
-                                                    color: AppColor
-                                                        .secondryColor(
+                                                    color:
+                                                        AppColor.secondryColor(
                                                             context))),
                                           ],
                                         ),

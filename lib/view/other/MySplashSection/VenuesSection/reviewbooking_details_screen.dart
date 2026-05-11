@@ -28,29 +28,6 @@ class ReviewBookingDetails extends StatefulWidget {
 }
 
 class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
-  List<Map<String, String>> termsList = [
-    {
-      'id': '1',
-      'text': 'Arrive 15 minutes early.',
-    },
-    {
-      'id': '2',
-      'text': 'Valid for the selected number of guests.',
-    },
-    {
-      'id': '3',
-      'text': 'Cover charges apply as per restaurant discretion.',
-    },
-    {
-      'id': '4',
-      'text': 'Offers valid only via app payment.',
-    },
-    {
-      'id': '5',
-      'text': 'Cover charges non-refundable if cancelled late.',
-    },
-  ];
-
   int select = 0;
   bool isOpen = false;
   String cityName = "";
@@ -178,6 +155,13 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              AppButton(
+                text: AppLanguage.continueText[language],
+                onPress: () {
+                  validation();
+                },
+              ),
+              SizedBox(height: size.height * 1.5 / 100),
               GestureDetector(
                 onTap: () {
                   setState(() {
@@ -226,12 +210,6 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                 ),
               ),
               SizedBox(height: size.height * 1 / 100),
-              AppButton(
-                text: AppLanguage.continueText[language],
-                onPress: () {
-                  validation();
-                },
-              ),
             ],
           ),
         ),
@@ -301,6 +279,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                   AppImage.infoIcon,
                                   height: size.width * 6 / 100,
                                   width: size.width * 6 / 100,
+                                  color: AppColor.secondryColor(context),
                                 ),
                                 SizedBox(width: size.width * 5 / 100),
                                 Expanded(
@@ -399,10 +378,11 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                                       eventData),
                                                 ),
                                         child: SizedBox(
-                                          width:
-                                              MediaQuery.of(context).size.width *
-                                                  50 /
-                                                  100,
+                                          width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                              50 /
+                                              100,
                                           child: Text(
                                             address,
                                             maxLines: 2,
@@ -674,60 +654,87 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                           ),
 
                           // Terms and Conditions
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                isOpen = !isOpen;
-                              });
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  AppLanguage.termAndconditionsText[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w700,
-                                    fontSize: 18,
-                                    color: AppColor.secondryColor(context),
-                                  ),
-                                ),
-                                Transform.rotate(
-                                  angle: !isOpen ? 0 : 3.14,
-                                  child: Image.asset(
-                                    AppImage.downArrow,
-                                    height: size.height * 2 / 100,
-                                    width: size.width * 4 / 100,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 2 / 100,
-                          ),
-                          if (isOpen)
-                            ListView.builder(
-                              shrinkWrap: true,
-                              physics: const NeverScrollableScrollPhysics(),
-                              itemCount: termsList.length,
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 15),
-                                  child: Text(
-                                    termsList[index]['text']!,
-                                    style: TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontWeight: FontWeight.w400,
-                                      fontSize: 16,
-                                      color: AppColor.secondryColor(context),
+                          Consumer<EventDetailsController>(
+                            builder: (context, eventController, _) {
+                              final List<dynamic> termsList = (() {
+                                final data = eventController.getEventDetails;
+                                if (data is Map &&
+                                    data['terms_and_conditions'] is List) {
+                                  return data['terms_and_conditions']
+                                      as List<dynamic>;
+                                }
+                                return <dynamic>[];
+                              })();
+                              return Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        isOpen = !isOpen;
+                                      });
+                                    },
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Text(
+                                          AppLanguage
+                                              .termAndconditionsText[language],
+                                          style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w700,
+                                            fontSize: 18,
+                                            color:
+                                                AppColor.secondryColor(context),
+                                          ),
+                                        ),
+                                        Transform.rotate(
+                                          angle: !isOpen ? 0 : 3.14,
+                                          child: Image.asset(
+                                            AppImage.downArrow,
+                                            height: size.height * 2 / 100,
+                                            width: size.width * 4 / 100,
+                                            fit: BoxFit.cover,
+                                            color:
+                                                AppColor.secondryColor(context),
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                );
-                              },
-                            ),
+                                  SizedBox(height: size.height * 2 / 100),
+                                  if (isOpen && termsList.isNotEmpty)
+                                    ListView.builder(
+                                      shrinkWrap: true,
+                                      physics:
+                                          const NeverScrollableScrollPhysics(),
+                                      itemCount: termsList.length,
+                                      itemBuilder: (context, index) {
+                                        final item = termsList[index];
+                                        final String text = (item is Map)
+                                            ? (item['item'] ?? '').toString()
+                                            : item.toString();
+                                        return Padding(
+                                          padding: const EdgeInsets.symmetric(
+                                              vertical: 15),
+                                          child: Text(
+                                            text,
+                                            style: TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 16,
+                                              color: AppColor.secondryColor(
+                                                  context),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                ],
+                              );
+                            },
+                          ),
                           SizedBox(
                             height: size.height * 15 / 100,
                           ),

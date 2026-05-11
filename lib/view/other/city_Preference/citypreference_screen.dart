@@ -125,6 +125,7 @@ class _CityPreferenceState extends State<CityPreference> {
     final size = MediaQuery.of(context).size;
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
+    final cardColor = AppColor.pastbookeventcontainercolor(context);
     return Consumer<CityPreferenceController>(
       builder: (context, controller, child) {
         return PopScope(
@@ -395,7 +396,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                         minHeight: size.height * 0.28,
                                       ),
                                       decoration: BoxDecoration(
-                                        color: AppColor.themeColor,
+                                        color: cardColor,
                                         borderRadius: BorderRadius.circular(15),
                                         border: Border.all(
                                           width: 0.3,
@@ -417,7 +418,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       AppFont.fontFamily,
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w500,
-                                                  color: Colors.white),
+                                                  color: AppColor.secondryColor(
+                                                      context)),
                                             ),
                                             SizedBox(
                                                 height:
@@ -451,12 +453,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                 ? "No cities found"
                                                                 : "No cities available",
                                                             style: TextStyle(
-                                                              fontFamily: AppFont
-                                                                  .fontFamily,
-                                                              fontSize: 14,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
+                                                                fontFamily: AppFont
+                                                                    .fontFamily,
+                                                                fontSize: 14,
+                                                                color: AppColor
+                                                                    .secondryColor(
+                                                                        context)),
                                                           ),
                                                         ),
                                                       )
@@ -613,19 +615,18 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                         100),
                                                                 Text(
                                                                   cityName,
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontFamily:
-                                                                        AppFont
-                                                                            .fontFamily,
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    color: Colors
-                                                                        .white,
-                                                                  ),
+                                                                  style: TextStyle(
+                                                                      fontFamily:
+                                                                          AppFont
+                                                                              .fontFamily,
+                                                                      fontSize:
+                                                                          12,
+                                                                      fontWeight:
+                                                                          FontWeight
+                                                                              .w400,
+                                                                      color: AppColor
+                                                                          .secondryColor(
+                                                                              context)),
                                                                 ),
                                                               ],
                                                             ),
@@ -907,14 +908,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                                           );
                                                         }
                                                       },
-                                                      activeColor:
+                                                      activeColor: Colors.white,
+                                                      activeTrackColor:
                                                           AppColor.pinkColor,
-                                                      inactiveTrackColor:
-                                                          AppColor
-                                                              .secondryColor(
-                                                                  context),
                                                       inactiveThumbColor:
-                                                          AppColor.pinkColor,
+                                                          Colors.white,
+                                                      inactiveTrackColor: isDark
+                                                          ? const Color(
+                                                              0xFF6E6E6E)
+                                                          : const Color(
+                                                              0xFFBDBDBD),
                                                     ),
                                                   ),
                                                 )

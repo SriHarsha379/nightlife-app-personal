@@ -859,9 +859,6 @@ class HomeWidget {
                         ),
                       ),
 
-                    
-                    
-                    
                       //! Info Section
                       Expanded(
                         flex: 3,
@@ -982,7 +979,7 @@ class HomeWidget {
                             width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                           ...categories.take(2).map((category) => Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
+                                padding: const EdgeInsets.only(right: 2.0),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
@@ -1415,7 +1412,7 @@ class HomeWidget {
                             width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                           ...categories.take(2).map((category) => Padding(
-                                padding: const EdgeInsets.only(right: 5.0),
+                                padding: const EdgeInsets.only(right: 2.0),
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),

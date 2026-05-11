@@ -10,6 +10,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
 import '../../../utilities/app_validation.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 
 class OtpVerify extends StatefulWidget {
@@ -102,255 +103,266 @@ class _OtpVerifyState extends State<OtpVerify> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-        systemNavigationBarColor: AppColor.transparentColor,
-        systemNavigationBarIconBrightness: Brightness.light,
-        statusBarColor: AppColor.transparentColor,
-        statusBarIconBrightness: Brightness.light));
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
 
-    return GestureDetector(
-      onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
-      child: Scaffold(
-        backgroundColor: AppColor.secondryColor(context),
-        body: Container(
-          width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height * 100 / 100,
-          decoration: BoxDecoration(
-              gradient: AppColor.backgroundGradientcolor(context)),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Form(
-                key: _forgotOtpFormKey,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 90 / 100,
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 2 / 100,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 70 / 100,
-                      child: Text(
-                        AppLanguage.otpVerificationText[language],
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          color: AppColor.secondryColor(context),
-                          fontSize: 24,
-                          fontWeight: FontWeight.w600,
-                          fontFamily: AppFont.fontFamily,
-                        ),
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
+      ),
+      child: GestureDetector(
+        onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
+        child: Scaffold(
+          backgroundColor: AppColor.secondryColor(context),
+          body: Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height * 100 / 100,
+            decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor(context)),
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: Form(
+                  key: _forgotOtpFormKey,
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 6 / 100,
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 1 / 100,
-                    ),
-                    Container(
-                      alignment: Alignment.center,
-                      width: MediaQuery.of(context).size.width * 80 / 100,
-                      child: Text(
-                        AppLanguage.enter4digitText[language],
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                          color: Colors.grey,
-                          fontSize: 17,
-                          fontWeight: FontWeight.normal,
-                          fontFamily: AppFont.fontFamily,
-                        ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 90 / 100,
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 1 / 100,
-                    ),
-                    SizedBox(
-                      // width: MediaQuery.of(context).size.width * 48.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            "+91 ${widget.mobile}",
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: AppColor.secondryColor(context),
-                              fontSize: 17,
-                              fontWeight: FontWeight.normal,
-                              fontFamily: AppFont.fontFamily,
-                            ),
-                          ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 1 / 100,
-                          ),
-                        ],
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 2 / 100,
                       ),
-                    ),
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 7 / 100,
-                    ),
-
-                    // OTP Input Pinput
-                    Pinput(
-                      length: 4,
-                      controller: pinputInputController,
-                      defaultPinTheme: PinTheme(
-                        width: MediaQuery.of(context).size.width * 15.8 / 100,
-                        height: MediaQuery.of(context).size.width * 14 / 100,
-                        textStyle: TextStyle(
-                          fontFamily: AppFont.fontFamily,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w700,
-                          color: AppColor.primaryColor(context),
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColor.secondryColor(context),
-                          border: Border.all(
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * 70 / 100,
+                        child: Text(
+                          AppLanguage.otpVerificationText[language],
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
                             color: AppColor.secondryColor(context),
+                            fontSize: 24,
+                            fontWeight: FontWeight.w600,
+                            fontFamily: AppFont.fontFamily,
                           ),
-                          boxShadow: [
-                            BoxShadow(
-                                blurRadius: 0,
-                                color: AppColor.primaryColor(context)
-                                    .withOpacity(0.25))
-                          ],
-                          borderRadius: BorderRadius.circular(13),
                         ),
-                        margin: EdgeInsets.symmetric(
-                            horizontal:
-                                MediaQuery.of(context).size.width * 1 / 100),
                       ),
-                    ),
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 3 / 100,
-                    ),
-
-                    // Timer and Resend Logic
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 85 / 100,
-                      height: MediaQuery.of(context).size.height * 4.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text(
-                            AppLanguage.didntOtpText[language],
-                            style: const TextStyle(
-                                color: Colors.grey,
-                                fontWeight: FontWeight.w500,
-                                fontSize: 12),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100,
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        width: MediaQuery.of(context).size.width * 80 / 100,
+                        child: Text(
+                          AppLanguage.enter4digitText[language],
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.grey,
+                            fontSize: 17,
+                            fontWeight: FontWeight.normal,
+                            fontFamily: AppFont.fontFamily,
                           ),
-                          SizedBox(
-                            width: MediaQuery.of(context).size.width * 1 / 100,
-                          ),
-
-                          // Show Timer or Resend based on _canResend
-                          if (!_canResend) ...[
-                            // Show Timer
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 1 / 100,
+                      ),
+                      SizedBox(
+                        // width: MediaQuery.of(context).size.width * 48.5 / 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
                             Text(
-                              _formatTime(_remainingSeconds),
-                              style: const TextStyle(
-                                  color: AppColor.buttonColor,
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 14),
+                              "+91 ${widget.mobile}",
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: AppColor.secondryColor(context),
+                                fontSize: 17,
+                                fontWeight: FontWeight.normal,
+                                fontFamily: AppFont.fontFamily,
+                              ),
                             ),
-                          ] else ...[
-                            // Show Resend Button
-                            GestureDetector(
-                              onTap: _resendOTP,
-                              child: Text(
-                                AppLanguage.resend[language],
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 1 / 100,
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 7 / 100,
+                      ),
+
+                      // OTP Input Pinput
+                      Pinput(
+                        length: 4,
+                        controller: pinputInputController,
+                        defaultPinTheme: PinTheme(
+                          width: MediaQuery.of(context).size.width * 15.8 / 100,
+                          height: MediaQuery.of(context).size.width * 14 / 100,
+                          textStyle: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 26,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? Colors.white
+                                : Color.fromARGB(255, 233, 231, 231),
+                            border: Border.all(
+                              color: Colors.black,
+                            ),
+                            boxShadow: [
+                              BoxShadow(
+                                  blurRadius: 0,
+                                  color: AppColor.primaryColor(context)
+                                      .withOpacity(0.25))
+                            ],
+                            borderRadius: BorderRadius.circular(13),
+                          ),
+                          margin: EdgeInsets.symmetric(
+                              horizontal:
+                                  MediaQuery.of(context).size.width * 1 / 100),
+                        ),
+                      ),
+
+
+
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 3 / 100,
+                      ),
+
+                      // Timer and Resend Logic
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 85 / 100,
+                        height: MediaQuery.of(context).size.height * 4.5 / 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              AppLanguage.didntOtpText[language],
+                              style: const TextStyle(
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w500,
+                                  fontSize: 12),
+                            ),
+                            SizedBox(
+                              width:
+                                  MediaQuery.of(context).size.width * 1 / 100,
+                            ),
+
+                            // Show Timer or Resend based on _canResend
+                            if (!_canResend) ...[
+                              // Show Timer
+                              Text(
+                                _formatTime(_remainingSeconds),
                                 style: const TextStyle(
                                     color: AppColor.buttonColor,
                                     fontWeight: FontWeight.w600,
-                                    fontSize: 14,
-                                    decoration: TextDecoration.underline,
-                                    decorationColor: AppColor.buttonColor),
+                                    fontSize: 14),
+                              ),
+                            ] else ...[
+                              // Show Resend Button
+                              GestureDetector(
+                                onTap: _resendOTP,
+                                child: Text(
+                                  AppLanguage.resend[language],
+                                  style: const TextStyle(
+                                      color: AppColor.buttonColor,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: AppColor.buttonColor),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 36 / 100,
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 80 / 100,
+                        height: MediaQuery.of(context).size.height * 4.5 / 100,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [],
+                        ),
+                      ),
+
+                      // Login with Password Text
+                      Text.rich(
+                        TextSpan(
+                          children: [
+                            TextSpan(
+                              text: "${AppLanguage.cantacessthis[language]} ",
+                              style: TextStyle(
+                                color: AppColor.secondryColor(context),
+                                fontSize: 12,
+                                fontWeight: FontWeight.w400,
+                                fontFamily: AppFont.fontFamily,
                               ),
                             ),
-                          ],
-                        ],
-                      ),
-                    ),
-
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 36 / 100,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 80 / 100,
-                      height: MediaQuery.of(context).size.height * 4.5 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [],
-                      ),
-                    ),
-
-                    // Login with Password Text
-                    Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "${AppLanguage.cantacessthis[language]} ",
-                            style: TextStyle(
-                              color: AppColor.secondryColor(context),
-                              fontSize: 12,
-                              fontWeight: FontWeight.w400,
-                              fontFamily: AppFont.fontFamily,
-                            ),
-                          ),
-                          WidgetSpan(
-                            alignment: PlaceholderAlignment.middle,
-                            child: GestureDetector(
-                              onTap: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => LoginScreen(),
+                            WidgetSpan(
+                              alignment: PlaceholderAlignment.middle,
+                              child: GestureDetector(
+                                onTap: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => LoginScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  AppLanguage.loginwithPassword[language],
+                                  style: const TextStyle(
+                                    color: AppColor.appButtonColor,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    fontFamily: AppFont.fontFamily,
+                                    // decoration: TextDecoration.underline,
                                   ),
-                                );
-                              },
-                              child: Text(
-                                AppLanguage.loginwithPassword[language],
-                                style: const TextStyle(
-                                  color: AppColor.appButtonColor,
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w600,
-                                  fontFamily: AppFont.fontFamily,
-                                  // decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
+                        textWidthBasis: TextWidthBasis.parent,
                       ),
-                      textAlign: TextAlign.center,
-                      textWidthBasis: TextWidthBasis.parent,
-                    ),
 
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 2 / 100,
-                    ),
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 2 / 100,
+                      ),
 
-                    // Verify Button
+                      // Verify Button
 
-                    Consumer<PostApiProvider>(
-                      builder: (context, apiprovider, child) {
-                        return apiprovider.loading
-                            ? const CircularProgressIndicator(
-                                color: AppColor.pinkColor)
-                            : AppButton(
-                                text: AppLanguage.verifyButtonText[language],
-                                onPress: () {
-                                  FocusScope.of(context).unfocus();
-                                  _verifyOTP();
-                                },
-                              );
-                      },
-                    ),
-                  ],
+                      Consumer<PostApiProvider>(
+                        builder: (context, apiprovider, child) {
+                          return apiprovider.loading
+                              ? const CircularProgressIndicator(
+                                  color: AppColor.pinkColor)
+                              : AppButton(
+                                  text: AppLanguage.verifyButtonText[language],
+                                  onPress: () {
+                                    FocusScope.of(context).unfocus();
+                                    _verifyOTP();
+                                  },
+                                );
+                        },
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

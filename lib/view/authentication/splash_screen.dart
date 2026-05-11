@@ -36,7 +36,7 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 2));
+    await Future.delayed(const Duration(seconds: 3));
 
     if (!mounted) return;
     final userController = Provider.of<UserController>(context, listen: false);

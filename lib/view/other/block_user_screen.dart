@@ -45,14 +45,14 @@ class _BlockUserScreenState extends State<BlockUserScreen> {
           title: Text(
             'Unblock User',
             style: TextStyle(
-              color: AppColor.secondryColor(dialogContext),
+              color: Colors.white,
               fontWeight: FontWeight.w600,
             ),
           ),
           content: Text(
             'Are you sure you want to unblock this user?',
             style: TextStyle(
-              color: AppColor.secondryColor(dialogContext),
+              color: Colors.white,
               fontWeight: FontWeight.w400,
             ),
           ),
@@ -211,22 +211,21 @@ class _BlockUserScreenState extends State<BlockUserScreen> {
                                             overflow: TextOverflow.ellipsis,
                                           ),
                                           trailing: GestureDetector(
-                                            onTap:
-                                                isUnblocking || userId.isEmpty
-                                                    ? null
-                                                    : () async {
-                                                        final shouldUnblock =
-                                                            await _showUnblockConfirmDialog();
-                                                        if (shouldUnblock !=
-                                                            true) {
-                                                          return;
-                                                        }
-                                                        await blockedController
-                                                            .unblockUser(
-                                                          context,
-                                                          targetUserId: userId,
-                                                        );
-                                                      },
+                                            onTap: isUnblocking ||
+                                                    userId.isEmpty
+                                                ? null
+                                                : () async {
+                                                    final shouldUnblock =
+                                                        await _showUnblockConfirmDialog();
+                                                    if (shouldUnblock != true) {
+                                                      return;
+                                                    }
+                                                    await blockedController
+                                                        .unblockUser(
+                                                      context,
+                                                      targetUserId: userId,
+                                                    );
+                                                  },
                                             child: Text(
                                               isUnblocking
                                                   ? 'Unblocking...'

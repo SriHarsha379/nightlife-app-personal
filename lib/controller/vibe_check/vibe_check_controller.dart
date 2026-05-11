@@ -11,7 +11,6 @@ class VibeCheckController with ChangeNotifier {
   bool _isLoading = false;
   bool get getIsLoading => _isLoading;
 
-  // Store answers as map: question_id -> answer
   Map<String, String> _answers = {};
   Map<String, String> get getAnswers => _answers;
 

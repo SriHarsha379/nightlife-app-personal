@@ -145,6 +145,12 @@ class AppColor {
         : const Color(0xFFF0F0F0);
   }
 
+  static Color pastbookeventcontainercolor(BuildContext context) {
+    return Theme.of(context).brightness == Brightness.dark
+        ? const Color.fromARGB(255, 42, 26, 56)
+        : Color.fromARGB(255, 240, 234, 245);
+  }
+
   /// Get text field container color based on theme
   static Color textfieldcontainercolor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
@@ -212,7 +218,7 @@ class AppColor {
   static Color pasttimecolor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
         ? const Color(0xffb8b8b8)
-        : const Color(0xff999999);
+        : Color.fromARGB(255, 88, 88, 88);
   }
 
   /// Get light grey color based on theme
@@ -265,7 +271,7 @@ class AppColor {
 
   static Color greyLightColor(BuildContext context) {
     return Theme.of(context).brightness == Brightness.dark
-        ? const  Color(0xffa7a7a7)
+        ? const Color(0xffa7a7a7)
         : Color.fromARGB(255, 87, 86, 86);
   }
 

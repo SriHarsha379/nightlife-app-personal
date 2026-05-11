@@ -201,7 +201,7 @@ class AppImage {
   static const frequencyincrementIcon =
       "./assets/icons/frequencyincrementIcon.png";
   // static const splashGif= "./assets/icons/splashGif.gif";
-  static const splashGif = "./assets/icons/gif.gif";
+  // static const splashGif = "./assets/icons/gif.gif";
   // static const uploadDoc = "./assets/icons/uploadDoc.png";
   static const pencilIcon = "./assets/icons/pencilIcon.png";
 
@@ -247,7 +247,7 @@ class AppImage {
   static const upgradeIcon = "./assets/icons/upgrade_ic.png";
 
   // 01-11
-  static const splashScreengif = "./assets/icons/splashScreen.gif";
+  // static const splashScreengif = "./assets/icons/splashScreen.gif";
   static const mapImageIcon = "./assets/icons/mapImage.png";
   // static const pinLocationIcon = "./assets/icons/pinlocation.png";
   static const eventImage1 = "./assets/icons/eventImage1.jpg";
@@ -322,7 +322,10 @@ class AppImage {
   static const vibesIcon = "./assets/icons/vibesIcon.png";
   static const member3 = "./assets/icons/Member3.png";
 
-  static const newGif = "./assets/icons/newgif.gif";
+  // static const newGif = "./assets/icons/newgif.gif";
+  // static const newGif = "./assets/icons/newSplash.gif";
+  static const newGif = "./assets/icons/newsplashgif.gif";
+
   static const locationwelcomeScreenIcon =
       "./assets/icons/locationwelcomeScreenIcon.png";
   static const chatWelcomescreenIcon =

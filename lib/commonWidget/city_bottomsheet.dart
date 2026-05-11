@@ -99,34 +99,38 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
               decoration: InputDecoration(
                 hintText: 'Search cities...',
                 hintStyle: TextStyle(
-                  color: AppColor.greyLightColor(context).withOpacity(0.7),
+                  color: AppColor.hinttextcolor(context),
                   fontFamily: AppFont.fontFamily,
                 ),
                 prefixIcon: Icon(
                   Icons.search,
-                  color: AppColor.greyLightColor(context),
+                  color: AppColor.hinttextcolor(context),
                 ),
                 filled: true,
-                fillColor: AppColor.themeColor,
+                fillColor: AppColor.textFieldColor(context),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: AppColor.borderColor,
-                    width: 0.5,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColor.buttonColor
+                        : AppColor.greyLightColor(context),
+                    width: 1,
                   ),
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
-                    color: AppColor.borderColor,
-                    width: 0.5,
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColor.buttonColor
+                        : AppColor.greyLightColor(context),
+                    width: 1,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12),
                   borderSide: BorderSide(
                     color: AppColor.buttonColor,
-                    width: 1,
+                    width: 1.5,
                   ),
                 ),
                 contentPadding: const EdgeInsets.symmetric(

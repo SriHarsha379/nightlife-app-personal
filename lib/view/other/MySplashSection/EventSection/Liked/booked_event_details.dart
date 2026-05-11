@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../controller/eventBookingDetails/event_booking_details_controller.dart';
+import '../../../../../provider/darkmode_provider.dart';
 import '../../../../../utilities/app_button.dart';
 import '../../../../../utilities/app_color.dart';
 import '../../../../../utilities/app_config_provider.dart';
@@ -77,7 +78,6 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
     });
   }
 
-  /// Splits "Saturday 28 Feb" → ['Saturday', '28 Feb']
   List<String> _splitDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return ['', ''];
     final parts = dateStr.trim().split(' ');
@@ -97,22 +97,28 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
         multiDayTickets.add(ticket);
       }
     }
-
-    print('One Day Tickets: $oneDayTickets');
-    print('Multi Day Tickets: $multiDayTickets');
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
+    // ── Adaptive colors ───────────────────────────────────────────────────
+    final cardColor = AppColor.pastbookeventcontainercolor(context);
+    final primaryText = AppColor.secondryColor(context);
+    final subText = isDark ? Colors.white70 : const Color(0xff555555);
+    final dividerColor = isDark ? Colors.white24 : const Color(0xffDDDDDD);
+    final guestPillBg = isDark ? Colors.black : const Color(0xff1A0F29);
+    final guestPillBorder =
+        isDark ? Colors.white.withOpacity(0.4) : Colors.white.withOpacity(0.3);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -122,30 +128,17 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
             builder: (context, controller, _) {
               final d = controller.getEventsDetail;
 
-              // ── Parse date parts ─────────────────────────────────────────
               final dateParts = _splitDate(d?['date']?.toString());
-              final dayName = dateParts[0]; // e.g. "Saturday"
-              final dateNum = dateParts[1]; // e.g. "28 Feb"
+              final dayName = dateParts[0];
+              final dateNum = dateParts[1];
               final timeStr = d?['time']?.toString() ?? '';
-
-              // ── Split time into value + AM/PM ────────────────────────────
               final timeParts = timeStr.split(' ');
               final timeVal = timeParts.isNotEmpty ? timeParts[0] : timeStr;
               final timeAmPm = timeParts.length > 1 ? timeParts[1] : '';
 
-              // ── Pill data: [Date, Time, Discount] ────────────────────────
-              // We build 3 pills: Date | Time | Discount
               final pills = [
-                {
-                  'top': dayName,
-                  'bottom': dateNum,
-                  'label': 'Date',
-                },
-                {
-                  'top': timeVal,
-                  'bottom': timeAmPm,
-                  'label': 'Time',
-                },
+                {'top': dayName, 'bottom': dateNum, 'label': 'Date'},
+                {'top': timeVal, 'bottom': timeAmPm, 'label': 'Time'},
               ];
 
               return SizedBox(
@@ -154,7 +147,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: size.height * 0.03),
+                      // SizedBox(height: size.height * 0.03),
 
                       // ── Hero Image + Back button ──────────────────────────
                       Stack(
@@ -203,7 +196,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     AppImage.backarrow,
                                     width: size.width * 5 / 100,
                                     height: size.width * 5 / 100,
-                                    color: AppColor.secondryColor(context),
+                                    color: Colors.white, // image pe white OK
                                   ),
                                 ),
                               ),
@@ -232,7 +225,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 24,
-                                      color: AppColor.secondryColor(context),
+                                      color: primaryText,
                                     ),
                                   ),
                                 ),
@@ -257,15 +250,15 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                               ],
                             ),
 
-                            // Number of guests pill
+                            // ── Number of guests pill ─────────────────────
                             Container(
                               width: size.width * 15 / 100,
                               height: size.height * 8 / 100,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: guestPillBg,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.4),
+                                  color: guestPillBorder,
                                   width: 1.2,
                                 ),
                               ),
@@ -299,13 +292,12 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
 
                       SizedBox(height: size.height * 2 / 100),
 
-                      // ── Date / Time / Discount pills ─────────────────────
+                      // ── Date / Time pills ────────────────────────────────
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Heading row
                           SizedBox(
-                            width: MediaQuery.of(context).size.width * 60 / 100,
+                            width: size.width * 60 / 100,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
@@ -314,10 +306,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                               ],
                             ),
                           ),
-
                           SizedBox(height: size.height * 1 / 100),
-
-                          // Pills row
                           Wrap(
                             spacing: 80,
                             runSpacing: 10,
@@ -372,100 +361,97 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 18, vertical: 20),
                               decoration: BoxDecoration(
-                                color:
-                                    AppColor.bookeventcontainercolor(context),
+                                color: cardColor,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // ── Your Details title ──────────────────
-                                  const Text(
+                                  Text(
                                     "Your Details",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   SizedBox(height: size.height * 3 / 100),
 
-                                  // ── Info fields from API ────────────────
-                                  infoItem(
-                                    "Phone Number",
-                                    '${d?['country_code'] ?? ''} ${d?['phone_number'] ?? ''}',
-                                  ),
+                                  infoItem("Phone Number",
+                                      '${d?['country_code'] ?? ''} ${d?['phone_number'] ?? ''}',
+                                      subText: subText),
+                                  SizedBox(height: size.height * 3 / 100),
+                                  infoItem("Full Name",
+                                      d?['full_name']?.toString() ?? '',
+                                      subText: subText),
                                   SizedBox(height: size.height * 3 / 100),
                                   infoItem(
-                                    "Full Name",
-                                    d?['full_name']?.toString() ?? '',
-                                  ),
+                                      "Email Id", d?['email']?.toString() ?? '',
+                                      subText: subText),
                                   SizedBox(height: size.height * 3 / 100),
                                   infoItem(
-                                    "Email Id",
-                                    d?['email']?.toString() ?? '',
-                                  ),
-                                  SizedBox(height: size.height * 3 / 100),
-                                  infoItem(
-                                    "City",
-                                    d?['city_name']?.toString() ?? '',
-                                  ),
+                                      "City", d?['city_name']?.toString() ?? '',
+                                      subText: subText),
+
                                   const SizedBox(height: 16),
-                                  const Divider(
-                                      color: Colors.white24, thickness: 0.6),
+                                  Divider(color: dividerColor, thickness: 0.6),
                                   const SizedBox(height: 16),
 
                                   // ── Price breakdown title ───────────────
-                                  const Text(
+                                  Text(
                                     "Price breakdown",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 16),
 
-                                  // Ticket Charges = sub_total
-                                  const Text(
+                                  // One Day Pass heading
+                                  Text(
                                     "One Day Pass",
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Wrap(
                                     children: List.generate(
                                       oneDayTickets.length,
-                                      (index) {
-                                        return detailsRow(
-                                          '${oneDayTickets[index]['title'] ?? ""} x ${oneDayTickets[index]['quantity'] ?? ""}',
-                                          "₹${oneDayTickets[index]['total_price'] ?? ''}",
-                                        );
-                                      },
+                                      (index) => detailsRow(
+                                        '${oneDayTickets[index]['title'] ?? ""} x ${oneDayTickets[index]['quantity'] ?? ""}',
+                                        "₹${oneDayTickets[index]['total_price'] ?? ''}",
+                                        subText: subText,
+                                        valueColor: primaryText,
+                                      ),
                                     ),
                                   ),
+
                                   const SizedBox(height: 16),
-                                  const Text(
+
+                                  // Multi Day Pass heading
+                                  Text(
                                     "Multi-Day Pass",
                                     style: TextStyle(
                                       fontSize: 13,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 6),
                                   Wrap(
                                     children: List.generate(
                                       multiDayTickets.length,
-                                      (index) {
-                                        return detailsRow(
-                                          '${multiDayTickets[index]['title'] ?? ""} x ${multiDayTickets[index]['quantity'] ?? ""}',
-                                          "₹${multiDayTickets[index]['total_price'] ?? ''}",
-                                        );
-                                      },
+                                      (index) => detailsRow(
+                                        '${multiDayTickets[index]['title'] ?? ""} x ${multiDayTickets[index]['quantity'] ?? ""}',
+                                        "₹${multiDayTickets[index]['total_price'] ?? ''}",
+                                        subText: subText,
+                                        valueColor: primaryText,
+                                      ),
                                     ),
                                   ),
 
@@ -473,13 +459,13 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                   detailsRow(
                                     'Total Charges',
                                     "₹${d?['sub_total'] ?? ''}",
+                                    subText: subText,
+                                    valueColor: primaryText,
                                   ),
-                                  Divider(
-                                      thickness: 0.2,
-                                      color: AppColor.secondryColor(context)),
+                                  Divider(thickness: 0.2, color: dividerColor),
                                   SizedBox(height: size.height * 0.2 / 100),
 
-                                  // ── Expandable Booking Fee (GST) ────────
+                                  // ── Expandable Booking Fee ────────────
                                   GestureDetector(
                                     onTap: () => setState(
                                         () => showDetails = !showDetails),
@@ -489,11 +475,10 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       children: [
                                         Row(
                                           children: [
-                                            const Text(
+                                            Text(
                                               "Booking Fee",
                                               style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white70),
+                                                  fontSize: 14, color: subText),
                                             ),
                                             const SizedBox(width: 6),
                                             Icon(
@@ -508,9 +493,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                         Text(
                                           "₹${d?['total'] ?? ''}",
                                           style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.secondryColor(
-                                                  context)),
+                                              fontSize: 14, color: primaryText),
                                         ),
                                       ],
                                     ),
@@ -519,114 +502,37 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
 
                                   if (showDetails) ...[
                                     SizedBox(height: size.height * 0.2 / 100),
-                                    // Base Price
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            "Base Price",
-                                            style: TextStyle(
-                                              fontSize: 7.30,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                          Text(
-                                            "₹${d?['sub_total'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    _subRow(
+                                        "Base Price",
+                                        "₹${d?['sub_total'] ?? ''}",
+                                        size,
+                                        subText),
                                     SizedBox(height: size.height * 0.6 / 100),
-                                    // GST
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                          Text(
-                                            "₹${d?['gst_amount'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
+                                    _subRow(
+                                        "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
+                                        "₹${d?['gst_amount'] ?? ''}",
+                                        size,
+                                        subText),
                                     SizedBox(height: size.height * 0.6 / 100),
                                     if (d?['discount'] > 0) ...[
-                                      // Coupon Discount
                                       Padding(
-                                        padding: EdgeInsets.only(
-                                            left: size.width * 3 / 100,
-                                            right: size.width * 3 / 100),
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: size.width * 3 / 100),
                                         child: Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Row(
-                                              children: [
-                                                const Text(
-                                                  "Coupon Discount",
-                                                  style: TextStyle(
-                                                    fontSize: 7.30,
-                                                    color: Colors.white70,
-                                                  ),
-                                                ),
-                                                Padding(
-                                                  padding:
-                                                      const EdgeInsets.only(
-                                                          left: 6),
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                      horizontal: 8,
-                                                      vertical: 2,
-                                                    ),
-                                                    decoration: BoxDecoration(
-                                                      color: AppColor.themeColor
-                                                          .withOpacity(0.15),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              6),
-                                                      border: Border.all(
-                                                        color:
-                                                            AppColor.themeColor,
-                                                        width: 0.5,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                            Text(
+                                              "Coupon Discount",
+                                              style: TextStyle(
+                                                  fontSize: 7.30,
+                                                  color: subText),
                                             ),
                                             Text(
                                               "-₹${d?['discount'] ?? ''}",
-                                              style: const TextStyle(
-                                                fontSize: 7.30,
-                                                color: Colors.white70,
-                                              ),
+                                              style: TextStyle(
+                                                  fontSize: 7.30,
+                                                  color: subText),
                                             ),
                                           ],
                                         ),
@@ -634,19 +540,19 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       SizedBox(height: size.height * 0.01),
                                     ],
                                   ],
+
                                   SizedBox(height: size.height * 2 / 100),
 
-                                  // Discount
                                   detailsRow(
                                     "Discount",
                                     d?['discount_percent'] == 0
                                         ? "Not Applicable"
                                         : "${d?['discount_percent'] ?? ''}%",
+                                    subText: subText,
+                                    valueColor: primaryText,
                                   ),
                                   SizedBox(height: size.height * 0.3 / 100),
-                                  Divider(
-                                      thickness: 0.2,
-                                      color: AppColor.secondryColor(context)),
+                                  Divider(thickness: 0.2, color: dividerColor),
                                   SizedBox(height: size.height * 0.8 / 100),
 
                                   // Total
@@ -654,13 +560,13 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Total",
                                         style: TextStyle(
                                           fontSize: 17,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.white70,
+                                          color: subText,
                                         ),
                                       ),
                                       Text(
@@ -669,8 +575,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color:
-                                              AppColor.secondryColor(context),
+                                          color: primaryText,
                                         ),
                                       ),
                                     ],
@@ -683,13 +588,13 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Payment Mode",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.white70,
+                                          color: subText,
                                         ),
                                       ),
                                       Text(
@@ -698,8 +603,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                           fontSize: 14,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color:
-                                              AppColor.secondryColor(context),
+                                          color: primaryText,
                                         ),
                                       ),
                                     ],
@@ -711,38 +615,34 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
 
                           SizedBox(height: size.height * 4 / 100),
 
+                          // ── Rating section (isRating == true) ────────────
                           if (widget.isRating) ...[
-                            // ------------------- Emoji Rating -----------------------
+                            // Emoji Rating card
                             Container(
                               width: size.width * 90 / 100,
                               height: size.height * 27.6 / 100,
                               padding: const EdgeInsets.symmetric(
                                   vertical: 18, horizontal: 16),
                               decoration: BoxDecoration(
-                                color:
-                                    AppColor.bookeventcontainercolor(context),
+                                color: cardColor,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  // Heading
                                   Text(
-                                    "How’s your experience?",
+                                    "How's your experience?",
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
-                                      color: AppColor.secondryColor(context),
+                                      color: primaryText,
                                       fontFamily: AppFont.fontFamily,
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-
                                   SizedBox(height: size.height * 1 / 100),
-
-                                  // Subtitle
                                   Text(
-                                    "We’d love to know!",
+                                    "We'd love to know!",
                                     style: TextStyle(
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
@@ -752,16 +652,12 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     ),
                                     textAlign: TextAlign.center,
                                   ),
-
                                   SizedBox(height: size.height * 3 / 100),
-
-                                  // Divider Line
                                   Container(
                                     height: 1,
                                     width: size.width * 80 / 100,
-                                    color: Colors.white24,
+                                    color: dividerColor,
                                   ),
-
                                   SizedBox(height: size.height * 2.6 / 100),
 
                                   // Emoji Row
@@ -771,13 +667,9 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     children:
                                         List.generate(emojis.length, (index) {
                                       final isSelected = selectedEmoji == index;
-
                                       return GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            selectedEmoji = index;
-                                          });
-                                        },
+                                        onTap: () => setState(
+                                            () => selectedEmoji = index),
                                         child: AnimatedContainer(
                                           duration:
                                               const Duration(milliseconds: 250),
@@ -788,10 +680,10 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                             gradient: isSelected
                                                 ? const LinearGradient(
                                                     colors: [
-                                                      Color.fromARGB(255, 195,
-                                                          151, 236), // purple
-                                                      Color.fromARGB(255, 80,
-                                                          91, 216), // blue
+                                                      Color.fromARGB(
+                                                          255, 195, 151, 236),
+                                                      Color.fromARGB(
+                                                          255, 80, 91, 216),
                                                     ],
                                                     begin: Alignment.topCenter,
                                                     end: Alignment.bottomCenter,
@@ -813,17 +705,16 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                 ],
                               ),
                             ),
+
                             SizedBox(height: size.height * 2 / 100),
 
-                            // ----------------- Feedback Text Field -----------------------
-                            SizedBox(height: size.height * 2 / 100),
+                            // Feedback card
                             Container(
                               width: size.width * 90 / 100,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 16, vertical: 18),
                               decoration: BoxDecoration(
-                                color:
-                                    AppColor.bookeventcontainercolor(context),
+                                color: cardColor,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
@@ -836,14 +727,12 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       fontSize: 20,
                                       fontWeight: FontWeight.w700,
                                       fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor(context),
+                                      color: primaryText,
                                     ),
                                   ),
-
                                   SizedBox(height: size.height * 1 / 100),
-
                                   Text(
-                                    "Your opinion matters. Tell us what worked and what didn’t.",
+                                    "Your opinion matters. Tell us what worked and what didn't.",
                                     textAlign: TextAlign.center,
                                     style: TextStyle(
                                       fontSize: 15,
@@ -852,15 +741,12 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       color: AppColor.lightGreyColor(context),
                                     ),
                                   ),
-
                                   SizedBox(height: size.height * 1.2 / 100),
-
                                   Container(
                                     width: size.width,
                                     height: size.height * 0.0025,
-                                    color: Colors.white12,
+                                    color: dividerColor,
                                   ),
-
                                   SizedBox(height: size.height * 2.2 / 100),
 
                                   // Feedback Text Input
@@ -877,17 +763,24 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     child: TextField(
                                       controller: feedbackController,
                                       maxLines: 6,
-                                      style: const TextStyle(
-                                          color: Colors.white, fontSize: 14),
+                                      style: TextStyle(
+                                        color: isDark
+                                            ? Colors.white
+                                            : const Color(0xff1A0F29),
+                                        fontSize: 14,
+                                      ),
                                       decoration: InputDecoration(
                                         filled: true,
                                         fillColor:
                                             AppColor.myperfectcontainercolr(
                                                 context),
                                         hintText: "My perfect night...",
-                                        hintStyle: const TextStyle(
-                                            color: Colors.white60,
-                                            fontSize: 14),
+                                        hintStyle: TextStyle(
+                                          color: isDark
+                                              ? Colors.white60
+                                              : const Color(0xff8A82A0),
+                                          fontSize: 14,
+                                        ),
                                         enabledBorder: InputBorder.none,
                                         focusedBorder: InputBorder.none,
                                         border: InputBorder.none,
@@ -898,9 +791,8 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                               ),
                             ),
 
-                            SizedBox(
-                              height: size.height * 6 / 100,
-                            ),
+                            SizedBox(height: size.height * 6 / 100),
+
                             Consumer<EventsBookingDetailsController>(
                               builder: (context, providerRating, _) {
                                 return selectedEmoji != -1
@@ -924,9 +816,8 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     : const SizedBox();
                               },
                             ),
-                            SizedBox(
-                              height: size.height * 4 / 100,
-                            ),
+
+                            SizedBox(height: size.height * 4 / 100),
                           ],
                         ],
                       ),
@@ -937,6 +828,24 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
             },
           ),
         ),
+      ),
+    );
+  }
+
+  // ── Sub row helper ─────────────────────────────────────────────────────────
+  Widget _subRow(String title, String value, Size size, Color color) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: size.width * 3 / 100),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title,
+              style: TextStyle(
+                  fontSize: 7.30, fontWeight: FontWeight.w400, color: color)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 7.30, fontWeight: FontWeight.w400, color: color)),
+        ],
       ),
     );
   }
@@ -953,11 +862,17 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
     );
   }
 
-  Widget detailsRow(String title, String value,
-      {bool isBold = false,
-      bool highlight = false,
-      double? fontSize,
-      FontWeight? fontWeight}) {
+  // ✅ subText + valueColor parameters add kiye
+  Widget detailsRow(
+    String title,
+    String value, {
+    bool isBold = false,
+    bool highlight = false,
+    double? fontSize,
+    FontWeight? fontWeight,
+    required Color subText,
+    required Color valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -976,7 +891,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
             style: TextStyle(
               fontSize: fontSize ?? 13,
               fontWeight: FontWeight.w400,
-              color: Colors.white,
+              color: valueColor,
             ),
           ),
         ],
@@ -984,7 +899,8 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
     );
   }
 
-  Widget infoItem(String title, String value) {
+  // ✅ subText parameter add kiya
+  Widget infoItem(String title, String value, {required Color subText}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -999,9 +915,9 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: Colors.white70,
+            color: subText,
             fontWeight: FontWeight.w400,
           ),
         ),

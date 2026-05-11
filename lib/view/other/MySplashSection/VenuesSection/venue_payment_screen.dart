@@ -946,6 +946,10 @@ class _CompletePayment2State extends State<CompletePayment2>
                                         ),
                                       ],
                                     ),
+                                 
+                                 
+                                 
+                                 
                                     SizedBox(height: size.height * 0.015),
                                   ],
 

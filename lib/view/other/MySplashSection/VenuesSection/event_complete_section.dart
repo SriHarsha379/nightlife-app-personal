@@ -7,6 +7,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../commonWidget/booking_success_dialog.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_footer.dart';
 import '/controller/bookingEvent/booking_event_controller.dart';
 import '/provider/post_api_provider.dart';
@@ -194,6 +195,8 @@ class _CompletePaymentState extends State<CompletePayment>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
         systemNavigationBarColor: AppColor.primaryColor(context),
         systemNavigationBarIconBrightness: Brightness.light,
@@ -834,26 +837,34 @@ class _CompletePaymentState extends State<CompletePayment>
                                                       readOnly: controller
                                                           .isCouponApplied,
                                                       maxLength: 15,
-                                                      style: const TextStyle(
-                                                        color: Colors.white,
+                                                      style: TextStyle(
+                                                        color: isDark
+                                                            ? Colors.white
+                                                            : const Color(
+                                                                0xff1E1A24),
                                                         fontSize: 14,
                                                       ),
                                                       decoration:
                                                           InputDecoration(
                                                         hintText:
                                                             "Enter Coupon Code",
-                                                        hintStyle:
-                                                            const TextStyle(
-                                                          color:
-                                                              Color(0xffB7AFC9),
+                                                        hintStyle: TextStyle(
+                                                          color: isDark
+                                                              ? const Color(
+                                                                  0xffB7AFC9)
+                                                              : const Color(
+                                                                  0xff8A82A0),
                                                           fontSize: 14,
                                                           fontWeight:
                                                               FontWeight.w400,
                                                         ),
                                                         filled: true,
                                                         counterText: '',
-                                                        fillColor: const Color(
-                                                            0xff1E1A24),
+                                                        fillColor: isDark
+                                                            ? const Color(
+                                                                0xff1E1A24)
+                                                            : const Color(
+                                                                0xffF3F0F7),
                                                         contentPadding:
                                                             const EdgeInsets
                                                                 .symmetric(
@@ -872,16 +883,26 @@ class _CompletePaymentState extends State<CompletePayment>
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(15),
-                                                          borderSide:
-                                                              BorderSide.none,
+                                                          borderSide: isDark
+                                                              ? BorderSide.none
+                                                              : const BorderSide(
+                                                                  color: Color(
+                                                                      0xffC5BDD6),
+                                                                  width: 1.2,
+                                                                ),
                                                         ),
                                                         focusedBorder:
                                                             OutlineInputBorder(
                                                           borderRadius:
                                                               BorderRadius
                                                                   .circular(15),
-                                                          borderSide:
-                                                              BorderSide.none,
+                                                          borderSide: isDark
+                                                              ? BorderSide.none
+                                                              : const BorderSide(
+                                                                  color: Color(
+                                                                      0xff7C5CBF),
+                                                                  width: 1.5,
+                                                                ),
                                                         ),
                                                       ),
                                                     ),
@@ -893,113 +914,109 @@ class _CompletePaymentState extends State<CompletePayment>
                                                     transitionBuilder:
                                                         (child, anim) =>
                                                             ScaleTransition(
-                                                      scale: anim,
-                                                      child: child,
-                                                    ),
-                                                    child: controller
-                                                            .isCouponApplied
-                                                        ? ElevatedButton(
-                                                            key: const ValueKey(
-                                                                'remove_btn'),
-                                                            style:
-                                                                ElevatedButton
+                                                                scale: anim,
+                                                                child: child),
+                                                    child:
+                                                        controller
+                                                                .isCouponApplied
+                                                            ? ElevatedButton(
+                                                                key: const ValueKey(
+                                                                    'remove_btn'),
+                                                                style: ElevatedButton
                                                                     .styleFrom(
-                                                              backgroundColor:
-                                                                  const Color
-                                                                      .fromARGB(
-                                                                      255,
-                                                                      224,
-                                                                      66,
-                                                                      64),
-                                                            ),
-                                                            onPressed: () {
-                                                              FocusManager
-                                                                  .instance
-                                                                  .primaryFocus
-                                                                  ?.unfocus();
-                                                              controller
-                                                                  .removeCoupon();
-                                                              couponController
-                                                                  .clear();
-                                                            },
-                                                            child: const Text(
-                                                              "Remove",
-                                                              style: TextStyle(
-                                                                color: Colors
-                                                                    .white,
-                                                              ),
-                                                            ),
-                                                          )
-                                                        : ElevatedButton(
-                                                            key: const ValueKey(
-                                                                'apply_btn'),
-                                                            onPressed: controller
-                                                                    .isCouponLoading
-                                                                ? null
-                                                                : () async {
-                                                                    FocusManager
-                                                                        .instance
-                                                                        .primaryFocus
-                                                                        ?.unfocus();
-                                                                    final code =
-                                                                        couponController
+                                                                  backgroundColor:
+                                                                      const Color
+                                                                          .fromARGB(
+                                                                          255,
+                                                                          224,
+                                                                          66,
+                                                                          64),
+                                                                ),
+                                                                onPressed: () {
+                                                                  FocusManager
+                                                                      .instance
+                                                                      .primaryFocus
+                                                                      ?.unfocus();
+                                                                  controller
+                                                                      .removeCoupon();
+                                                                  couponController
+                                                                      .clear();
+                                                                },
+                                                                child:
+                                                                    const Text(
+                                                                  "Remove",
+                                                                  style: TextStyle(
+                                                                      color: Colors
+                                                                          .white),
+                                                                ),
+                                                              )
+                                                            : ElevatedButton(
+                                                                key: const ValueKey(
+                                                                    'apply_btn'),
+                                                                onPressed: controller
+                                                                        .isCouponLoading
+                                                                    ? null
+                                                                    : () async {
+                                                                        FocusManager
+                                                                            .instance
+                                                                            .primaryFocus
+                                                                            ?.unfocus();
+                                                                        final code = couponController
                                                                             .text
                                                                             .trim();
-                                                                    if (code
-                                                                        .isEmpty) {
-                                                                      SnackBarToastMessage
-                                                                          .info(
-                                                                        context,
-                                                                        'Please enter coupon code',
-                                                                      );
-                                                                      return;
-                                                                    }
-                                                                    await controller.validateAndApplyCoupon(
-                                                                        context,
-                                                                        code,
-                                                                        vendorId,
-                                                                        eventId);
-                                                                    if (!mounted) {
-                                                                      return;
-                                                                    }
-                                                                    if (controller
-                                                                        .isCouponApplied) {
-                                                                      final savedAmount =
-                                                                          controller
-                                                                              .getCouponDiscountAmount;
-                                                                      _showCouponSuccessPopup(
-                                                                        code:
+                                                                        if (code
+                                                                            .isEmpty) {
+                                                                          SnackBarToastMessage
+                                                                              .info(
+                                                                            context,
+                                                                            'Please enter coupon code',
+                                                                          );
+                                                                          return;
+                                                                        }
+                                                                        await controller.validateAndApplyCoupon(
+                                                                            context,
                                                                             code,
-                                                                        discountPercent:
-                                                                            controller.getAppliedCouponPercent,
-                                                                        savedAmount:
-                                                                            savedAmount,
-                                                                      );
-                                                                    } else if (controller
-                                                                            .couponErrorMessage !=
-                                                                        null) {
-                                                                      SnackBarToastMessage
-                                                                          .error(
-                                                                        context,
-                                                                        controller
-                                                                            .couponErrorMessage!,
-                                                                      );
-                                                                    }
-                                                                  },
-                                                            child: controller
-                                                                    .isCouponLoading
-                                                                ? const SizedBox(
-                                                                    width: 16,
-                                                                    height: 16,
-                                                                    child:
-                                                                        CircularProgressIndicator(
-                                                                      strokeWidth:
-                                                                          2,
-                                                                    ),
-                                                                  )
-                                                                : const Text(
-                                                                    "Apply"),
-                                                          ),
+                                                                            vendorId,
+                                                                            eventId);
+                                                                        if (!mounted)
+                                                                          return;
+                                                                        if (controller
+                                                                            .isCouponApplied) {
+                                                                          final savedAmount =
+                                                                              controller.getCouponDiscountAmount;
+                                                                          _showCouponSuccessPopup(
+                                                                            code:
+                                                                                code,
+                                                                            discountPercent:
+                                                                                controller.getAppliedCouponPercent,
+                                                                            savedAmount:
+                                                                                savedAmount,
+                                                                          );
+                                                                        } else if (controller.couponErrorMessage !=
+                                                                            null) {
+                                                                          SnackBarToastMessage
+                                                                              .error(
+                                                                            context,
+                                                                            controller.couponErrorMessage!,
+                                                                          );
+                                                                        }
+                                                                      },
+                                                                child: controller
+                                                                        .isCouponLoading
+                                                                    ? const SizedBox(
+                                                                        width:
+                                                                            16,
+                                                                        height:
+                                                                            16,
+                                                                        child:
+                                                                            CircularProgressIndicator(
+                                                                          strokeWidth:
+                                                                              2,
+                                                                        ),
+                                                                      )
+                                                                    : const Text(
+                                                                        "Apply"),
+                                                              ),
                                                   ),
                                                 ],
                                               ),

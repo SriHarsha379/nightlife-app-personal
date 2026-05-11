@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 
 import '../../../controller/my_profile/get_my_profile.dart';
 import '../../../controller/vibe_preference/vibe_prefernce_controller.dart';
+import '../../../provider/darkmode_provider.dart';
 import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -81,13 +82,14 @@ class _EditVibePreferenceState extends State<EditVibePreference> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.statusbar,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,

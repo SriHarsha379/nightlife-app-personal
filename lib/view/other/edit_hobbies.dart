@@ -11,6 +11,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../provider/user_controller.dart';
 
@@ -93,7 +94,6 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
       return;
     }
 
-    // Check if hobby name already exists
     if (hobbies.any((h) =>
         h['hobby'].toString().toLowerCase() == hobby.trim().toLowerCase())) {
       SnackBarToastMessage.info(context, "This hobby already exists");
@@ -105,7 +105,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
         "id": _nextId,
         "hobby": hobby.trim(),
       });
-      _nextId++; // Increment for next hobby
+      _nextId++;
       _updateHobbiesDisplay();
     });
     hobbyInputController.clear();
@@ -117,7 +117,6 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
       return;
     }
 
-    // Check if the new hobby name already exists (excluding current hobby)
     if (hobbies.any((h) =>
         h['id'] != id &&
         h['hobby'].toString().toLowerCase() == newHobby.trim().toLowerCase())) {
@@ -142,15 +141,32 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     });
   }
 
+  // ── helpers ──────────────────────────────────────────────────────────────
+  /// Light mode mein dark text, dark mode mein white text
+  Color _textColor(BuildContext context) => AppColor.secondryColor(context);
+
+  /// Light mode ke liye hint text thoda zyada visible
+  Color _hintColor(bool isDark) => isDark ? Colors.white54 : Colors.black45;
+
+  /// TextField ki fill – light mode mein slightly off-white/grey
+  Color _fieldFill(bool isDark) =>
+      isDark ? AppColor.primaryColor(context) : const Color(0xFFF0F0F0);
+
+  /// Bottom sheet background
+  Color _sheetBg(bool isDark) => isDark ? AppColor.themeColor : Colors.white;
+
+  // ─────────────────────────────────────────────────────────────────────────
+
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
+      value: SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -169,7 +185,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                       width: MediaQuery.of(context).size.width * 0.9,
                       child: Column(
                         children: [
-                          // Header
+                          // ── Header ──────────────────────────────────────
                           Row(
                             children: [
                               GestureDetector(
@@ -181,7 +197,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       MediaQuery.of(context).size.height * 0.05,
                                   child: Image.asset(
                                     AppImage.backArrowIcon,
-                                    color: AppColor.secondryColor(context),
+                                    // FIX: light mode mein arrow visible ho
+                                    color: _textColor(context),
                                   ),
                                 ),
                               ),
@@ -193,7 +210,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 18,
                                       fontWeight: FontWeight.w600,
-                                      color: AppColor.secondryColor(context),
+                                      // FIX: theme-aware color
+                                      color: _textColor(context),
                                     ),
                                   ),
                                 ),
@@ -210,10 +228,12 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                               height:
                                   MediaQuery.of(context).size.height * 0.04),
 
-                          // Hobbies Input Field
+                          // ── Hobbies display field ────────────────────────
                           TextFormField(
+                            // FIX: theme-aware input text color
                             style: TextStyle(
-                                color: AppColor.secondryColor(context)),
+                                color: _textColor(context),
+                                fontFamily: AppFont.fontFamily),
                             controller: hobbiesTextController,
                             focusNode: _hobbiesFocusNode,
                             readOnly: true,
@@ -230,8 +250,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                         0.06,
                                     height: MediaQuery.of(context).size.width *
                                         0.06,
-                                    color: AppColor
-                                                        .greyLightColor(context),
+                                    // FIX: icon color theme-aware
+                                    color: isDark
+                                        ? AppColor.greyLightColor(context)
+                                        : Colors.black54,
                                   ),
                                   SizedBox(
                                       width: MediaQuery.of(context).size.width *
@@ -244,33 +266,46 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                   minWidth: 35, minHeight: 10),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(40),
-                                borderSide: const BorderSide(
-                                    color: AppColor.buttonColor, width: 0),
+                                borderSide: BorderSide(
+                                  // FIX: light mode mein border visible
+                                  color: isDark
+                                      ? AppColor.buttonColor
+                                      : Colors.grey.shade300,
+                                  width: isDark ? 0 : 1,
+                                ),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(40),
                                 borderSide: const BorderSide(
                                     color: AppColor.buttonColor, width: 1.5),
                               ),
+                              // FIX: fill color theme-aware
                               fillColor: _isHobbiesFocusNode
                                   ? AppColor.primaryColor(context)
-                                  : AppColor.themeColor,
+                                  : (isDark
+                                      ? AppColor.themeColor
+                                      : const Color(0xFFF5F5F5)),
                               filled: true,
                               counterText: '',
                               hintText: AppLanguage.yourHobbiesText[language],
-                              hintStyle: AppConstant.textFilledStyle(context),
+                              // FIX: hint style theme-aware
+                              hintStyle: TextStyle(
+                                color: _hintColor(isDark),
+                                fontFamily: AppFont.fontFamily,
+                                fontSize: 14,
+                              ),
                               contentPadding: const EdgeInsets.symmetric(
                                 horizontal: 30,
                                 vertical: 15,
                               ),
                             ),
-                            onTap: () => _showAddHobbyBottomSheet(),
+                            onTap: () => _showAddHobbyBottomSheet(isDark),
                           ),
                           SizedBox(
                               height:
                                   MediaQuery.of(context).size.height * 0.02),
 
-                          // Hobbies List
+                          // ── Hobbies list ─────────────────────────────────
                           if (hobbies.isNotEmpty)
                             ListView.builder(
                               shrinkWrap: true,
@@ -288,11 +323,15 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 12),
                                   decoration: BoxDecoration(
-                                    color: AppColor.primaryColor(context),
+                                    // FIX: card bg theme-aware
+                                    color: isDark
+                                        ? AppColor.primaryColor(context)
+                                        : Colors.white,
                                     borderRadius: BorderRadius.circular(8),
                                     boxShadow: [
                                       BoxShadow(
-                                        color: Colors.black.withOpacity(0.05),
+                                        color: Colors.black
+                                            .withOpacity(isDark ? 0.05 : 0.08),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -300,14 +339,17 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                   ),
                                   child: Row(
                                     children: [
-                                      // ID Badge (Optional - can be removed if not needed in UI)
+                                      // ID Badge
                                       Container(
                                         padding: const EdgeInsets.symmetric(
                                           horizontal: 8,
                                           vertical: 4,
                                         ),
                                         decoration: BoxDecoration(
-                                          color: AppColor.themeColor,
+                                          // FIX: badge bg
+                                          color: isDark
+                                              ? AppColor.themeColor
+                                              : const Color(0xFFEEEEEE),
                                           borderRadius:
                                               BorderRadius.circular(4),
                                         ),
@@ -317,8 +359,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                             fontSize: 10,
                                             fontWeight: FontWeight.w600,
                                             fontFamily: AppFont.fontFamily,
-                                            color:
-                                                AppColor.secondryColor(context),
+                                            color: _textColor(context),
                                           ),
                                         ),
                                       ),
@@ -330,19 +371,19 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w400,
                                             fontFamily: AppFont.fontFamily,
-                                            color:
-                                                AppColor.secondryColor(context),
+                                            // FIX: hobby text color
+                                            color: _textColor(context),
                                           ),
                                         ),
                                       ),
                                       const SizedBox(width: 8),
                                       GestureDetector(
                                         onTap: () => _showEditHobbyBottomSheet(
-                                            id, hobbyName),
+                                            id, hobbyName, isDark),
                                         child: Icon(
                                           Icons.edit_outlined,
-                                          color:
-                                              AppColor.secondryColor(context),
+                                          // FIX: edit icon theme-aware
+                                          color: _textColor(context),
                                           size: 20,
                                         ),
                                       ),
@@ -350,7 +391,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                       GestureDetector(
                                         onTap: () =>
                                             _showDeleteConfirmationDialog(
-                                                id, hobbyName),
+                                                id, hobbyName, isDark),
                                         child: const Icon(
                                           Icons.delete_outline,
                                           color: Colors.red,
@@ -372,7 +413,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                   ),
                 ),
 
-                // Continue Button
+                // ── Continue Button ──────────────────────────────────────
                 AppButton(
                     text: AppLanguage.continueText[language],
                     onPress: () async {
@@ -397,9 +438,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           context,
                           PageTransition(
                             type: PageTransitionType.rightToLeftWithFade,
-                            child: const MyAppFooter(
-                              initialIndex: 4,
-                            ),
+                            child: const MyAppFooter(initialIndex: 4),
                             duration: const Duration(milliseconds: 400),
                           ),
                         );
@@ -414,8 +453,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     );
   }
 
-  // Add Hobby Bottom Sheet
-  void _showAddHobbyBottomSheet() {
+  // ── Add Hobby Bottom Sheet ────────────────────────────────────────────────
+  void _showAddHobbyBottomSheet(bool isDark) {
     hobbyInputController.clear();
     showModalBottomSheet(
       context: context,
@@ -427,9 +466,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
-            decoration: const BoxDecoration(
-              color: AppColor.themeColor,
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              // FIX: sheet bg
+              color: _sheetBg(isDark),
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
@@ -445,7 +485,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                     fontSize: 18,
                     fontWeight: FontWeight.w600,
                     fontFamily: AppFont.fontFamily,
-                    color: AppColor.secondryColor(context),
+                    // FIX: title color
+                    color: isDark ? Colors.white : Colors.black87,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -453,6 +494,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                   hint: "Type here...",
                   controller: hobbyInputController,
                   inputFormatters: AppConstant.alphabetFormatter,
+                  isDark: isDark,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -463,7 +505,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor(context),
+                            // FIX: cancel btn bg
+                            color: isDark
+                                ? AppColor.primaryColor(context)
+                                : const Color(0xFFEEEEEE),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
@@ -473,7 +518,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -515,8 +560,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     );
   }
 
-  // Edit Hobby Bottom Sheet
-  void _showEditHobbyBottomSheet(int id, String currentHobby) {
+  // ── Edit Hobby Bottom Sheet ───────────────────────────────────────────────
+  void _showEditHobbyBottomSheet(int id, String currentHobby, bool isDark) {
     hobbyInputController.text = currentHobby;
     showModalBottomSheet(
       context: context,
@@ -528,9 +573,10 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
             bottom: MediaQuery.of(context).viewInsets.bottom,
           ),
           child: Container(
-            decoration: const BoxDecoration(
-              color: AppColor.themeColor,
-              borderRadius: BorderRadius.only(
+            decoration: BoxDecoration(
+              // FIX: sheet bg
+              color: _sheetBg(isDark),
+              borderRadius: const BorderRadius.only(
                 topLeft: Radius.circular(20),
                 topRight: Radius.circular(20),
               ),
@@ -548,7 +594,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         fontSize: 18,
                         fontWeight: FontWeight.w600,
                         fontFamily: AppFont.fontFamily,
-                        color: AppColor.secondryColor(context),
+                        color: isDark ? Colors.white : Colors.black87,
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -558,7 +604,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.primaryColor(context),
+                        color: isDark
+                            ? AppColor.primaryColor(context)
+                            : const Color(0xFFEEEEEE),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -567,7 +615,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           fontSize: 12,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor(context),
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                     ),
@@ -578,6 +626,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                   hint: "Type here...",
                   controller: hobbyInputController,
                   inputFormatters: AppConstant.alphabetFormatter,
+                  isDark: isDark,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -588,7 +637,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         child: Container(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           decoration: BoxDecoration(
-                            color: AppColor.primaryColor(context),
+                            color: isDark
+                                ? AppColor.primaryColor(context)
+                                : const Color(0xFFEEEEEE),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           alignment: Alignment.center,
@@ -598,7 +649,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                               fontSize: 16,
                               fontWeight: FontWeight.w500,
                               fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
+                              color: isDark ? Colors.white : Colors.black87,
                             ),
                           ),
                         ),
@@ -640,13 +691,14 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     );
   }
 
-  // Delete Confirmation Dialog
-  void _showDeleteConfirmationDialog(int id, String hobbyName) {
+  // ── Delete Confirmation Dialog ────────────────────────────────────────────
+  void _showDeleteConfirmationDialog(int id, String hobbyName, bool isDark) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: AppColor.themeColor,
+          // FIX: dialog bg theme-aware
+          backgroundColor: isDark ? AppColor.themeColor : Colors.white,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
@@ -656,7 +708,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               fontSize: 18,
               fontWeight: FontWeight.w600,
               fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor(context),
+              color: isDark ? Colors.white : Colors.black87,
             ),
           ),
           content: Column(
@@ -668,14 +720,16 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                 style: TextStyle(
                   fontSize: 14,
                   fontFamily: AppFont.fontFamily,
-                  color: AppColor.secondryColor(context),
+                  color: isDark ? Colors.white70 : Colors.black87,
                 ),
               ),
               const SizedBox(height: 12),
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColor.primaryColor(context),
+                  color: isDark
+                      ? AppColor.primaryColor(context)
+                      : const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Row(
@@ -686,7 +740,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         vertical: 2,
                       ),
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor,
+                        color: isDark
+                            ? AppColor.themeColor
+                            : const Color(0xFFEEEEEE),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -695,7 +751,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           fontSize: 10,
                           fontWeight: FontWeight.w600,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor(context),
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                     ),
@@ -707,7 +763,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
                           fontFamily: AppFont.fontFamily,
-                          color: AppColor.secondryColor(context),
+                          color: isDark ? Colors.white : Colors.black87,
                         ),
                       ),
                     ),
@@ -722,7 +778,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
               child: Text(
                 "Cancel",
                 style: TextStyle(
-                  color: AppColor.secondryColor(context),
+                  // FIX: cancel text color
+                  color: isDark ? Colors.white : Colors.black87,
                   fontFamily: AppFont.fontFamily,
                 ),
               ),
@@ -747,15 +804,17 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     );
   }
 
-  // Build TextField Widget
+  // ── Build TextField ───────────────────────────────────────────────────────
   Widget _buildTextField({
     required String hint,
     required TextEditingController controller,
     List<TextInputFormatter>? inputFormatters,
+    required bool isDark,
   }) {
     return TextField(
       style: TextStyle(
-        color: AppColor.secondryColor(context),
+        // FIX: typed text color
+        color: isDark ? Colors.white : Colors.black87,
         fontFamily: AppFont.fontFamily,
       ),
       controller: controller,
@@ -763,14 +822,35 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
       maxLength: 30,
       decoration: InputDecoration(
         hintText: hint,
-        hintStyle: const TextStyle(color: Colors.white54),
+        hintStyle: TextStyle(
+          // FIX: hint color
+          color: _hintColor(isDark),
+          fontFamily: AppFont.fontFamily,
+        ),
+        // FIX: counter text color
+        counterStyle: TextStyle(
+          color: isDark ? Colors.white54 : Colors.black45,
+        ),
         filled: true,
-        fillColor: AppColor.primaryColor(context),
+        // FIX: fill color
+        fillColor:
+            isDark ? AppColor.primaryColor(context) : const Color(0xFFF0F0F0),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,
+        ),
+        // FIX: light mode mein subtle border
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: isDark
+              ? BorderSide.none
+              : BorderSide(color: Colors.grey.shade300, width: 1),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColor.buttonColor, width: 1.5),
         ),
       ),
     );

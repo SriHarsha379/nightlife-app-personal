@@ -351,6 +351,7 @@ class _MyEventsState extends State<MyEvents> {
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
         width: size.width * 50 / 100,

@@ -643,7 +643,9 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                   // ),
                                                   child: Icon(
                                                     Icons.arrow_back_ios_new,
-                                                    color: Colors.black,
+                                                    color:
+                                                        AppColor.secondryColor(
+                                                            context),
                                                     size: 24,
                                                   ),
                                                 ),
@@ -834,7 +836,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                             1 /
                                                             100),
                                                 Text(
-                                                  _str(_memberData?['height']),
+                                                  "${_str(_memberData?['height'])} |",
                                                   style: TextStyle(
                                                     fontSize: 14,
                                                     fontFamily:
@@ -956,7 +958,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                                           .isEmpty
                                                                       ? ""
                                                                       : hobbiesText,
-                                                                  style:  TextStyle(
+                                                                  style: TextStyle(
                                                                       fontSize:
                                                                           14,
                                                                       fontFamily:
@@ -1008,7 +1010,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                         ? ""
                                                         : _str(_memberData?[
                                                             'city_name']),
-                                                    style:  TextStyle(
+                                                    style: TextStyle(
                                                         fontSize: 15,
                                                         fontFamily:
                                                             AppFont.fontFamily,
@@ -1055,13 +1057,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                         .isEmpty
                                                     ? ""
                                                     : _str(_memberData?['bio']),
-                                                style:  TextStyle(
+                                                style: TextStyle(
                                                     fontSize: 16,
                                                     fontFamily:
-                                                       AppFont.fontFamily,
+                                                        AppFont.fontFamily,
                                                     fontWeight: FontWeight.w400,
-                                                    color: AppColor
-                                                        .greyLightColor(context)),
+                                                    color:
+                                                        AppColor.greyLightColor(
+                                                            context)),
                                               ),
                                             ),
                                           SizedBox(
@@ -1743,8 +1746,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                           Divider(
                                             height: 0.2,
                                             thickness: 0.5,
-                                            color: AppColor
-                                                        .greyLightColor(context),
+                                            color: AppColor.greyLightColor(
+                                                context),
                                             indent: 70,
                                             endIndent: 70,
                                           ),

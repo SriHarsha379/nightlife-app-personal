@@ -310,7 +310,29 @@ class _SearchScreenState extends State<SearchScreen> {
       await homeController.dislikeItem(context, targetVenueId, 'venue');
     } else if (action == 'like') {
       await homeController.likeItem(context, targetVenueId, 'venue');
+    } else {
+      return;
     }
+  }
+
+  Future<void> _handleEventDetailResult(dynamic result) async {
+    if (result is! Map) return;
+
+    final action = (result['action'] ?? '').toString().trim().toLowerCase();
+    final targetEventId = (result['targetEventId'] ?? '').toString().trim();
+    if (targetEventId.isEmpty) return;
+
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    if (action == 'dislike') {
+      await homeController.dislikeItem(context, targetEventId, 'event');
+    } else if (action == 'like') {
+      await homeController.likeItem(context, targetEventId, 'event');
+    } else {
+      return;
+    }
+
+    if (!mounted) return;
+    await _loadSearchData(type: 'event');
   }
 
   Future<void> _openVenueDetail(String venueId) async {
@@ -327,6 +349,25 @@ class _SearchScreenState extends State<SearchScreen> {
     );
     if (!mounted) return;
     await _handleVenueDetailResult(result);
+  }
+
+  Future<void> _openEventDetail(
+    String eventId, {
+    PageTransitionType transitionType = PageTransitionType.rightToLeftWithFade,
+  }) async {
+    if (eventId.trim().isEmpty) return;
+    final result = await Navigator.push(
+      context,
+      PageTransition(
+        type: transitionType,
+        child: LikedEventDetail(
+          eventId: eventId,
+        ),
+        duration: const Duration(milliseconds: 500),
+      ),
+    );
+    if (!mounted) return;
+    await _handleEventDetailResult(result);
   }
 
   @override
@@ -421,10 +462,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Color _featuredCardBorderColor(BuildContext context) {
     final isDark = context.read<ThemeProvider>().isDarkMode;
     return isDark
-        ? AppColor
-                                                        .greyLightColor(context).withOpacity(0.18)
-        : AppColor
-                                                        .greyLightColor(context).withOpacity(0.55);
+        ? AppColor.greyLightColor(context).withOpacity(0.18)
+        : AppColor.greyLightColor(context).withOpacity(0.55);
   }
 
   List<BoxShadow> _featuredCardShadow(BuildContext context) {
@@ -610,9 +649,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                   offset: const Offset(0, 2),
                                   spreadRadius: 1,
                                   blurRadius: 4,
-                                  color:
-                                      AppColor
-                                                        .greyLightColor(context).withOpacity(0.4),
+                                  color: AppColor.greyLightColor(context)
+                                      .withOpacity(0.4),
                                 ),
                                 BoxShadow(
                                   offset: const Offset(0, 1),
@@ -1429,21 +1467,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                   GestureDetector(
                                                                     onTap: () {
                                                                       log("bfjkdbafbdkfbdk${items[i1]['id'].toString()}");
-                                                                      Navigator
-                                                                          .push(
-                                                                        context,
-                                                                        PageTransition(
-                                                                          type:
-                                                                              PageTransitionType.rightToLeftWithFade,
-                                                                          child:
-                                                                              VenuePages(
-                                                                            venueId:
-                                                                                items[i1]['id'].toString(),
-                                                                          ),
-                                                                          duration:
-                                                                              const Duration(milliseconds: 500),
-                                                                        ),
-                                                                      );
+                                                                      _openVenueDetail(items[i1]
+                                                                              [
+                                                                              'id']
+                                                                          .toString());
                                                                     },
                                                                     child:
                                                                         Container(
@@ -1563,16 +1590,17 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             GestureDetector(
                                                                           onTap:
                                                                               () {
-                                                                            Navigator.push(
-                                                                              context,
-                                                                              PageTransition(
-                                                                                type: PageTransitionType.rightToLeftWithFade,
-                                                                                child: VenuePages(
-                                                                                  venueId: items[i2]['id'].toString(),
-                                                                                ),
-                                                                                duration: const Duration(milliseconds: 500),
-                                                                              ),
-                                                                            );
+                                                                            // Navigator.push(
+                                                                            //   context,
+                                                                            //   PageTransition(
+                                                                            //     type: PageTransitionType.rightToLeftWithFade,
+                                                                            //     child: VenuePages(
+                                                                            //       venueId: items[i2]['id'].toString(),
+                                                                            //     ),
+                                                                            //     duration: const Duration(milliseconds: 500),
+                                                                            //   ),
+                                                                            // );
+                                                                            _openVenueDetail(items[i2]['id'].toString());
                                                                           },
                                                                           child:
                                                                               Column(
@@ -1745,16 +1773,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                       width: 0.5,
                                                                                     )),
                                                                                 child: GestureDetector(
-                                                                                  onTap: () {
-                                                                                    Navigator.push(
-                                                                                      context,
-                                                                                      PageTransition(
-                                                                                        type: PageTransitionType.rightToLeftWithFade,
-                                                                                        child: LikedEventDetail(
-                                                                                          eventId: eventFeaturedList[index]['id'].toString(),
-                                                                                        ),
-                                                                                        duration: const Duration(milliseconds: 500),
-                                                                                      ),
+                                                                                  onTap: () async {
+                                                                                    await _openEventDetail(
+                                                                                      eventFeaturedList[index]['id'].toString(),
                                                                                     );
                                                                                   },
                                                                                   child: Column(
@@ -1946,20 +1967,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     child:
                                                                         GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        Navigator
-                                                                            .push(
-                                                                          context,
-                                                                          PageTransition(
-                                                                            type:
-                                                                                PageTransitionType.rightToLeftWithFade,
-                                                                            child:
-                                                                                LikedEventDetail(
-                                                                              eventId: eventList[index]['id'].toString(),
-                                                                            ),
-                                                                            duration:
-                                                                                const Duration(milliseconds: 500),
-                                                                          ),
+                                                                          () async {
+                                                                        await _openEventDetail(
+                                                                          eventList[index]['id']
+                                                                              .toString(),
                                                                         );
                                                                       },
                                                                       child:
@@ -2105,20 +2116,12 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     // ---------- FIRST CARD ----------
                                                                     GestureDetector(
                                                                       onTap:
-                                                                          () {
-                                                                        Navigator
-                                                                            .push(
-                                                                          context,
-                                                                          PageTransition(
-                                                                            type:
-                                                                                PageTransitionType.bottomToTop,
-                                                                            child:
-                                                                                LikedEventDetail(
-                                                                              eventId: eventRecommendedList[i1]['id'].toString(),
-                                                                            ),
-                                                                            duration:
-                                                                                const Duration(milliseconds: 500),
-                                                                          ),
+                                                                          () async {
+                                                                        await _openEventDetail(
+                                                                          eventRecommendedList[i1]['id']
+                                                                              .toString(),
+                                                                          transitionType:
+                                                                              PageTransitionType.bottomToTop,
                                                                         );
                                                                       },
                                                                       child:
@@ -2206,17 +2209,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                             .length)
                                                                       GestureDetector(
                                                                         onTap:
-                                                                            () {
-                                                                          Navigator
-                                                                              .push(
-                                                                            context,
-                                                                            PageTransition(
-                                                                              type: PageTransitionType.bottomToTop,
-                                                                              child: LikedEventDetail(
-                                                                                eventId: eventRecommendedList[i2]['id'].toString(),
-                                                                              ),
-                                                                              duration: const Duration(milliseconds: 500),
-                                                                            ),
+                                                                            () async {
+                                                                          await _openEventDetail(
+                                                                            eventRecommendedList[i2]['id'].toString(),
+                                                                            transitionType:
+                                                                                PageTransitionType.bottomToTop,
                                                                           );
                                                                         },
                                                                         child:

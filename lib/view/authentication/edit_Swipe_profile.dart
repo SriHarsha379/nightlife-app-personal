@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_color.dart';
 import 'package:provider/provider.dart';
-
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
 import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
+import '../../provider/darkmode_provider.dart';
 
 class EditSwipeProfile extends StatefulWidget {
   static const String routeName = '/EditSwipeProfile';
@@ -24,37 +24,6 @@ class EditSwipeProfile extends StatefulWidget {
 
 class _EditSwipeProfileState extends State<EditSwipeProfile> {
   int selectedIndex = 0;
-  List Followinglist = [
-    {
-      'image': AppImage.menimg,
-      'title': 'Gaurav kapoor',
-      'date': 'Members since 2 yrs',
-      'address': 'Lane 7, IT Park + 1.8 km',
-    },
-    {
-      'image': AppImage.womenimg,
-      'title': 'Anaya Joshi',
-      'date': 'Members since 2 yrs',
-      'address': 'Lane 7, IT Park + 1.8 km',
-    },
-  ];
-
-  List connectionlist = [
-    {
-      'image': AppImage.womenimg,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-    {
-      'image': AppImage.menimg,
-      'title': 'Base Drop Fridays',
-      'date': 'Fri, 10 PM - 4 AM',
-      'address': 'Club Neon, Downtown',
-      'text': 'Mark',
-    },
-  ];
 
   late final List<Map<String, String>> _galleryItems;
   Map<String, bool> _visibility = {
@@ -131,15 +100,15 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+    final cardColor = AppColor.pastbookeventcontainercolor(context);
 
-    // SystemChrome.setSystemUIOverlayStyle(AppConstant.systemUiOverlayStyle);
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: Colors.black,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -217,9 +186,11 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                               fontWeight: FontWeight.w500)),
                     ),
                   ),
+                  SizedBox(
+                      height: MediaQuery.of(context).size.height * 2 / 100),
                   Center(
                     child: Container(
-                      height: MediaQuery.of(context).size.width * 70 / 100,
+                      height: MediaQuery.of(context).size.width * 68 / 100,
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
@@ -287,14 +258,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('age', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -332,14 +301,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('height', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -377,14 +344,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('pronouns', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -422,14 +387,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('hobbies', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -467,14 +430,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('location', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -485,111 +446,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       ),
                     ),
                   ),
-                  // SizedBox(
-                  //     height: MediaQuery.of(context).size.height * 4 / 100),
-                  // Padding(
-                  //   padding: const EdgeInsets.symmetric(horizontal: 17.0),
-                  //   child: Container(
-                  //     width: MediaQuery.of(context).size.width * 91 / 100,
-                  //     padding: EdgeInsets.symmetric(
-                  //       horizontal: MediaQuery.of(context).size.width * 3 / 100,
-                  //       vertical: MediaQuery.of(context).size.height * 2 / 100,
-                  //     ),
-                  //     decoration: BoxDecoration(
-                  //       color: AppColor.themeColor,
-                  //       borderRadius: BorderRadius.circular(16),
-                  //     ),
-                  //     child: Column(
-                  //       crossAxisAlignment: CrossAxisAlignment.start,
-                  //       children: [
-                  //         /// ---- TITLE ----
-                  //         Text(
-                  //           AppLanguage.hobbiestext[language],
-                  //           style: TextStyle(
-                  //             color: AppColor.secondryColor(context),
-                  //             fontSize: 14,
-                  //             fontWeight: FontWeight.w600,
-                  //             fontFamily: AppFont.fontFamily,
-                  //           ),
-                  //         ),
-
-                  //         SizedBox(
-                  //             height: MediaQuery.of(context).size.height *
-                  //                 1.25 /
-                  //                 100),
-
-                  //         /// ---- SUB TEXT ----
-                  //         Text(
-                  //           AppLanguage.hobbiesInsttext[language],
-                  //           style: const TextStyle(
-                  //               color: AppColor.textcolor,
-                  //               fontSize: 13,
-                  //               fontFamily: AppFont.fontFamily,
-                  //               fontWeight: FontWeight.w400),
-                  //         ),
-
-                  //         SizedBox(
-                  //             height:
-                  //                 MediaQuery.of(context).size.height * 2 / 100),
-
-                  //         /// ---- TEXT FIELD ----
-                  //         Container(
-                  //           padding: EdgeInsets.symmetric(
-                  //             horizontal:
-                  //                 MediaQuery.of(context).size.width * 4 / 100,
-                  //           ),
-                  //           decoration: BoxDecoration(
-                  //             color: Color.fromARGB(255, 45, 18, 68),
-                  //             borderRadius: BorderRadius.circular(12),
-                  //           ),
-                  //           child: TextField(
-                  //             style: TextStyle(
-                  //               color: AppColor.secondryColor(context),
-                  //               fontFamily: AppFont.fontFamily,
-                  //             ),
-                  //             decoration: InputDecoration(
-                  //               hintText: "Enter your Hobby",
-                  //               hintStyle: TextStyle(
-                  //                 color: Color(0xffAD8FCC),
-                  //                 fontSize: 13,
-                  //               ),
-                  //               border: InputBorder.none,
-                  //             ),
-                  //           ),
-                  //         ),
-
-                  //         SizedBox(
-                  //             height:
-                  //                 MediaQuery.of(context).size.height * 2 / 100),
-
-                  //         /// ---- SAVE BUTTON ----
-                  //         Center(
-                  //           child: Container(
-                  //             width:
-                  //                 MediaQuery.of(context).size.width * 42 / 100,
-                  //             height: MediaQuery.of(context).size.height *
-                  //                 5.5 /
-                  //                 100,
-                  //             decoration: BoxDecoration(
-                  //               color: AppColor.primaryColor(context),
-                  //               borderRadius: BorderRadius.circular(50),
-                  //             ),
-                  //             alignment: Alignment.center,
-                  //             child: Text(
-                  //               "Save",
-                  //               style: TextStyle(
-                  //                 color: AppColor.secondryColor(context),
-                  //                 fontSize: 15,
-                  //                 fontWeight: FontWeight.w500,
-                  //                 fontFamily: AppFont.fontFamily,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
 
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 3 / 100),
@@ -601,7 +457,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor, // background color
+                        color: cardColor, // background color
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
@@ -638,12 +494,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 onChanged: (value) {
                                   _updateVisibility('vibes', value);
                                 },
-                                activeColor: AppColor.secondryColor(context),
+                                activeColor: Colors.white,
                                 activeTrackColor: AppColor.pinkColor,
-                                inactiveThumbColor:
-                                    AppColor.secondryColor(context),
-                                inactiveTrackColor: AppColor
-                                                        .greyLightColor(context),
+                                inactiveThumbColor: Colors.white,
+                                inactiveTrackColor: isDark
+                                    ? const Color(0xFF6E6E6E)
+                                    : const Color(0xFFBDBDBD),
                               ),
                             ),
                           )
@@ -662,7 +518,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         width: MediaQuery.of(context).size.width * 92 / 100,
                         alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: AppColor.themeColor,
+                          color: cardColor,
                           boxShadow: [
                             BoxShadow(
                               color: AppColor.grayColor.withOpacity(0.4),
@@ -712,36 +568,17 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('gallery', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
                               ],
                             ),
-                            // Container(
-                            //   width:
-                            //       MediaQuery.of(context).size.width * 90 / 100,
-                            //   child: Padding(
-                            //     padding: const EdgeInsets.all(8.0),
-                            //     child: Text(AppLanguage.uploadedText[language],
-                            //         style: const TextStyle(
-                            //             color: AppColor.textcolor,
-                            //             fontFamily: AppFont.fontFamily,
-                            //             fontSize: 14,
-                            //             fontWeight: FontWeight.w400)),
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(context).size.height *
-                            //         1 /
-                            //         100),
                             if (_galleryItems.isEmpty)
                               Padding(
                                 padding: const EdgeInsets.symmetric(
@@ -818,24 +655,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   },
                                 ),
                               ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(context).size.height *
-                            //         2 /
-                            //         100),
-                            // Center(
-                            //   child: SizedBox(
-                            //     child: Image.asset(
-                            //       AppImage.blackUploadicon,
-                            //       height: MediaQuery.of(context).size.height *
-                            //           6 /
-                            //           100,
-                            //       width: MediaQuery.of(context).size.width *
-                            //           45 /
-                            //           100,
-                            //       fit: BoxFit.fill,
-                            //     ),
-                            //   ),
-                            // ),
                           ],
                         ),
                       ),
@@ -843,279 +662,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                   ),
                   SizedBox(
                       height: MediaQuery.of(context).size.height * 3 / 100),
-                  // SingleChildScrollView(
-                  //   scrollDirection: Axis.vertical,
-                  //   child: Center(
-                  //     child: Container(
-                  //       height: MediaQuery.of(context).size.width * 126 / 100,
-                  //       width: MediaQuery.of(context).size.width * 92 / 100,
-                  //       alignment: Alignment.center,
-                  //       decoration: BoxDecoration(
-                  //         color: AppColor.themeColor, // background color
-                  //         boxShadow: [
-                  //           BoxShadow(
-                  //             color: AppColor.grayColor
-                  //                 .withOpacity(0.4), // shadow color
-                  //             // spreadRadius: 1,
-                  //             blurRadius: 2, // blur effect
-                  //             offset: Offset(1, 1),
-                  //           ),
-                  //         ],
-                  //         borderRadius: BorderRadius.circular(20),
-                  //       ),
-                  //       child: Column(
-                  //         children: [
-                  //           SizedBox(
-                  //               height: MediaQuery.of(context).size.height *
-                  //                   1 /
-                  //                   100),
-                  //           Container(
-                  //             width:
-                  //                 MediaQuery.of(context).size.width * 92 / 100,
-                  //             child: Padding(
-                  //               padding: const EdgeInsets.all(10.0),
-                  //               child: Text(AppLanguage.eventsText[language],
-                  //                   style: const TextStyle(
-                  //                       color: AppColor.secondryColor(context),
-                  //                       fontFamily: AppFont.fontFamily,
-                  //                       fontSize: 16,
-                  //                       fontWeight: FontWeight.w600)),
-                  //             ),
-                  //           ),
-                  //           SingleChildScrollView(
-                  //             scrollDirection: Axis.horizontal,
-                  //             child: Row(
-                  //               children: List.generate(3, (index) {
-                  //                 // bool isSelected = selectedtickIndex1 == index;
-                  //                 bool isSelected =
-                  //                     selectedTickIndexes.contains(index);
-
-                  //                 return GestureDetector(
-                  //                   behavior: HitTestBehavior.translucent,
-                  //                   onTap: () {
-                  //                     setState(() {
-                  //                       if (isSelected) {
-                  //                         selectedTickIndexes.remove(index);
-                  //                       } else {
-                  //                         selectedTickIndexes.add(index);
-                  //                       }
-                  //                     });
-                  //                   },
-                  //                   child: Container(
-                  //                     width: size.width * 28 / 100,
-                  //                     height: size.height * 20 / 100,
-                  //                     margin: const EdgeInsets.only(right: 3.8),
-                  //                     child: ClipRRect(
-                  //                       borderRadius: BorderRadius.circular(10),
-                  //                       child: Stack(
-                  //                         fit: StackFit.expand,
-                  //                         children: [
-                  //                           Image.asset(
-                  //                             index == 0
-                  //                                 ? AppImage.aroundmeIcon1
-                  //                                 : AppImage.divWithouttick,
-                  //                             fit: BoxFit.cover,
-                  //                           ),
-                  //                           Positioned(
-                  //                             right: 7,
-                  //                             bottom: 7,
-                  //                             child: Container(
-                  //                               width: 20,
-                  //                               height: 20,
-                  //                               decoration: BoxDecoration(
-                  //                                 shape: BoxShape.circle,
-                  //                                 color: isSelected
-                  //                                     ? AppColor.buttonColor
-                  //                                     : Colors.transparent,
-                  //                                 border: Border.all(
-                  //                                   color: isSelected
-                  //                                       ? Colors.transparent
-                  //                                       : Colors.white,
-                  //                                   width: 1,
-                  //                                 ),
-                  //                               ),
-                  //                               child: isSelected
-                  //                                   ? const Icon(
-                  //                                       Icons.check,
-                  //                                       size: 14,
-                  //                                       color: AppColor
-                  //                                           .primaryColor,
-                  //                                     )
-                  //                                   : null,
-                  //                             ),
-                  //                           )
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 );
-                  //               }),
-                  //             ),
-                  //           ),
-                  //           SizedBox(
-                  //               height: MediaQuery.of(context).size.height *
-                  //                   1 /
-                  //                   100),
-                  //           SingleChildScrollView(
-                  //             scrollDirection: Axis.horizontal,
-                  //             child: Row(
-                  //               children: List.generate(3, (index) {
-                  //                 // bool isSelected = selectedtickIndex == index;
-                  //                 bool isSelected =
-                  //                     selectedTickIndexes1.contains(index);
-
-                  //                 return GestureDetector(
-                  //                   behavior: HitTestBehavior.translucent,
-                  //                   onTap: () {
-                  //                     setState(() {
-                  //                       if (isSelected) {
-                  //                         selectedTickIndexes1.remove(index);
-                  //                       } else {
-                  //                         selectedTickIndexes1.add(index);
-                  //                       }
-                  //                     });
-                  //                   },
-                  //                   child: Container(
-                  //                     width: size.width * 28 / 100,
-                  //                     height: size.height * 20 / 100,
-                  //                     margin: const EdgeInsets.only(right: 3.8),
-                  //                     child: ClipRRect(
-                  //                       borderRadius: BorderRadius.circular(10),
-                  //                       child: Stack(
-                  //                         fit: StackFit.expand,
-                  //                         children: [
-                  //                           Image.asset(
-                  //                             index == 0
-                  //                                 ? AppImage.aroundmeIcon1
-                  //                                 : AppImage.divWithouttick,
-                  //                             fit: BoxFit.cover,
-                  //                           ),
-                  //                           Positioned(
-                  //                             right: 7,
-                  //                             bottom: 7,
-                  //                             child: Container(
-                  //                               width: 20,
-                  //                               height: 20,
-                  //                               decoration: BoxDecoration(
-                  //                                 shape: BoxShape.circle,
-                  //                                 color: isSelected
-                  //                                     ? AppColor.buttonColor
-                  //                                     : Colors.transparent,
-                  //                                 border: Border.all(
-                  //                                   color: isSelected
-                  //                                       ? Colors.transparent
-                  //                                       : Colors.white,
-                  //                                   width: 1,
-                  //                                 ),
-                  //                               ),
-                  //                               child: isSelected
-                  //                                   ? const Icon(
-                  //                                       Icons.check,
-                  //                                       size: 12,
-                  //                                       color: AppColor
-                  //                                           .primaryColor,
-                  //                                     )
-                  //                                   : null,
-                  //                             ),
-                  //                           )
-                  //                         ],
-                  //                       ),
-                  //                     ),
-                  //                   ),
-                  //                 );
-                  //               }),
-                  //             ),
-                  //           ),
-                  //           SizedBox(
-                  //               height: MediaQuery.of(context).size.height *
-                  //                   2 /
-                  //                   100),
-                  //           Center(
-                  //             child: SizedBox(
-                  //               child: Image.asset(
-                  //                 AppImage.blackviewallicon,
-                  //                 height: MediaQuery.of(context).size.height *
-                  //                     6 /
-                  //                     100,
-                  //                 width: MediaQuery.of(context).size.width *
-                  //                     45 /
-                  //                     100,
-                  //                 fit: BoxFit.fill,
-                  //               ),
-                  //             ),
-                  //           ),
-                  //         ],
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  // SizedBox(height: size.height * 4 / 100),
-                  // Center(
-                  //   child: Container(
-                  //     height: MediaQuery.of(context).size.height * 30 / 100,
-                  //     width: MediaQuery.of(context).size.width * 90 / 100,
-                  //     alignment: Alignment.center,
-                  //     decoration: BoxDecoration(
-                  //       color: AppColor.themeColor, // background color
-                  //       boxShadow: [
-                  //         BoxShadow(
-                  //           color: AppColor.grayColor
-                  //               .withOpacity(0.4), // shadow color
-                  //           // spreadRadius: 1,
-                  //           blurRadius: 2, // blur effect
-                  //           offset: Offset(1, 1),
-                  //         ),
-                  //       ],
-                  //       borderRadius: BorderRadius.circular(20),
-                  //     ),
-                  //     child: Column(
-                  //       children: [
-                  //         SizedBox(
-                  //             height:
-                  //                 MediaQuery.of(context).size.height * 2 / 100),
-                  //         Container(
-                  //           width: MediaQuery.of(context).size.width * 81 / 100,
-                  //           child: Text(AppLanguage.eventsText[language],
-                  //               style: const TextStyle(
-                  //                   color: AppColor.secondryColor(context),
-                  //                   fontFamily: AppFont.fontFamily,
-                  //                   fontSize: 16,
-                  //                   fontWeight: FontWeight.w600)),
-                  //         ),
-                  //         SizedBox(
-                  //             height: MediaQuery.of(context).size.height *
-                  //                 0.2 /
-                  //                 100),
-                  //         Container(
-                  //           width: size.width * 95 / 100,
-                  //           child: ClipRRect(
-                  //               borderRadius: const BorderRadius.only(
-                  //                 topLeft: Radius.circular(15),
-                  //                 topRight: Radius.circular(15),
-                  //               ),
-                  //               child: Image.asset(
-                  //                 AppImage.followedVenueIcon,
-                  //                 fit: BoxFit.cover,
-                  //               )),
-                  //         ),
-                  //         Center(
-                  //           child: SizedBox(
-                  //             child: Image.asset(
-                  //               AppImage.blackviewallicon,
-                  //               height: MediaQuery.of(context).size.height *
-                  //                   6 /
-                  //                   100,
-                  //               width: MediaQuery.of(context).size.width *
-                  //                   45 /
-                  //                   100,
-                  //               fit: BoxFit.fill,
-                  //             ),
-                  //           ),
-                  //         ),
-                  //       ],
-                  //     ),
-                  //   ),
-                  // ),
 
 //==================Recent events==========//
                   Center(
@@ -1124,7 +670,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor,
+                        color: cardColor,
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor.withOpacity(0.4),
@@ -1174,14 +720,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           _updateVisibility(
                                               'recent_events', value);
                                         },
-                                        activeColor:
-                                            AppColor.secondryColor(context),
+                                        activeColor: Colors.white,
                                         activeTrackColor: AppColor.pinkColor,
-                                        inactiveThumbColor:
-                                            AppColor.secondryColor(context),
-                                        inactiveTrackColor:
-                                            AppColor
-                                                        .greyLightColor(context),
+                                        inactiveThumbColor: Colors.white,
+                                        inactiveTrackColor: isDark
+                                            ? const Color(0xFF6E6E6E)
+                                            : const Color(0xFFBDBDBD),
                                       ),
                                     ),
                                   ),
@@ -1207,24 +751,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 height: MediaQuery.of(context).size.height *
                                     2 /
                                     100),
-                            // Center(
-                            //   child: SizedBox(
-                            //     child: Image.asset(
-                            //       AppImage.blackviewallicon,
-                            //       height: MediaQuery.of(context).size.height *
-                            //           6 /
-                            //           100,
-                            //       width: MediaQuery.of(context).size.width *
-                            //           45 /
-                            //           100,
-                            //       fit: BoxFit.contain,
-                            //     ),
-                            //   ),
-                            // ),
-                            // SizedBox(
-                            //     height: MediaQuery.of(context).size.height *
-                            //         1 /
-                            //         100),
                           ],
                         ),
                       ),
@@ -1241,7 +767,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor,
+                        color: cardColor,
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor.withOpacity(0.4),
@@ -1291,14 +817,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                           _updateVisibility(
                                               'recent_venues', value);
                                         },
-                                        activeColor:
-                                            AppColor.secondryColor(context),
+                                        activeColor: Colors.white,
                                         activeTrackColor: AppColor.pinkColor,
-                                        inactiveThumbColor:
-                                            AppColor.secondryColor(context),
-                                        inactiveTrackColor:
-                                            AppColor
-                                                        .greyLightColor(context),
+                                        inactiveThumbColor: Colors.white,
+                                        inactiveTrackColor: isDark
+                                            ? const Color(0xFF6E6E6E)
+                                            : const Color(0xFFBDBDBD),
                                       ),
                                     ),
                                   ),
@@ -1324,21 +848,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 height: MediaQuery.of(context).size.height *
                                     2 /
                                     100),
-                            // Center(
-                            //   child: SizedBox(
-                            //     child: Image.asset(
-                            //       AppImage.blackviewallicon,
-                            //       height: MediaQuery.of(context).size.height *
-                            //           6 /
-                            //           100,
-                            //       width: MediaQuery.of(context).size.width *
-                            //           45 /
-                            //           100,
-                            //       fit: BoxFit.contain,
-                            //     ),
-                            //   ),
-                            // ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
@@ -1358,7 +867,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor, // background color
+                        color: cardColor, // background color
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
@@ -1405,14 +914,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('instagram', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 ),
@@ -1422,21 +929,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100),
-                            // Center(
-                            //   child: SizedBox(
-                            //     child: Image.asset(
-                            //       AppImage.blackConnecticon,
-                            //       height: MediaQuery.of(context).size.height *
-                            //           6 /
-                            //           100,
-                            //       width: MediaQuery.of(context).size.width *
-                            //           45 /
-                            //           100,
-                            //       fit: BoxFit.contain,
-                            //     ),
-                            //   ),
-                            // ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /
@@ -1454,7 +946,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                       width: MediaQuery.of(context).size.width * 90 / 100,
                       alignment: Alignment.center,
                       decoration: BoxDecoration(
-                        color: AppColor.themeColor, // background color
+                        color: cardColor, // background color
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
@@ -1502,14 +994,12 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                       onChanged: (value) {
                                         _updateVisibility('spotify', value);
                                       },
-                                      activeColor:
-                                          AppColor.secondryColor(context),
+                                      activeColor: Colors.white,
                                       activeTrackColor: AppColor.pinkColor,
-                                      inactiveThumbColor:
-                                          AppColor.secondryColor(context),
-                                      inactiveTrackColor:
-                                          AppColor
-                                                        .greyLightColor(context),
+                                      inactiveThumbColor: Colors.white,
+                                      inactiveTrackColor: isDark
+                                          ? const Color(0xFF6E6E6E)
+                                          : const Color(0xFFBDBDBD),
                                     ),
                                   ),
                                 )
@@ -1519,21 +1009,6 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                 height: MediaQuery.of(context).size.height *
                                     1 /
                                     100),
-                            // Center(
-                            //   child: SizedBox(
-                            //     child: Image.asset(
-                            //       AppImage.blackConnecticon,
-                            //       height: MediaQuery.of(context).size.height *
-                            //           6 /
-                            //           100,
-                            //       width: MediaQuery.of(context).size.width *
-                            //           45 /
-                            //           100,
-                            //       fit: BoxFit.contain,
-                            //     ),
-                            //   ),
-                            // ),
-
                             SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     1 /

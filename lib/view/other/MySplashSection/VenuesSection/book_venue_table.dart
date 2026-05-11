@@ -793,6 +793,7 @@ class _BookTableState extends State<BookTable> {
                                     children: [
                                       SizedBox(height: size.height * 2 / 100),
                                       GestureDetector(
+                                        behavior: HitTestBehavior.opaque,
                                         onTap: () {
                                           setState(() {
                                             showAllSlots = !showAllSlots;

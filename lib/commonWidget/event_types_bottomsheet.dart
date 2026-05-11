@@ -152,7 +152,8 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
       source[isVenue ? 'venue_address' : 'event_address'],
       source['venue_location'],
     ]);
-    final about = _firstNonEmpty(<dynamic>[source['about'], source['description']]);
+    final about =
+        _firstNonEmpty(<dynamic>[source['about'], source['description']]);
     final categories = source['categories'];
 
     return <String, dynamic>{
@@ -260,245 +261,281 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return TweenAnimationBuilder<double>(
-      tween: Tween(begin: 0.0, end: 1.0),
-      duration: const Duration(milliseconds: 400),
-      curve: Curves.easeOutCubic,
-      builder: (context, value, child) => Transform.translate(
-        offset: Offset(0, (1 - value) * size.height * 0.3),
-        child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
-      ),
-      child: Container(
-        width: size.width,
-        height: size.height * 0.6,
-        color: Colors.transparent,
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: AppColor.backgroundGradientcolor(context),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(46),
-              topRight: Radius.circular(46),
+
+    return Consumer<InviteEventVenueListController>(
+      builder: (context, controller, _) {
+        final bool hasMembers =
+            !controller.isMembersLoading && controller.memberItems.isNotEmpty;
+
+        final double sheetHeight =
+            hasMembers ? size.height * 0.6 : size.height * 0.38;
+        // ─────────────────────────────────────────────────────────────────
+
+        return TweenAnimationBuilder<double>(
+          tween: Tween(begin: 0.0, end: 1.0),
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeOutCubic,
+          builder: (context, value, child) => Transform.translate(
+            offset: Offset(0, (1 - value) * size.height * 0.3),
+            child: Opacity(opacity: value.clamp(0.0, 1.0), child: child),
+          ),
+          child: Container(
+            width: size.width,
+            // ── CHANGE: dynamic height ──
+            height: sheetHeight,
+            color: Colors.transparent,
+            child: Container(
+              decoration: BoxDecoration(
+                gradient: AppColor.backgroundGradientcolor(context),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(46),
+                  topRight: Radius.circular(46),
+                ),
+              ),
+              child: Column(
+                children: [
+                  SizedBox(height: size.height * 0.02),
+                  Image.asset(
+                    AppImage.dashIcon,
+                    height: size.height * 0.005,
+                    width: size.width * 0.28,
+                    fit: BoxFit.fill,
+                    color: AppColor.secondryColor(context),
+                  ),
+                  SizedBox(height: size.height * 0.01),
+
+                  // ── Share icons row ──────────────────────────────────
+                  Center(
+                    child: SizedBox(
+                      width: size.width * 90 / 100,
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: List.generate(shareIcons.length, (index) {
+                          return Padding(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: size.width * 3 / 100,
+                              vertical: size.height * 2 / 100,
+                            ),
+                            child: GestureDetector(
+                              onTap: () => _handleShareTap(index),
+                              child: Image.asset(
+                                shareIcons[index],
+                                width: size.width * 14 / 100,
+                                height: size.width * 14 / 100,
+                                fit: BoxFit.cover,
+                                color: AppColor.secondryColor(context),
+                              ),
+                            ),
+                          );
+                        }),
+                      ),
+                    ),
+                  ),
+
+                  SizedBox(height: size.height * 0.01),
+                  Divider(
+                    height: 0.1,
+                    thickness: 0.5,
+                    color: AppColor.secondryColor(context),
+                    indent: 28,
+                    endIndent: 28,
+                  ),
+                  SizedBox(height: size.height * 0.015),
+
+                  // ── Members section ──────────────────────────────────
+                  Expanded(
+                    child: _buildMembersSection(
+                      context,
+                      controller,
+                      size,
+                    ),
+                  ),
+
+                  SizedBox(height: size.height * 0.02),
+                ],
+              ),
             ),
           ),
-          child: Column(
-            children: [
-              SizedBox(height: size.height * 0.02),
-              Image.asset(
-                AppImage.dashIcon,
-                height: size.height * 0.005,
-                width: size.width * 0.28,
-                fit: BoxFit.fill,
+        );
+      },
+    );
+  }
+
+  Widget _buildMembersSection(
+    BuildContext context,
+    InviteEventVenueListController controller,
+    Size size,
+  ) {
+    // Loading state
+    if (controller.isMembersLoading && controller.memberItems.isEmpty) {
+      return Center(
+        child: CircularProgressIndicator(color: AppColor.buttonColor),
+      );
+    }
+
+    // ── CHANGE: Empty state ──────────────────────────────────────────────
+    if (controller.memberItems.isEmpty) {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.people_outline,
+              size: 38,
+              color: AppColor.secondryColor(context).withOpacity(0.4),
+            ),
+            SizedBox(height: size.height * 0.012),
+            Text(
+              'No members found',
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w500,
+                fontFamily: AppFont.fontFamily,
+                color: AppColor.secondryColor(context).withOpacity(0.5),
               ),
-              SizedBox(height: size.height * 0.01),
-              Center(
-                child: SizedBox(
-                  width: size.width * 90 / 100,
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: List.generate(shareIcons.length, (index) {
-                      return Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 3 / 100,
-                          vertical: size.height * 2 / 100,
-                        ),
-                        child: GestureDetector(
-                          onTap: () => _handleShareTap(index),
-                          child: Image.asset(
-                            shareIcons[index],
-                            width: size.width * 14 / 100,
-                            height: size.width * 14 / 100,
+            ),
+          ],
+        ),
+      );
+    }
+    // ────────────────────────────────────────────────────────────────────
+
+    // Normal list
+    return SingleChildScrollView(
+      controller: _membersScrollController,
+      child: Column(
+        children: [
+          ...List.generate(controller.memberItems.length, (index) {
+            final item = controller.memberItems[index];
+            final id = _memberId(item);
+            final key = id.isEmpty ? index.toString() : id;
+            final isSend = _sentIds.contains(key);
+            final name = _memberName(item);
+            final username = _str(item['username']);
+            final image = _fullImage(_memberImage(item));
+            final resolved = image.isEmpty ? AppImage.dummyImageIcon : image;
+
+            return Column(
+              children: [
+                SizedBox(
+                  width: size.width * 0.9,
+                  height: size.height * 0.085,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: SizedBox(
+                      height: size.width * 0.13,
+                      width: size.width * 0.13,
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(100),
+                        child: Image(
+                          image: _providerFor(resolved),
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Image.asset(
+                            AppImage.dummyImageIcon,
                             fit: BoxFit.cover,
                           ),
                         ),
-                      );
-                    }),
-                  ),
-                ),
-              ),
-              SizedBox(height: size.height * 0.01),
-              Divider(
-                height: 0.1,
-                thickness: 0.5,
-                color: AppColor.secondryColor(context),
-                indent: 28,
-                endIndent: 28,
-              ),
-              SizedBox(height: size.height * 0.015),
-              Expanded(
-                child: Consumer<InviteEventVenueListController>(
-                  builder: (context, controller, _) {
-                    if (controller.isMembersLoading &&
-                        controller.memberItems.isEmpty) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: AppColor.buttonColor,
-                        ),
-                      );
-                    }
-                    return SingleChildScrollView(
-                      controller: _membersScrollController,
-                      child: Column(
-                        children: [
-                          ...List.generate(controller.memberItems.length,
-                              (index) {
-                            final item = controller.memberItems[index];
-                            final id = _memberId(item);
-                            final key = id.isEmpty ? index.toString() : id;
-                            final isSend = _sentIds.contains(key);
-                            final name = _memberName(item);
-                            final username = _str(item['username']);
-                            final image = _fullImage(_memberImage(item));
-                            final resolved =
-                                image.isEmpty ? AppImage.dummyImageIcon : image;
-                            return Column(
-                              children: [
-                                SizedBox(
-                                  width: size.width * 0.9,
-                                  height: size.height * 0.085,
-                                  child: ListTile(
-                                    contentPadding: EdgeInsets.zero,
-                                    leading: SizedBox(
-                                      height: size.width * 0.13,
-                                      width: size.width * 0.13,
-                                      child: ClipRRect(
-                                        borderRadius:
-                                            BorderRadius.circular(100),
-                                        child: Image(
-                                          image: _providerFor(resolved),
-                                          fit: BoxFit.cover,
-                                          errorBuilder: (_, __, ___) =>
-                                              Image.asset(
-                                            AppImage.dummyImageIcon,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    title: Text(
-                                      name,
-                                      maxLines: 2,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 16,
-                                        color: AppColor.secondryColor(context),
-                                      ),
-                                    ),
-                                    subtitle: Text(
-                                      username.isEmpty ? '' : '@$username',
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        color: AppColor.secondryColor(context),
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                    trailing: GestureDetector(
-                                      onTap: () async {
-                                        setState(() => _sentIds.add(key));
-                                        print(
-                                          '[EventShareBottomSheet] memberTap => '
-                                          'memberId=$id, memberName=$name, memberImage=$resolved, '
-                                          'shareType=${widget.type}, sharedEventData=${widget.sharedEventData}',
-                                        );
-                                        final conversationController =
-                                            Provider.of<ConversionListController>(
-                                          context,
-                                          listen: false,
-                                        );
-                                        final conversationId =
-                                            await conversationController
-                                                .fetchConversationIdByUserId(
-                                          otherUserId: id,
-                                        );
-                                        if (!mounted) return;
-                                        final sharedItem = _sharedItemPayload();
-                                        Navigator.of(context).pop();
-                                        Future.delayed(
-                                          const Duration(milliseconds: 200),
-                                          () {
-                                            if (!widget.parentContext.mounted) {
-                                              return;
-                                            }
-                                            Navigator.push(
-                                              widget.parentContext,
-                                              PageTransition(
-                                                type: PageTransitionType
-                                                    .bottomToTop,
-                                                child: ChatMessageScreen(
-                                                  name: name,
-                                                  image: resolved,
-                                                  receiverId: id,
-                                                  conversationId:
-                                                      conversationId.isEmpty
-                                                          ? null
-                                                          : conversationId,
-                                                  sharedEventData: sharedItem,
-                                                  autoSendSharedEvent: true,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                      child: AnimatedContainer(
-                                        duration:
-                                            const Duration(milliseconds: 300),
-                                        padding: const EdgeInsets.symmetric(
-                                          horizontal: 17,
-                                          vertical: 7,
-                                        ),
-                                        decoration: BoxDecoration(
-                                          color: isSend
-                                              ? AppColor.logoutContainerColor(
-                                                  context)
-                                              : AppColor.secondryColor(context),
-                                          borderRadius:
-                                              BorderRadius.circular(10),
-                                          border: isSend
-                                              ? Border.all(
-                                                  color: AppColor.buttonColor,
-                                                  width: 1,
-                                                )
-                                              : null,
-                                        ),
-                                        child: Text(
-                                          isSend ? 'Done' : 'Send',
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily,
-                                            color: isSend
-                                                ? AppColor.secondryColor(
-                                                    context)
-                                                : AppColor.primaryColor(
-                                                    context),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: size.height * 0.002),
-                              ],
-                            );
-                          }),
-                          if (controller.isMembersLoadingMore)
-                            Center(
-                              child: CircularProgressIndicator(
-                                color: AppColor.buttonColor,
+                      ),
+                    ),
+                    title: Text(
+                      name,
+                      maxLines: 2,
+                      style: TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 16,
+                        color: AppColor.secondryColor(context),
+                      ),
+                    ),
+                    subtitle: Text(
+                      username.isEmpty ? '' : '@$username',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: AppColor.secondryColor(context),
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    trailing: GestureDetector(
+                      onTap: () async {
+                        setState(() => _sentIds.add(key));
+                        print(
+                          '[EventShareBottomSheet] memberTap => '
+                          'memberId=$id, memberName=$name, memberImage=$resolved, '
+                          'shareType=${widget.type}, sharedEventData=${widget.sharedEventData}',
+                        );
+                        final conversationController =
+                            Provider.of<ConversionListController>(
+                          context,
+                          listen: false,
+                        );
+                        final conversationId = await conversationController
+                            .fetchConversationIdByUserId(otherUserId: id);
+                        if (!mounted) return;
+                        final sharedItem = _sharedItemPayload();
+                        Navigator.of(context).pop();
+                        Future.delayed(const Duration(milliseconds: 200), () {
+                          if (!widget.parentContext.mounted) return;
+                          Navigator.push(
+                            widget.parentContext,
+                            PageTransition(
+                              type: PageTransitionType.bottomToTop,
+                              child: ChatMessageScreen(
+                                name: name,
+                                image: resolved,
+                                receiverId: id,
+                                conversationId: conversationId.isEmpty
+                                    ? null
+                                    : conversationId,
+                                sharedEventData: sharedItem,
+                                autoSendSharedEvent: true,
                               ),
                             ),
-                        ],
+                          );
+                        });
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 300),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 17,
+                          vertical: 7,
+                        ),
+                        decoration: BoxDecoration(
+                          color: isSend
+                              ? AppColor.logoutContainerColor(context)
+                              : AppColor.secondryColor(context),
+                          borderRadius: BorderRadius.circular(10),
+                          border: isSend
+                              ? Border.all(
+                                  color: AppColor.buttonColor,
+                                  width: 1,
+                                )
+                              : null,
+                        ),
+                        child: Text(
+                          isSend ? 'Done' : 'Send',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                            color: isSend
+                                ? AppColor.secondryColor(context)
+                                : AppColor.primaryColor(context),
+                          ),
+                        ),
                       ),
-                    );
-                  },
+                    ),
+                  ),
                 ),
-              ),
-              SizedBox(height: size.height * 0.02),
-            ],
-          ),
-        ),
+                SizedBox(height: size.height * 0.002),
+              ],
+            );
+          }),
+          if (controller.isMembersLoadingMore)
+            Center(
+              child: CircularProgressIndicator(color: AppColor.buttonColor),
+            ),
+        ],
       ),
     );
   }

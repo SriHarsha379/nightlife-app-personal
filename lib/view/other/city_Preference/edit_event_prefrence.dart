@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../../../controller/event_preference/event_preference_controller.dart';
 import '../../../controller/my_profile/get_my_profile.dart';
+import '../../../provider/darkmode_provider.dart';
 import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -58,7 +59,8 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
               if (event is! Map) return '';
               final String normalizedId = _eventIdFrom(event);
               final String eventId = (event['event_id'] ?? '').toString();
-              final String rawId = (event['_id'] ?? event['id'] ?? '').toString();
+              final String rawId =
+                  (event['_id'] ?? event['id'] ?? '').toString();
               if (normalizedId.isEmpty) return '';
               if (initialIds.contains(normalizedId) ||
                   (eventId.isNotEmpty && initialIds.contains(eventId)) ||
@@ -92,14 +94,14 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    // ignore: deprecated_member_use
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: const SystemUiOverlayStyle(
-        statusBarColor: AppColor.statusbar,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark, // required for iOS
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -123,8 +125,7 @@ class _EditEventPreferenceState extends State<EditEventPreference> {
                       Provider.of<PostApiProvider>(context, listen: false);
                   final profileController =
                       Provider.of<ProfileController>(context, listen: false);
-                  final String customEvent =
-                      searchController.text.trim();
+                  final String customEvent = searchController.text.trim();
                   final isSuccess = await postProvider.addEventPreferencesApi(
                     context,
                     eventPreferenceIds: selectedEventIds,

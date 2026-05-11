@@ -176,12 +176,11 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                   child: Text(
                     textAlign: TextAlign.center,
                     AppLanguage.skip[language],
-                    style:  TextStyle(
+                    style: TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 14,
                       fontWeight: FontWeight.w700,
-                      color: AppColor
-                                                        .greyLightColor(context),
+                      color: AppColor.greyLightColor(context),
                     ),
                   ),
                 ),
@@ -329,6 +328,23 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
   // Track dropdown state for each question
   final Map<int, bool> _dropdownStates = {};
 
+  bool _doesTextOverflow({
+    required String text,
+    required TextStyle style,
+    required double maxWidth,
+  }) {
+    if (text.trim().isEmpty || maxWidth <= 0) return false;
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 1,
+      textDirection: Directionality.of(context),
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout(maxWidth: maxWidth);
+
+    return textPainter.didExceedMaxLines;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -365,6 +381,18 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final questionStyle = const TextStyle(
+      fontSize: 16,
+      fontWeight: FontWeight.w600,
+      color: Colors.white,
+      fontFamily: AppFont.plusJakartaSansFamily,
+    );
+    final descriptionStyle = const TextStyle(
+      fontSize: 13,
+      fontFamily: AppFont.plusJakartaSansFamily,
+      fontWeight: FontWeight.w400,
+      color: Color(0xffB7AFC9),
+    );
 
     if (widget.questionList.isEmpty) {
       return Center(
@@ -396,83 +424,106 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                   return Column(
                     children: [
                       // Question Dropdown
-                      GestureDetector(
-                        onTap: () => _toggleDropdown(index),
-                        child: Container(
-                          width: size.width * 0.9,
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 15,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.circular(50),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      question['question'] ?? 'Question',
-                                      style: const TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.white,
-                                        fontFamily:
-                                            AppFont.plusJakartaSansFamily,
-                                      ),
-                                      maxLines: isDropdownOpen ? null : 1,
-                                      overflow: isDropdownOpen
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
-                                    ),
-                                    const SizedBox(height: 4),
-                                    Text(
-                                      question['description'] ?? 'Description',
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        fontFamily:
-                                            AppFont.plusJakartaSansFamily,
-                                        fontWeight: FontWeight.w400,
-                                        color: Color(0xffB7AFC9),
-                                      ),
-                                      maxLines: isDropdownOpen ? null : 1,
-                                      overflow: isDropdownOpen
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          final bool isAnswered =
+                              vibeCheckProvider.isQuestionAnswered(questionId);
+                          final double trailingWidth = isAnswered ? 60 : 28;
+                          final double availableTextWidth =
+                              constraints.maxWidth - 36 - trailingWidth;
+                          final String questionText =
+                              (question['question'] ?? 'Question').toString();
+                          final String descriptionText =
+                              (question['description'] ?? 'Description')
+                                  .toString();
+
+                          final bool showArrow = _doesTextOverflow(
+                                text: questionText,
+                                style: questionStyle,
+                                maxWidth: availableTextWidth,
+                              ) ||
+                              _doesTextOverflow(
+                                text: descriptionText,
+                                style: descriptionStyle,
+                                maxWidth: availableTextWidth,
+                              );
+
+                          return GestureDetector(
+                            onTap:
+                                showArrow ? () => _toggleDropdown(index) : null,
+                            child: Container(
+                              width: size.width * 0.9,
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 18,
+                                vertical: 15,
                               ),
-                              Row(
+                              decoration: BoxDecoration(
+                                color: AppColor.themeColor,
+                                borderRadius: BorderRadius.circular(24),
+                              ),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  // Show checkmark if answered
-                                  if (vibeCheckProvider
-                                      .isQuestionAnswered(questionId))
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          questionText,
+                                          style: questionStyle,
+                                          maxLines: showArrow
+                                              ? (isDropdownOpen ? null : 1)
+                                              : null,
+                                          overflow: showArrow && !isDropdownOpen
+                                              ? TextOverflow.ellipsis
+                                              : TextOverflow.visible,
+                                        ),
+                                        const SizedBox(height: 4),
+                                        Text(
+                                          descriptionText,
+                                          style: descriptionStyle,
+                                          maxLines: showArrow
+                                              ? (isDropdownOpen ? null : 1)
+                                              : null,
+                                          overflow: showArrow && !isDropdownOpen
+                                              ? TextOverflow.ellipsis
+                                              : TextOverflow.visible,
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  if (isAnswered) ...[
+                                    const SizedBox(width: 10),
                                     const Padding(
-                                      padding: EdgeInsets.only(right: 8),
+                                      padding: EdgeInsets.only(top: 2),
                                       child: Icon(
                                         Icons.check_circle,
                                         color: Colors.green,
                                         size: 20,
                                       ),
                                     ),
-                                  AnimatedRotation(
-                                    turns: isDropdownOpen ? 0.5 : 0,
-                                    duration: const Duration(milliseconds: 200),
-                                    child: const Icon(
-                                      Icons.keyboard_arrow_down_rounded,
-                                      color: Colors.white,
+                                  ],
+                                  if (showArrow) ...[
+                                    const SizedBox(width: 6),
+                                    Padding(
+                                      padding: const EdgeInsets.only(top: 2),
+                                      child: AnimatedRotation(
+                                        turns: isDropdownOpen ? 0.5 : 0,
+                                        duration:
+                                            const Duration(milliseconds: 200),
+                                        child: const Icon(
+                                          Icons.keyboard_arrow_down_rounded,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
-                                  ),
+                                  ],
                                 ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       ),
 
                       SizedBox(height: size.height * 0.015),

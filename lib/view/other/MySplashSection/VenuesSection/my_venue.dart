@@ -149,9 +149,6 @@ class _MyVenueState extends State<MyVenue> {
     );
   }
 
-
-
-
   Future<void> _handleVenueDetailResult(dynamic result) async {
     if (result is! Map) return;
 
@@ -294,7 +291,6 @@ class _MyVenueState extends State<MyVenue> {
                   ),
                 ),
 
-                // ── Tab indicator ────────────────────────────────────────────
                 Row(
                   children: [
                     _buildTabIndicator(context, tabIndex: 0, size: size),
@@ -326,6 +322,7 @@ class _MyVenueState extends State<MyVenue> {
     required VoidCallback onTap,
   }) {
     return GestureDetector(
+      behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
         width: size.width * 50 / 100,
@@ -593,10 +590,6 @@ class _MyVenueState extends State<MyVenue> {
       ),
     );
   }
-
-
-
-
 
   // ══════════════════════════════════════════════════════════════════════════
   // RESERVED TAB

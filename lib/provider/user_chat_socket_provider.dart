@@ -27,7 +27,8 @@ class UserChatSocketProvider extends ChangeNotifier {
 
   List<Map<String, dynamic>> get messages => _socket.messages;
 
-  void clearLocalMessages() => _socket.clearLocalMessages();
+  void clearLocalMessages({bool notify = true}) =>
+      _socket.clearLocalMessages(notify: notify);
 
   List<Map<String, dynamic>> get conversationList => _socket.conversationList;
   bool get hasConversationListLoaded => _socket.hasConversationListLoaded;

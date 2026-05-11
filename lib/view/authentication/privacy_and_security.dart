@@ -396,6 +396,7 @@ class _PrivacySecurityScreenState extends State<PrivacySecurityScreen> {
                           child: Image.asset(
                             AppImage.frontArrowIcon,
                             fit: BoxFit.contain,
+                            color: AppColor.secondryColor(context),
                           ),
                         ),
                       ],

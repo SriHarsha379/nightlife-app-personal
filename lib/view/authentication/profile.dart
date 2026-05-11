@@ -555,7 +555,7 @@ class _ProfileState extends State<Profile> {
         return ActionBottomSheet(
           heading: "Are you sure?",
           subheading:
-              "Do you really want to delete your account? This action cannot be undone.",
+              "After deleting the account, the same mobile number cannot be used to log in. This action cannot be undone.",
           otherButton: "Cancel",
           mainButton: "Delete",
           onTapOtherButton: () {
@@ -602,7 +602,7 @@ class ActionBottomSheet extends StatelessWidget {
 
     return Container(
       width: size.width,
-      height: size.height * 28 / 100,
+      height: size.height * 28.5 / 100,
       decoration: BoxDecoration(
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(36),

@@ -327,7 +327,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         height: 110,
                                         width: 110,
                                         decoration: BoxDecoration(
-                                          color: AppColor.themeColor,
+                                          color: isDark
+                                              ? AppColor.themeColor
+                                              : Color.fromARGB(
+                                                  255, 235, 234, 234),
                                           border: Border.all(
                                               color: AppColor.buttonColor),
                                           shape: BoxShape.circle,
@@ -587,8 +590,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                                   .width *
                                               5 /
                                               100,
-                                          color: AppColor
-                                                        .greyLightColor(context),
+                                          color:
+                                              AppColor.greyLightColor(context),
                                         ),
                                       ),
                                       suffixIconConstraints:
@@ -598,9 +601,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       ),
                                       enabledBorder: OutlineInputBorder(
                                         borderRadius: BorderRadius.circular(40),
-                                        borderSide: const BorderSide(
-                                          color: AppColor.buttonColor,
-                                          width: 0,
+                                        borderSide: BorderSide(
+                                          color: Theme.of(context).brightness ==
+                                                  Brightness.dark
+                                              ? AppColor.buttonColor
+                                              : AppColor.greyLightColor(
+                                                  context),
+                                          width: 1,
                                         ),
                                       ),
                                       focusedBorder: OutlineInputBorder(
@@ -611,13 +618,17 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         ),
                                       ),
                                       fillColor: _isDobFocused
-                                          ? AppColor.primaryColor(context)
-                                          : AppColor.themeColor,
+                                          ? AppColor.whiteBlackcolor(context)
+                                          : AppColor.textFieldColor(context),
                                       filled: true,
                                       counterText: '',
                                       hintText: 'DOB',
-                                      hintStyle:
-                                          AppConstant.textFilledStyle(context),
+                                      hintStyle: TextStyle(
+                                        color: AppColor.hinttextcolor(context),
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 14,
+                                      ),
                                       contentPadding:
                                           const EdgeInsets.symmetric(
                                         horizontal: 30,
@@ -686,8 +697,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                                       .width *
                                                   1 /
                                                   100,
-                                              color: AppColor
-                                                        .greyLightColor(context),
+                                              color: AppColor.greyLightColor(
+                                                  context),
                                             ),
                                           ),
                                           suffixIconConstraints:
@@ -698,9 +709,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
                                                 BorderRadius.circular(40),
-                                            borderSide: const BorderSide(
-                                              color: AppColor.buttonColor,
-                                              width: 0.5,
+                                            borderSide: BorderSide(
+                                              color: Theme.of(context)
+                                                          .brightness ==
+                                                      Brightness.dark
+                                                  ? AppColor.buttonColor
+                                                  : AppColor.greyLightColor(
+                                                      context),
+                                              width: 1,
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
@@ -711,12 +727,17 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                               width: 1.5,
                                             ),
                                           ),
-                                          fillColor: AppColor.themeColor,
+                                          fillColor:
+                                              AppColor.textFieldColor(context),
                                           filled: true,
                                           hintText: "Select City",
-                                          hintStyle:
-                                              AppConstant.textFilledStyle(
-                                                  context),
+                                          hintStyle: TextStyle(
+                                            color:
+                                                AppColor.hinttextcolor(context),
+                                            fontWeight: FontWeight.w400,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontSize: 14,
+                                          ),
                                           contentPadding:
                                               const EdgeInsets.symmetric(
                                             horizontal: 30,
@@ -844,7 +865,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             height: MediaQuery.of(context).size.height * 7 / 100,
             child: DropdownButtonFormField<String>(
               value: value,
-              dropdownColor: AppColor.themeColor,
+              dropdownColor: AppColor.textFieldColor(context),
               style: TextStyle(
                 color: AppColor.secondryColor(context),
                 fontFamily: AppFont.fontFamily,
@@ -857,8 +878,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     AppImage.downArrowicon,
                     width: MediaQuery.of(context).size.width * 3 / 100,
                     height: MediaQuery.of(context).size.width * 1 / 100,
-                    color: AppColor
-                                                        .greyLightColor(context),
+                    color: AppColor.greyLightColor(context),
                   ),
                 ),
                 suffixIconConstraints: const BoxConstraints(
@@ -867,22 +887,29 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
-                  borderSide: const BorderSide(
-                    color: AppColor.buttonColor,
-                    width: 0.5,
+                  borderSide: BorderSide(
+                    color: Theme.of(context).brightness == Brightness.dark
+                        ? AppColor.buttonColor
+                        : AppColor.greyLightColor(context),
+                    width: 1,
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                   borderSide: const BorderSide(
                     color: AppColor.buttonColor,
-                    width: 0.5,
+                    width: 1.5,
                   ),
                 ),
-                fillColor: AppColor.themeColor,
+                fillColor: AppColor.textFieldColor(context),
                 filled: true,
                 hintText: AppLanguage.selectGendertext[language],
-                hintStyle: AppConstant.textFilledStyle(context),
+                hintStyle: TextStyle(
+                  color: AppColor.hinttextcolor(context),
+                  fontWeight: FontWeight.w400,
+                  fontFamily: AppFont.fontFamily,
+                  fontSize: 14,
+                ),
                 contentPadding: const EdgeInsets.symmetric(
                   horizontal: 30,
                   vertical: 15,
@@ -924,7 +951,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   CupertinoButton(
-                    child: Text(
+                    child: const Text(
                       'Cancel',
                       style: TextStyle(
                         color: Colors.white,
@@ -936,7 +963,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     onPressed: () => Navigator.pop(context),
                   ),
                   CupertinoButton(
-                      child: Text(
+                      child: const Text(
                         'Done',
                         style: TextStyle(
                           color: Colors.white,
@@ -1008,8 +1035,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.photo_camera_outlined),
-                  title: const Text('Camera'),
+                  leading: const Icon(Icons.photo_camera_outlined,
+                      color: Colors.white),
+                  title: const Text(
+                    'Camera',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onTap: () async {
                     Navigator.pop(sheetContext);
                     final pickedFile = await ImagePicker().pickImage(
@@ -1023,8 +1054,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.photo_library_outlined),
-                  title: const Text('Gallery'),
+                  leading: const Icon(
+                    Icons.photo_library_outlined,
+                    color: Colors.white,
+                  ),
+                  title: const Text(
+                    'Gallery',
+                    style: TextStyle(color: Colors.white),
+                  ),
                   onTap: () async {
                     Navigator.pop(sheetContext);
                     final pickedFile = await ImagePicker().pickImage(

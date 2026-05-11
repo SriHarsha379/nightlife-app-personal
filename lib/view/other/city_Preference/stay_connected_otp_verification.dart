@@ -4,6 +4,7 @@ import 'package:night_life/utilities/app_footer.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
+import '../../../provider/darkmode_provider.dart';
 import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -126,6 +127,8 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
   Widget build(BuildContext context) {
     final apiProvider = Provider.of<PostApiProvider>(context);
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -237,20 +240,21 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                         defaultPinTheme: PinTheme(
                           width: MediaQuery.of(context).size.width * 15.8 / 100,
                           height: MediaQuery.of(context).size.width * 14 / 100,
-                          textStyle: const TextStyle(
+                          textStyle: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
                             fontWeight: FontWeight.w700,
                             color: Colors.black,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColor.otpboxColor(context),
+                            color: isDark
+                                ? Colors.white
+                                : Color.fromARGB(255, 233, 231, 231),
                             border: Border.all(
-                              color: AppColor.secondryColor(context),
+                              color: Colors.black,
                             ),
                             boxShadow: [
                               BoxShadow(
-                                  // offset: const Offset(0, 4),
                                   blurRadius: 0,
                                   color: AppColor.primaryColor(context)
                                       .withOpacity(0.25))

@@ -156,7 +156,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     _userStatusPollTimer?.cancel();
     _conversationRefreshTimer?.cancel();
     _markConversationAsReadOnExit();
-    _clearLocalChatCache();
+    _clearLocalChatCache(notify: false);
 
     if (_socketProvider != null &&
         _joined &&
@@ -181,13 +181,16 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (_socketProvider == null) return;
     if (_conversationId.trim().isEmpty) return;
     _socketProvider!.markConversationSeenLocal(conversationId: _conversationId);
-    if (_userId.trim().isEmpty) return;
-    _socketProvider!.getConversationList(userId: _userId, page: 1, limit: 50);
   }
 
-  void _clearLocalChatCache() {
+  void _clearLocalChatCache({bool notify = true}) {
     _pendingMediaMessages.clear();
-    _socketProvider?.clearLocalMessages();
+    _socketProvider?.clearLocalMessages(notify: notify);
+  }
+
+  void _dismissComposerKeyboard() {
+    FocusManager.instance.primaryFocus?.unfocus();
+    SystemChannels.textInput.invokeMethod('TextInput.hide');
   }
 
   // -----------------------------------------------------------------
@@ -2893,20 +2896,20 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                       width:
                                                           size.width * 2 / 100),
                                                   GestureDetector(
-                                                    onTap: () {
+                                                    onTap: () async {
+                                                      _dismissComposerKeyboard();
                                                       setState(() {
                                                         isBottomSheetOpen =
-                                                            !isBottomSheetOpen;
+                                                            true;
                                                       });
-                                                      if (isBottomSheetOpen) {
-                                                        plusiconsBottomSheet(
-                                                                context)
-                                                            .whenComplete(() {
-                                                          setState(() =>
-                                                              isBottomSheetOpen =
-                                                                  false);
-                                                        });
-                                                      }
+                                                      await plusiconsBottomSheet(
+                                                          context);
+                                                      if (!mounted) return;
+                                                      _dismissComposerKeyboard();
+                                                      setState(() {
+                                                        isBottomSheetOpen =
+                                                            false;
+                                                      });
                                                     },
                                                     child: Image.asset(
                                                         AppImage.plusIcon,
@@ -3532,7 +3535,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
             child: Text(
               'You blocked this contact',
               style: TextStyle(
-                color: AppColor.secondryColor(context),
+                color: Colors.white,
                 fontSize: 14,
                 fontWeight: FontWeight.w400,
                 fontFamily: AppFont.fontFamily,
@@ -3581,7 +3584,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: AppColor.secondryColor(context),
+          color: Colors.white,
           fontSize: 14,
           fontWeight: FontWeight.w500,
           fontFamily: AppFont.fontFamily,

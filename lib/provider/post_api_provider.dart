@@ -1,4 +1,4 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
+// ignore_for_file: avoid_print, use_build_context_synchronously, curly_braces_in_flow_control_structures
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
@@ -235,7 +235,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(true);
 
     Map<String, String> fields = {
-      'email': email.toString(),
+      'email': email.toString().trim(),
       "password": password.toString(),
       'player_id': AppConstant.playerID.toString(),
       'device_type': AppConstant.deviceType,
@@ -435,9 +435,9 @@ class PostApiProvider with ChangeNotifier {
     final Map<String, String> fields = {
       'first_name': name.toString(),
       'last_name': lastName.toString(),
-      'username': userName.toString(),
-      'email': email.toString(),
-      'phone_number': mobile.toString(),
+      'username': userName.toString().trim(),
+      'email': email.toString().trim(),
+      'phone_number': mobile.toString().trim(),
       'dob': dob.toString(),
       'gender': gender.toString(),
       'height': height.toString(),
@@ -652,7 +652,7 @@ class PostApiProvider with ChangeNotifier {
       if (customVibes != null && customVibes.isNotEmpty)
         fields['custom_vibes'] = customVibes;
       if (anotherEmail != null && anotherEmail.isNotEmpty)
-        fields['another_email'] = anotherEmail;
+        fields['another_email'] = anotherEmail.trim();
 
       fields['vibe_checks'] = jsonEncode(vibeChecks);
       request.fields.addAll(fields);
@@ -1553,4 +1553,3 @@ class AppContentCache {
 
   bool get hasData => contentArr != null && contentArr!.isNotEmpty;
 }
-

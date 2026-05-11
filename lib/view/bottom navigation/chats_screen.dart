@@ -33,6 +33,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   static const String _locationPrefix = '__loc__';
 
   late TextEditingController searchController;
+  final ScrollController _conversationScrollController = ScrollController();
   final FocusNode _chatSearchFocusNode = FocusNode();
   UserChatSocketProvider? _socketProvider;
   UserController? _userController;
@@ -76,6 +77,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     _recentFriendsRetryTimer?.cancel();
     _socketProvider?.removeListener(_handleSocketStateChanged);
     searchController.dispose();
+    _conversationScrollController.dispose();
     footerVisibilityNotifier.value = true;
     _chatSearchFocusNode.dispose();
     super.dispose();
@@ -634,9 +636,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
-          setState(() {
-            AppConstant.selectFooterIndex = 0;
-          });
+          AppConstant.selectFooterIndex = 0;
         },
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -1013,7 +1013,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 topRight: Radius.circular(32),
                               ),
                             ),
-                            child: !socketProvider.hasConversationListLoaded
+                            child: !socketProvider.hasConversationListLoaded &&
+                                    socketProvider.conversationList.isEmpty
                                 ? Center(
                                     child: CircularProgressIndicator(
                                       color: AppColor.buttonColor,
@@ -1034,6 +1035,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                         ),
                                       )
                                     : ListView.builder(
+                                        key: const PageStorageKey<String>(
+                                          'chat_conversation_list',
+                                        ),
+                                        controller:
+                                            _conversationScrollController,
                                         padding: EdgeInsets.only(
                                           top: size.height * 0.03,
                                           bottom: size.height * 0.05,
@@ -1109,7 +1115,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                               .secondryColor(
                                                                   context)
                                                           : AppColor
-                                                              .greyLightColor(context),
+                                                              .greyLightColor(
+                                                                  context),
                                                     ),
                                                   ),
                                                   trailing: Column(
@@ -1145,10 +1152,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                               0.01),
                                                       Text(
                                                         time,
-                                                        style:  TextStyle(
+                                                        style: TextStyle(
                                                           fontSize: 14,
                                                           color: AppColor
-                                                              .greyLightColor(context),
+                                                              .greyLightColor(
+                                                                  context),
                                                         ),
                                                       ),
                                                     ],
@@ -1195,11 +1203,11 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                   },
                                                 ),
                                               ),
-                                               Divider(
+                                              Divider(
                                                 height: 0.2,
                                                 thickness: 0.5,
-                                                color: AppColor
-                                                        .greyLightColor(context),
+                                                color: AppColor.greyLightColor(
+                                                    context),
                                                 indent: 30,
                                                 endIndent: 30,
                                               ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import '../../../../../commonWidget/artist_image_preview.dart';
+import '../../../../../provider/darkmode_provider.dart';
 import '/controller/eventDetails/events_details_controller.dart';
 import '/utilities/app_color.dart';
 import '/utilities/app_constant.dart';
@@ -396,13 +397,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     final showDislikeOnly = widget.forceDislikeOnly || isLiked;
     final targetEventId = _targetEventId(eventDetails['_id']);
 
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDark = themeProvider.isDarkMode;
+
     return AnnotatedRegion<SystemUiOverlayStyle>(
         value: SystemUiOverlayStyle(
-          statusBarColor: AppColor.primaryColor(context),
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: Brightness.light,
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+          statusBarBrightness:
+              isDark ? Brightness.dark : Brightness.light, // iOS
         ),
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -503,8 +506,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               AppImage.heartImg,
                               height: 20,
                               width: 20,
-                              color: AppColor.secondryColor(
-                                  context), // optional tint color
+                              color: Colors.white, // optional tint color
                             ),
                             Text(
                               AppLanguage.likeText[language],
@@ -512,7 +514,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
                                 fontFamily: AppFont.fontFamily,
-                                color: AppColor.secondryColor(context),
+                                color: Colors.white,
                               ),
                             ),
                           ],
@@ -530,7 +532,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(height: size.height * 3 / 100),
+                  SizedBox(height: size.height * 4 / 100),
                   Expanded(
                     child: SingleChildScrollView(
                       child: Center(
@@ -965,7 +967,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                           children: [
                                                             Text(
                                                               "${distance} km away",
-                                                              style:  TextStyle(
+                                                              style: TextStyle(
                                                                   fontSize: 15,
                                                                   fontFamily:
                                                                       AppFont
@@ -974,7 +976,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                       FontWeight
                                                                           .w400,
                                                                   color: AppColor
-                                                                      .greyLightColor(context)),
+                                                                      .greyLightColor(
+                                                                          context)),
                                                             ),
                                                           ],
                                                         ),
@@ -1185,14 +1188,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 trimMode: TrimMode.Line,
                                                 trimCollapsedText: 'Read More',
                                                 trimExpandedText: ' Read Less',
-                                                style:  TextStyle(
+                                                style: TextStyle(
                                                   fontSize: 15,
                                                   fontFamily:
                                                       AppFont.fontFamily,
                                                   fontWeight: FontWeight.normal,
                                                   color:
-                                                      AppColor
-                                                        .greyLightColor(context),
+                                                      AppColor.greyLightColor(
+                                                          context),
                                                 ),
                                                 moreStyle: const TextStyle(
                                                   fontSize: 15,
@@ -1567,9 +1570,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                     fontWeight:
                                                                         FontWeight
                                                                             .w400,
-                                                                    color: AppColor
-                                                                        .secondryColor(
-                                                                            context)),
+                                                                    color: Colors
+                                                                        .white),
                                                               ),
                                                             ),
                                                             Text(
@@ -1582,9 +1584,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                   fontWeight:
                                                                       FontWeight
                                                                           .w700,
-                                                                  color: AppColor
-                                                                      .secondryColor(
-                                                                          context)),
+                                                                  color: Colors
+                                                                      .white),
                                                             ),
                                                           ],
                                                         ),
@@ -1618,9 +1619,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 45 /
                                                                 100,
                                                             decoration: BoxDecoration(
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context),
+                                                                color: Colors
+                                                                    .white,
                                                                 borderRadius:
                                                                     BorderRadius
                                                                         .circular(
@@ -1694,9 +1694,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 .fontFamily,
                                                             fontWeight:
                                                                 FontWeight.w400,
-                                                            color: AppColor
-                                                                .secondryColor(
-                                                                    context)),
+                                                            color:
+                                                                Colors.white),
                                                       ),
                                                     ),
                                                   ),

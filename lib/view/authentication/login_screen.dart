@@ -300,10 +300,17 @@ class _LoginScreenState extends State<LoginScreen>
                               ),
                               if (AppConstant.deviceType == "ios") ...[
                                 SizedBox(width: size.width * 0.02),
-                                Image.asset(
-                                  isDark ? AppImage.apple : AppImage.appleLight,
-                                  width: size.width * 0.15,
-                                  height: size.width * 0.15,
+                                GestureDetector(
+                                  onTap: () {
+                                    loginApple(context);
+                                  },
+                                  child: Image.asset(
+                                    isDark
+                                        ? AppImage.apple
+                                        : AppImage.appleLight,
+                                    width: size.width * 0.15,
+                                    height: size.width * 0.15,
+                                  ),
                                 ),
                               ],
                             ],

@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '/controller/bookingEvent/booking_event_controller.dart';
 import '/utilities/app_constant.dart';
 import '/utilities/app_language.dart';
@@ -80,21 +81,23 @@ class _BookEventState extends State<BookEvent> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    return PopScope(
-      canPop: true,
-      onPopInvoked: (didPop) {
-        final bookingDetails =
-            Provider.of<BookingEventDetails>(context, listen: false);
-        bookingDetails.clearSelections();
-      },
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: SystemUiOverlayStyle(
-          statusBarColor: AppColor.primaryColor(context),
-          statusBarIconBrightness: Brightness.light,
-          statusBarBrightness: Brightness.dark,
-          systemNavigationBarColor: Colors.transparent,
-          systemNavigationBarIconBrightness: Brightness.light,
-        ),
+
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    bool isDark = themeProvider.isDarkMode;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
+      ),
+      child: PopScope(
+        canPop: true,
+        onPopInvoked: (didPop) {
+          final bookingDetails =
+              Provider.of<BookingEventDetails>(context, listen: false);
+          bookingDetails.clearSelections();
+        },
         child: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
             child: Scaffold(
@@ -134,9 +137,9 @@ class _BookEventState extends State<BookEvent> {
                     child: SingleChildScrollView(
                       child: Column(
                         children: [
-                          SizedBox(
-                            height: size.height * 2 / 100,
-                          ),
+                          // SizedBox(
+                          //   height: size.height * 4 / 100,
+                          // ),
 
                           //! Event Image
                           Consumer<EventDetailsController>(
@@ -180,7 +183,7 @@ class _BookEventState extends State<BookEvent> {
                                     ),
                                   ),
                                   Positioned(
-                                    top: 26,
+                                    top: 38,
                                     left: 16,
                                     child: GestureDetector(
                                       onTap: () {
@@ -459,7 +462,11 @@ class _BookEventState extends State<BookEvent> {
                                         height: size.height * 4.2 / 100,
                                         decoration: BoxDecoration(
                                           color: selectedPassIndex == 0
-                                              ? AppColor.secondryColor(context)
+                                              ? (isDark
+                                                  ? AppColor.secondryColor(
+                                                      context) // dark — same as before
+                                                  : AppColor
+                                                      .pinkColor) // light — pink
                                               : Colors.transparent,
                                           borderRadius:
                                               BorderRadius.circular(44),
@@ -477,10 +484,12 @@ class _BookEventState extends State<BookEvent> {
                                                 fontFamily: AppFont.fontFamily,
                                                 fontWeight: FontWeight.w500,
                                                 color: selectedPassIndex == 0
-                                                    ? AppColor.primaryColor(
-                                                        context)
-                                                    : AppColor.secondryColor(
-                                                        context),
+                                                    ? (isDark
+                                                        ? AppColor.primaryColor(
+                                                            context) // dark — same
+                                                        : Colors
+                                                            .white) // light — white on pink
+                                                    : Colors.white,
                                               ),
                                             ),
                                           ),
@@ -508,7 +517,11 @@ class _BookEventState extends State<BookEvent> {
                                         height: size.height * 4.2 / 100,
                                         decoration: BoxDecoration(
                                           color: selectedPassIndex == 1
-                                              ? AppColor.secondryColor(context)
+                                              ? (isDark
+                                                  ? AppColor.secondryColor(
+                                                      context) // dark — same
+                                                  : AppColor
+                                                      .pinkColor) // light — pink
                                               : Colors.transparent,
                                           borderRadius:
                                               BorderRadius.circular(44),
@@ -521,10 +534,12 @@ class _BookEventState extends State<BookEvent> {
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w500,
                                               color: selectedPassIndex == 1
-                                                  ? AppColor.primaryColor(
-                                                      context)
-                                                  : AppColor.secondryColor(
-                                                      context),
+                                                  ? (isDark
+                                                      ? AppColor.primaryColor(
+                                                          context) // dark — same
+                                                      : Colors
+                                                          .white) // light — white on pink
+                                                  : Colors.white,
                                             ),
                                           ),
                                         ),
@@ -663,7 +678,8 @@ class _BookEventState extends State<BookEvent> {
                                                       width: 1,
                                                       color: isSoldOut
                                                           ? AppColor
-                                                              .greyLightColor(context)
+                                                              .greyLightColor(
+                                                                  context)
                                                           : isSelected
                                                               ? AppColor
                                                                   .pinkColor
@@ -687,7 +703,8 @@ class _BookEventState extends State<BookEvent> {
                                                                   FontWeight
                                                                       .w600,
                                                               color: AppColor
-                                                                  .greyLightColor(context),
+                                                                  .greyLightColor(
+                                                                      context),
                                                             ),
                                                           ),
                                                         )
@@ -804,46 +821,53 @@ class _BookEventState extends State<BookEvent> {
                                 },
                               ),
                               SizedBox(height: size.height * 5.5 / 100),
-                              Column(
-                                children: [
-                                  // View Event Layout
-                                  customExpandableContainer(
-                                    title: "View Event Layout",
-                                    isExpanded: isEventLayoutExpanded,
-                                    onTap: () {
-                                      setState(() {
-                                        isEventLayoutExpanded =
-                                            !isEventLayoutExpanded;
-                                      });
-                                    },
-                                    child: _buildEventLayout(size),
-                                  ),
+                              Consumer<EventDetailsController>(
+                                builder: (context, eventController, _) {
+                                  final eventData =
+                                      eventController.getEventDetails;
+                                  return Column(
+                                    children: [
+                                      // View Event Layout
+                                      customExpandableContainer(
+                                        title: "View Event Layout",
+                                        isExpanded: isEventLayoutExpanded,
+                                        onTap: () {
+                                          setState(() {
+                                            isEventLayoutExpanded =
+                                                !isEventLayoutExpanded;
+                                          });
+                                        },
+                                        child:
+                                            _buildEventLayout(size, eventData),
+                                      ),
 
-                                  // Prohibited Items
-                                  customExpandableContainer(
-                                    title: "Prohibited Items",
-                                    isExpanded: isProhibitedItemsExpanded,
-                                    onTap: () {
-                                      setState(() {
-                                        isProhibitedItemsExpanded =
-                                            !isProhibitedItemsExpanded;
-                                      });
-                                    },
-                                    child: _buildProhibitedItems(),
-                                  ),
+                                      // Prohibited Items
+                                      customExpandableContainer(
+                                        title: "Prohibited Items",
+                                        isExpanded: isProhibitedItemsExpanded,
+                                        onTap: () {
+                                          setState(() {
+                                            isProhibitedItemsExpanded =
+                                                !isProhibitedItemsExpanded;
+                                          });
+                                        },
+                                        child: _buildProhibitedItems(eventData),
+                                      ),
 
-                                  // FAQ
-                                  customExpandableContainer(
-                                    title: "Frequently Asked Questions",
-                                    isExpanded: isFAQExpanded,
-                                    onTap: () {
-                                      setState(() {
-                                        isFAQExpanded = !isFAQExpanded;
-                                      });
-                                    },
-                                    child: _buildFAQ(),
-                                  ),
-                                ],
+                                      // FAQ
+                                      customExpandableContainer(
+                                        title: "Frequently Asked Questions",
+                                        isExpanded: isFAQExpanded,
+                                        onTap: () {
+                                          setState(() {
+                                            isFAQExpanded = !isFAQExpanded;
+                                          });
+                                        },
+                                        child: _buildFAQ(eventData),
+                                      ),
+                                    ],
+                                  );
+                                },
                               ),
                               SizedBox(
                                 height: size.height * 20 / 100,
@@ -950,14 +974,22 @@ class _BookEventState extends State<BookEvent> {
     required VoidCallback onTap,
     required Widget child,
   }) {
+    final isDark = context.read<ThemeProvider>().isDarkMode;
+
     return AnimatedContainer(
       duration: const Duration(milliseconds: 300),
       width: double.infinity,
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 16),
       decoration: BoxDecoration(
-        color: const Color(0xFF1A0F29),
+        color: isDark ? const Color(0xFF1A0F29) : const Color(0xFFF3EEF9),
         borderRadius: BorderRadius.circular(30),
+        border: isDark
+            ? null
+            : Border.all(
+                color: const Color(0xFFDDD5EB),
+                width: 1,
+              ),
       ),
       child: Column(
         children: [
@@ -968,8 +1000,10 @@ class _BookEventState extends State<BookEvent> {
               children: [
                 Text(
                   title,
-                  style: const TextStyle(
-                    color: Colors.white,
+                  style: TextStyle(
+                    color: isDark
+                        ? Colors.white // dark — same
+                        : const Color(0xFF1A0F29), // light — dark purple
                     fontSize: 15,
                     fontWeight: FontWeight.w600,
                   ),
@@ -977,9 +1011,11 @@ class _BookEventState extends State<BookEvent> {
                 AnimatedRotation(
                   turns: isExpanded ? 0.5 : 0,
                   duration: const Duration(milliseconds: 300),
-                  child: const Icon(
+                  child: Icon(
                     Icons.keyboard_arrow_down_rounded,
-                    color: Colors.white,
+                    color: isDark
+                        ? Colors.white // dark — same
+                        : const Color(0xFF1A0F29), // light — dark purple
                     size: 26,
                   ),
                 ),
@@ -1002,180 +1038,100 @@ class _BookEventState extends State<BookEvent> {
     );
   }
 
-  Widget _buildEventLayout(Size size) {
+  Widget _buildEventLayout(Size size, dynamic eventData) {
+    final List<dynamic> layoutImages =
+        (eventData is Map && eventData['event_layout_images'] is List)
+            ? eventData['event_layout_images'] as List<dynamic>
+            : [];
+
+    if (layoutImages.isEmpty) {
+      return Center(
+        child: Text(
+          "No layout available",
+          style: TextStyle(
+            color: AppColor.secondryColor(context),
+            fontSize: 13,
+          ),
+        ),
+      );
+    }
+
     return Column(
-      children: [
-        // Stage Section
-        Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: Colors.grey.shade300,
+      children: layoutImages.map((item) {
+        final String imageUrl = item['image_url'] ?? '';
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 12),
+          child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
-          ),
-          child: const Center(
-            child: Text(
-              "STAGE",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 16,
-                fontWeight: FontWeight.w700,
+            child: CachedNetworkImage(
+              imageUrl: "${AppConfigProvider.imageUrl}$imageUrl",
+              width: double.infinity,
+              fit: BoxFit.contain,
+              errorWidget: (context, url, error) => Image.asset(
+                AppImage.dummyImageIcon,
+                fit: BoxFit.cover,
               ),
-            ),
-          ),
-        ),
-        const SizedBox(height: 15),
-        // VIP and GA Area
-        Container(
-          height: 280,
-          decoration: BoxDecoration(
-            color: Colors.purple.shade900,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Stack(
-            children: [
-              // VIP Area
-              Positioned(
-                top: 15,
-                left: 15,
-                right: 15,
-                child: Container(
-                  height: 50,
-                  decoration: BoxDecoration(
-                    color: Colors.purple.shade600,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "VIP AREA",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              // GA Area
-              Positioned(
-                top: 80,
-                left: 15,
-                right: 15,
-                bottom: 15,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.purple.shade700,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Text(
-                        "GA AREA",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                        ),
-                      ),
-                      const SizedBox(height: 30),
-                      // Center Rectangle
-                      Container(
-                        width: 60,
-                        height: 80,
-                        decoration: BoxDecoration(
-                          color: Colors.grey.shade800,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: 15),
-        // Notes
-        const Row(
-          children: [
-            Icon(
-              Icons.info_outline,
-              color: Colors.grey,
-              size: 14,
-            ),
-            SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                "This layout is not drawn to the actual scale of the venue.",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 11,
+              placeholder: (context, url) => Center(
+                child: LoadingAnimationWidget.dotsTriangle(
+                  color: AppColor.themeColor,
+                  size: 35,
                 ),
               ),
             ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        const Row(
-          children: [
-            Icon(
-              Icons.square,
-              color: Colors.grey,
-              size: 14,
-            ),
-            SizedBox(width: 6),
-            Expanded(
-              child: Text(
-                "Sold Out / Unavailable tickets are marked in grey",
-                style: TextStyle(
-                  color: Colors.grey,
-                  fontSize: 11,
-                ),
-              ),
-            ),
-          ],
-        ),
-      ],
+          ),
+        );
+      }).toList(),
     );
   }
 
-  Widget _buildProhibitedItems() {
+  Widget _buildProhibitedItems(dynamic eventData) {
+    final List<dynamic> items =
+        (eventData is Map && eventData['prohibited_items'] is List)
+            ? eventData['prohibited_items'] as List<dynamic>
+            : [];
+
+    if (items.isEmpty) {
+      return Center(
+        child: Text(
+          "No prohibited items listed",
+          style:
+              TextStyle(color: AppColor.secondryColor(context), fontSize: 13),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildBulletPoint("Outside food and beverages"),
-        _buildBulletPoint("Professional cameras and recording equipment"),
-        _buildBulletPoint("Weapons or sharp objects"),
-        _buildBulletPoint("Illegal substances"),
-      ],
+      children:
+          items.map((item) => _buildBulletPoint(item.toString())).toList(),
     );
   }
 
-  Widget _buildFAQ() {
+  Widget _buildFAQ(dynamic eventData) {
+    final List<dynamic> faqs = (eventData is Map && eventData['faqs'] is List)
+        ? eventData['faqs'] as List<dynamic>
+        : [];
+
+    if (faqs.isEmpty) {
+      return Center(
+        child: Text(
+          "No FAQs available",
+          style:
+              TextStyle(color: AppColor.secondryColor(context), fontSize: 13),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildFAQItem(
-          "What time does the event start?",
-          "The event starts at 8:00 PM.",
-        ),
-        const SizedBox(height: 12),
-        _buildFAQItem(
-          "Is parking available?",
-          "Yes, parking is available at the venue.",
-        ),
-        const SizedBox(height: 12),
-        _buildFAQItem(
-          "Can I get a refund?",
-          "Refunds are available up to 48 hours before the event.",
-        ),
-        const SizedBox(height: 12),
-        _buildFAQItem(
-          "Is outside food allowed?",
-          "No, outside food is not permitted inside the venue.",
-        ),
+        for (int i = 0; i < faqs.length; i++) ...[
+          _buildFAQItem(
+            faqs[i]['question'] ?? '',
+            faqs[i]['answer'] ?? '',
+          ),
+          if (i < faqs.length - 1) const SizedBox(height: 12),
+        ],
       ],
     );
   }
@@ -1208,26 +1164,29 @@ class _BookEventState extends State<BookEvent> {
   }
 
   Widget _buildFAQItem(String question, String answer) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          question,
-          style: TextStyle(
-            color: AppColor.secondryColor(context),
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
+    return Container(
+      width: MediaQuery.of(context).size.width * 85 / 100,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            question,
+            style: TextStyle(
+              color: AppColor.secondryColor(context),
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          answer,
-          style: const TextStyle(
-            color: Colors.grey,
-            fontSize: 12,
+          const SizedBox(height: 4),
+          Text(
+            answer,
+            style: TextStyle(
+              color: AppColor.pasttimecolor(context),
+              fontSize: 12,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }

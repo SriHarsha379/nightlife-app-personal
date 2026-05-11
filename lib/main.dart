@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/splash_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:provider/single_child_widget.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'provider/app_providers.dart';
 import 'provider/darkmode_provider.dart';
@@ -62,6 +63,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
+  late final List<SingleChildWidget> _appProviders;
   StreamSubscription<Uri>? _deepLinkSub;
   Uri? _lastHandledDeepLink;
   static const String _handledInitialRedirectsKey =
@@ -74,6 +76,7 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    _appProviders = buildAppProviders();
     _initDeepLinks();
     _initNotificationRedirections();
   }
@@ -400,7 +403,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-      providers: buildAppProviders(),
+      providers: _appProviders,
       child: Consumer<ThemeProvider>(
         builder: (context, themeProvider, child) {
           return MaterialApp(

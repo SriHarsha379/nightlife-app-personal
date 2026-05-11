@@ -956,11 +956,13 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
 
   bool _canEmit() => socket != null && isConnectedValue && socket!.connected;
 
-  void clearLocalMessages() {
+  void clearLocalMessages({bool notify = true}) {
     _messages = [];
     _currentPage = 1;
     _hasMore = true;
-    notifyListeners();
+    if (notify) {
+      notifyListeners();
+    }
   }
 
   @override

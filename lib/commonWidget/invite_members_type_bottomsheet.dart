@@ -205,6 +205,7 @@ class _InviteMembersTypeBottomSheetState
                 height: size.height * 0.005,
                 width: size.width * 0.28,
                 fit: BoxFit.fill,
+                color: AppColor.secondryColor(context),
               ),
               SizedBox(height: size.height * 0.02),
               _tabs(context, size),
@@ -438,8 +439,7 @@ class _InviteMembersTypeBottomSheetState
                 fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
                 color: selected
                     ? AppColor.secondryColor(context)
-                    : AppColor
-                                                        .greyLightColor(context),
+                    : AppColor.greyLightColor(context),
                 fontSize: selected ? 16 : 15,
                 fontFamily: AppFont.fontFamily,
               ),
@@ -474,8 +474,7 @@ class _InviteMembersTypeBottomSheetState
           Container(
             width: MediaQuery.of(context).size.width,
             height: 2,
-            color: AppColor
-                                                        .greyLightColor(context).withOpacity(0.3),
+            color: AppColor.greyLightColor(context).withOpacity(0.3),
           ),
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),

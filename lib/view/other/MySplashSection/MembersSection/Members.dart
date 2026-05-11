@@ -351,6 +351,7 @@ class _splashMembersState extends State<splashMembers> {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() => selectedIndex = 0);
                         Provider.of<MembersController>(context, listen: false)
@@ -379,6 +380,7 @@ class _splashMembersState extends State<splashMembers> {
                       ),
                     ),
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () {
                         setState(() => selectedIndex = 1);
                         Provider.of<MembersController>(context, listen: false)
@@ -414,6 +416,7 @@ class _splashMembersState extends State<splashMembers> {
               Row(
                 children: [
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () {
                       setState(() => selectedIndex = 0);
                       Provider.of<MembersController>(context, listen: false)
@@ -433,6 +436,7 @@ class _splashMembersState extends State<splashMembers> {
                     ),
                   ),
                   GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: () {
                       setState(() => selectedIndex = 1);
                       Provider.of<MembersController>(context, listen: false)

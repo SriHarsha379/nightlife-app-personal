@@ -5,6 +5,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:night_life/controller/book_venue/book_venue_details_controller.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_font.dart';
@@ -51,10 +52,6 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
     }
   }
 
-
-
-
-
   @override
   void initState() {
     super.initState();
@@ -66,7 +63,6 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
     });
   }
 
-  /// Splits "Saturday 28 Feb" → ['Saturday', '28 Feb']
   List<String> _splitDate(String? dateStr) {
     if (dateStr == null || dateStr.isEmpty) return ['', ''];
     final parts = dateStr.trim().split(' ');
@@ -81,14 +77,23 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDark = themeProvider.isDarkMode;
+
+    // ── Adaptive colors ───────────────────────────────────────────────────
+    final cardColor = AppColor.pastbookeventcontainercolor(context);
+    final primaryText = AppColor.secondryColor(context);
+    final subText = isDark ? Colors.white70 : const Color(0xff555555);
+    final dividerColor = isDark ? Colors.white24 : const Color(0xffDDDDDD);
+    final guestPillBg = isDark ? Colors.black : const Color(0xff1A0F29);
+    final guestPillBorder =
+        isDark ? Colors.white.withOpacity(0.4) : Colors.white.withOpacity(0.3);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
-        statusBarColor: AppColor.primaryColor(context),
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.dark,
-        systemNavigationBarColor: Colors.transparent,
-        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
+        statusBarBrightness: isDark ? Brightness.dark : Brightness.light,
       ),
       child: GestureDetector(
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -98,34 +103,19 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
             builder: (context, controller, _) {
               final d = controller.getVenuesDetail;
 
-              // ── Parse date parts ─────────────────────────────────────────
               final dateParts = _splitDate(d?['date']?.toString());
-              final dayName = dateParts[0]; // e.g. "Saturday"
-              final dateNum = dateParts[1]; // e.g. "28 Feb"
+              final dayName = dateParts[0];
+              final dateNum = dateParts[1];
               final timeStr = d?['time']?.toString() ?? '';
-
-              // ── Split time into value + AM/PM ────────────────────────────
               final timeParts = timeStr.split(' ');
               final timeVal = timeParts.isNotEmpty ? timeParts[0] : timeStr;
               final timeAmPm = timeParts.length > 1 ? timeParts[1] : '';
-
-              // ── Discount ─────────────────────────────────────────────────
               final discountPercent =
                   d?['cover_charge_percentage']?.toString() ?? '0';
 
-              // ── Pill data: [Date, Time, Discount] ────────────────────────
-              // We build 3 pills: Date | Time | Discount
               final pills = [
-                {
-                  'top': dayName,
-                  'bottom': dateNum,
-                  'label': 'Date',
-                },
-                {
-                  'top': timeVal,
-                  'bottom': timeAmPm,
-                  'label': 'Time',
-                },
+                {'top': dayName, 'bottom': dateNum, 'label': 'Date'},
+                {'top': timeVal, 'bottom': timeAmPm, 'label': 'Time'},
                 {
                   'top':
                       discountPercent == '0' ? "Not" : '$discountPercent% Off',
@@ -140,8 +130,6 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                 child: SingleChildScrollView(
                   child: Column(
                     children: [
-                      SizedBox(height: size.height * 0.03),
-
                       // ── Hero Image + Back button ──────────────────────────
                       Stack(
                         children: [
@@ -189,7 +177,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                     AppImage.backarrow,
                                     width: size.width * 5 / 100,
                                     height: size.width * 5 / 100,
-                                    color: AppColor.secondryColor(context),
+                                    color: Colors.white, // image pe white OK
                                   ),
                                 ),
                               ),
@@ -218,7 +206,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w500,
                                       fontSize: 24,
-                                      color: AppColor.secondryColor(context),
+                                      color: primaryText,
                                     ),
                                   ),
                                 ),
@@ -229,9 +217,9 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                   ),
                                   child: SizedBox(
                                     width: size.width * 70 / 100,
-                                    child: Text(
-                                      '${d?['city_name'] ?? ''}, ${d?['address'] ?? ''}',
-                                      style: const TextStyle(
+                                    child: const Text(
+                                      '',
+                                      style: TextStyle(
                                         fontFamily: AppFont.fontFamily,
                                         fontWeight: FontWeight.w500,
                                         fontSize: 14.5,
@@ -240,21 +228,18 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                     ),
                                   ),
                                 ),
-                              
-                              
-                              
                               ],
                             ),
 
-                            // Number of guests pill
+                            // ── Number of guests pill ─────────────────────
                             Container(
                               width: size.width * 15 / 100,
                               height: size.height * 8 / 100,
                               decoration: BoxDecoration(
-                                color: Colors.black,
+                                color: guestPillBg,
                                 borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
-                                  color: Colors.white.withOpacity(0.4),
+                                  color: guestPillBorder,
                                   width: 1.2,
                                 ),
                               ),
@@ -292,7 +277,6 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          // Heading row
                           Row(
                             children: [
                               SizedBox(width: size.width * 12 / 100),
@@ -303,10 +287,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                               _pillLabel('Discount', context),
                             ],
                           ),
-
                           SizedBox(height: size.height * 1 / 100),
-
-                          // Pills row
                           Wrap(
                             spacing: 10,
                             runSpacing: 10,
@@ -361,91 +342,84 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 18, vertical: 20),
                               decoration: BoxDecoration(
-                                color:
-                                    AppColor.bookeventcontainercolor(context),
+                                color: cardColor,
                                 borderRadius: BorderRadius.circular(14),
                               ),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   // ── Your Details title ──────────────────
-                                  const Text(
+                                  Text(
                                     "Your Details",
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   SizedBox(height: size.height * 3 / 100),
 
-                                  // ── Info fields from API ────────────────
-                                  infoItem(
-                                    "Phone Number",
-                                    '${d?['country_code'] ?? ''} ${d?['phone_number'] ?? ''}',
-                                  ),
+                                  infoItem("Phone Number",
+                                      '${d?['country_code'] ?? ''} ${d?['phone_number'] ?? ''}',
+                                      subText: subText),
+                                  SizedBox(height: size.height * 3 / 100),
+                                  infoItem("Full Name",
+                                      d?['full_name']?.toString() ?? '',
+                                      subText: subText),
                                   SizedBox(height: size.height * 3 / 100),
                                   infoItem(
-                                    "Full Name",
-                                    d?['full_name']?.toString() ?? '',
-                                  ),
+                                      "Email Id", d?['email']?.toString() ?? '',
+                                      subText: subText),
                                   SizedBox(height: size.height * 3 / 100),
                                   infoItem(
-                                    "Email Id",
-                                    d?['email']?.toString() ?? '',
-                                  ),
-                                  SizedBox(height: size.height * 3 / 100),
-                                  infoItem(
-                                    "City",
-                                    d?['city_name']?.toString() ?? '',
-                                  ),
+                                      "City", d?['city_name']?.toString() ?? '',
+                                      subText: subText),
+
                                   d?['special_request'] == ""
-                                      ? SizedBox()
+                                      ? const SizedBox()
                                       : SizedBox(height: size.height * 3 / 100),
                                   d?['special_request'] == ""
-                                      ? SizedBox()
+                                      ? const SizedBox()
                                       : infoItem(
                                           "Special Request",
                                           d?['special_request']?.toString() ??
                                               '',
-                                        ),
+                                          subText: subText),
+
                                   const SizedBox(height: 16),
-                                  const Divider(
-                                      color: Colors.white24, thickness: 0.6),
+                                  Divider(color: dividerColor, thickness: 0.6),
                                   const SizedBox(height: 16),
 
                                   // ── Price breakdown title ───────────────
-                                  const Text(
+                                  Text(
                                     "Price breakdown",
                                     style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.w700,
-                                      color: Colors.white,
+                                      color: primaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 16),
 
-                                  // Ticket Charges = sub_total
                                   detailsRow(
                                     'Total Charges',
                                     "₹${d?['reservation_booking_fees'] ?? ''}",
+                                    subText: subText,
+                                    valueColor: primaryText,
                                   ),
-                                  Divider(
-                                      thickness: 0.2,
-                                      color: AppColor.secondryColor(context)),
+                                  Divider(thickness: 0.2, color: dividerColor),
                                   SizedBox(height: size.height * 0.2 / 100),
 
-                                  // Cover charge
                                   detailsRow(
                                     "Cover charge",
                                     "₹${d?['cover_charge'] ?? ''}",
+                                    subText: subText,
+                                    valueColor: primaryText,
                                   ),
-                                  Divider(
-                                      thickness: 0.2,
-                                      color: AppColor.secondryColor(context)),
+                                  Divider(thickness: 0.2, color: dividerColor),
                                   SizedBox(height: size.height * 0.2 / 100),
 
-                                  // ── Expandable Booking Fee (GST) ────────
+                                  // ── Expandable Booking Fee ────────────
                                   GestureDetector(
                                     onTap: () => setState(
                                         () => showDetails = !showDetails),
@@ -455,11 +429,10 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                       children: [
                                         Row(
                                           children: [
-                                            const Text(
+                                            Text(
                                               "Booking Fee",
                                               style: TextStyle(
-                                                  fontSize: 14,
-                                                  color: Colors.white70),
+                                                  fontSize: 14, color: subText),
                                             ),
                                             const SizedBox(width: 6),
                                             Icon(
@@ -474,9 +447,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                         Text(
                                           "₹${d?['sub_total'] ?? ''}",
                                           style: TextStyle(
-                                              fontSize: 14,
-                                              color: AppColor.secondryColor(
-                                                  context)),
+                                              fontSize: 14, color: primaryText),
                                         ),
                                       ],
                                     ),
@@ -485,144 +456,40 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
 
                                   if (showDetails) ...[
                                     SizedBox(height: size.height * 0.2 / 100),
-                                    // Base Price
+                                    _subRow(
+                                        "Base Price",
+                                        "₹${d?['reservation_booking_fees'] ?? ''}",
+                                        size,
+                                        subText),
+                                    SizedBox(height: size.height * 0.6 / 100),
+                                    _subRow(
+                                        "Cover Charge",
+                                        "₹${d?['cover_charge'] ?? ''}",
+                                        size,
+                                        subText),
+                                    SizedBox(height: size.height * 0.6 / 100),
+                                    _subRow(
+                                        "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
+                                        "₹${d?['gst_amount'] ?? ''}",
+                                        size,
+                                        subText),
+                                    SizedBox(height: size.height * 0.6 / 100),
                                     Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
+                                      padding: EdgeInsets.symmetric(
+                                          horizontal: size.width * 3 / 100),
                                       child: Row(
                                         mainAxisAlignment:
                                             MainAxisAlignment.spaceBetween,
                                         children: [
                                           Text(
-                                            "Base Price",
+                                            "Coupon Discount",
                                             style: TextStyle(
-                                              fontSize: 7.30,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                          Text(
-                                            "₹${d?['reservation_booking_fees'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: size.height * 0.6 / 100),
-                                    // Cover Charge
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          const Text(
-                                            "Cover Charge",
-                                            style: TextStyle(
-                                              fontSize: 7.30,
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                          Text(
-                                            "₹${d?['cover_charge'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              fontWeight: FontWeight.w400,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: size.height * 0.6 / 100),
-                                    // GST
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Integrated GST (IGST) @${d?['gst_percentage'] ?? '18'}%",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                          Text(
-                                            "₹${d?['gst_amount'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    SizedBox(height: size.height * 0.6 / 100),
-                                    // Coupon Discount
-                                    Padding(
-                                      padding: EdgeInsets.only(
-                                          left: size.width * 3 / 100,
-                                          right: size.width * 3 / 100),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              const Text(
-                                                "Coupon Discount",
-                                                style: TextStyle(
-                                                  fontSize: 7.30,
-                                                  color: Colors.white70,
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    left: size.width * 3 / 100,
-                                                    right:
-                                                        size.width * 3 / 100),
-                                                child: Container(
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    horizontal: 8,
-                                                    vertical: 2,
-                                                  ),
-                                                  decoration: BoxDecoration(
-                                                    color: AppColor.themeColor
-                                                        .withOpacity(0.15),
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            6),
-                                                    border: Border.all(
-                                                      color:
-                                                          AppColor.themeColor,
-                                                      width: 0.5,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
+                                                fontSize: 7.30, color: subText),
                                           ),
                                           Text(
                                             "-₹${d?['discount'] ?? ''}",
-                                            style: const TextStyle(
-                                              fontSize: 7.30,
-                                              color: Colors.white70,
-                                            ),
+                                            style: TextStyle(
+                                                fontSize: 7.30, color: subText),
                                           ),
                                         ],
                                       ),
@@ -630,22 +497,18 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                     SizedBox(height: size.height * 0.01),
                                   ],
 
-
-
-
                                   SizedBox(height: size.height * 2 / 100),
 
-                                  // Discount
                                   detailsRow(
                                     "Discount",
                                     d?['cover_charge_percentage'] == 0
                                         ? "Not Applicable"
                                         : "${d?['cover_charge_percentage'] ?? ''}%",
+                                    subText: subText,
+                                    valueColor: primaryText,
                                   ),
                                   SizedBox(height: size.height * 0.3 / 100),
-                                  Divider(
-                                      thickness: 0.2,
-                                      color: AppColor.secondryColor(context)),
+                                  Divider(thickness: 0.2, color: dividerColor),
                                   SizedBox(height: size.height * 0.8 / 100),
 
                                   // Total
@@ -653,13 +516,13 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Total",
                                         style: TextStyle(
                                           fontSize: 17,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color: Colors.white70,
+                                          color: subText,
                                         ),
                                       ),
                                       Text(
@@ -668,8 +531,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                           fontSize: 18,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color:
-                                              AppColor.secondryColor(context),
+                                          color: primaryText,
                                         ),
                                       ),
                                     ],
@@ -682,13 +544,13 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceBetween,
                                     children: [
-                                      const Text(
+                                      Text(
                                         "Payment Mode",
                                         style: TextStyle(
                                           fontSize: 14,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
-                                          color: Colors.white70,
+                                          color: subText,
                                         ),
                                       ),
                                       Text(
@@ -697,8 +559,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
                                           fontSize: 14,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w600,
-                                          color:
-                                              AppColor.secondryColor(context),
+                                          color: primaryText,
                                         ),
                                       ),
                                     ],
@@ -722,6 +583,24 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
     );
   }
 
+  // ── Sub row helper ─────────────────────────────────────────────────────────
+  Widget _subRow(String title, String value, Size size, Color color) {
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: size.width * 3 / 100),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(title,
+              style: TextStyle(
+                  fontSize: 7.30, fontWeight: FontWeight.w400, color: color)),
+          Text(value,
+              style: TextStyle(
+                  fontSize: 7.30, fontWeight: FontWeight.w400, color: color)),
+        ],
+      ),
+    );
+  }
+
   Widget _pillLabel(String text, BuildContext context) {
     return Text(
       text,
@@ -734,11 +613,17 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
     );
   }
 
-  Widget detailsRow(String title, String value,
-      {bool isBold = false,
-      bool highlight = false,
-      double? fontSize,
-      FontWeight? fontWeight}) {
+  // ✅ subText + valueColor parameters add kiye
+  Widget detailsRow(
+    String title,
+    String value, {
+    bool isBold = false,
+    bool highlight = false,
+    double? fontSize,
+    FontWeight? fontWeight,
+    required Color subText,
+    required Color valueColor,
+  }) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: Row(
@@ -757,7 +642,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
             style: TextStyle(
               fontSize: fontSize ?? 13,
               fontWeight: FontWeight.w400,
-              color: Colors.white,
+              color: valueColor,
             ),
           ),
         ],
@@ -765,7 +650,8 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
     );
   }
 
-  Widget infoItem(String title, String value) {
+  // ✅ subText parameter add kiya
+  Widget infoItem(String title, String value, {required Color subText}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -780,9 +666,9 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 13,
-            color: Colors.white70,
+            color: subText,
             fontWeight: FontWeight.w400,
           ),
         ),
