@@ -91,15 +91,41 @@ class Validation {
     }
     return true;
   }
-
-  // PASSWORD MIN LENGTH
-
-  static bool isPasswordLength(BuildContext context, String password,
-      {int minLength = 6}) {
+
+  /// Validates that [password] meets the strong-password policy:
+  ///   • At least [minLength] characters (default 8)
+  ///   • Contains at least one uppercase letter
+  ///   • Contains at least one lowercase letter
+  ///   • Contains at least one digit
+  ///   • Contains at least one special character
+  ///
+  /// Shows a SnackBar error and returns `false` if the policy is violated.
+  static bool isStrongPassword(
+    BuildContext context,
+    String password, {
+    int minLength = 8,
+  }) {
     if (!context.mounted) return false;
 
-    if (password.trim().length < minLength) {
-      _showError(context, AppLanguage.passwordMinMessage[language]);
+    final value = password.trim();
+    if (value.length < minLength) {
+      _showError(
+        context,
+        "Password must be at least $minLength characters and include an uppercase letter, a lowercase letter, a number, and a special character",
+      );
+      return false;
+    }
+
+    final hasUpper = RegExp(r'[A-Z]').hasMatch(value);
+    final hasLower = RegExp(r'[a-z]').hasMatch(value);
+    final hasDigit = RegExp(r'\d').hasMatch(value);
+    final hasSpecial = RegExp(r'[^A-Za-z0-9]').hasMatch(value);
+
+    if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
+      _showError(
+        context,
+        "Password must include an uppercase letter, a lowercase letter, a number, and a special character",
+      );
       return false;
     }
     return true;
@@ -227,6 +253,62 @@ class Validation {
 
     if (!regex.hasMatch(trimmed)) {
       _showError(context, "$fieldName should contain alphabets only");
+      return false;
+    }
+    return true;
+  }
+
+  /// Validates an optional social-account field that can hold either a
+  /// full URL (http/https/www prefix) or a plain username string.
+  ///
+  /// Returns `true` immediately if [value] is empty (field is optional).
+  /// For URL values, checks that the URI is structurally valid.
+  /// For plain usernames, checks length constraints ([usernameMinLength]–[usernameMaxLength])
+  /// and that only allowed characters are present.
+  ///
+  /// Shows a SnackBar error and returns `false` on any violation.
+  static bool isOptionalSocialValueValid(
+    BuildContext context, {
+    required String value,
+    required String fieldName,
+    int usernameMinLength = 2,
+    int usernameMaxLength = 50,
+  }) {
+    if (!context.mounted) return false;
+
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return true;
+
+    final bool isUrl = trimmed.startsWith('http://') ||
+        trimmed.startsWith('https://') ||
+        trimmed.startsWith('www.');
+    if (isUrl) {
+      final normalized =
+          trimmed.startsWith('www.') ? 'https://$trimmed' : trimmed;
+      final uri = Uri.tryParse(normalized);
+      final valid = uri != null &&
+          uri.hasScheme &&
+          (uri.scheme == 'http' || uri.scheme == 'https') &&
+          uri.host.isNotEmpty;
+      if (!valid) {
+        _showError(context, "Please enter a valid $fieldName link");
+        return false;
+      }
+      return true;
+    }
+
+    final username = trimmed.startsWith('@') ? trimmed.substring(1) : trimmed;
+    if (username.length < usernameMinLength ||
+        username.length > usernameMaxLength) {
+      _showError(
+        context,
+        "$fieldName username must be $usernameMinLength-$usernameMaxLength characters",
+      );
+      return false;
+    }
+    final usernameRegex = RegExp(r'^[A-Za-z0-9._-]+$');
+    if (!usernameRegex.hasMatch(username)) {
+      _showError(context, "Please enter a valid $fieldName username or URL");
       return false;
     }
     return true;

@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -62,6 +63,42 @@ class PostApiProvider with ChangeNotifier {
     if (stepValue is int) return stepValue;
     if (stepValue is String) return int.tryParse(stepValue) ?? 0;
     return 0;
+  }
+
+  /// Generates a cryptographically random temporary password for social-login
+  /// sign-ups (Google / Apple), where the user has not supplied a password.
+  ///
+  /// The result always satisfies the strong-password policy:
+  ///   • At least 12 characters  
+  ///   • Contains uppercase, lowercase, digit and a special character
+  ///
+  /// The special character set is limited to URL-safe and form-safe characters
+  /// (`@#$%&*!?^()_+-=`) to avoid conflicts with backend validation or HTTP
+  /// encoding layers.
+  ///
+  /// **Security note**: this password is only used as a placeholder during the
+  /// social-signup flow and is never shown to or set by the user. The backend
+  /// should treat it as a transient credential.
+  String _generateTemporarySocialPassword() {
+    final random = Random.secure();
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const digits = '0123456789';
+    const special = r'@#$%&*!?^()_+-=';
+    const all = '$upper$lower$digits$special';
+
+    final buffer = StringBuffer()
+      ..write(upper[random.nextInt(upper.length)])
+      ..write(lower[random.nextInt(lower.length)])
+      ..write(digits[random.nextInt(digits.length)])
+      ..write(special[random.nextInt(special.length)]);
+
+    for (int i = 0; i < 8; i++) {
+      buffer.write(all[random.nextInt(all.length)]);
+    }
+    final chars = buffer.toString().split('');
+    chars.shuffle(random);
+    return chars.join();
   }
 
   Map<String, dynamic> _extractUserData(dynamic data) {
@@ -231,7 +268,9 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // =============Login Api=================//
-  loginUserApiCall(BuildContext context, String email, String password) async {
+  Future<bool> loginUserApiCall(
+      BuildContext context, String email, String password) async {
+    if (_loading) return false;
     setLoading(true);
 
     Map<String, String> fields = {
@@ -251,7 +290,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (!context.mounted) {
           setLoading(false);
-          return;
+          return false;
         }
 
         TopNotification.success(context, res['message'][language]);
@@ -261,7 +300,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (userData is! Map) {
           setLoading(false);
-          return;
+          return false;
         }
 
         final bool isVerified =
@@ -284,7 +323,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (!context.mounted) {
           setLoading(false);
-          return;
+          return false;
         }
 
         if (signupStep >= 3 &&
@@ -349,9 +388,12 @@ class PostApiProvider with ChangeNotifier {
             ),
           );
         }
+        setLoading(false);
+        return true;
       }
     }
     setLoading(false);
+    return false;
   }
 
   // =============social Api=================//
@@ -426,8 +468,9 @@ class PostApiProvider with ChangeNotifier {
       String height,
       String cityId,
       XFile? profileImage,
-      {String loginType = 'email',
-      bool isSocialSignup = false}) async {
+       {String loginType = 'email',
+       bool isSocialSignup = false}) async {
+    if (_loading) return;
     setLoading(true);
 
     final String trimmedPassword = password.toString().trim();
@@ -451,7 +494,7 @@ class PostApiProvider with ChangeNotifier {
     if (trimmedPassword.isNotEmpty) {
       fields['password'] = trimmedPassword;
     } else if (isSocialSignup) {
-      fields['password'] = '123456';
+      fields['password'] = _generateTemporarySocialPassword();
     }
 
     Map<String, XFile>? files;
@@ -501,6 +544,7 @@ class PostApiProvider with ChangeNotifier {
     String otp,
     String mobile,
   ) async {
+    if (_loading) return;
     setLoading(true);
 
     final Map<String, String> fields = {
@@ -536,7 +580,8 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // =============== Resend Otp Api =================//
-  resendotpApiCalling(BuildContext context) async {
+  Future<Map<String, dynamic>?> resendotpApiCalling(BuildContext context) async {
+    if (_secondaryLoading) return null;
     setSecondaryLoading(true);
 
     final res = await postJsonData(
@@ -550,10 +595,12 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true && res['data'] != "NA") {
         setSecondaryLoading(false);
         TopNotification.success(context, res['message'][language]);
+        return res;
       }
     }
 
     setSecondaryLoading(false);
+    return null;
   }
 
   // ================Signup Step Two Api================//
@@ -1274,6 +1321,7 @@ class PostApiProvider with ChangeNotifier {
 
   // --------------- check Number -----------
   checkNumberApiCalling(BuildContext context, String mobile) async {
+    if (_loading) return;
     setLoading(true);
 
     final res = await postJsonData(

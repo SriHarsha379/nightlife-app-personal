@@ -150,6 +150,33 @@ class _EditProfileState extends State<EditProfile> {
         value: lastName, fieldName: AppLanguage.lastNameText[language])) {
       return;
     }
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: instagramController.text,
+      fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
+    )) {
+      return;
+    }
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: spotifyController.text,
+      fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
+    )) {
+      return;
+    }
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: snapchatController.text,
+      fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
+    )) {
+      return;
+    }
 
     final combinedName = '$firstName $lastName'.trim();
 

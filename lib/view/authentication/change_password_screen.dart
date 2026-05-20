@@ -48,15 +48,13 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       fieldName: "Current Password",
     )) return;
 
-    if (!Validation.isPasswordLength(context, currentController.text)) return;
-
     if (Validation.isFieldEmpty(
       context,
       value: newPasswordTextController.text,
       fieldName: AppLanguage.newPasswordText[language],
     )) return;
 
-    if (!Validation.isPasswordLength(context, newPasswordTextController.text))
+    if (!Validation.isStrongPassword(context, newPasswordTextController.text))
       return;
 
     // if (!Validation.isChangePasswordMatch(
@@ -71,7 +69,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       fieldName: "Confirm New Password",
     )) return;
 
-    if (!Validation.isPasswordLength(
+    if (!Validation.isStrongPassword(
         context, confirmPasswordTextEditingController.text)) return;
 
     if (!Validation.isChangePasswordMatch(

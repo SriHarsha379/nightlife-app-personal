@@ -109,18 +109,19 @@ String _getErrorMessage(dynamic body) {
 // ------------------ REDIRECT TO LOGIN ------------------
 void _redirectToLogin(BuildContext context, String message) {
   TopNotification.error(context, message);
-  Navigator.push(
+  CacheHelper.clearAll();
+  AppConstant.token = '';
+  AppConstant.selectFooterIndex = 0;
+  AppContentCache().clear();
+  Navigator.pushAndRemoveUntil(
     context,
     PageTransition(
       type: PageTransitionType.rightToLeftWithFade,
       child: const LoginScreen(),
       duration: const Duration(milliseconds: 100),
     ),
+    (route) => false,
   );
-  CacheHelper.clearAll();
-  AppConstant.token = '';
-  AppConstant.selectFooterIndex = 0;
-  AppContentCache().clear();
 }
 
 // ------------------ GET DATA (HEADERS ONLY - WITH TOKEN) ------------------

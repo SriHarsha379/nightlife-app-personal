@@ -55,7 +55,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       return;
     }
 
-    if (!Validation.isPasswordLength(context, newPassword, minLength: 6)) {
+    if (!Validation.isStrongPassword(context, newPassword)) {
       return;
     }
 

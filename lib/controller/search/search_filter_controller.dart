@@ -3,6 +3,39 @@ import 'package:flutter/material.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
 
+/// Immutable snapshot of the parameters used for a filter request.
+/// Used to skip redundant network calls when nothing has changed.
+class _SearchParams {
+  final double latitude;
+  final double longitude;
+  final int radius;
+  final String search;
+  final String type;
+
+  const _SearchParams({
+    required this.latitude,
+    required this.longitude,
+    required this.radius,
+    required this.search,
+    required this.type,
+  });
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is _SearchParams &&
+        other.latitude == latitude &&
+        other.longitude == longitude &&
+        other.radius == radius &&
+        other.search == search &&
+        other.type == type;
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(latitude, longitude, radius, search, type);
+}
+
 class SearchFilterController with ChangeNotifier {
   bool _isVenueLoading = false;
   bool _isEventLoading = false;
@@ -14,6 +47,11 @@ class SearchFilterController with ChangeNotifier {
   List<Map<String, String>> _eventFeaturedList = [];
   List<Map<String, String>> _eventNearbyList = [];
   List<Map<String, String>> _eventRecommendedList = [];
+
+  /// Tracks the params from the last successful fetch to avoid re-fetching
+  /// when the caller requests the same query again (e.g. on tab switch).
+  _SearchParams? _lastVenueParams;
+  _SearchParams? _lastEventParams;
 
   bool get isVenueLoading => _isVenueLoading;
   bool get isEventLoading => _isEventLoading;
@@ -33,7 +71,22 @@ class SearchFilterController with ChangeNotifier {
     required String type,
     int radius = 10,
     String search = '',
+    bool forceRefresh = false,
   }) async {
+    final params = _SearchParams(
+      latitude: latitude,
+      longitude: longitude,
+      radius: radius,
+      search: search.trim(),
+      type: type,
+    );
+
+    // Skip the network call when params are identical to the last fetch.
+    if (!forceRefresh) {
+      final lastParams = type == 'venue' ? _lastVenueParams : _lastEventParams;
+      if (params == lastParams) return;
+    }
+
     if (type == 'venue') {
       _isVenueLoading = true;
     } else {
@@ -76,13 +129,29 @@ class SearchFilterController with ChangeNotifier {
       _venueFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
       _venueNearbyList = nearbyRaw.map(_toNearbyMap).toList();
       _venueRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
+      _lastVenueParams = params;
     } else {
       _eventFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
       _eventNearbyList = nearbyRaw.map(_toNearbyMap).toList();
       _eventRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
+      _lastEventParams = params;
     }
 
     _setLoading(type, false);
+    notifyListeners();
+  }
+
+  /// Clears all results and invalidates cached params so the next call
+  /// forces a fresh fetch (e.g. when the user changes their city).
+  void clearAll() {
+    _venueFeaturedList = [];
+    _venueNearbyList = [];
+    _venueRecommendedList = [];
+    _eventFeaturedList = [];
+    _eventNearbyList = [];
+    _eventRecommendedList = [];
+    _lastVenueParams = null;
+    _lastEventParams = null;
     notifyListeners();
   }
 

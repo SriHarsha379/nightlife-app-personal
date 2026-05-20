@@ -2,16 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:night_life/utilities/app_font.dart';
 import '../utilities/app_color.dart';
 
+/// Primary action button used throughout the app.
+///
+/// Optionally accepts a [leadingIcon] so that contextual action buttons
+/// (e.g. YES / NO / ACCEPT / REJECT) can carry a recognisable icon that
+/// makes the intent immediately clear at a glance.
 class AppButton extends StatelessWidget {
   final String text;
   final Function onPress;
   final Color? backgroundColor;
+
+  /// Optional Material icon displayed to the left of [text].
+  /// Use this for semantic action buttons (e.g. Icons.check for YES/ACCEPT,
+  /// Icons.close for NO/REJECT) to improve visual clarity.
+  final IconData? leadingIcon;
 
   const AppButton({
     Key? key,
     required this.text,
     required this.onPress,
     this.backgroundColor,
+    this.leadingIcon,
   }) : super(key: key);
 
   @override
@@ -28,13 +39,23 @@ class AppButton extends StatelessWidget {
           borderRadius: const BorderRadius.all(Radius.circular(40)),
         ),
         alignment: Alignment.center,
-        child: Text(
-          text,
-          style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.w600,
-              fontFamily: AppFont.fontFamily,
-              fontSize: 16),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (leadingIcon != null) ...[
+              Icon(leadingIcon, color: Colors.white, size: 20),
+              const SizedBox(width: 8),
+            ],
+            Text(
+              text,
+              style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.w600,
+                fontFamily: AppFont.fontFamily,
+                fontSize: 16,
+              ),
+            ),
+          ],
         ),
       ),
     );

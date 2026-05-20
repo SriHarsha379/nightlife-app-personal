@@ -12,6 +12,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
@@ -108,7 +109,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       return;
     }
 
-    if (hobbies.contains(hobby.trim())) {
+    if (hobbies.any(
+        (element) => element.toLowerCase() == hobby.trim().toLowerCase())) {
       SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
@@ -130,7 +132,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     if (hobbies
         .asMap()
         .entries
-        .any((entry) => entry.key != index && entry.value == newHobby.trim())) {
+        .any((entry) =>
+            entry.key != index &&
+            entry.value.toLowerCase() == newHobby.trim().toLowerCase())) {
       SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
@@ -156,47 +160,31 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       return;
     }
 
-    // ✅ Instagram validation
-    if (instagramTextEditingController.text.trim().isEmpty) {
-      SnackBarToastMessage.showSnackBar(
-          context, "Please enter your Instagram profile");
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: instagramTextEditingController.text,
+      fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
+    )) {
       return;
     }
-
-    final instagramRegex = RegExp(r'^[A-Za-z0-9._]+$');
-    if (!instagramRegex.hasMatch(instagramTextEditingController.text.trim())) {
-      SnackBarToastMessage.error(context,
-          "Instagram username can only contain letters, numbers, dots, and underscores");
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: spotifyTextEditingController.text,
+      fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
+    )) {
       return;
     }
-
-    // ✅ Spotify validation
-    if (spotifyTextEditingController.text.trim().isEmpty) {
-      SnackBarToastMessage.showSnackBar(
-          context, "Please enter your Spotify account");
-      return;
-    }
-    if (spotifyTextEditingController.text.trim().length > 100) {
-      SnackBarToastMessage.error(context, "Spotify link is too long");
-      return;
-    }
-
-    // ✅ Snapchat validation
-    if (snapchattexteditingController.text.trim().isEmpty) {
-      SnackBarToastMessage.showSnackBar(
-          context, "Please enter your Snapchat account");
-      return;
-    }
-    if (snapchattexteditingController.text.trim().length < 3 ||
-        snapchattexteditingController.text.trim().length > 15) {
-      SnackBarToastMessage.showSnackBar(
-          context, "Snapchat username should be 3-15 characters");
-      return;
-    }
-    final snapchatRegex = RegExp(r'^[A-Za-z0-9._-]+$');
-    if (!snapchatRegex.hasMatch(snapchattexteditingController.text.trim())) {
-      SnackBarToastMessage.showSnackBar(context,
-          "Snapchat username can only contain letters, numbers, dots, underscores, and hyphens");
+    if (!Validation.isOptionalSocialValueValid(
+      context,
+      value: snapchattexteditingController.text,
+      fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
+    )) {
       return;
     }
 
