@@ -85,8 +85,8 @@ lib/
 - Base API and media URL values are configured in:
   - `lib/utilities/app_config_provider.dart`
 - Use environment-specific configuration and placeholders in docs, for example:
-  - `apiUrl: https://api.example.com/v1/app/`
-  - `imageUrl: https://cdn.example.com/uploads/`
+  - `apiBaseUrl: https://api.example.com/v1/app/`
+  - `imageBaseUrl: https://cdn.example.com/uploads/`
 - `common_api_helper.dart` provides reusable GET/POST/multipart helpers.
 - `post_api_provider.dart` orchestrates auth/session and feature API workflows.
 
@@ -103,6 +103,7 @@ lib/
   app deep-link navigation into feature screens.
 - Required: replace this with a unique, app-specific scheme
   (for example `nightlife://` or `hiiapp://`) to avoid conflicts.
+- This is a critical production requirement because generic schemes can be intercepted by other apps.
 
 ### iOS
 
