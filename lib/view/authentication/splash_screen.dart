@@ -3,7 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/view/welcomescreens/welcome_screen1.dart';
+import 'package:night_life/view/welcomescreens/app_onboarding_screen.dart';
 import 'package:page_transition/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -158,7 +158,7 @@ class _SplashState extends State<Splash> {
     if (mounted) {
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => WelcomeScreen1()),
+        MaterialPageRoute(builder: (context) => const AppOnboardingScreen()),
       );
     }
   }

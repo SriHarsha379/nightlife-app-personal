@@ -2254,13 +2254,26 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                           approved ? AppColor.greenColor1 : AppColor.statusbar,
                     ),
                     child: Center(
-                      child: Text(
-                        approved ? 'Approved' : 'Accept',
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            approved
+                                ? Icons.verified_rounded
+                                : Icons.check_circle_outline_rounded,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 6),
+                          Text(
+                            approved ? 'Approved' : 'Accept',
+                            style: const TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),
@@ -2283,13 +2296,24 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                       color: Colors.grey.shade900,
                     ),
                     child: const Center(
-                      child: Text(
-                        'Reject',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.cancel_outlined,
+                            color: Colors.white,
+                            size: 18,
+                          ),
+                          SizedBox(width: 6),
+                          Text(
+                            'Reject',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
                   ),

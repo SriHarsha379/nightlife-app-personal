@@ -10,12 +10,14 @@ import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
-import '../other/city_Preference/citypreference_screen.dart';
 
 class WelcomeScreen4 extends StatefulWidget {
   static String routeName = './LoginScreen';
 
   const WelcomeScreen4({super.key});
+
+  // WelcomeScreen4 is always the 4th (last) step of the onboarding flow.
+  static const int _dotIndex = 3;
 
   @override
   State<WelcomeScreen4> createState() => _WelcomeScreen4State();
@@ -28,7 +30,6 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
     with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<Offset> _slideAnimation;
-  int _activeIndex = 2;
 
   @override
   void initState() {
@@ -177,14 +178,14 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                 ),
                 Positioned(
                   bottom: h * 0.07,
-                  left: w * 0.42,
+                  left: 0,
+                  right: 0,
                   child: Row(
-                    children: [
-                      _dot(_activeIndex == 1),
-                      _dot(_activeIndex == 0),
-                      _dot(_activeIndex == 0),
-                      _dot(_activeIndex == 2),
-                    ],
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: List.generate(
+                      4,
+                      (i) => _dot(i == WelcomeScreen4._dotIndex),
+                    ),
                   ),
                 ),
               ],
@@ -196,7 +197,9 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
   }
 
   Widget _dot(bool active) {
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
       margin: const EdgeInsets.symmetric(horizontal: 4),
       width: active ? 12 : 5,
       height: active ? 10 : 5,
