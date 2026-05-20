@@ -87,6 +87,7 @@ lib/
 - Use environment-specific configuration and placeholders in docs, for example:
   - `apiBaseUrl: https://api.example.com/v1/app/`
   - `imageBaseUrl: https://cdn.example.com/uploads/`
+  - Keep URL formatting consistent with your concatenation logic (trailing slash vs no trailing slash).
 - `common_api_helper.dart` provides reusable GET/POST/multipart helpers.
 - `post_api_provider.dart` orchestrates auth/session and feature API workflows.
 
@@ -99,9 +100,8 @@ lib/
 - Firebase is enabled through:
   - `android/app/google-services.json`
   - Gradle Google Services plugin
-- Custom URL scheme intent filter is present (`scheme="q"`), used for
-  app deep-link navigation into feature screens.
-- Required: replace this with a unique, app-specific scheme
+- A custom URL scheme intent filter is used for app deep-link navigation.
+- Required: use a unique, app-specific scheme
   (for example `nightlife://` or `hiiapp://`) to avoid conflicts.
 - This is a critical production requirement because generic schemes can be intercepted by other apps.
 
