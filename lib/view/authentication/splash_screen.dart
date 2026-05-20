@@ -39,7 +39,7 @@ class _SplashState extends State<Splash> {
       final normalized = base64Url.normalize(payload);
       final decoded = utf8.decode(base64Url.decode(normalized));
       final map = jsonDecode(decoded);
-      if (map is! Map || map['exp'] == null) return false;
+      if (map is! Map || map['exp'] == null) return true;
       final exp = int.tryParse(map['exp'].toString());
       if (exp == null) return false;
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);

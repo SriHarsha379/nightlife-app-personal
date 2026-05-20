@@ -2,6 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
@@ -65,8 +66,25 @@ class PostApiProvider with ChangeNotifier {
   }
 
   String _generateTemporarySocialPassword() {
-    final millis = DateTime.now().millisecondsSinceEpoch;
-    return 'Tmp@${millis}Aa!';
+    final random = Random.secure();
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const digits = '0123456789';
+    const special = '@#\$%&*!?';
+    const all = '$upper$lower$digits$special';
+
+    final buffer = StringBuffer()
+      ..write(upper[random.nextInt(upper.length)])
+      ..write(lower[random.nextInt(lower.length)])
+      ..write(digits[random.nextInt(digits.length)])
+      ..write(special[random.nextInt(special.length)]);
+
+    for (int i = 0; i < 8; i++) {
+      buffer.write(all[random.nextInt(all.length)]);
+    }
+    final chars = buffer.toString().split('');
+    chars.shuffle(random);
+    return chars.join();
   }
 
   Map<String, dynamic> _extractUserData(dynamic data) {

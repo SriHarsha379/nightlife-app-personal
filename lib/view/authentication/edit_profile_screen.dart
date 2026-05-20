@@ -154,6 +154,8 @@ class _EditProfileState extends State<EditProfile> {
       context,
       value: instagramController.text,
       fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
     )) {
       return;
     }
@@ -161,6 +163,8 @@ class _EditProfileState extends State<EditProfile> {
       context,
       value: spotifyController.text,
       fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
     )) {
       return;
     }
@@ -168,6 +172,8 @@ class _EditProfileState extends State<EditProfile> {
       context,
       value: snapchatController.text,
       fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
     )) {
       return;
     }

@@ -164,6 +164,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       context,
       value: instagramTextEditingController.text,
       fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
     )) {
       return;
     }
@@ -171,6 +173,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       context,
       value: spotifyTextEditingController.text,
       fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
     )) {
       return;
     }
@@ -178,6 +182,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       context,
       value: snapchattexteditingController.text,
       fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
     )) {
       return;
     }
