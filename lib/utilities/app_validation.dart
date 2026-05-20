@@ -111,7 +111,7 @@ class Validation {
     if (value.length < minLength) {
       _showError(
         context,
-        "Password must be at least $minLength characters and include uppercase, lowercase, number and special character",
+        "Password must be at least $minLength characters and include an uppercase letter, a lowercase letter, a number, and a special character",
       );
       return false;
     }
@@ -124,7 +124,7 @@ class Validation {
     if (!hasUpper || !hasLower || !hasDigit || !hasSpecial) {
       _showError(
         context,
-        "Password must include uppercase, lowercase, number and special character",
+        "Password must include an uppercase letter, a lowercase letter, a number, and a special character",
       );
       return false;
     }
