@@ -236,8 +236,9 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // =============Login Api=================//
-  loginUserApiCall(BuildContext context, String email, String password) async {
-    if (_loading) return;
+  Future<bool> loginUserApiCall(
+      BuildContext context, String email, String password) async {
+    if (_loading) return false;
     setLoading(true);
 
     Map<String, String> fields = {
@@ -257,7 +258,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (!context.mounted) {
           setLoading(false);
-          return;
+          return false;
         }
 
         TopNotification.success(context, res['message'][language]);
@@ -267,7 +268,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (userData is! Map) {
           setLoading(false);
-          return;
+          return false;
         }
 
         final bool isVerified =
@@ -290,7 +291,7 @@ class PostApiProvider with ChangeNotifier {
 
         if (!context.mounted) {
           setLoading(false);
-          return;
+          return false;
         }
 
         if (signupStep >= 3 &&
@@ -355,9 +356,12 @@ class PostApiProvider with ChangeNotifier {
             ),
           );
         }
+        setLoading(false);
+        return true;
       }
     }
     setLoading(false);
+    return false;
   }
 
   // =============social Api=================//

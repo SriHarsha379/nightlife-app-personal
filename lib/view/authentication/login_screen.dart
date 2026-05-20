@@ -98,7 +98,7 @@ class _LoginScreenState extends State<LoginScreen>
     });
   }
 
-  void LoginValidation() {
+  Future<void> LoginValidation() async {
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     // Prevent duplicate submissions while an existing login request is in-flight.
     if (apiProvider.loading) return;
@@ -110,8 +110,12 @@ class _LoginScreenState extends State<LoginScreen>
     if (Validation.isFieldEmpty(context,
         value: passwordController.text,
         fieldName: AppLanguage.passwordtext[language])) return;
-    apiProvider.loginUserApiCall(
+    final success = await apiProvider.loginUserApiCall(
         context, emailController.text, passwordController.text);
+    if (success) {
+      emailController.clear();
+      passwordController.clear();
+    }
   }
 
   // ---- Google Login ------
@@ -342,8 +346,8 @@ class _LoginScreenState extends State<LoginScreen>
                           /// Continue button
                           AppButton(
                             text: AppLanguage.continueText[language],
-                            onPress: () {
-                              LoginValidation();
+                            onPress: () async {
+                              await LoginValidation();
                             },
                           ),
                           SizedBox(
