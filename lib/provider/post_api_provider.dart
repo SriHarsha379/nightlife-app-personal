@@ -70,7 +70,7 @@ class PostApiProvider with ChangeNotifier {
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lower = 'abcdefghijklmnopqrstuvwxyz';
     const digits = '0123456789';
-    const special = '@#\$%&*!?';
+    const special = r'@#$%&*!?^()_+-=[]{}|;:,.<>?/~';
     const all = '$upper$lower$digits$special';
 
     final buffer = StringBuffer()

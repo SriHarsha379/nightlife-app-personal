@@ -101,7 +101,10 @@ class Validation {
 
     final value = password.trim();
     if (value.length < minLength) {
-      _showError(context, "Password must be at least $minLength characters");
+      _showError(
+        context,
+        "Password must be at least $minLength characters and include uppercase, lowercase, number and special character",
+      );
       return false;
     }
 

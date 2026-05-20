@@ -41,7 +41,7 @@ class _SplashState extends State<Splash> {
       final map = jsonDecode(decoded);
       if (map is! Map || map['exp'] == null) return true;
       final exp = int.tryParse(map['exp'].toString());
-      if (exp == null) return false;
+      if (exp == null) return true;
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       return DateTime.now().isAfter(expiry);
     } catch (_) {
