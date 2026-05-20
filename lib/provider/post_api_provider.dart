@@ -64,6 +64,11 @@ class PostApiProvider with ChangeNotifier {
     return 0;
   }
 
+  String _generateTemporarySocialPassword() {
+    final millis = DateTime.now().millisecondsSinceEpoch;
+    return 'Tmp@${millis}Aa!';
+  }
+
   Map<String, dynamic> _extractUserData(dynamic data) {
     if (data is Map && data['user'] is Map) {
       return Map<String, dynamic>.from(data['user']);
@@ -452,6 +457,8 @@ class PostApiProvider with ChangeNotifier {
 
     if (trimmedPassword.isNotEmpty) {
       fields['password'] = trimmedPassword;
+    } else if (isSocialSignup) {
+      fields['password'] = _generateTemporarySocialPassword();
     }
 
     Map<String, XFile>? files;

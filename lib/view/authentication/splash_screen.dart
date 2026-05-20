@@ -33,7 +33,7 @@ class _SplashState extends State<Splash> {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return true;
     final parts = trimmed.split('.');
-    if (parts.length != 3) return false;
+    if (parts.length != 3) return true;
     try {
       final payload = parts[1];
       final normalized = base64Url.normalize(payload);
@@ -45,7 +45,7 @@ class _SplashState extends State<Splash> {
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       return DateTime.now().isAfter(expiry);
     } catch (_) {
-      return false;
+      return true;
     }
   }
 

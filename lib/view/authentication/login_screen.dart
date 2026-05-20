@@ -100,6 +100,7 @@ class _LoginScreenState extends State<LoginScreen>
 
   void LoginValidation() {
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    // Prevent duplicate submissions while an existing login request is in-flight.
     if (apiProvider.loading) return;
 
     if (Validation.isFieldEmpty(context,
