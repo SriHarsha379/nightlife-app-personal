@@ -82,10 +82,12 @@ lib/
 
 ## API and Backend Integration
 
-- Base API URL is currently configured in:
+- Base API and media URL values are configured in:
   - `lib/utilities/app_config_provider.dart`
-    - `apiUrl: https://hii.life/app/server/api/v1/app/`
-    - `imageUrl: https://hii.life/app/server/uploads/`
+- Do not publish production endpoints in documentation for public distribution.
+- Use environment-specific configuration and placeholders in docs, for example:
+  - `apiUrl: https://api.example.com/v1/app/`
+  - `imageUrl: https://cdn.example.com/uploads/`
 - `common_api_helper.dart` provides reusable GET/POST/multipart helpers.
 - `post_api_provider.dart` orchestrates auth/session and feature API workflows.
 
@@ -98,7 +100,8 @@ lib/
 - Firebase is enabled through:
   - `android/app/google-services.json`
   - Gradle Google Services plugin
-- Custom URL scheme intent filter is present (`scheme="q"`).
+- Custom URL scheme intent filter is present (`scheme="q"`), used for
+  app deep-link navigation into feature screens.
 
 ### iOS
 
