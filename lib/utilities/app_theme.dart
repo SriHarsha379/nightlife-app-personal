@@ -29,7 +29,7 @@ class AppThemeConfig {
             statusBarBrightness: Brightness.dark,
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: const Color(0xff171217),
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -156,7 +156,7 @@ class AppThemeConfig {
             statusBarBrightness: Brightness.light,
           ),
         ),
-        cardTheme: CardTheme(
+        cardTheme: CardThemeData(
           color: Colors.white,
           elevation: 2,
           shape: RoundedRectangleBorder(

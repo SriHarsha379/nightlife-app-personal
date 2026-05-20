@@ -2,7 +2,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'dart:math';
+import 'dart:math' show Random;
 import 'package:flutter/material.dart';
 import 'package:page_transition/page_transition.dart';
 
