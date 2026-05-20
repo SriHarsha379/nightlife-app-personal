@@ -67,8 +67,12 @@ class _OtpVerifyState extends State<OtpVerify> {
   }
 
   // Resend OTP
-  void _resendOTP() {
-    if (_canResend) {
+  Future<void> _resendOTP() async {
+    if (!_canResend) return;
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    if (apiProvider.secondaryLoading) return;
+    final res = await apiProvider.resendotpApiCalling(context);
+    if (res != null) {
       _startTimer();
     }
   }
@@ -271,9 +275,13 @@ class _OtpVerifyState extends State<OtpVerify> {
                             ] else ...[
                               // Show Resend Button
                               GestureDetector(
-                                onTap: _resendOTP,
+                                onTap: () async {
+                                  await _resendOTP();
+                                },
                                 child: Text(
-                                  AppLanguage.resend[language],
+                                  context.watch<PostApiProvider>().secondaryLoading
+                                      ? "Sending..."
+                                      : AppLanguage.resend[language],
                                   style: const TextStyle(
                                       color: AppColor.buttonColor,
                                       fontWeight: FontWeight.w600,

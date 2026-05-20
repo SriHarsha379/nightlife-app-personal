@@ -29,6 +29,26 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  bool _isTokenExpired(String token) {
+    final trimmed = token.trim();
+    if (trimmed.isEmpty) return true;
+    final parts = trimmed.split('.');
+    if (parts.length != 3) return false;
+    try {
+      final payload = parts[1];
+      final normalized = base64Url.normalize(payload);
+      final decoded = utf8.decode(base64Url.decode(normalized));
+      final map = jsonDecode(decoded);
+      if (map is! Map || map['exp'] == null) return false;
+      final exp = int.tryParse(map['exp'].toString());
+      if (exp == null) return false;
+      final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
+      return DateTime.now().isAfter(expiry);
+    } catch (_) {
+      return false;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -56,6 +76,16 @@ class _SplashState extends State<Splash> {
           final token = (data['token'] ?? '').toString().trim();
 
           if (token.isEmpty) {
+            AppConstant.token = '';
+            userController.reset();
+            homeController.clearAllData();
+            profileController.clearProfileData();
+            swipeProfileController.resetState();
+            await CacheHelper.remove('user_details');
+            _navigateToWelcome();
+            return;
+          }
+          if (_isTokenExpired(token)) {
             AppConstant.token = '';
             userController.reset();
             homeController.clearAllData();

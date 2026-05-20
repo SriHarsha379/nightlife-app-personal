@@ -232,6 +232,7 @@ class PostApiProvider with ChangeNotifier {
 
   // =============Login Api=================//
   loginUserApiCall(BuildContext context, String email, String password) async {
+    if (_loading) return;
     setLoading(true);
 
     Map<String, String> fields = {
@@ -426,8 +427,9 @@ class PostApiProvider with ChangeNotifier {
       String height,
       String cityId,
       XFile? profileImage,
-      {String loginType = 'email',
-      bool isSocialSignup = false}) async {
+       {String loginType = 'email',
+       bool isSocialSignup = false}) async {
+    if (_loading) return;
     setLoading(true);
 
     final String trimmedPassword = password.toString().trim();
@@ -450,8 +452,6 @@ class PostApiProvider with ChangeNotifier {
 
     if (trimmedPassword.isNotEmpty) {
       fields['password'] = trimmedPassword;
-    } else if (isSocialSignup) {
-      fields['password'] = '123456';
     }
 
     Map<String, XFile>? files;
@@ -501,6 +501,7 @@ class PostApiProvider with ChangeNotifier {
     String otp,
     String mobile,
   ) async {
+    if (_loading) return;
     setLoading(true);
 
     final Map<String, String> fields = {
@@ -536,7 +537,8 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // =============== Resend Otp Api =================//
-  resendotpApiCalling(BuildContext context) async {
+  Future<Map<String, dynamic>?> resendotpApiCalling(BuildContext context) async {
+    if (_secondaryLoading) return null;
     setSecondaryLoading(true);
 
     final res = await postJsonData(
@@ -550,10 +552,12 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true && res['data'] != "NA") {
         setSecondaryLoading(false);
         TopNotification.success(context, res['message'][language]);
+        return res;
       }
     }
 
     setSecondaryLoading(false);
+    return null;
   }
 
   // ================Signup Step Two Api================//
@@ -1274,6 +1278,7 @@ class PostApiProvider with ChangeNotifier {
 
   // --------------- check Number -----------
   checkNumberApiCalling(BuildContext context, String mobile) async {
+    if (_loading) return;
     setLoading(true);
 
     final res = await postJsonData(

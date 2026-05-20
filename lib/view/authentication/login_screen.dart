@@ -99,6 +99,9 @@ class _LoginScreenState extends State<LoginScreen>
   }
 
   void LoginValidation() {
+    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+    if (apiProvider.loading) return;
+
     if (Validation.isFieldEmpty(context,
         value: emailController.text,
         fieldName: AppLanguage.usernameemailIdPhonenumberText[language]))
@@ -106,8 +109,6 @@ class _LoginScreenState extends State<LoginScreen>
     if (Validation.isFieldEmpty(context,
         value: passwordController.text,
         fieldName: AppLanguage.passwordtext[language])) return;
-    if (!Validation.isPasswordLength(context, passwordController.text)) return;
-    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     apiProvider.loginUserApiCall(
         context, emailController.text, passwordController.text);
     emailController.clear();

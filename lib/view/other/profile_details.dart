@@ -145,6 +145,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
       if (!Validation.isPasswordLength(
           context, passwordTextEditingController.text)) return;
+      if (!Validation.isStrongPassword(
+          context, passwordTextEditingController.text)) return;
 
       if (Validation.isFieldEmpty(
         context,
