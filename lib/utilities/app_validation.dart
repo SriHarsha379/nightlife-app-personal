@@ -91,7 +91,15 @@ class Validation {
     }
     return true;
   }
-
+
+  /// Validates that [password] meets the strong-password policy:
+  ///   • At least [minLength] characters (default 8)
+  ///   • Contains at least one uppercase letter
+  ///   • Contains at least one lowercase letter
+  ///   • Contains at least one digit
+  ///   • Contains at least one special character
+  ///
+  /// Shows a SnackBar error and returns `false` if the policy is violated.
   static bool isStrongPassword(
     BuildContext context,
     String password, {
@@ -250,6 +258,15 @@ class Validation {
     return true;
   }
 
+  /// Validates an optional social-account field that can hold either a
+  /// full URL (http/https/www prefix) or a plain username string.
+  ///
+  /// Returns `true` immediately if [value] is empty (field is optional).
+  /// For URL values, checks that the URI is structurally valid.
+  /// For plain usernames, checks length constraints ([usernameMinLength]–[usernameMaxLength])
+  /// and that only allowed characters are present.
+  ///
+  /// Shows a SnackBar error and returns `false` on any violation.
   static bool isOptionalSocialValueValid(
     BuildContext context, {
     required String value,

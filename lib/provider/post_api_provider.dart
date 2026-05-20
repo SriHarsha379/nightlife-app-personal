@@ -65,12 +65,26 @@ class PostApiProvider with ChangeNotifier {
     return 0;
   }
 
+  /// Generates a cryptographically random temporary password for social-login
+  /// sign-ups (Google / Apple), where the user has not supplied a password.
+  ///
+  /// The result always satisfies the strong-password policy:
+  ///   • At least 12 characters  
+  ///   • Contains uppercase, lowercase, digit and a special character
+  ///
+  /// The special character set is limited to URL-safe and form-safe characters
+  /// (`@#$%&*!?^()_+-=`) to avoid conflicts with backend validation or HTTP
+  /// encoding layers.
+  ///
+  /// **Security note**: this password is only used as a placeholder during the
+  /// social-signup flow and is never shown to or set by the user. The backend
+  /// should treat it as a transient credential.
   String _generateTemporarySocialPassword() {
     final random = Random.secure();
     const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     const lower = 'abcdefghijklmnopqrstuvwxyz';
     const digits = '0123456789';
-    const special = r'@#$%&*!?^()_+-=[]{}|;:,.<>?/~';
+    const special = r'@#$%&*!?^()_+-=';
     const all = '$upper$lower$digits$special';
 
     final buffer = StringBuffer()
