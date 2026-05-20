@@ -264,6 +264,8 @@ class Validation {
     BuildContext context, {
     required String value,
     required String fieldName,
+    int usernameMinLength = 2,
+    int usernameMaxLength = 50,
   }) {
     if (!context.mounted) return false;
 
@@ -289,7 +291,15 @@ class Validation {
     }
 
     final username = trimmed.startsWith('@') ? trimmed.substring(1) : trimmed;
-    final usernameRegex = RegExp(r'^[A-Za-z0-9._-]{2,50}$');
+    if (username.length < usernameMinLength ||
+        username.length > usernameMaxLength) {
+      _showError(
+        context,
+        "$fieldName username must be $usernameMinLength-$usernameMaxLength characters",
+      );
+      return false;
+    }
+    final usernameRegex = RegExp(r'^[A-Za-z0-9._-]+$');
     if (!usernameRegex.hasMatch(username)) {
       _showError(context, "Please enter a valid $fieldName username or URL");
       return false;

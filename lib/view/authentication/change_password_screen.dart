@@ -54,8 +54,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       fieldName: AppLanguage.newPasswordText[language],
     )) return;
 
-    if (!Validation.isStrongPassword(
-        context, newPasswordTextController.text, minLength: 8))
+    if (!Validation.isStrongPassword(context, newPasswordTextController.text))
       return;
 
     // if (!Validation.isChangePasswordMatch(
@@ -71,8 +70,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
     )) return;
 
     if (!Validation.isStrongPassword(
-        context, confirmPasswordTextEditingController.text,
-        minLength: 8)) return;
+        context, confirmPasswordTextEditingController.text)) return;
 
     if (!Validation.isChangePasswordMatch(
       context,
