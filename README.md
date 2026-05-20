@@ -102,6 +102,8 @@ lib/
   - Gradle Google Services plugin
 - Custom URL scheme intent filter is present (`scheme="q"`), used for
   app deep-link navigation into feature screens.
+- Recommended: replace this with a unique, app-specific scheme
+  (for example `nightlife://` or `hiiapp://`) to avoid conflicts.
 
 ### iOS
 
