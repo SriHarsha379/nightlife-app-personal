@@ -42,6 +42,9 @@ class _SearchScreenState extends State<SearchScreen> {
   final ScrollController _searchScrollController = ScrollController();
   Timer? _searchDebounce;
 
+  // Tracks whether the search field has text so the clear button shows/hides
+  bool _hasSearchText = false;
+
   final GlobalKey _venueFeaturedKey = GlobalKey();
   final GlobalKey _venueNearbyKey = GlobalKey();
   final GlobalKey _venueRecommendedKey = GlobalKey();
@@ -71,6 +74,15 @@ class _SearchScreenState extends State<SearchScreen> {
   void initState() {
     super.initState();
     tapBarStatus = 1;
+
+    searchController.addListener(() {
+      final hasText = searchController.text.isNotEmpty;
+      if (hasText != _hasSearchText) {
+        setState(() {
+          _hasSearchText = hasText;
+        });
+      }
+    });
 
     _searchFocusNode.addListener(() {
       footerVisibilityNotifier.value = !_searchFocusNode.hasFocus;
@@ -131,7 +143,18 @@ class _SearchScreenState extends State<SearchScreen> {
     return "$distance | $location";
   }
 
-  Future<void> _loadSearchData({required String type}) async {
+  /// Clears the search field and reloads the current tab's default data.
+  Future<void> _clearSearch() async {
+    _searchDebounce?.cancel();
+    searchController.clear();
+    _searchFocusNode.unfocus();
+    await _loadSearchData(type: tapBarStatus == 1 ? 'venue' : 'event');
+  }
+
+  Future<void> _loadSearchData({
+    required String type,
+    bool forceRefresh = false,
+  }) async {
     final controller = context.read<SearchFilterController>();
     final searchQuery = searchController.text.trim();
 
@@ -142,6 +165,7 @@ class _SearchScreenState extends State<SearchScreen> {
       type: type,
       radius: _selectedRadiusKm.toInt(),
       search: searchQuery,
+      forceRefresh: forceRefresh,
     );
 
     if (!mounted) return;
@@ -582,17 +606,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                                 AppColor.secondryColor(context),
                                           ),
                                         ),
-                                        // Text(
-                                        //   "Chander Nagar, Surya Nagar, Delhi",
-                                        //   style: TextStyle(
-                                        //     fontFamily: AppFont.fontFamily,
-                                        //     fontSize: 11,
-                                        //     fontWeight: FontWeight.w300,
-                                        //     color: isDark
-                                        //         ? AppColor.secondryColor(context)
-                                        //         : AppColor.primaryColor(context),
-                                        //   ),
-                                        // ),
+                                        // Radius badge shows the active filter
+                                        if (_selectedRadiusKm > 0)
+                                          Text(
+                                            "Within ${_selectedRadiusKm.toInt()} km",
+                                            style: TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.listTextColor(
+                                                  context),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -677,7 +702,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 14),
                               textAlignVertical: TextAlignVertical.center,
-                              decoration: InputDecoration(
+                               decoration: InputDecoration(
                                 prefixIcon: Padding(
                                   padding: EdgeInsets.symmetric(
                                     horizontal:
@@ -714,6 +739,20 @@ class _SearchScreenState extends State<SearchScreen> {
                                 border: InputBorder.none,
                                 hintText: AppLanguage.searchText[language],
                                 hintStyle: AppConstant.textFilledStyle(context),
+                                suffixIcon: _hasSearchText
+                                    ? GestureDetector(
+                                        onTap: _clearSearch,
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Icon(
+                                            Icons.close_rounded,
+                                            size: 20,
+                                            color: AppColor.secondryColor(
+                                                context),
+                                          ),
+                                        ),
+                                      )
+                                    : null,
                                 contentPadding: EdgeInsets.symmetric(
                                   vertical: 12,
                                   horizontal:
@@ -880,20 +919,28 @@ class _SearchScreenState extends State<SearchScreen> {
                               height:
                                   MediaQuery.of(context).size.height * 1 / 100),
 
-                          Container(
-                            width: MediaQuery.of(context).size.width * 55 / 100,
-                            alignment: tapBarStatus == 1
-                                ? Alignment.centerLeft
-                                : Alignment.centerRight,
-                            child: Container(
-                              height: MediaQuery.of(context).size.height *
-                                  0.5 /
-                                  100,
-                              width:
-                                  MediaQuery.of(context).size.width * 22 / 100,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                color: AppColor.pinkColor,
+                          // Animated tab indicator – slides smoothly between tabs
+                          SizedBox(
+                            width: MediaQuery.of(context).size.width * 75 / 100,
+                            child: AnimatedAlign(
+                              duration: const Duration(milliseconds: 250),
+                              curve: Curves.easeInOut,
+                              alignment: tapBarStatus == 1
+                                  ? Alignment.centerLeft
+                                  : Alignment.centerRight,
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 250),
+                                curve: Curves.easeInOut,
+                                height: MediaQuery.of(context).size.height *
+                                    0.5 /
+                                    100,
+                                width: MediaQuery.of(context).size.width *
+                                    22 /
+                                    100,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10),
+                                  color: AppColor.pinkColor,
+                                ),
                               ),
                             ),
                           ),
@@ -915,10 +962,19 @@ class _SearchScreenState extends State<SearchScreen> {
 
                           Expanded(
                               flex: 1,
-                              child: SingleChildScrollView(
-                                controller: _searchScrollController,
-                                child: Column(
-                                  children: [
+                              child: RefreshIndicator(
+                                color: AppColor.pinkColor,
+                                onRefresh: () async {
+                                  await _loadSearchData(
+                                    type: tapBarStatus == 1 ? 'venue' : 'event',
+                                    forceRefresh: true,
+                                  );
+                                },
+                                child: SingleChildScrollView(
+                                  controller: _searchScrollController,
+                                  physics: const AlwaysScrollableScrollPhysics(),
+                                  child: Column(
+                                    children: [
                                     Container(
                                       width: MediaQuery.of(context).size.width *
                                           90 /
@@ -2316,7 +2372,8 @@ class _SearchScreenState extends State<SearchScreen> {
                                     ),
                                   ],
                                 ),
-                              ))
+                              ),    // SingleChildScrollView
+                              )),   // RefreshIndicator + Expanded
                         ]),
                       ),
               ),
@@ -2357,7 +2414,7 @@ class _SearchScreenState extends State<SearchScreen> {
       _selectedRadiusKm = result.radiusKm;
     });
 
-    await _loadSearchData(type: 'venue');
-    await _loadSearchData(type: 'event');
+    await _loadSearchData(type: 'venue', forceRefresh: true);
+    await _loadSearchData(type: 'event', forceRefresh: true);
   }
 }
