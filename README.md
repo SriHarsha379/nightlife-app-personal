@@ -84,7 +84,6 @@ lib/
 
 - Base API and media URL values are configured in:
   - `lib/utilities/app_config_provider.dart`
-- Do not publish production endpoints in documentation for public distribution.
 - Use environment-specific configuration and placeholders in docs, for example:
   - `apiUrl: https://api.example.com/v1/app/`
   - `imageUrl: https://cdn.example.com/uploads/`
@@ -102,7 +101,7 @@ lib/
   - Gradle Google Services plugin
 - Custom URL scheme intent filter is present (`scheme="q"`), used for
   app deep-link navigation into feature screens.
-- Recommended: replace this with a unique, app-specific scheme
+- Required: replace this with a unique, app-specific scheme
   (for example `nightlife://` or `hiiapp://`) to avoid conflicts.
 
 ### iOS
@@ -144,3 +143,9 @@ flutter test
 
 - The app currently uses hardcoded backend/config references in code (API base URL and platform metadata).  
   For production hardening, move environment-sensitive values to secure configuration management.
+
+## Security Considerations
+
+- Do not publish production API/media endpoints in public documentation.
+- Replace README placeholder URLs with deployment-specific values via secure config management before release.
+- Use environment variables or build-time secure configuration for sensitive environment settings.
