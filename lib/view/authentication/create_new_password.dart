@@ -67,10 +67,6 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
       return;
     }
 
-    if (!Validation.isStrongPassword(context, confirmPassword)) {
-      return;
-    }
-
     if (!Validation.isPasswordMatch(context, newPassword, confirmPassword)) {
       return;
     }

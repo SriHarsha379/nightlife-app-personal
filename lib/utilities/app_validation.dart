@@ -92,19 +92,6 @@ class Validation {
     return true;
   }
 
-  // PASSWORD MIN LENGTH
-
-  static bool isPasswordLength(BuildContext context, String password,
-      {int minLength = 8}) {
-    if (!context.mounted) return false;
-
-    if (password.trim().length < minLength) {
-      _showError(context, "Password must be at least $minLength characters");
-      return false;
-    }
-    return true;
-  }
-
   static bool isStrongPassword(
     BuildContext context,
     String password, {

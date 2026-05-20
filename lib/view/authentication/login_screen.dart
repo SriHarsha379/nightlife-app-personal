@@ -111,8 +111,6 @@ class _LoginScreenState extends State<LoginScreen>
         fieldName: AppLanguage.passwordtext[language])) return;
     apiProvider.loginUserApiCall(
         context, emailController.text, passwordController.text);
-    emailController.clear();
-    passwordController.clear();
   }
 
   // ---- Google Login ------

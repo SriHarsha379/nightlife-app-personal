@@ -143,8 +143,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         fieldName: AppLanguage.passwordtext[language],
       )) return;
 
-      if (!Validation.isPasswordLength(
-          context, passwordTextEditingController.text)) return;
       if (!Validation.isStrongPassword(
           context, passwordTextEditingController.text)) return;
 
@@ -153,9 +151,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         value: confirmpasswordTextEditingController.text,
         fieldName: AppLanguage.confirmPassword[language],
       )) return;
-
-      if (!Validation.isPasswordLength(
-          context, confirmpasswordTextEditingController.text)) return;
 
       if (!Validation.isPasswordMatch(
         context,
