@@ -146,8 +146,10 @@ class _SplashState extends State<Splash> {
     }
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (context) => const LoginScreen(),
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: const LoginScreen(),
+        duration: const Duration(milliseconds: 400),
       ),
     );
   }
