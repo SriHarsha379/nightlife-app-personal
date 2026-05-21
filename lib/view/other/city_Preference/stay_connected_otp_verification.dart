@@ -12,6 +12,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_snack_bar_toast_message.dart';
 import '../../../utilities/app_validation.dart';
 
 class StayConnectedOTPVerify extends StatefulWidget {
@@ -29,10 +30,14 @@ class StayConnectedOTPVerify extends StatefulWidget {
 }
 
 class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
+  static const int _otpExpirySeconds = 120;
+  static const int _maxOtpRetries = 5;
   TextEditingController pinputInputController = TextEditingController();
   Timer? _timer;
-  int _remainingSeconds = 30;
+  int _remainingSeconds = _otpExpirySeconds;
   bool _canResend = false;
+  bool _isOtpExpired = false;
+  int _retryCount = 0;
 
   @override
   void initState() {
@@ -59,8 +64,10 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
 
   void _startTimer() {
     setState(() {
-      _remainingSeconds = 30;
+      _remainingSeconds = _otpExpirySeconds;
       _canResend = false;
+      _isOtpExpired = false;
+      _retryCount = 0;
     });
 
     _timer?.cancel();
@@ -72,6 +79,7 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
       } else {
         setState(() {
           _canResend = true;
+          _isOtpExpired = true;
         });
         timer.cancel();
       }
@@ -95,11 +103,23 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
       return;
     }
 
-    if (!Validation.isOtpLength(
-      context,
-      otp,
-      minLength: 4,
-    )) {
+    if (_isOtpExpired) {
+      SnackBarToastMessage.error(
+        context,
+        "OTP expired. Please resend and try again.",
+      );
+      return;
+    }
+
+    if (_retryCount >= _maxOtpRetries) {
+      SnackBarToastMessage.error(
+        context,
+        "Retry limit reached. Please resend OTP.",
+      );
+      return;
+    }
+
+    if (!Validation.isOtpLength(context, otp)) {
       return;
     }
 
@@ -109,7 +129,18 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
       otp: otp,
       email: widget.email,
     );
-    if (res == null || !context.mounted) return;
+    if (res == null || !context.mounted) {
+      setState(() {
+        _retryCount++;
+      });
+      if (_retryCount >= _maxOtpRetries) {
+        SnackBarToastMessage.error(
+          context,
+          "Retry limit reached. Please resend OTP.",
+        );
+      }
+      return;
+    }
 
     AppConstant.selectFooterIndex = 0;
     Navigator.pushAndRemoveUntil(
@@ -193,7 +224,7 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 80 / 100,
                         child: Text(
-                          AppLanguage.enter4digitText[language],
+                          "We have sent a 6-digit verification code to",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.grey,
@@ -235,11 +266,11 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                         height: MediaQuery.of(context).size.height * 7 / 100,
                       ),
                       Pinput(
-                        length: 4,
+                        length: 6,
                         controller: pinputInputController,
                         defaultPinTheme: PinTheme(
-                          width: MediaQuery.of(context).size.width * 15.8 / 100,
-                          height: MediaQuery.of(context).size.width * 14 / 100,
+                          width: MediaQuery.of(context).size.width * 12 / 100,
+                          height: MediaQuery.of(context).size.width * 12 / 100,
                           textStyle: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
@@ -263,7 +294,7 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                           ),
                           margin: EdgeInsets.symmetric(
                               horizontal:
-                                  MediaQuery.of(context).size.width * 1 / 100),
+                                  MediaQuery.of(context).size.width * 0.6 / 100),
                         ),
                       ),
                       SizedBox(

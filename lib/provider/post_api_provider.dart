@@ -458,12 +458,12 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // --------------- Otp Verification -----------
-  otpVerificationApiCalling(
+  Future<bool> otpVerificationApiCalling(
     BuildContext context,
     String otp,
     String mobile,
   ) async {
-    if (_loading) return;
+    if (_loading) return false;
     setLoading(true);
 
     final Map<String, String> fields = {
@@ -482,7 +482,7 @@ class PostApiProvider with ChangeNotifier {
       if (res['success'] == true && res['data'] != "NA") {
         setLoading(false);
         await _syncAuthSession(context, res['data']);
-        if (!context.mounted) return;
+        if (!context.mounted) return true;
         TopNotification.success(context, res['message'][language]);
         Navigator.push(
           context,
@@ -492,10 +492,12 @@ class PostApiProvider with ChangeNotifier {
             duration: const Duration(milliseconds: 500),
           ),
         );
+        return true;
       }
     }
 
     setLoading(false);
+    return false;
   }
 
   // =============== Resend Otp Api =================//

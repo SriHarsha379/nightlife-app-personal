@@ -9,6 +9,7 @@ import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
+import '../../../utilities/app_snack_bar_toast_message.dart';
 import '../../../utilities/app_validation.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
@@ -27,9 +28,13 @@ class _OtpVerifyState extends State<OtpVerify> {
   TextEditingController pinputInputController = TextEditingController();
 
   // Timer variables
+  static const int _otpExpirySeconds = 120;
+  static const int _maxOtpRetries = 5;
   Timer? _timer;
-  int _remainingSeconds = 30; // 30 seconds timer
+  int _remainingSeconds = _otpExpirySeconds;
   bool _canResend = false;
+  bool _isOtpExpired = false;
+  int _retryCount = 0;
 
   @override
   void initState() {
@@ -47,8 +52,10 @@ class _OtpVerifyState extends State<OtpVerify> {
   // Start countdown timer
   void _startTimer() {
     setState(() {
-      _remainingSeconds = 30;
+      _remainingSeconds = _otpExpirySeconds;
       _canResend = false;
+      _isOtpExpired = false;
+      _retryCount = 0;
     });
 
     _timer?.cancel(); // Cancel any existing timer
@@ -60,6 +67,7 @@ class _OtpVerifyState extends State<OtpVerify> {
       } else {
         setState(() {
           _canResend = true;
+          _isOtpExpired = true;
         });
         timer.cancel();
       }
@@ -78,24 +86,51 @@ class _OtpVerifyState extends State<OtpVerify> {
   }
 
   // Verify OTP
-  void _verifyOTP() {
+  Future<void> _verifyOTP() async {
     if (Validation.isFieldEmpty(
       context,
       value: pinputInputController.text,
       fieldName: "OTP",
     )) return;
 
-    if (!Validation.isOtpLength(
-      context,
-      pinputInputController.text,
-      minLength: 4,
-    )) return;
+    if (_isOtpExpired) {
+      SnackBarToastMessage.error(
+        context,
+        "OTP expired. Please resend and try again.",
+      );
+      return;
+    }
+
+    if (_retryCount >= _maxOtpRetries) {
+      SnackBarToastMessage.error(
+        context,
+        "Retry limit reached. Please resend OTP.",
+      );
+      return;
+    }
+
+    if (!Validation.isOtpLength(context, pinputInputController.text)) return;
 
     print("Verifying OTP: ${pinputInputController.text}");
 
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    apiProvider.otpVerificationApiCalling(
-        context, pinputInputController.text, widget.mobile.toString());
+    final isVerified = await apiProvider.otpVerificationApiCalling(
+      context,
+      pinputInputController.text,
+      widget.mobile.toString(),
+    );
+    if (!mounted || isVerified) return;
+
+    setState(() {
+      _retryCount++;
+    });
+
+    if (_retryCount >= _maxOtpRetries) {
+      SnackBarToastMessage.error(
+        context,
+        "Retry limit reached. Please resend OTP.",
+      );
+    }
   }
 
   // Format timer display (00:30 format)
@@ -163,7 +198,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 80 / 100,
                         child: Text(
-                          AppLanguage.enter4digitText[language],
+                          "We have sent a 6-digit verification code to",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.grey,
@@ -204,11 +239,11 @@ class _OtpVerifyState extends State<OtpVerify> {
 
                       // OTP Input Pinput
                       Pinput(
-                        length: 4,
+                        length: 6,
                         controller: pinputInputController,
                         defaultPinTheme: PinTheme(
-                          width: MediaQuery.of(context).size.width * 15.8 / 100,
-                          height: MediaQuery.of(context).size.width * 14 / 100,
+                          width: MediaQuery.of(context).size.width * 12 / 100,
+                          height: MediaQuery.of(context).size.width * 12 / 100,
                           textStyle: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 26,
@@ -232,7 +267,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                           ),
                           margin: EdgeInsets.symmetric(
                               horizontal:
-                                  MediaQuery.of(context).size.width * 1 / 100),
+                                  MediaQuery.of(context).size.width * 0.6 / 100),
                         ),
                       ),
 

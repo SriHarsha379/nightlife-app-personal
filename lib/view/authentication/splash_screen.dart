@@ -9,6 +9,11 @@ import 'package:provider/provider.dart';
 
 import '../../provider/socket_provider.dart';
 import '../../provider/user_chat_socket_provider.dart';
+import '../../view/authentication/otp_verify_screen.dart';
+import '../../view/other/city_Preference/citypreference_screen.dart';
+import '../../view/other/city_Preference/music_genres.dart';
+import '../../view/other/city_Preference/stay_connected_otp_verification.dart';
+import '../../view/other/city_Preference/stay_connected_screen.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_footer.dart';
@@ -33,20 +38,118 @@ class _SplashState extends State<Splash> {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return true;
     final parts = trimmed.split('.');
-    if (parts.length != 3) return true;
+    if (parts.length != 3) return false;
     try {
       final payload = parts[1];
       final normalized = base64Url.normalize(payload);
       final decoded = utf8.decode(base64Url.decode(normalized));
       final map = jsonDecode(decoded);
-      if (map is! Map || map['exp'] == null) return true;
+      if (map is! Map || map['exp'] == null) return false;
       final exp = int.tryParse(map['exp'].toString());
-      if (exp == null) return true;
+      if (exp == null) return false;
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       return DateTime.now().isAfter(expiry);
     } catch (_) {
-      return true;
+      return false;
     }
+  }
+
+  int _parseSignupStep(dynamic stepValue) {
+    if (stepValue is int) return stepValue;
+    if (stepValue is String) return int.tryParse(stepValue) ?? 0;
+    return 0;
+  }
+
+  void _navigateForAuthenticatedUser(Map<String, dynamic> userData) {
+    final bool isVerified =
+        userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
+    final bool isProfileCompleted = userData['is_profile_completed'] ??
+        userData['isProfileCompleted'] ??
+        false;
+    final bool isAnotherEmailVerify =
+        userData['is_another_email_verify'] == true;
+    final String anotherEmail = (userData['another_email'] ?? '').toString();
+    final int signupStep = _parseSignupStep(userData['signup_step']);
+
+    if (signupStep >= 3 &&
+        anotherEmail.trim().isNotEmpty &&
+        !isAnotherEmailVerify) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: StayConnectedOTPVerify(
+            isEmail: true,
+            email: anotherEmail,
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    if (isProfileCompleted) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MyAppFooter(initialIndex: 0),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    if (signupStep >= 3) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: StayConnectedScreen(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    if (signupStep == 2) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MusicGenresScreen(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    if (signupStep == 1 && isVerified) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: CityPreference(),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    if (signupStep == 1 && !isVerified) {
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: OtpVerify(
+            mobile: userData['phone_number']?.toString() ?? '',
+          ),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
+    }
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(
+        builder: (context) => LoginScreen(),
+      ),
+    );
   }
 
   @override
@@ -73,7 +176,10 @@ class _SplashState extends State<Splash> {
         final data = json.decode(userDetails);
         log("userdetails$data");
         if (data is Map<String, dynamic>) {
-          final token = (data['token'] ?? '').toString().trim();
+          String token = (data['token'] ?? '').toString().trim();
+          if (token.isEmpty && data['user'] is Map) {
+            token = (data['user']['token'] ?? '').toString().trim();
+          }
 
           if (token.isEmpty) {
             AppConstant.token = '';
@@ -112,31 +218,10 @@ class _SplashState extends State<Splash> {
                   ? Map<String, dynamic>.from(data['user'])
                   : data;
 
-          final bool isProfileCompleted = userData['is_profile_completed'] ??
-              userData['isProfileCompleted'] ??
-              false;
-
           if (!mounted) return;
 
           userController.setUserFromMap(userData);
-
-          if (isProfileCompleted) {
-            Navigator.pushReplacement(
-              context,
-              PageTransition(
-                type: PageTransitionType.rightToLeftWithFade,
-                child: const MyAppFooter(initialIndex: 0),
-                duration: const Duration(milliseconds: 400),
-              ),
-            );
-            return;
-          }
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(
-              builder: (context) => LoginScreen(),
-            ),
-          );
+          _navigateForAuthenticatedUser(userData);
           return;
         }
       }

@@ -159,11 +159,17 @@ class Validation {
   // OTP LENGTH VALIDATION
 
   static bool isOtpLength(BuildContext context, String otp,
-      {int minLength = 4}) {
+      {int requiredLength = 6}) {
     if (!context.mounted) return false;
 
-    if (otp.trim().length < minLength) {
-      _showError(context, AppLanguage.otpMinLenthMessage[language]);
+    final value = otp.trim();
+    if (!RegExp(r'^\d+$').hasMatch(value)) {
+      _showError(context, "OTP should contain numbers only");
+      return false;
+    }
+
+    if (value.length != requiredLength) {
+      _showError(context, "Please enter a $requiredLength-digit OTP");
       return false;
     }
     return true;
