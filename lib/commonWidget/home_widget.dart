@@ -14,6 +14,9 @@ class HomeWidget {
     return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 
+  static bool _isNetworkImage(String value) =>
+      value.trim().toLowerCase().startsWith('http');
+
   static String _formatLikes(int count) {
     if (count >= 1000) {
       final double val = count / 1000;
@@ -136,7 +139,7 @@ class HomeWidget {
         ],
       ),
       child: ClipOval(
-        child: image.startsWith('http')
+        child: _isNetworkImage(image)
             ? Image.network(
                 image,
                 fit: BoxFit.cover,
@@ -186,7 +189,7 @@ class HomeWidget {
   static Widget _adImage({
     required String image,
   }) {
-    if (image.startsWith('http')) {
+    if (_isNetworkImage(image)) {
       return Image.network(
         image,
         fit: BoxFit.cover,
@@ -436,7 +439,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: _isNetworkImage(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.cover,
@@ -815,7 +818,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: _isNetworkImage(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,
@@ -1248,7 +1251,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: _isNetworkImage(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,

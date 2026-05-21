@@ -110,12 +110,7 @@ class _SearchScreenState extends State<SearchScreen> {
         if (!mounted) return;
         setState(() {
           final controller = context.read<SearchFilterController>();
-          venueFeaturedList = controller.venueFeaturedList;
-          placeList = controller.venueNearbyList;
-          venueRecommendedList = controller.venueRecommendedList;
-          eventFeaturedList = controller.eventFeaturedList;
-          eventList = controller.eventNearbyList;
-          eventRecommendedList = controller.eventRecommendedList;
+          _syncControllerLists(controller);
           items = venueRecommendedList;
           trendingSearchList = venueTrendingSearchList.isNotEmpty
               ? venueTrendingSearchList
@@ -135,6 +130,15 @@ class _SearchScreenState extends State<SearchScreen> {
     if (value == null) return fallback;
     if (value is num) return value.toDouble();
     return double.tryParse(value.toString()) ?? fallback;
+  }
+
+  void _syncControllerLists(SearchFilterController controller) {
+    venueFeaturedList = controller.venueFeaturedList;
+    placeList = controller.venueNearbyList;
+    venueRecommendedList = controller.venueRecommendedList;
+    eventFeaturedList = controller.eventFeaturedList;
+    eventList = controller.eventNearbyList;
+    eventRecommendedList = controller.eventRecommendedList;
   }
 
   String _locationLabel(String distance, String location) {
@@ -170,17 +174,12 @@ class _SearchScreenState extends State<SearchScreen> {
 
     if (!mounted) return;
     setState(() {
+      _syncControllerLists(controller);
       if (type == 'venue') {
-        venueFeaturedList = controller.venueFeaturedList;
-        placeList = controller.venueNearbyList;
-        venueRecommendedList = controller.venueRecommendedList;
         if (tapBarStatus == 1) {
           items = venueRecommendedList;
         }
       } else {
-        eventFeaturedList = controller.eventFeaturedList;
-        eventList = controller.eventNearbyList;
-        eventRecommendedList = controller.eventRecommendedList;
         if (tapBarStatus == 2) {
           items = eventRecommendedList;
         }

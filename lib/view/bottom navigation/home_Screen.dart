@@ -120,6 +120,9 @@ class _HomeState extends State<Home> {
       item is Map &&
       (item['type'] ?? '').toString().trim().toLowerCase() == 'ad';
 
+  bool _isNetworkUrl(String value) =>
+      value.trim().toLowerCase().startsWith('http');
+
   String _adImage(dynamic item) {
     if (item is! Map) return AppImage.dummyImageIcon;
     for (final key in [
@@ -130,7 +133,7 @@ class _HomeState extends State<Home> {
     ]) {
       final value = (item[key] ?? '').toString().trim();
       if (value.isNotEmpty) {
-        return value.startsWith('http')
+        return _isNetworkUrl(value)
             ? value
             : '${AppConfigProvider.imageUrl}$value';
       }
@@ -1046,7 +1049,7 @@ class _HomeState extends State<Home> {
     }
 
     try {
-      if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+      if (_isNetworkUrl(rawImage)) {
         return NetworkImage(rawImage);
       }
       if (rawImage.startsWith('file://')) {
@@ -1762,8 +1765,8 @@ class _HomeState extends State<Home> {
                                                     if (profileImage.isEmpty) {
                                                       return '';
                                                     }
-                                                    return profileImage
-                                                            .startsWith('http')
+                                                    return _isNetworkUrl(
+                                                            profileImage)
                                                         ? profileImage
                                                         : '${AppConfigProvider.imageUrl}$profileImage';
                                                   }).toList(),
@@ -1976,8 +1979,8 @@ class _HomeState extends State<Home> {
                                                     if (profileImage.isEmpty) {
                                                       return '';
                                                     }
-                                                    return profileImage
-                                                            .startsWith('http')
+                                                    return _isNetworkUrl(
+                                                            profileImage)
                                                         ? profileImage
                                                         : '${AppConfigProvider.imageUrl}$profileImage';
                                                   }).toList(),

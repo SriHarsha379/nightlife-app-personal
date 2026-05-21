@@ -72,10 +72,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
 
   List<dynamic> _toList(dynamic value) => value is List ? value : <dynamic>[];
 
+  bool _isNetworkUrl(String value) =>
+      value.trim().toLowerCase().startsWith('http://') ||
+      value.trim().toLowerCase().startsWith('https://');
+
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
     if (value.isEmpty) return '';
-    if (value.startsWith('http://') || value.startsWith('https://')) {
+    if (_isNetworkUrl(value)) {
       return value;
     }
     return '${AppConfigProvider.imageUrl}$value';
@@ -201,7 +205,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     BoxFit fit = BoxFit.cover,
     String fallbackAsset = AppImage.placeHolder2Icon,
   }) {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    if (_isNetworkUrl(imagePath)) {
       return Image.network(
         imagePath,
         fit: fit,
