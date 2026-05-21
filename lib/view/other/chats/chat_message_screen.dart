@@ -1496,6 +1496,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     return value;
   }
 
+  /// Shows a snackbar with [message] when this widget is still mounted.
   void _showSnackBarMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
