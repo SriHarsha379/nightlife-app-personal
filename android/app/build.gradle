@@ -1,13 +1,14 @@
 plugins {
     id "com.android.application"
-    id "kotlin-android"
+    id "org.jetbrains.kotlin.android"
     id "dev.flutter.flutter-gradle-plugin"
     id "com.google.gms.google-services"
 }
 
 def localProperties = new Properties()
 def localPropertiesFile = rootProject.file('local.properties')
-if(localPropertiesFile.exists()) {
+
+if (localPropertiesFile.exists()) {
     localPropertiesFile.withReader('UTF-8') { reader ->
         localProperties.load(reader)
     }
@@ -18,15 +19,19 @@ def flutterVersionName = localProperties.getProperty('flutter.versionName') ?: '
 
 android {
     namespace "com.app.night_life"
-    compileSdk 35
-    ndkVersion "26.1.10909125"
+
+    compileSdk 36
+    ndkVersion "28.2.13676358"
 
     defaultConfig {
         applicationId "com.app.night_life"
-        minSdkVersion 24
-        targetSdkVersion 35
+
+        minSdk 24
+        targetSdk 36
+
         versionCode flutterVersionCode.toInteger()
         versionName flutterVersionName
+
         multiDexEnabled true
     }
 
@@ -37,7 +42,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = "17"
     }
 
     sourceSets {
@@ -45,14 +50,26 @@ android {
     }
 
     buildTypes {
-        release {
-            signingConfig signingConfigs.debug
-            minifyEnabled true
-            shrinkResources true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-        }
+
         debug {
             signingConfig signingConfigs.debug
+        }
+
+        profile {
+            signingConfig signingConfigs.debug
+        }
+
+        release {
+            signingConfig signingConfigs.debug
+
+            // TEMPORARILY DISABLED DURING MODERNIZATION
+            minifyEnabled false
+            shrinkResources false
+
+            proguardFiles(
+                    getDefaultProguardFile('proguard-android-optimize.txt'),
+                    'proguard-rules.pro'
+            )
         }
     }
 
@@ -66,10 +83,16 @@ flutter {
 }
 
 dependencies {
-    implementation "org.jetbrains.kotlin:kotlin-stdlib:1.9.0"
+
+    // REMOVE OLD PINNED KOTLIN VERSION
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+
     implementation 'com.google.android.exoplayer:exoplayer:2.19.1'
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
-    implementation platform('com.google.firebase:firebase-bom:29.0.3')
+
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
+
+    implementation platform('com.google.firebase:firebase-bom:33.12.0')
+
     implementation 'com.google.firebase:firebase-analytics'
 }
 
@@ -80,5 +103,3 @@ subprojects {
         }
     }
 }
-
-
