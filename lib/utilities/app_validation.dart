@@ -258,6 +258,20 @@ class Validation {
     return true;
   }
 
+  // BLOCK KNOWN STATIC OTP VALUE
+  static bool isStaticOtpBlocked(BuildContext context, String otp) {
+    if (!context.mounted) return false;
+
+    if (otp.trim() == '1234') {
+      _showError(
+        context,
+        "This OTP value is not valid. Please enter the OTP sent to your device.",
+      );
+      return true;
+    }
+    return false;
+  }
+
   /// Validates an optional social-account field that can hold either a
   /// full URL (http/https/www prefix) or a plain username string.
   ///

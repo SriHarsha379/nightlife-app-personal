@@ -103,6 +103,10 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
       return;
     }
 
+    if (Validation.isStaticOtpBlocked(context, otp)) {
+      return;
+    }
+
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     final res = await apiProvider.verifyEmailOtpApiCalling(
       context,

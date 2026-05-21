@@ -499,13 +499,22 @@ class PostApiProvider with ChangeNotifier {
   }
 
   // =============== Resend Otp Api =================//
-  Future<Map<String, dynamic>?> resendotpApiCalling(BuildContext context) async {
+  Future<Map<String, dynamic>?> resendotpApiCalling(
+    BuildContext context, {
+    String? phoneNumber,
+  }) async {
     if (_secondaryLoading) return null;
     setSecondaryLoading(true);
 
+    final Map<String, String> fields = {};
+    final String trimmedPhone = phoneNumber?.trim() ?? '';
+    if (trimmedPhone.isNotEmpty) {
+      fields['phone_number'] = trimmedPhone;
+    }
+
     final res = await postJsonData(
       'auth/resend_otp',
-      {},
+      fields,
       context,
       headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );

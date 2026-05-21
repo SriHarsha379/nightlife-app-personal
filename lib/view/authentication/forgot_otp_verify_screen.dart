@@ -82,6 +82,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
     final otp = pinputInputController.text.trim();
     if (Validation.isFieldEmpty(context, value: otp, fieldName: "OTP")) return;
     if (!Validation.isOtpLength(context, otp, minLength: 4)) return;
+    if (Validation.isStaticOtpBlocked(context, otp)) return;
 
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     final res = await apiProvider.forgotOtpVerificationApiCalling(
