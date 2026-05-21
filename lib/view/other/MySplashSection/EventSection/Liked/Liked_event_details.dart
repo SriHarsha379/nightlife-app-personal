@@ -45,6 +45,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   bool isEnded = false;
   Map<String, String>? _swipeResult;
 
+  /// Updates timer label and ended status together.
   void _setTimerState(String timerText, bool ended) {
     setState(() {
       _timerText = timerText;
@@ -52,6 +53,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     });
   }
 
+  /// Updates only the ended status flag.
   void _setEndedState(bool ended) {
     setState(() {
       isEnded = ended;

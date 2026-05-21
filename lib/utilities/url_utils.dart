@@ -1,4 +1,4 @@
-/// Returns `true` when [value] is an HTTP(S) URL.
+/// Determines whether [value] is an HTTP/HTTPS URL with a non-empty host.
 bool isNetworkUrl(String value) {
   final normalized = value.trim();
   if (normalized.isEmpty) return false;
