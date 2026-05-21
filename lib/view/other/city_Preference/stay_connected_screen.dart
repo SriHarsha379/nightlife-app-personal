@@ -3,7 +3,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:night_life/utilities/app_image.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../provider/post_api_provider.dart';

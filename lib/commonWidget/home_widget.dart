@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import '../utilities/app_color.dart';
 import '../utilities/app_font.dart';
 import '../utilities/app_image.dart';
@@ -1609,7 +1609,7 @@ class HomeWidget {
 //===============================================//////////////////////////////////////////////
 
 // import 'package:flutter/material.dart';
-// import 'package:page_transition/page_transition.dart';
+// import 'package:night_life/utilities/page_transition.dart';
 // import '../utilities/app_color.dart';
 // import '../utilities/app_font.dart';
 // import '../utilities/app_image.dart';

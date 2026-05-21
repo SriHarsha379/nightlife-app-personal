@@ -4,7 +4,7 @@ import 'package:night_life/controller/home/home_controller.dart';
 import 'package:night_life/controller/venues/venues_details_controller.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_table.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';

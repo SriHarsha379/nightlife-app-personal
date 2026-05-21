@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:table_calendar/table_calendar.dart';
 

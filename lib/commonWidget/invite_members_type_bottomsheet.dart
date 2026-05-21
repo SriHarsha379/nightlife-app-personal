@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../controller/invite/invite_event_venue_list_controller.dart';
 import '../utilities/app_color.dart';

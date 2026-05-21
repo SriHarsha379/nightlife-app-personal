@@ -8,7 +8,7 @@ import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/my_events.dart';
 import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/my_venue.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../../controller/home/home_controller.dart';
 import '../../../../controller/members/conversion_list_controller.dart';

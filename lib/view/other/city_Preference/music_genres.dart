@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:provider/provider.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:night_life/view/other/city_Preference/event_preference.dart';
 import '../../../controller/genres/music_genres_controller.dart';
 import '../../../provider/darkmode_provider.dart';

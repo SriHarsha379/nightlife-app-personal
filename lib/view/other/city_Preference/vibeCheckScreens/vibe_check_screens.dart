@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/city_Preference/stay_connected_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../../controller/vibe_check/vibe_check_controller.dart';
 import '../../../../provider/darkmode_provider.dart';

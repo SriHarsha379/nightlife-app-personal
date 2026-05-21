@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:night_life/view/authentication/report_problem.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controller/support/faq_controller.dart';
 import '../../provider/content_service.dart';

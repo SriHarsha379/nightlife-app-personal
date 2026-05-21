@@ -6,7 +6,7 @@ import 'package:night_life/commonWidget/booking_success_dialog.dart';
 import 'package:night_life/utilities/app_button.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../../controller/book_venue/book_venue_controller.dart';
 import '../../../../controller/venues/venues_details_controller.dart';

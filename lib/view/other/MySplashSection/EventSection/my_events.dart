@@ -8,7 +8,7 @@ import '/controller/home/home_controller.dart';
 import '/controller/likedAndBookedEvents/like_booked_event_controller.dart';
 import '/utilities/app_color.dart';
 import '/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_constant.dart';

@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 
 import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../controller/vibe_preference/vibe_prefernce_controller.dart';
 import '../../../provider/darkmode_provider.dart';

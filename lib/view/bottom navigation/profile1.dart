@@ -6,7 +6,7 @@ import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/view_all_events.dart';
 import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../controller/home/home_controller.dart';

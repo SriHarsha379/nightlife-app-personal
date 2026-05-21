@@ -13,7 +13,7 @@ import '/utilities/app_font.dart';
 import '/utilities/app_image.dart';
 import '/utilities/app_language.dart';
 import '/view/other/view_all_lineup.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:readmore/readmore.dart';
 import 'package:url_launcher/url_launcher.dart';
