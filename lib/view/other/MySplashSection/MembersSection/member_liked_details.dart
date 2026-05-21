@@ -8,6 +8,7 @@ import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/utilities/page_transition.dart';
+import 'package:night_life/utilities/url_utils.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../controller/home/home_controller.dart';
 import '../../../../helper/ImagePreviewScreen.dart';
@@ -75,7 +76,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
     if (value.isEmpty) return '';
-    if (value.startsWith('http://') || value.startsWith('https://')) {
+    if (isNetworkUrl(value)) {
       return value;
     }
     return '${AppConfigProvider.imageUrl}$value';
@@ -201,7 +202,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     BoxFit fit = BoxFit.cover,
     String fallbackAsset = AppImage.placeHolder2Icon,
   }) {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    if (isNetworkUrl(imagePath)) {
       return Image.network(
         imagePath,
         fit: fit,

@@ -40,11 +40,13 @@ class PostApiProvider with ChangeNotifier {
   List<String> favouriteClub = [];
 
   void setLoading(bool value) {
+    if (_loading == value) return;
     _loading = value;
     notifyListeners();
   }
 
   void setSecondaryLoading(bool value) {
+    if (_secondaryLoading == value) return;
     _secondaryLoading = value;
     notifyListeners();
   }
@@ -175,6 +177,7 @@ class PostApiProvider with ChangeNotifier {
     BuildContext context,
     Map<String, dynamic> userData, {
     Map<String, dynamic>? socialUser,
+    Duration footerDuration = const Duration(milliseconds: 500),
   }) {
     final bool isNewUser = userData['is_new_user'] == true;
     if (isNewUser && socialUser != null) {
@@ -223,7 +226,7 @@ class PostApiProvider with ChangeNotifier {
         PageTransition(
           type: PageTransitionType.rightToLeftWithFade,
           child: const MyAppFooter(initialIndex: 0),
-          duration: const Duration(milliseconds: 500),
+          duration: footerDuration,
         ),
       );
     } else if (signupStep >= 3) {
@@ -267,6 +270,33 @@ class PostApiProvider with ChangeNotifier {
     }
   }
 
+  Future<bool> _completeAuthSuccess(
+    BuildContext context, {
+    required dynamic authPayload,
+    required String successMessage,
+    Map<String, dynamic>? socialUser,
+    bool showSuccessToast = true,
+    Duration footerDuration = const Duration(milliseconds: 500),
+  }) async {
+    await _syncAuthSession(context, authPayload);
+    if (!context.mounted) return false;
+
+    final userData = _extractUserData(authPayload);
+    if (userData.isEmpty) return false;
+
+    if (showSuccessToast) {
+      TopNotification.success(context, successMessage);
+    }
+
+    _navigateFromAuthState(
+      context,
+      userData,
+      socialUser: socialUser,
+      footerDuration: footerDuration,
+    );
+    return true;
+  }
+
   // =============Login Api=================//
   Future<bool> loginUserApiCall(
       BuildContext context, String email, String password) async {
@@ -285,111 +315,14 @@ class PostApiProvider with ChangeNotifier {
     if (res != null) {
       if (res['success'] == true) {
         final data = res['data'] ?? <String, dynamic>{};
-
-        await _syncAuthSession(context, data);
-
-        if (!context.mounted) {
-          setLoading(false);
-          return false;
-        }
-
-        TopNotification.success(context, res['message'][language]);
-
-        final dynamic userData =
-            (data is Map && data['user'] is Map) ? data['user'] : data;
-
-        if (userData is! Map) {
-          setLoading(false);
-          return false;
-        }
-
-        final bool isVerified =
-            userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
-        final bool isProfileCompleted = userData['is_profile_completed'] ??
-            userData['isProfileCompleted'] ??
-            false;
-        final bool isAnotherEmailVerify =
-            userData['is_another_email_verify'] == true;
-        final String anotherEmail =
-            (userData['another_email'] ?? '').toString();
-
-        int signupStep = 0;
-        final dynamic stepValue = userData['signup_step'];
-        if (stepValue is int) {
-          signupStep = stepValue;
-        } else if (stepValue is String) {
-          signupStep = int.tryParse(stepValue) ?? 0;
-        }
-
-        if (!context.mounted) {
-          setLoading(false);
-          return false;
-        }
-
-        if (signupStep >= 3 &&
-            anotherEmail.trim().isNotEmpty &&
-            !isAnotherEmailVerify) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: StayConnectedOTPVerify(
-                isEmail: true,
-                email: anotherEmail,
-              ),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        } else if (isProfileCompleted) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: const MyAppFooter(initialIndex: 0),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        } else if (signupStep >= 3) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: StayConnectedScreen(),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        } else if (signupStep == 1 && isVerified) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: CityPreference(),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        } else if (signupStep == 2) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: const MusicGenresScreen(),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        } else if (signupStep == 1 && !isVerified) {
-          Navigator.push(
-            context,
-            PageTransition(
-              type: PageTransitionType.rightToLeftWithFade,
-              child: OtpVerify(
-                mobile: userData['phone_number']?.toString() ?? '',
-              ),
-              duration: const Duration(milliseconds: 400),
-            ),
-          );
-        }
+        final didComplete = await _completeAuthSuccess(
+          context,
+          authPayload: data,
+          successMessage: res['message'][language],
+          footerDuration: const Duration(milliseconds: 400),
+        );
         setLoading(false);
-        return true;
+        return didComplete;
       }
     }
     setLoading(false);
@@ -427,26 +360,12 @@ class PostApiProvider with ChangeNotifier {
         final data = res['data'] ?? <String, dynamic>{};
         final userData = _extractUserData(data);
         final bool shouldShowSuccessToast = !(userData['is_new_user'] == true);
-
-        if (!context.mounted) {
-          setLoading(false);
-          return;
-        }
-
-        await _syncAuthSession(context, data);
-
-        if (!context.mounted) {
-          setLoading(false);
-          return;
-        }
-
-        if (shouldShowSuccessToast) {
-          TopNotification.success(context, res['message'][language]);
-        }
-        _navigateFromAuthState(
+        await _completeAuthSuccess(
           context,
-          userData,
+          authPayload: data,
+          successMessage: res['message'][language],
           socialUser: Map<String, dynamic>.from(user),
+          showSuccessToast: shouldShowSuccessToast,
         );
       }
     }

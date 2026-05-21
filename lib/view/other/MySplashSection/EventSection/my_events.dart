@@ -29,6 +29,8 @@ class MyEvents extends StatefulWidget {
 }
 
 class _MyEventsState extends State<MyEvents> {
+  static const int _initialPage = 0;
+  static const int _pageLimit = 10;
   int selectedIndex = 0;
   List pastEventlist = [
     {
@@ -72,24 +74,27 @@ class _MyEventsState extends State<MyEvents> {
     });
   }
 
-  void _fetchLiked() {
-    Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
+  LikedBookedEventController get _eventsController =>
+      Provider.of<LikedBookedEventController>(context, listen: false);
+
+  /// Fetches events for [type].
+  ///
+  /// Supported values: `liked`, `booked`.
+  Future<void> _fetchEventsByType(String type) {
+    return _eventsController.fetchMyEvents(
       context,
-      type: 'liked',
-      page: 0,
-      limit: 10,
+      type: type,
+      page: _initialPage,
+      limit: _pageLimit,
     );
   }
 
-  void _fetchBooked() {
-    Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
-      context,
-      type: 'booked',
-      page: 0,
-      limit: 10,
-    );
+  Future<void> _fetchLiked() {
+    return _fetchEventsByType('liked');
+  }
+
+  Future<void> _fetchBooked() {
+    return _fetchEventsByType('booked');
   }
 
   Future<void> _handleEventDetailResult(dynamic result) async {
@@ -109,13 +114,7 @@ class _MyEventsState extends State<MyEvents> {
     }
 
     if (!mounted) return;
-    await Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
-      context,
-      type: 'liked',
-      page: 0,
-      limit: 10,
-    );
+    await _fetchLiked();
   }
 
   void _onLikedScroll() {

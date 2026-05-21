@@ -22,6 +22,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_snack_bar_toast_message.dart';
+import '../../utilities/url_utils.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
 
@@ -130,7 +131,7 @@ class _HomeState extends State<Home> {
     ]) {
       final value = (item[key] ?? '').toString().trim();
       if (value.isNotEmpty) {
-        return value.startsWith('http')
+        return isNetworkUrl(value)
             ? value
             : '${AppConfigProvider.imageUrl}$value';
       }
@@ -1046,7 +1047,7 @@ class _HomeState extends State<Home> {
     }
 
     try {
-      if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+      if (isNetworkUrl(rawImage)) {
         return NetworkImage(rawImage);
       }
       if (rawImage.startsWith('file://')) {
@@ -1762,8 +1763,8 @@ class _HomeState extends State<Home> {
                                                     if (profileImage.isEmpty) {
                                                       return '';
                                                     }
-                                                    return profileImage
-                                                            .startsWith('http')
+                                                    return isNetworkUrl(
+                                                            profileImage)
                                                         ? profileImage
                                                         : '${AppConfigProvider.imageUrl}$profileImage';
                                                   }).toList(),
@@ -1976,8 +1977,8 @@ class _HomeState extends State<Home> {
                                                     if (profileImage.isEmpty) {
                                                       return '';
                                                     }
-                                                    return profileImage
-                                                            .startsWith('http')
+                                                    return isNetworkUrl(
+                                                            profileImage)
                                                         ? profileImage
                                                         : '${AppConfigProvider.imageUrl}$profileImage';
                                                   }).toList(),

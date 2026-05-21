@@ -47,6 +47,14 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
 
   int select = 0;
   bool isOpen = false;
+
+  void _showSnackBarMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
   Future<void> _openVenueLocationInMaps(Map<String, dynamic> venueData) async {
     final latitude = venueData['latitude'];
     final longitude = venueData['longitude'];
@@ -66,11 +74,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
     if (uri == null) return;
 
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
-    if (!launched && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Unable to open location')),
-      );
-    }
+    if (!launched) _showSnackBarMessage('Unable to open location');
   }
 
   // Text Editing Controllers

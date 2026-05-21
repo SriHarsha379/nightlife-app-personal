@@ -31,6 +31,8 @@ class MyVenue extends StatefulWidget {
 }
 
 class _MyVenueState extends State<MyVenue> {
+  static const int _initialPage = 0;
+  static const int _pageLimit = 10;
   int selectedIndex = 0;
 
   late final ScrollController _likedScrollController;
@@ -51,22 +53,27 @@ class _MyVenueState extends State<MyVenue> {
     });
   }
 
-  void _fetchLiked() {
-    Provider.of<MyVenuesController>(context, listen: false).fetchMyVenues(
+  MyVenuesController get _venuesController =>
+      Provider.of<MyVenuesController>(context, listen: false);
+
+  /// Fetches venues for [type].
+  ///
+  /// Supported values: `liked`, `reserved`.
+  void _fetchVenuesByType(String type) {
+    _venuesController.fetchMyVenues(
       context,
-      type: 'liked',
-      page: 0,
-      limit: 10,
+      type: type,
+      page: _initialPage,
+      limit: _pageLimit,
     );
   }
 
+  void _fetchLiked() {
+    _fetchVenuesByType('liked');
+  }
+
   void _fetchReserved() {
-    Provider.of<MyVenuesController>(context, listen: false).fetchMyVenues(
-      context,
-      type: 'reserved',
-      page: 0,
-      limit: 10,
-    );
+    _fetchVenuesByType('reserved');
   }
 
   void _onLikedScroll() {

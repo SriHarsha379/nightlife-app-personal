@@ -512,10 +512,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
         senderImage: _userImage,
         receiverId: _receiverId,
         receiverName: _receiverName,
-        receiverImage: (_receiverImage.startsWith('assets/') ||
-                _receiverImage.startsWith('./assets/'))
-            ? ''
-            : _receiverImage,
+        receiverImage: _receiverImageForPayload(),
         conversationId: _conversationId,
         message: '',
         senderModel: 'User',
@@ -936,12 +933,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
         : null;
     if (text.isEmpty && eventObject == null) return;
 
-    if (_userId.isEmpty || _receiverId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chat is loading. Please wait.')),
-      );
-      return;
-    }
+    if (!_ensureChatReady()) return;
 
     Provider.of<UserChatSocketProvider>(context, listen: false)
         .sendConversationMessage(
@@ -950,10 +942,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       senderImage: _userImage,
       receiverId: _receiverId,
       receiverName: _receiverName,
-      receiverImage: (_receiverImage.startsWith('assets/') ||
-              _receiverImage.startsWith('./assets/'))
-          ? ''
-          : _receiverImage,
+      receiverImage: _receiverImageForPayload(),
       conversationId: _conversationId,
       message: text,
       senderModel: 'User',
@@ -1240,12 +1229,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   Future<bool> _shareCurrentLocation() async {
     if (_isSendingLocation) return false;
-    if (_userId.isEmpty || _receiverId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chat is loading. Please wait.')),
-      );
-      return false;
-    }
+    if (!_ensureChatReady()) return false;
     if (mounted) setState(() => _isSendingLocation = true);
     try {
       LocationPermission permission = await Geolocator.checkPermission();
@@ -1278,10 +1262,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
         senderImage: _userImage,
         receiverId: _receiverId,
         receiverName: _receiverName,
-        receiverImage: (_receiverImage.startsWith('assets/') ||
-                _receiverImage.startsWith('./assets/'))
-            ? ''
-            : _receiverImage,
+        receiverImage: _receiverImageForPayload(),
         conversationId: _conversationId,
         message: locationPayload,
         senderModel: 'User',
@@ -1324,12 +1305,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Future<void> _sendPickedMedia(List<Map<String, String>> picked) async {
-    if (!mounted || _userId.isEmpty || _receiverId.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Chat is loading. Please wait.')),
-      );
-      return;
-    }
+    if (!mounted || !_ensureChatReady()) return;
 
     final uploadPaths = <String>[];
     for (final item in picked) {
@@ -1399,10 +1375,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       senderImage: _userImage,
       receiverId: _receiverId,
       receiverName: _receiverName,
-      receiverImage: (_receiverImage.startsWith('assets/') ||
-              _receiverImage.startsWith('./assets/'))
-          ? ''
-          : _receiverImage,
+      receiverImage: _receiverImageForPayload(),
       conversationId: _conversationId,
       localFilePaths: paths,
       senderModel: 'User',
@@ -1513,6 +1486,30 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   String _raw(dynamic value) => (value ?? '').toString().trim();
+
+  /// Returns empty for bundled asset paths or empty values; else receiver image.
+  String _receiverImageForPayload() {
+    final value = _receiverImage.trim();
+    if (value.startsWith('assets/') || value.startsWith('./assets/')) {
+      return '';
+    }
+    return value;
+  }
+
+  /// Shows a snackbar with [message] when this widget is still mounted.
+  void _showSnackBarMessage(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
+  }
+
+  /// Ensures sender/receiver context is loaded before sending chat data.
+  bool _ensureChatReady() {
+    if (_userId.isNotEmpty && _receiverId.isNotEmpty) return true;
+    _showSnackBarMessage('Chat is loading. Please wait.');
+    return false;
+  }
 
   ImageProvider _chatAvatar(dynamic value) {
     final raw = _raw(value);

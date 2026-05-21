@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:night_life/utilities/page_transition.dart';
+import 'package:night_life/utilities/url_utils.dart';
 import '../utilities/app_color.dart';
 import '../utilities/app_font.dart';
 import '../utilities/app_image.dart';
@@ -136,7 +137,7 @@ class HomeWidget {
         ],
       ),
       child: ClipOval(
-        child: image.startsWith('http')
+        child: isNetworkUrl(image)
             ? Image.network(
                 image,
                 fit: BoxFit.cover,
@@ -186,7 +187,7 @@ class HomeWidget {
   static Widget _adImage({
     required String image,
   }) {
-    if (image.startsWith('http')) {
+    if (isNetworkUrl(image)) {
       return Image.network(
         image,
         fit: BoxFit.cover,
@@ -436,7 +437,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.cover,
@@ -815,7 +816,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,
@@ -1248,7 +1249,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: image.startsWith('http')
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,

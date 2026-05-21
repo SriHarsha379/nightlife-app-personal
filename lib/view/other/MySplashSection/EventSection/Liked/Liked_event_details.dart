@@ -38,10 +38,27 @@ class LikedEventDetail extends StatefulWidget {
 }
 
 class _LikedEventDetailState extends State<LikedEventDetail> {
+  static const String _limitedTimeText = "🔥 Limited time";
+  static const String _endedText = "🔥 Ended";
   Timer? _countdownTimer;
-  String _timerText = "🔥 Limited time";
+  String _timerText = _limitedTimeText;
   bool isEnded = false;
   Map<String, String>? _swipeResult;
+
+  /// Updates timer label and ended status together.
+  void _setTimerState(String timerText, bool ended) {
+    setState(() {
+      _timerText = timerText;
+      isEnded = ended;
+    });
+  }
+
+  /// Updates only the ended status flag.
+  void _setEndedState(bool ended) {
+    setState(() {
+      isEnded = ended;
+    });
+  }
 
   @override
   void initState() {
@@ -64,10 +81,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     _countdownTimer?.cancel();
 
     if (endDateString == null || endDateString.isEmpty) {
-      setState(() {
-        _timerText = "🔥 Limited time";
-        isEnded = false;
-      });
+      _setTimerState(_limitedTimeText, false);
       return;
     }
 
@@ -88,16 +102,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
       // Check if event booking has ended
       if (now.isAfter(endDateMidnight)) {
-        setState(() {
-          _timerText = "🔥 Ended";
-          isEnded = true;
-        });
+        _setTimerState(_endedText, true);
         return;
       }
 
-      setState(() {
-        isEnded = false;
-      });
+      _setEndedState(false);
 
       bool isSameDay = now.year == dayBeforeEvent.year &&
           now.month == dayBeforeEvent.month &&
@@ -111,10 +120,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
           if (currentTime.isAfter(endDateMidnight)) {
             timer.cancel();
-            setState(() {
-              _timerText = "🔥 Ended";
-              isEnded = true;
-            });
+            _setTimerState(_endedText, true);
           } else {
             _updateCountdown(endDateMidnight);
           }
@@ -131,10 +137,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
         });
       }
     } catch (e) {
-      setState(() {
-        _timerText = "🔥 Limited time";
-        isEnded = false;
-      });
+      _setTimerState(_limitedTimeText, false);
     }
   }
 
@@ -187,25 +190,17 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
     final endDateTime = _resolveEventEndDateTime(endDateString, endTimeString);
     if (endDateTime == null) {
-      setState(() {
-        _timerText = "🔥 Limited time";
-        isEnded = false;
-      });
+      _setTimerState(_limitedTimeText, false);
       return;
     }
 
     final now = DateTime.now();
     if (now.isAfter(endDateTime)) {
-      setState(() {
-        _timerText = "🔥 Ended";
-        isEnded = true;
-      });
+      _setTimerState(_endedText, true);
       return;
     }
 
-    setState(() {
-      isEnded = false;
-    });
+    _setEndedState(false);
 
     final isSameDay = now.year == endDateTime.year &&
         now.month == endDateTime.month &&
@@ -217,10 +212,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
         final currentTime = DateTime.now();
         if (currentTime.isAfter(endDateTime)) {
           timer.cancel();
-          setState(() {
-            _timerText = "🔥 Ended";
-            isEnded = true;
-          });
+          _setTimerState(_endedText, true);
         } else {
           _updateCountdown(endDateTime);
         }
