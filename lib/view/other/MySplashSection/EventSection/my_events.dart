@@ -77,7 +77,9 @@ class _MyEventsState extends State<MyEvents> {
   LikedBookedEventController get _eventsController =>
       Provider.of<LikedBookedEventController>(context, listen: false);
 
-  /// Fetches events for [type] such as `liked` or `booked`.
+  /// Fetches events for [type].
+  ///
+  /// Supported values: `liked`, `booked`.
   Future<void> _fetchEventsByType(String type) {
     return _eventsController.fetchMyEvents(
       context,

@@ -56,7 +56,9 @@ class _MyVenueState extends State<MyVenue> {
   MyVenuesController get _venuesController =>
       Provider.of<MyVenuesController>(context, listen: false);
 
-  /// Fetches venues for [type] such as `liked` or `reserved`.
+  /// Fetches venues for [type].
+  ///
+  /// Supported values: `liked`, `reserved`.
   void _fetchVenuesByType(String type) {
     _venuesController.fetchMyVenues(
       context,
