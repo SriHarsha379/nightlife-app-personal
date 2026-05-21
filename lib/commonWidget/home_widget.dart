@@ -14,8 +14,11 @@ class HomeWidget {
     return int.tryParse(value?.toString() ?? '') ?? 0;
   }
 
-  static bool _isNetworkImage(String value) =>
-      value.trim().toLowerCase().startsWith('http');
+  static bool _isNetworkImage(String value) {
+    final normalized = value.trim().toLowerCase();
+    return normalized.startsWith('http://') ||
+        normalized.startsWith('https://');
+  }
 
   static String _formatLikes(int count) {
     if (count >= 1000) {

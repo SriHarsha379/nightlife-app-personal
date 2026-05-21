@@ -120,8 +120,11 @@ class _HomeState extends State<Home> {
       item is Map &&
       (item['type'] ?? '').toString().trim().toLowerCase() == 'ad';
 
-  bool _isNetworkUrl(String value) =>
-      value.trim().toLowerCase().startsWith('http');
+  bool _isNetworkUrl(String value) {
+    final normalized = value.trim().toLowerCase();
+    return normalized.startsWith('http://') ||
+        normalized.startsWith('https://');
+  }
 
   String _adImage(dynamic item) {
     if (item is! Map) return AppImage.dummyImageIcon;

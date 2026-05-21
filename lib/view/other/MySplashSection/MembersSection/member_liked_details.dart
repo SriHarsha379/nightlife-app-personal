@@ -72,9 +72,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
 
   List<dynamic> _toList(dynamic value) => value is List ? value : <dynamic>[];
 
-  bool _isNetworkUrl(String value) =>
-      value.trim().toLowerCase().startsWith('http://') ||
-      value.trim().toLowerCase().startsWith('https://');
+  bool _isNetworkUrl(String value) {
+    final normalized = value.trim().toLowerCase();
+    return normalized.startsWith('http://') ||
+        normalized.startsWith('https://');
+  }
 
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
