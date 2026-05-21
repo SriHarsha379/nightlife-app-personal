@@ -29,6 +29,8 @@ class MyEvents extends StatefulWidget {
 }
 
 class _MyEventsState extends State<MyEvents> {
+  static const int _initialPage = 0;
+  static const int _pageLimit = 10;
   int selectedIndex = 0;
   List pastEventlist = [
     {
@@ -79,8 +81,8 @@ class _MyEventsState extends State<MyEvents> {
     await _eventsController.fetchMyEvents(
       context,
       type: type,
-      page: 0,
-      limit: 10,
+      page: _initialPage,
+      limit: _pageLimit,
     );
   }
 

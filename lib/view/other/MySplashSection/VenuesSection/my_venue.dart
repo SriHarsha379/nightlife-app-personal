@@ -31,6 +31,8 @@ class MyVenue extends StatefulWidget {
 }
 
 class _MyVenueState extends State<MyVenue> {
+  static const int _initialPage = 0;
+  static const int _pageLimit = 10;
   int selectedIndex = 0;
 
   late final ScrollController _likedScrollController;
@@ -58,8 +60,8 @@ class _MyVenueState extends State<MyVenue> {
     _venuesController.fetchMyVenues(
       context,
       type: type,
-      page: 0,
-      limit: 10,
+      page: _initialPage,
+      limit: _pageLimit,
     );
   }
 
