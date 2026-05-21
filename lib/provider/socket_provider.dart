@@ -101,18 +101,12 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void resetConversationListState() {
-    final shouldNotify = _hasConversationListLoaded ||
-        _conversationList.isNotEmpty ||
-        _pendingConversationListRequest != null ||
-        _conversationListRetryCount != 0;
     _hasConversationListLoaded = false;
     _conversationList = [];
     _pendingConversationListRequest = null;
     _conversationListRetryCount = 0;
     _conversationListLoadTimer?.cancel();
-    if (shouldNotify) {
-      notifyListeners();
-    }
+    notifyListeners();
   }
 
   /// Call this on login/signup success — just saves the token, no socket yet.

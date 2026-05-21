@@ -1,6 +1,7 @@
 /// Determines whether [value] is an HTTP/HTTPS URL with a non-empty host.
 ///
-/// This is a stricter replacement for simple prefix checks like
+/// This validates parsed URL structure instead of relying on simple prefix
+/// checks like
 /// `value.startsWith('http://') || value.startsWith('https://')`.
 bool isNetworkUrl(String value) {
   final normalized = value.trim();

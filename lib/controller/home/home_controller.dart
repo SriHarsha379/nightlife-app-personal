@@ -519,7 +519,7 @@ class HomeController with ChangeNotifier {
       allowRedirectOnFailure: allowRedirectOnFailure,
     );
     if (didSucceed) {
-      log("show action after 15 second ============>>>>eventId=$eventId action=$action");
+      log("show action after 15 seconds ============>>>>eventId=$eventId action=$action");
     }
     return didSucceed;
   }
