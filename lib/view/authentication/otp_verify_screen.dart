@@ -73,7 +73,7 @@ class _OtpVerifyState extends State<OtpVerify> {
     if (apiProvider.secondaryLoading) return;
     final res = await apiProvider.resendotpApiCalling(
       context,
-      phoneNumber: widget.mobile?.trim(),
+      phoneNumber: widget.mobile,
     );
     if (res != null) {
       _startTimer();
