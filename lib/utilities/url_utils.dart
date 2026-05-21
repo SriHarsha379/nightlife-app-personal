@@ -4,6 +4,7 @@ bool isNetworkUrl(String value) {
   if (normalized.isEmpty) return false;
   final uri = Uri.tryParse(normalized);
   if (uri == null) return false;
+  final host = uri.host.trim();
   final scheme = uri.scheme.toLowerCase();
-  return (scheme == 'http' || scheme == 'https') && uri.host.isNotEmpty;
+  return (scheme == 'http' || scheme == 'https') && host.isNotEmpty;
 }

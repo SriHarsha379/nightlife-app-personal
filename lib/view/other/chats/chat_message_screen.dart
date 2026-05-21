@@ -1487,7 +1487,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   String _raw(dynamic value) => (value ?? '').toString().trim();
 
-  /// Returns empty for bundled asset paths; otherwise returns receiver image.
+  /// Returns empty for bundled asset paths or empty values; else receiver image.
   String _receiverImageForPayload() {
     final value = _receiverImage.trim();
     if (value.startsWith('assets/') || value.startsWith('./assets/')) {
