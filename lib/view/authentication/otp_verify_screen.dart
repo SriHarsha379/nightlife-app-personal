@@ -71,7 +71,10 @@ class _OtpVerifyState extends State<OtpVerify> {
     if (!_canResend) return;
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     if (apiProvider.secondaryLoading) return;
-    final res = await apiProvider.resendotpApiCalling(context);
+    final res = await apiProvider.resendotpApiCalling(
+      context,
+      phoneNumber: widget.mobile?.trim(),
+    );
     if (res != null) {
       _startTimer();
     }
@@ -90,6 +93,10 @@ class _OtpVerifyState extends State<OtpVerify> {
       pinputInputController.text,
       minLength: 4,
     )) return;
+
+    if (Validation.isStaticOtpBlocked(context, pinputInputController.text)) {
+      return;
+    }
 
     print("Verifying OTP: ${pinputInputController.text}");
 
