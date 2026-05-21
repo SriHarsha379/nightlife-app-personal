@@ -263,7 +263,10 @@ class Validation {
     if (!context.mounted) return false;
 
     if (otp.trim() == '1234') {
-      _showError(context, "Invalid OTP. Please enter OTP sent to your device");
+      _showError(
+        context,
+        "This OTP value is not valid. Please enter the OTP sent to your device.",
+      );
       return true;
     }
     return false;

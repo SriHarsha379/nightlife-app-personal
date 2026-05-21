@@ -507,8 +507,9 @@ class PostApiProvider with ChangeNotifier {
     setSecondaryLoading(true);
 
     final Map<String, String> fields = {};
-    if (phoneNumber != null && phoneNumber.trim().isNotEmpty) {
-      fields['phone_number'] = phoneNumber.trim();
+    final String trimmedPhone = phoneNumber?.trim() ?? '';
+    if (trimmedPhone.isNotEmpty) {
+      fields['phone_number'] = trimmedPhone;
     }
 
     final res = await postJsonData(
