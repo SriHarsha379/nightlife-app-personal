@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-/// Minimal local replacement for the external page_transition package.
 enum PageTransitionType {
   fade,
   rightToLeft,
