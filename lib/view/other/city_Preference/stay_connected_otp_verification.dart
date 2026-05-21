@@ -129,7 +129,9 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
       otp: otp,
       email: widget.email,
     );
-    if (res == null || !context.mounted) {
+    if (!context.mounted) return;
+
+    if (res == null) {
       setState(() {
         _retryCount++;
       });

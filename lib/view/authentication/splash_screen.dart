@@ -38,19 +38,19 @@ class _SplashState extends State<Splash> {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return true;
     final parts = trimmed.split('.');
-    if (parts.length != 3) return false;
+    if (parts.length != 3) return true;
     try {
       final payload = parts[1];
       final normalized = base64Url.normalize(payload);
       final decoded = utf8.decode(base64Url.decode(normalized));
       final map = jsonDecode(decoded);
-      if (map is! Map || map['exp'] == null) return false;
+      if (map is! Map || map['exp'] == null) return true;
       final exp = int.tryParse(map['exp'].toString());
-      if (exp == null) return false;
+      if (exp == null) return true;
       final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
       return DateTime.now().isAfter(expiry);
     } catch (_) {
-      return false;
+      return true;
     }
   }
 
