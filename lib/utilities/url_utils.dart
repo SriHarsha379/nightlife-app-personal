@@ -3,6 +3,12 @@
 /// This validates parsed URL structure instead of relying on simple prefix
 /// checks like
 /// `value.startsWith('http://') || value.startsWith('https://')`.
+///
+/// Examples:
+/// - `http://` => `false`
+/// - `https://localhost` => `true`
+/// - `http://example.com/path` => `true`
+/// - `assets/image.png` => `false`
 bool isNetworkUrl(String value) {
   final normalized = value.trim();
   if (normalized.isEmpty) return false;

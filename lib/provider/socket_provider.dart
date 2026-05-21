@@ -794,8 +794,7 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       _logSocket('on user_status => $data');
       final root = asMap(data);
       if (root == null) return;
-      final previousOnline = _isCheckedUserOnline;
-      final previousCheckedUserId = _checkedUserId;
+      var didChange = false;
       final dynamic onlineRaw = root['online'] ??
           root['is_online'] ??
           root['isOnline'] ??
@@ -804,11 +803,13 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       if (onlineRaw is bool) {
         if (_isCheckedUserOnline != onlineRaw) {
           _isCheckedUserOnline = onlineRaw;
+          didChange = true;
         }
       } else if (onlineRaw is num) {
         final nextOnline = onlineRaw == 1;
         if (_isCheckedUserOnline != nextOnline) {
           _isCheckedUserOnline = nextOnline;
+          didChange = true;
         }
       } else if (onlineRaw is String) {
         final normalized = onlineRaw.toLowerCase().trim();
@@ -816,6 +817,7 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
             normalized == 'online' || normalized == 'true' || normalized == '1';
         if (_isCheckedUserOnline != nextOnline) {
           _isCheckedUserOnline = nextOnline;
+          didChange = true;
         }
       }
       final resolvedCheckedUserId = (root['check_user_id'] ??
@@ -828,9 +830,8 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       if (resolvedCheckedUserId.isNotEmpty &&
           resolvedCheckedUserId != _checkedUserId) {
         _checkedUserId = resolvedCheckedUserId;
+        didChange = true;
       }
-      final didChange = previousOnline != _isCheckedUserOnline ||
-          previousCheckedUserId != _checkedUserId;
       if (didChange) {
         notifyListeners();
       }
