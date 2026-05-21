@@ -77,8 +77,8 @@ class _MyEventsState extends State<MyEvents> {
   LikedBookedEventController get _eventsController =>
       Provider.of<LikedBookedEventController>(context, listen: false);
 
-  Future<void> _fetchEventsByType(String type) async {
-    await _eventsController.fetchMyEvents(
+  Future<void> _fetchEventsByType(String type) {
+    return _eventsController.fetchMyEvents(
       context,
       type: type,
       page: _initialPage,
@@ -86,12 +86,12 @@ class _MyEventsState extends State<MyEvents> {
     );
   }
 
-  Future<void> _fetchLiked() async {
-    await _fetchEventsByType('liked');
+  Future<void> _fetchLiked() {
+    return _fetchEventsByType('liked');
   }
 
-  Future<void> _fetchBooked() async {
-    await _fetchEventsByType('booked');
+  Future<void> _fetchBooked() {
+    return _fetchEventsByType('booked');
   }
 
   Future<void> _handleEventDetailResult(dynamic result) async {
