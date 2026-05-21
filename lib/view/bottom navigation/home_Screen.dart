@@ -8,7 +8,7 @@ import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../commonWidget/home_widget.dart';
 import '../../commonWidget/event_types_bottomsheet.dart';

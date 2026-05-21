@@ -4,7 +4,7 @@ import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/other/city_Preference/gallery_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/darkmode_provider.dart';
 import '../../../utilities/app_button.dart';

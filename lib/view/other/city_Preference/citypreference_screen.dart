@@ -5,7 +5,7 @@ import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/authentication/signup.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../controller/city/city_preference.dart';
 import '../../../provider/darkmode_provider.dart';

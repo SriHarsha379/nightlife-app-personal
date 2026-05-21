@@ -7,7 +7,7 @@ import '/controller/bookingEvent/booking_event_controller.dart';
 import '/utilities/app_constant.dart';
 import '/utilities/app_language.dart';
 import '/view/other/MySplashSection/VenuesSection/reviewbooking_details_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../controller/eventDetails/events_details_controller.dart';

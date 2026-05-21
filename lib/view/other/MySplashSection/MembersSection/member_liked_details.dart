@@ -7,7 +7,7 @@ import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/utilities/app_font.dart';
 import 'package:night_life/utilities/app_image.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../controller/home/home_controller.dart';
 import '../../../../helper/ImagePreviewScreen.dart';

@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'dart:math' show Random;
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';

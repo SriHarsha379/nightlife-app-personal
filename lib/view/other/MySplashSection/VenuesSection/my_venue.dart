@@ -8,7 +8,7 @@ import 'package:night_life/utilities/app_color.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/my_events.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/past_venue_screeen.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:intl/intl.dart';
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/city_Preference/vibeCheckScreens/vibe_check_screen2.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_constant.dart';

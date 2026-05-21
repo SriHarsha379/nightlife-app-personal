@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:night_life/utilities/app_footer.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:pinput/pinput.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/darkmode_provider.dart';

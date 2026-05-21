@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_config_provider.dart';
 import '../../utilities/app_constant.dart';

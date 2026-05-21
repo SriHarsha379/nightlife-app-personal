@@ -3,7 +3,7 @@ import 'package:night_life/view/bottom%20navigation/home_Screen.dart';
 import 'package:night_life/view/bottom%20navigation/profile1.dart';
 import 'package:night_life/view/bottom%20navigation/chats_screen.dart';
 import 'package:night_life/view/bottom%20navigation/search_screen.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../view/other/MySplashSection/EventSection/my_events.dart';
 import '../view/other/MySplashSection/MembersSection/Members.dart';

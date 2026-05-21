@@ -6,7 +6,7 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:provider/provider.dart';
 
 import 'package:night_life/view/other/city_Preference/vibe_preference.dart';
-import 'package:page_transition/page_transition.dart';
+import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../controller/event_preference/event_preference_controller.dart';
 import '../../../provider/darkmode_provider.dart';
