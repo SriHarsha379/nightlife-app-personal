@@ -119,7 +119,8 @@ class _OtpVerifyState extends State<OtpVerify> {
       pinputInputController.text,
       widget.mobile.toString(),
     );
-    if (!mounted || isVerified) return;
+    if (!mounted) return;
+    if (isVerified) return;
 
     setState(() {
       _retryCount++;
