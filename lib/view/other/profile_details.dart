@@ -884,6 +884,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             width: MediaQuery.of(context).size.width * 90 / 100,
             height: MediaQuery.of(context).size.height * 7 / 100,
             child: DropdownButtonFormField<String>(
+              key: ValueKey(value),
               initialValue: value,
               dropdownColor: AppColor.textFieldColor(context),
               style: TextStyle(
