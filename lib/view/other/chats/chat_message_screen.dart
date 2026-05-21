@@ -1487,6 +1487,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   String _raw(dynamic value) => (value ?? '').toString().trim();
 
+  /// Returns empty for bundled asset paths; otherwise returns receiver image.
   String _receiverImageForPayload() {
     final value = _receiverImage.trim();
     if (value.startsWith('assets/') || value.startsWith('./assets/')) {
@@ -1502,6 +1503,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     );
   }
 
+  /// Ensures sender/receiver context is loaded before sending chat data.
   bool _ensureChatReady() {
     if (_userId.isNotEmpty && _receiverId.isNotEmpty) return true;
     _showSnackBarMessage('Chat is loading. Please wait.');

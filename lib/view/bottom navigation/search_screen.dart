@@ -132,6 +132,7 @@ class _SearchScreenState extends State<SearchScreen> {
     return double.tryParse(value.toString()) ?? fallback;
   }
 
+  /// Syncs local venue/event list state from [SearchFilterController].
   void _syncControllerLists(SearchFilterController controller) {
     venueFeaturedList = controller.venueFeaturedList;
     placeList = controller.venueNearbyList;
