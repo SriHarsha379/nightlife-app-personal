@@ -127,12 +127,6 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
       setState(() {
         _retryCount++;
       });
-      if (_retryCount >= _maxOtpRetries) {
-        SnackBarToastMessage.error(
-          context,
-          "Retry limit reached. Please resend OTP.",
-        );
-      }
     }
   }
 
