@@ -72,24 +72,24 @@ class _MyEventsState extends State<MyEvents> {
     });
   }
 
-  void _fetchLiked() {
-    Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
+  LikedBookedEventController get _eventsController =>
+      Provider.of<LikedBookedEventController>(context, listen: false);
+
+  Future<void> _fetchEventsByType(String type) async {
+    await _eventsController.fetchMyEvents(
       context,
-      type: 'liked',
+      type: type,
       page: 0,
       limit: 10,
     );
   }
 
-  void _fetchBooked() {
-    Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
-      context,
-      type: 'booked',
-      page: 0,
-      limit: 10,
-    );
+  Future<void> _fetchLiked() async {
+    await _fetchEventsByType('liked');
+  }
+
+  Future<void> _fetchBooked() async {
+    await _fetchEventsByType('booked');
   }
 
   Future<void> _handleEventDetailResult(dynamic result) async {
@@ -109,13 +109,7 @@ class _MyEventsState extends State<MyEvents> {
     }
 
     if (!mounted) return;
-    await Provider.of<LikedBookedEventController>(context, listen: false)
-        .fetchMyEvents(
-      context,
-      type: 'liked',
-      page: 0,
-      limit: 10,
-    );
+    await _fetchLiked();
   }
 
   void _onLikedScroll() {

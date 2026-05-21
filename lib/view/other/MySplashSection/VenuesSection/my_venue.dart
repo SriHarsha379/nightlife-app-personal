@@ -51,22 +51,24 @@ class _MyVenueState extends State<MyVenue> {
     });
   }
 
-  void _fetchLiked() {
-    Provider.of<MyVenuesController>(context, listen: false).fetchMyVenues(
+  MyVenuesController get _venuesController =>
+      Provider.of<MyVenuesController>(context, listen: false);
+
+  void _fetchVenuesByType(String type) {
+    _venuesController.fetchMyVenues(
       context,
-      type: 'liked',
+      type: type,
       page: 0,
       limit: 10,
     );
   }
 
+  void _fetchLiked() {
+    _fetchVenuesByType('liked');
+  }
+
   void _fetchReserved() {
-    Provider.of<MyVenuesController>(context, listen: false).fetchMyVenues(
-      context,
-      type: 'reserved',
-      page: 0,
-      limit: 10,
-    );
+    _fetchVenuesByType('reserved');
   }
 
   void _onLikedScroll() {

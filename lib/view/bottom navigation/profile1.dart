@@ -20,6 +20,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/media_picker_helper.dart';
+import '../../utilities/url_utils.dart';
 import '../authentication/profile.dart';
 import '../other/MySplashSection/EventSection/Liked/liked_event_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
@@ -1456,7 +1457,7 @@ class _Profile1State extends State<Profile1> {
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
     if (value.isEmpty) return '';
-    if (value.startsWith('http://') || value.startsWith('https://')) {
+    if (isNetworkUrl(value)) {
       return value;
     }
     return '${AppConfigProvider.imageUrl}$value';
@@ -1476,7 +1477,7 @@ class _Profile1State extends State<Profile1> {
     BoxFit fit = BoxFit.cover,
     String fallbackAsset = AppImage.placeHolder2Icon,
   }) {
-    if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+    if (isNetworkUrl(imagePath)) {
       return Image.network(
         imagePath,
         fit: fit,
