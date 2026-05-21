@@ -84,13 +84,35 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       : _enableLifecycleReconnect = enableLifecycleReconnect {
     WidgetsBinding.instance.addObserver(this);
   }
+
+  bool _setConnectedValue(bool value) {
+    if (isConnectedValue == value) return false;
+    isConnectedValue = value;
+    return true;
+  }
+
+  bool _disposeAndClearBoundSocket(IO.Socket target) {
+    _disposeSocketInstance(target);
+    if (identical(socket, target)) {
+      socket = null;
+      return true;
+    }
+    return false;
+  }
+
   void resetConversationListState() {
+    final shouldNotify = _hasConversationListLoaded ||
+        _conversationList.isNotEmpty ||
+        _pendingConversationListRequest != null ||
+        _conversationListRetryCount != 0;
     _hasConversationListLoaded = false;
     _conversationList = [];
     _pendingConversationListRequest = null;
     _conversationListRetryCount = 0;
     _conversationListLoadTimer?.cancel();
-    notifyListeners();
+    if (shouldNotify) {
+      notifyListeners();
+    }
   }
 
   /// Call this on login/signup success — just saves the token, no socket yet.
@@ -693,30 +715,31 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
     boundSocket.onConnect((_) {
       if (!identical(socket, boundSocket)) return;
       _logSocket('onConnect id=${boundSocket.id}');
-      isConnectedValue = true;
+      final didChange = _setConnectedValue(true);
       _existingSocketReconnectAttempts = 0;
       _lastManualConnectAttemptAt = null;
       _reconnectTimer?.cancel();
       _flushPendingQueue();
-      notifyListeners();
+      if (didChange) {
+        notifyListeners();
+      }
     });
 
     boundSocket.onDisconnect((reason) {
       if (!identical(socket, boundSocket)) return;
       _logSocket('onDisconnect => $reason');
-      isConnectedValue = false;
+      var didChange = _setConnectedValue(false);
       final reasonText = (reason ?? '').toString().toLowerCase();
       if (reasonText.contains('transport close') ||
           reasonText.contains('ping timeout')) {
         _reconnectUrgent = true;
         _lastManualConnectAttemptAt = null;
-        _disposeSocketInstance(boundSocket);
-        if (identical(socket, boundSocket)) {
-          socket = null;
-        }
+        didChange = _disposeAndClearBoundSocket(boundSocket) || didChange;
       }
       _scheduleReconnect();
-      notifyListeners();
+      if (didChange) {
+        notifyListeners();
+      }
 
       // socket.io built-in reconnection handles transport close automatically.
     });
@@ -724,42 +747,42 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
     boundSocket.onConnectError((err) {
       if (!identical(socket, boundSocket)) return;
       _logSocketErrorThrottled('Socket connect error: $err');
-      isConnectedValue = false;
+      var didChange = _setConnectedValue(false);
       final errorText = (err ?? '').toString().toLowerCase();
       if (errorText.contains('timeout')) {
-        _disposeSocketInstance(boundSocket);
-        if (identical(socket, boundSocket)) {
-          socket = null;
-        }
+        didChange = _disposeAndClearBoundSocket(boundSocket) || didChange;
       }
       _scheduleReconnect();
-      notifyListeners();
+      if (didChange) {
+        notifyListeners();
+      }
     });
 
     boundSocket.onError((err) {
       if (!identical(socket, boundSocket)) return;
       _logSocketErrorThrottled('Socket error: $err');
-      isConnectedValue = false;
+      var didChange = _setConnectedValue(false);
       final errorText = (err ?? '').toString().toLowerCase();
       if (errorText.contains('timeout') || errorText.contains('transport')) {
-        _disposeSocketInstance(boundSocket);
-        if (identical(socket, boundSocket)) {
-          socket = null;
-        }
+        didChange = _disposeAndClearBoundSocket(boundSocket) || didChange;
       }
       _scheduleReconnect();
-      notifyListeners();
+      if (didChange) {
+        notifyListeners();
+      }
     });
 
     boundSocket.onReconnect((attempt) {
       if (!identical(socket, boundSocket)) return;
       _logSocket('onReconnect attempt=$attempt');
-      isConnectedValue = true;
+      final didChange = _setConnectedValue(true);
       _existingSocketReconnectAttempts = 0;
       _lastManualConnectAttemptAt = null;
       _reconnectTimer?.cancel();
       _flushPendingQueue();
-      notifyListeners();
+      if (didChange) {
+        notifyListeners();
+      }
     });
 
     boundSocket.onReconnectError((err) {
@@ -777,19 +800,29 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       _logSocket('on user_status => $data');
       final root = asMap(data);
       if (root == null) return;
+      final previousOnline = _isCheckedUserOnline;
+      final previousCheckedUserId = _checkedUserId;
       final dynamic onlineRaw = root['online'] ??
           root['is_online'] ??
           root['isOnline'] ??
           root['status'] ??
           root['data']?['online'];
       if (onlineRaw is bool) {
-        _isCheckedUserOnline = onlineRaw;
+        if (_isCheckedUserOnline != onlineRaw) {
+          _isCheckedUserOnline = onlineRaw;
+        }
       } else if (onlineRaw is num) {
-        _isCheckedUserOnline = onlineRaw == 1;
+        final nextOnline = onlineRaw == 1;
+        if (_isCheckedUserOnline != nextOnline) {
+          _isCheckedUserOnline = nextOnline;
+        }
       } else if (onlineRaw is String) {
         final normalized = onlineRaw.toLowerCase().trim();
-        _isCheckedUserOnline =
+        final nextOnline =
             normalized == 'online' || normalized == 'true' || normalized == '1';
+        if (_isCheckedUserOnline != nextOnline) {
+          _isCheckedUserOnline = nextOnline;
+        }
       }
       final resolvedCheckedUserId = (root['check_user_id'] ??
               root['checkUserId'] ??
@@ -798,10 +831,15 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
               '')
           .toString()
           .trim();
-      if (resolvedCheckedUserId.isNotEmpty) {
+      if (resolvedCheckedUserId.isNotEmpty &&
+          resolvedCheckedUserId != _checkedUserId) {
         _checkedUserId = resolvedCheckedUserId;
       }
-      notifyListeners();
+      final didChange = previousOnline != _isCheckedUserOnline ||
+          previousCheckedUserId != _checkedUserId;
+      if (didChange) {
+        notifyListeners();
+      }
     });
 
     // ── get_conversation_list  (both support & user-user) ──
@@ -943,9 +981,11 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       if (scheduledToken.isEmpty || scheduledToken != _storedToken) return;
       if (isConnectedValue) return;
       if (socket != null && socket!.connected) {
-        isConnectedValue = true;
+        final didChange = _setConnectedValue(true);
         _reconnectUrgent = false;
-        notifyListeners();
+        if (didChange) {
+          notifyListeners();
+        }
         return;
       }
       _logSocket('scheduleReconnect — retrying initSocket');

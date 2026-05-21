@@ -7,6 +7,9 @@ import '../../utilities/app_constant.dart';
 
 class HomeController with ChangeNotifier {
   static const int _defaultPageSize = 20;
+  static const String _memberType = 'member';
+  static const String _eventType = 'event';
+  static const String _venueType = 'venue';
 
   // Lists for different data types
   List<dynamic> _membersList = [];
@@ -14,7 +17,7 @@ class HomeController with ChangeNotifier {
   List<dynamic> _venuesList = [];
 
   // Current data type
-  String _currentType = 'member'; // member, event, venue
+  String _currentType = _memberType; // member, event, venue
 
   // Getters
   List<dynamic> get getMembersList => _membersList;
@@ -25,16 +28,20 @@ class HomeController with ChangeNotifier {
   // Loading states
   bool _isLoading = false;
   bool get getIsLoading => _isLoading;
-  final Map<String, int> _currentPages = {'member': 0, 'event': 0, 'venue': 0};
+  final Map<String, int> _currentPages = {
+    _memberType: 0,
+    _eventType: 0,
+    _venueType: 0,
+  };
   final Map<String, bool> _hasMorePages = {
-    'member': true,
-    'event': true,
-    'venue': true,
+    _memberType: true,
+    _eventType: true,
+    _venueType: true,
   };
   final Map<String, bool> _isPaginationLoading = {
-    'member': false,
-    'event': false,
-    'venue': false,
+    _memberType: false,
+    _eventType: false,
+    _venueType: false,
   };
   bool _notificationStatus = false;
   bool get getNotificationStatus => _notificationStatus;
@@ -48,15 +55,21 @@ class HomeController with ChangeNotifier {
   // Get current active list based on type
   List<dynamic> getCurrentList() {
     switch (_currentType) {
-      case 'member':
+      case _memberType:
         return _membersList;
-      case 'event':
+      case _eventType:
         return _eventsList;
-      case 'venue':
+      case _venueType:
         return _venuesList;
       default:
         return [];
     }
+  }
+
+  Map<String, String>? _authorizedHeaders() {
+    final token = AppConstant.token;
+    if (token.isEmpty) return null;
+    return {'Authorization': 'Bearer $token'};
   }
 
   // Fetch home data from API
@@ -67,16 +80,11 @@ class HomeController with ChangeNotifier {
     int limit = _defaultPageSize,
     bool loadMore = false,
   }) async {
-    String token = AppConstant.token;
-
-    if (token.isEmpty) {
+    final headers = _authorizedHeaders();
+    if (headers == null) {
       print("Token is missing!");
       return;
     }
-
-    Map<String, String> headers = {
-      'Authorization': 'Bearer $token',
-    };
 
     if (!loadMore && _shouldShowLoading(type)) {
       _isLoading = true;
@@ -133,8 +141,7 @@ class HomeController with ChangeNotifier {
           _updateListByType(_currentType, list, append: loadMore);
 
           // Store the page
-          _currentPages[_currentType] =
-              page; // Use our page, not serverCurrentPage
+          _currentPages[_currentType] = page; // Use our page, not serverCurrentPage
           _hasMorePages[_currentType] = hasMore;
 
           print("$_currentType List updated: ${list.length} items");
@@ -209,11 +216,11 @@ class HomeController with ChangeNotifier {
   // Helper method to check if loading should be shown
   bool _shouldShowLoading(String type) {
     switch (type) {
-      case 'member':
+      case _memberType:
         return _membersList.isEmpty;
-      case 'event':
+      case _eventType:
         return _eventsList.isEmpty;
-      case 'venue':
+      case _venueType:
         return _venuesList.isEmpty;
       default:
         return false;
@@ -224,13 +231,13 @@ class HomeController with ChangeNotifier {
   void _updateListByType(String type, List<dynamic> list,
       {bool append = false}) {
     switch (type) {
-      case 'member':
+      case _memberType:
         _membersList = append ? [..._membersList, ...list] : list;
         break;
-      case 'event':
+      case _eventType:
         _eventsList = append ? [..._eventsList, ...list] : list;
         break;
-      case 'venue':
+      case _venueType:
         _venuesList = append ? [..._venuesList, ...list] : list;
         break;
     }
@@ -253,31 +260,31 @@ class HomeController with ChangeNotifier {
   // Clear list based on type
   void _clearListByType(String type) {
     switch (type) {
-      case 'member':
+      case _memberType:
         _membersList = [];
-        _currentPages['member'] = 0;
-        _hasMorePages['member'] = true;
+        _currentPages[_memberType] = 0;
+        _hasMorePages[_memberType] = true;
         break;
-      case 'event':
+      case _eventType:
         _eventsList = [];
-        _currentPages['event'] = 0;
-        _hasMorePages['event'] = true;
+        _currentPages[_eventType] = 0;
+        _hasMorePages[_eventType] = true;
         break;
-      case 'venue':
+      case _venueType:
         _venuesList = [];
-        _currentPages['venue'] = 0;
-        _hasMorePages['venue'] = true;
+        _currentPages[_venueType] = 0;
+        _hasMorePages[_venueType] = true;
         break;
     }
   }
 
   List<dynamic> _listByType(String type) {
     switch (type) {
-      case 'member':
+      case _memberType:
         return _membersList;
-      case 'event':
+      case _eventType:
         return _eventsList;
-      case 'venue':
+      case _venueType:
         return _venuesList;
       default:
         return [];
@@ -317,9 +324,9 @@ class HomeController with ChangeNotifier {
   // Refresh all data
   Future<void> refreshAllData(BuildContext context) async {
     await Future.wait([
-      fetchHomeData(context, type: 'member', page: 0, limit: _defaultPageSize),
-      fetchHomeData(context, type: 'event', page: 0, limit: _defaultPageSize),
-      fetchHomeData(context, type: 'venue', page: 0, limit: _defaultPageSize),
+      fetchHomeData(context, type: _memberType, page: 0, limit: _defaultPageSize),
+      fetchHomeData(context, type: _eventType, page: 0, limit: _defaultPageSize),
+      fetchHomeData(context, type: _venueType, page: 0, limit: _defaultPageSize),
     ]);
   }
 
@@ -411,13 +418,13 @@ class HomeController with ChangeNotifier {
     final list = getCurrentList();
     if (index >= 0 && index < list.length) {
       switch (_currentType) {
-        case 'member':
+        case _memberType:
           _membersList.removeAt(index);
           break;
-        case 'event':
+        case _eventType:
           _eventsList.removeAt(index);
           break;
-        case 'venue':
+        case _venueType:
           _venuesList.removeAt(index);
           break;
       }
@@ -430,7 +437,7 @@ class HomeController with ChangeNotifier {
     _membersList = [];
     _eventsList = [];
     _venuesList = [];
-    _currentType = 'member';
+    _currentType = _memberType;
     _isLoading = false;
     _currentPages.updateAll((key, value) => 0);
     _hasMorePages.updateAll((key, value) => true);
@@ -449,27 +456,23 @@ class HomeController with ChangeNotifier {
     return getCurrentList().isEmpty;
   }
 
-  // Like/Unlike actions (you can implement API calls here)
-  Future<bool> swipeUserAction(
+  Future<bool> _postItemAction(
     BuildContext? context, {
-    required String targetUserId,
-    required String action, // right | left
+    required String endpoint,
+    required Map<String, dynamic> payload,
     bool allowRedirectOnFailure = true,
   }) async {
-    final token = AppConstant.token;
-    if (token.isEmpty) {
+    final headers = _authorizedHeaders();
+    if (headers == null) {
       return false;
     }
 
     final res = await postJsonData(
-      'feed/swipe_user',
-      {
-        'target_user_id': targetUserId,
-        'action': action,
-      },
+      endpoint,
+      payload,
       context,
       headers: {
-        'authorization': 'Bearer $token',
+        'authorization': headers['Authorization']!,
       },
     );
 
@@ -480,6 +483,24 @@ class HomeController with ChangeNotifier {
       // CommonHelper.handleInactiveUserRedirect(context, res);
     }
     return false;
+  }
+
+  // Like/Unlike actions (you can implement API calls here)
+  Future<bool> swipeUserAction(
+    BuildContext? context, {
+    required String targetUserId,
+    required String action, // right | left
+    bool allowRedirectOnFailure = true,
+  }) async {
+    return _postItemAction(
+      context,
+      endpoint: 'feed/swipe_user',
+      payload: {
+        'target_user_id': targetUserId,
+        'action': action,
+      },
+      allowRedirectOnFailure: allowRedirectOnFailure,
+    );
   }
 
   Future<bool> eventLikeDislikeAction(
@@ -488,32 +509,19 @@ class HomeController with ChangeNotifier {
     required String action, // like | dislike
     bool allowRedirectOnFailure = true,
   }) async {
-    final token = AppConstant.token;
-    if (token.isEmpty) {
-      return false;
-    }
-
-    final res = await postJsonData(
-      'event/like_dislike',
-      {
+    final didSucceed = await _postItemAction(
+      context,
+      endpoint: 'event/like_dislike',
+      payload: {
         'event_id': eventId,
         'action': action,
       },
-      context,
-      headers: {
-        'authorization': 'Bearer $token',
-      },
+      allowRedirectOnFailure: allowRedirectOnFailure,
     );
-
-    if (res != null && res['success'] == true) {
-      log("show action after 15 second ============>>>>$res");
-
-      return true;
+    if (didSucceed) {
+      log("show action after 15 second ============>>>>eventId=$eventId action=$action");
     }
-    if (res != null && allowRedirectOnFailure && context != null) {
-      // CommonHelper.handleInactiveUserRedirect(context, res);
-    }
-    return false;
+    return didSucceed;
   }
 
   Future<bool> venueLikeDislikeAction(
@@ -522,84 +530,64 @@ class HomeController with ChangeNotifier {
     required String action, // like | dislike
     bool allowRedirectOnFailure = true,
   }) async {
-    final token = AppConstant.token;
-    if (token.isEmpty) {
-      return false;
-    }
-
-    final res = await postJsonData(
-      'venue/like_dislike',
-      {
+    return _postItemAction(
+      context,
+      endpoint: 'venue/like_dislike',
+      payload: {
         'venue_id': venueId,
         'action': action,
       },
-      context,
-      headers: {
-        'authorization': 'Bearer $token',
-      },
+      allowRedirectOnFailure: allowRedirectOnFailure,
     );
+  }
 
-    if (res != null && res['success'] == true) {
-      return true;
+  Future<void> _applyItemAction(
+    BuildContext context, {
+    required String id,
+    required String type,
+    required String action,
+  }) async {
+    if (type == _memberType) {
+      await swipeUserAction(
+        context,
+        targetUserId: id,
+        action: action,
+      );
+      return;
     }
-    if (res != null && allowRedirectOnFailure && context != null) {
-      // CommonHelper.handleInactiveUserRedirect(context, res);
+    if (type == _eventType) {
+      await eventLikeDislikeAction(
+        context,
+        eventId: id,
+        action: action,
+      );
+      return;
     }
-    return false;
+    if (type == _venueType) {
+      await venueLikeDislikeAction(
+        context,
+        venueId: id,
+        action: action,
+      );
+    }
   }
 
   Future<void> likeItem(BuildContext context, String id, String type) async {
-    if (type == 'member') {
-      await swipeUserAction(
-        context,
-        targetUserId: id,
-        action: 'right',
-      );
-      return;
-    }
-    if (type == 'event') {
-      await eventLikeDislikeAction(
-        context,
-        eventId: id,
-        action: 'like',
-      );
-      return;
-    }
-    if (type == 'venue') {
-      await venueLikeDislikeAction(
-        context,
-        venueId: id,
-        action: 'like',
-      );
-      return;
-    }
+    await _applyItemAction(
+      context,
+      id: id,
+      type: type,
+      action: type == _memberType ? 'right' : 'like',
+    );
   }
 
   Future<void> dislikeItem(BuildContext context, String id, String type) async {
-    if (type == 'member') {
-      await swipeUserAction(
-        context,
-        targetUserId: id,
-        action: 'left',
-      );
-      return;
-    }
-    if (type == 'event') {
-      await eventLikeDislikeAction(
-        context,
-        eventId: id,
-        action: 'dislike',
-      );
-      return;
-    }
-    if (type == 'venue') {
-      await venueLikeDislikeAction(
-        context,
-        venueId: id,
-        action: 'dislike',
-      );
-      return;
-    }
+    await _applyItemAction(
+      context,
+      id: id,
+      type: type,
+      action: type == _memberType ? 'left' : 'dislike',
+    );
   }
 }
 
