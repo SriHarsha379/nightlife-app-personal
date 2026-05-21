@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:night_life/utilities/page_transition.dart';
+import 'package:night_life/utilities/url_utils.dart';
 import '../utilities/app_color.dart';
 import '../utilities/app_font.dart';
 import '../utilities/app_image.dart';
@@ -12,12 +13,6 @@ class HomeWidget {
     if (value is int) return value;
     if (value is double) return value.toInt();
     return int.tryParse(value?.toString() ?? '') ?? 0;
-  }
-
-  static bool _isNetworkImage(String value) {
-    final normalized = value.trim().toLowerCase();
-    return normalized.startsWith('http://') ||
-        normalized.startsWith('https://');
   }
 
   static String _formatLikes(int count) {
@@ -142,7 +137,7 @@ class HomeWidget {
         ],
       ),
       child: ClipOval(
-        child: _isNetworkImage(image)
+        child: isNetworkUrl(image)
             ? Image.network(
                 image,
                 fit: BoxFit.cover,
@@ -192,7 +187,7 @@ class HomeWidget {
   static Widget _adImage({
     required String image,
   }) {
-    if (_isNetworkImage(image)) {
+    if (isNetworkUrl(image)) {
       return Image.network(
         image,
         fit: BoxFit.cover,
@@ -442,7 +437,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: _isNetworkImage(image)
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.cover,
@@ -821,7 +816,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: _isNetworkImage(image)
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,
@@ -1254,7 +1249,7 @@ class HomeWidget {
                                   ],
                                 ),
                               ),
-                              child: _isNetworkImage(image)
+                              child: isNetworkUrl(image)
                                   ? Image.network(
                                       image,
                                       fit: BoxFit.fitHeight,
