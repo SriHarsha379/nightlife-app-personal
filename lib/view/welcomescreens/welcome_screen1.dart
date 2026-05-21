@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:carousel_slider/carousel_slider.dart';
-import 'package:night_life/view/welcomescreens/welcome_Screen2.dart';
+import 'package:night_life/view/welcomescreens/welcome_screen2.dart';
 
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
@@ -65,7 +65,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {},
+      onPopInvokedWithResult: (didPop, result) {},
       child: Scaffold(
         body: Stack(
           children: [
@@ -133,7 +133,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => WelcomeScreen2()),
+                            builder: (context) => const WelcomeScreen2()),
                       );
                     },
                     child: Container(
@@ -195,10 +195,13 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
                         height: 1.2,
                         fontWeight: FontWeight.w700)),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.30),
-                Text("", style: TextStyle(color: Colors.white, fontSize: 22)),
+                const Text(
+                  "",
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
                 SizedBox(height: MediaQuery.of(context).size.height * 0.03),
                 Text(desc,
-                    style: TextStyle(
+                    style: const TextStyle(
                         color: Colors.white,
                         fontSize: 14,
                         height: 1.4,
@@ -250,7 +253,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
       decoration: BoxDecoration(
         color: active
             ? const Color(0xFFFF2CDF)
-            : Color.fromARGB(255, 251, 249, 253),
+            : const Color.fromARGB(255, 251, 249, 253),
         shape: BoxShape.circle,
       ),
     );

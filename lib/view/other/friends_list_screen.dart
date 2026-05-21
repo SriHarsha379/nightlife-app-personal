@@ -442,7 +442,7 @@ class _FriendsListState extends State<FriendsList> {
                     child: Container(
                       decoration: BoxDecoration(
                         gradient: AppColor.chatContainerColor(context),
-                        borderRadius: BorderRadius.only(
+                        borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(40),
                           topRight: Radius.circular(40),
                         ),
@@ -455,7 +455,7 @@ class _FriendsListState extends State<FriendsList> {
                             final chat = chats[index];
                             return Wrap(
                               children: [
-                                Container(
+                                SizedBox(
                                   width: size.width * 90 / 100,
                                   height: size.height * 8.5 / 100,
                                   child: ListTile(
@@ -502,7 +502,7 @@ class _FriendsListState extends State<FriendsList> {
                                       ),
                                       child: Text(
                                         chat['message'],
-                                        style: TextStyle(
+                                        style: const TextStyle(
                                           fontSize: 14,
                                           fontWeight: FontWeight.w500,
                                           fontFamily: AppFont.fontFamily,
@@ -511,7 +511,7 @@ class _FriendsListState extends State<FriendsList> {
                                       ),
                                     ),
                                     onTap: () {
-                                      print('Tapped on ${chat['name']}');
+                                      debugPrint('Tapped on ${chat['name']}');
                                       Navigator.push(
                                         context,
                                         MaterialPageRoute(

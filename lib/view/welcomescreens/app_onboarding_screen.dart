@@ -105,7 +105,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen>
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {},
+      onPopInvokedWithResult: (didPop, result) {},
       child: Scaffold(
         body: Stack(
           children: [

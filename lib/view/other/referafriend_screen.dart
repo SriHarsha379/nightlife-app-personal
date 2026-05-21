@@ -288,7 +288,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                                   width: 2,
                                   height: 4,
                                   decoration: BoxDecoration(
-                                    color: Colors.grey.withOpacity(0.5),
+                                    color: Colors.grey.withValues(alpha: 0.5),
                                     borderRadius: BorderRadius.circular(2),
                                   ),
                                 ),
@@ -372,7 +372,7 @@ class _ReferAFriendState extends State<ReferAFriend> {
                     Container(
                       height: size.height * 0.05,
                       width: 1,
-                      color: Colors.grey.withOpacity(0.5),
+                       color: Colors.grey.withValues(alpha: 0.5),
                     ),
                     SizedBox(width: size.width * 3 / 100),
                     GestureDetector(

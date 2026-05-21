@@ -6,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 import '../../commonWidget/city_bottomsheet.dart';
 import '../../controller/city/city_preference.dart';
 import '../../provider/darkmode_provider.dart';
@@ -47,7 +46,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   String imageController = "NA";
 
-  TextEditingController NameTextEditingController = TextEditingController();
+  TextEditingController nameTextEditingController = TextEditingController();
   TextEditingController heightTextEditingController = TextEditingController();
 
   TextEditingController lastnameTextEditingController = TextEditingController();
@@ -85,7 +84,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         widget.refercode == null ? "" : widget.refercode.toString();
     if (_isSocialSignup && widget.socialUser != null) {
       final Map<String, dynamic> socialUser = widget.socialUser!;
-      NameTextEditingController.text =
+      nameTextEditingController.text =
           (socialUser['first_name'] ?? '').toString();
       lastnameTextEditingController.text =
           (socialUser['last_name'] ?? '').toString();
@@ -116,65 +115,89 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       return;
     }
     if (Validation.isFieldEmpty(context,
-        value: NameTextEditingController.text,
-        fieldName: AppLanguage.firstNameText[language])) return;
+        value: nameTextEditingController.text,
+        fieldName: AppLanguage.firstNameText[language])) {
+      return;
+    }
 
     if (Validation.isFieldEmpty(context,
         value: lastnameTextEditingController.text,
-        fieldName: AppLanguage.lastNameText[language])) return;
+        fieldName: AppLanguage.lastNameText[language])) {
+      return;
+    }
 
     if (Validation.isFieldEmpty(context,
         value: usernameTextEditingController.text,
-        fieldName: AppLanguage.username[language])) return;
+        fieldName: AppLanguage.username[language])) {
+      return;
+    }
 
     if (Validation.isFieldEmpty(context,
         value: emailController.text,
-        fieldName: AppLanguage.emailText[language])) return;
+        fieldName: AppLanguage.emailText[language])) {
+      return;
+    }
 
     if (!Validation.isEmailValid(
       context,
       emailController.text,
-    )) return;
+    )) {
+      return;
+    }
 
     if (!_isSocialSignup) {
       if (Validation.isFieldEmpty(
         context,
         value: passwordTextEditingController.text,
         fieldName: AppLanguage.passwordtext[language],
-      )) return;
+      )) {
+        return;
+      }
 
       if (!Validation.isStrongPassword(
-          context, passwordTextEditingController.text)) return;
+          context, passwordTextEditingController.text)) {
+        return;
+      }
 
       if (Validation.isFieldEmpty(
         context,
         value: confirmpasswordTextEditingController.text,
         fieldName: AppLanguage.confirmPassword[language],
-      )) return;
+      )) {
+        return;
+      }
 
       if (!Validation.isPasswordMatch(
         context,
         passwordTextEditingController.text,
         confirmpasswordTextEditingController.text,
-      )) return;
+      )) {
+        return;
+      }
     }
 
     if (Validation.isFieldEmpty(context,
         value: dobtexteditingController.text,
-        fieldName: AppLanguage.dateOfbirth[language])) return;
+        fieldName: AppLanguage.dateOfbirth[language])) {
+      return;
+    }
 
     if (Validation.isFieldSelect(context,
         value: selectedGender ?? "",
-        fieldName: AppLanguage.gendertext[language])) return;
+        fieldName: AppLanguage.gendertext[language])) {
+      return;
+    }
 
     if (Validation.isFieldEmpty(context,
-        value: cityTextEditingController.text, fieldName: "City")) return;
+        value: cityTextEditingController.text, fieldName: "City")) {
+      return;
+    }
 
     // Navigate or API call
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     apiProvider.signupUserApi(
         context,
-        NameTextEditingController.text,
+        nameTextEditingController.text,
         lastnameTextEditingController.text,
         usernameTextEditingController.text,
         referCodeTextEditingController.text,
@@ -196,7 +219,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   void dispose() {
     _focusNode.dispose();
     _dobFocusNode.dispose();
-    NameTextEditingController.dispose();
+    nameTextEditingController.dispose();
     lastnameTextEditingController.dispose();
     usernameTextEditingController.dispose();
     emailController.dispose();
@@ -272,7 +295,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        Container(
+                        SizedBox(
                           width: MediaQuery.of(context).size.width * 90 / 100,
                           child: Column(
                             children: [
@@ -326,8 +349,8 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         decoration: BoxDecoration(
                                           color: isDark
                                               ? AppColor.themeColor
-                                              : Color.fromARGB(
-                                                  255, 235, 234, 234),
+                                               : const Color.fromARGB(
+                                                   255, 235, 234, 234),
                                           border: Border.all(
                                               color: AppColor.buttonColor),
                                           shape: BoxShape.circle,
@@ -340,7 +363,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                               : null,
                                         ),
                                         child: profilePhoto == null
-                                            ? Icon(Icons.add,
+                                            ? const Icon(Icons.add,
                                                 size: 40, color: Colors.grey)
                                             : null,
                                       ),
@@ -404,7 +427,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     hintText:
                                         AppLanguage.firstNameText[language],
                                     maxLength: AppConstant.fullNameText,
-                                    controller: NameTextEditingController,
+                                    controller: nameTextEditingController,
                                     readOnly: false,
                                   ),
                                 ),
@@ -861,7 +884,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
             width: MediaQuery.of(context).size.width * 90 / 100,
             height: MediaQuery.of(context).size.height * 7 / 100,
             child: DropdownButtonFormField<String>(
-              value: value,
+              initialValue: value,
               dropdownColor: AppColor.textFieldColor(context),
               style: TextStyle(
                 color: AppColor.secondryColor(context),
@@ -1002,7 +1025,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       setState(() {
                         selectedDate = dateTime;
                       });
-                      print("selectedDate $selectedDate");
+                      log("selectedDate $selectedDate");
                     },
                   ),
                 ),

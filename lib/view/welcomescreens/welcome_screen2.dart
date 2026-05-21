@@ -132,7 +132,7 @@ class _WelcomeScreen2State extends State<WelcomeScreen2>
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: WelcomeScreen3(),
+                      child: const WelcomeScreen3(),
                       duration: const Duration(milliseconds: 500),
                     ),
                   );
