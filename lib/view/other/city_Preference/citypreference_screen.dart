@@ -23,6 +23,11 @@ class CityPreference extends StatefulWidget {
 }
 
 class _CityPreferenceState extends State<CityPreference> {
+  static const double _cityChipRadius = 24.0;
+  static const double _mapCardRadius = 18.0;
+  static const double _mapHeightRatio = 0.38;
+  static const double _mapWidthRatio = 0.90;
+
   TextEditingController searchController = TextEditingController();
   DateTime? lastPressed;
   GoogleMapController? mapController;
@@ -126,10 +131,6 @@ class _CityPreferenceState extends State<CityPreference> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
     final cardColor = AppColor.pastbookeventcontainercolor(context);
-    const cityChipRadius = 24.0;
-    const mapCardRadius = 18.0;
-    const mapHeightRatio = 0.38;
-    const mapWidthRatio = 0.90;
     return Consumer<CityPreferenceController>(
       builder: (context, controller, child) {
         return PopScope(
@@ -490,9 +491,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                         spacing:
                                                            size.width * 2 / 100,
                                                         runSpacing:
-                                                           size.height *
-                                                               1.2 /
-                                                               100,
+                                                           size.height * 1.2 / 100,
                                                         children: _getFilteredCities(
                                                                controller
                                                                    .getCityList)
@@ -581,7 +580,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                borderRadius:
                                                                    BorderRadius
                                                                        .circular(
-                                                                           cityChipRadius),
+                                                                           _cityChipRadius),
                                                                color: isSelected
                                                                    ? AppColor
                                                                        .pinkColor
@@ -628,6 +627,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                          ),
                                                                          fit: BoxFit
                                                                              .cover,
+                                                                         onError:
+                                                                             (error, stackTrace) {
+                                                                           print(
+                                                                               "Image load error: $error");
+                                                                         },
                                                                        ),
                                                                      ),
                                                                    ),
@@ -703,18 +707,18 @@ class _CityPreferenceState extends State<CityPreference> {
                                 SizedBox(height: size.height * 2.5 / 100),
 
                                 Container(
-                                 height: size.height * mapHeightRatio,
-                                 width: size.width * mapWidthRatio,
-                                   decoration: BoxDecoration(
+                                 height: size.height * _mapHeightRatio,
+                                 width: size.width * _mapWidthRatio,
+                                 decoration: BoxDecoration(
                                    borderRadius: BorderRadius.circular(
-                                       mapCardRadius),
+                                       _mapCardRadius),
                                    border: Border.all(
                                        color: AppColor.darkPurpleColor,
                                        width: 1.5),
                                  ),
                                  child: ClipRRect(
                                    borderRadius: BorderRadius.circular(
-                                       mapCardRadius),
+                                       _mapCardRadius),
                                    child: GoogleMap(
                                      initialCameraPosition: CameraPosition(
                                        target: LatLng(
