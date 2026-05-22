@@ -7,7 +7,6 @@ import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/socket_provider.dart';
-import '../../provider/user_chat_socket_provider.dart';
 import '../../view/authentication/otp_verify_screen.dart';
 import '../../view/other/city_Preference/citypreference_screen.dart';
 import '../../view/other/city_Preference/music_genres.dart';
@@ -17,6 +16,7 @@ import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_footer.dart';
 import '../../utilities/app_image.dart';
+import '../../utilities/auth_session_service.dart';
 import '../../utilities/session_manager.dart';
 import '../../provider/common_sharedpreferences.dart';
 import '../../provider/user_controller.dart';
@@ -55,7 +55,7 @@ class _SplashState extends State<Splash> {
     homeController.clearAllData();
     profileController.clearProfileData();
     swipeProfileController.resetState();
-    await SessionManager.clearAuthSession();
+    await SessionManager.clearAuthSession(signOutFromFirebase: true);
     await _navigateToUnauthenticatedEntry();
   }
 
@@ -171,6 +171,28 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
+      if (!SessionManager.hasAuthenticatedUser) {
+        await _clearSessionAndNavigateUnauthenticated(
+          userController,
+          homeController,
+          profileController,
+          swipeProfileController,
+        );
+        return;
+      }
+
+      try {
+        await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
+      } on SessionExpiredAuthException {
+        await _clearSessionAndNavigateUnauthenticated(
+          userController,
+          homeController,
+          profileController,
+          swipeProfileController,
+        );
+        return;
+      }
+
       Map<String, dynamic> data = await SessionManager.readCachedUserDetailsMap();
       if (data.isNotEmpty) {
         log("userdetails$data");
@@ -227,6 +249,16 @@ class _SplashState extends State<Splash> {
         _navigateForAuthenticatedUser(userData);
         return;
       }
+
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MyAppFooter(initialIndex: 0),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
     } catch (e) {
       print("Error checking login status: $e");
     }

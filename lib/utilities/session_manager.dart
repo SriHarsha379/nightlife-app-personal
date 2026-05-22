@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import '../provider/common_sharedpreferences.dart';
 import 'app_config_provider.dart';
 import 'app_constant.dart';
+import 'auth_session_service.dart';
 
 class SessionManager {
   static const String _userDetailsKey = 'user_details';
@@ -18,6 +19,29 @@ class SessionManager {
   ];
 
   static Future<bool>? _refreshInFlight;
+  static AuthSessionService _authSessionService = FirebaseAuthSessionService();
+
+  static void setAuthSessionServiceForTesting(AuthSessionService? service) {
+    _authSessionService = service ?? FirebaseAuthSessionService();
+  }
+
+  static bool get hasAuthenticatedUser => _authSessionService.isSignedIn;
+
+  static Stream<bool> authStateChanges() => _authSessionService.authStateChanges();
+
+  static Future<String?> getFreshFirebaseIdToken({
+    bool forceRefresh = true,
+  }) async {
+    final token =
+        (await _authSessionService.getFreshIdToken(forceRefresh: forceRefresh) ??
+                '')
+            .trim();
+    if (token.isNotEmpty) {
+      AppConstant.token = token;
+      return token;
+    }
+    return null;
+  }
 
   static String _firstNonEmpty(Iterable<dynamic> values) {
     for (final value in values) {
@@ -250,10 +274,24 @@ class SessionManager {
     return next;
   }
 
-  static Future<void> clearAuthSession() async {
+  static Future<void> clearAuthSession({
+    bool signOutFromFirebase = false,
+    bool clearAllPreferences = false,
+  }) async {
+    if (signOutFromFirebase) {
+      try {
+        await _authSessionService.signOut();
+      } catch (_) {}
+    }
     AppConstant.token = '';
-    await CacheHelper.remove(_userDetailsKey);
-    await CacheHelper.remove(_refreshTokenKey);
-    await CacheHelper.remove(_tokenExpiryEpochKey);
+    if (clearAllPreferences) {
+      await CacheHelper.clearAll();
+      return;
+    }
+    await Future.wait([
+      CacheHelper.remove(_userDetailsKey),
+      CacheHelper.remove(_refreshTokenKey),
+      CacheHelper.remove(_tokenExpiryEpochKey),
+    ]);
   }
 }

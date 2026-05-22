@@ -1237,7 +1237,10 @@ class PostApiProvider with ChangeNotifier {
     _clearSessionState(context);
     await Provider.of<UserController>(context, listen: false)
         .clearSelectedSearchLocation(notify: false);
-    await SessionManager.clearAuthSession();
+    await SessionManager.clearAuthSession(
+      signOutFromFirebase: true,
+      clearAllPreferences: true,
+    );
     setSecondaryLoading(false);
   }
 
@@ -1484,7 +1487,10 @@ class PostApiProvider with ChangeNotifier {
       _clearSessionState(context);
       await Provider.of<UserController>(context, listen: false)
           .clearSelectedSearchLocation(notify: false);
-      await SessionManager.clearAuthSession();
+      await SessionManager.clearAuthSession(
+        signOutFromFirebase: true,
+        clearAllPreferences: true,
+      );
       if (!context.mounted) return;
 
       setLoading(false);
