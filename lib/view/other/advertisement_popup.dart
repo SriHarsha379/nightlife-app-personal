@@ -29,7 +29,7 @@ class AdvertisementData {
 /// Replace or augment this list with real API-sourced data as needed.
 const List<AdvertisementData> sampleAds = [
   AdvertisementData(
-    imageUrl: './assets/icons/eventimg.png',
+    imageUrl: 'assets/icons/eventimg.png',
     title: 'Hot Events Near You 🔥',
     description:
         'Discover the hottest parties and nightlife events happening around you tonight.',
@@ -37,7 +37,7 @@ const List<AdvertisementData> sampleAds = [
     ctaUrl: '',
   ),
   AdvertisementData(
-    imageUrl: './assets/icons/eventstory1.jpg',
+    imageUrl: 'assets/icons/eventstory1.jpg',
     title: 'VIP Access — Limited Seats',
     description:
         'Book your VIP table before they run out. Exclusive deals for Hii members.',

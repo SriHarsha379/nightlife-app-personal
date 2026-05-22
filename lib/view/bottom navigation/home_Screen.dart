@@ -808,6 +808,8 @@ class _HomeState extends State<Home> {
     _tryLoadMoreForType('member', currentIndex, membersList.length);
     return true;
   }
+
+  bool _onSwipeEvents(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     final homeController = Provider.of<HomeController>(context, listen: false);
     final eventsList =
@@ -893,6 +895,8 @@ class _HomeState extends State<Home> {
 
     return true;
   }
+
+  bool _onSwipeVenues(
       int previousIndex, int? currentIndex, CardSwiperDirection direction) {
     final homeController = Provider.of<HomeController>(context, listen: false);
     final venuesList =
@@ -975,6 +979,9 @@ class _HomeState extends State<Home> {
     _tryLoadMoreForType('venue', currentIndex, venuesList.length);
     return true;
   }
+
+  @override
+  void dispose() {
     final pendingTargetUserId = _pendingMemberUserId;
     final pendingAction = _pendingMemberAction;
     final pendingEventId = _pendingEventId;
