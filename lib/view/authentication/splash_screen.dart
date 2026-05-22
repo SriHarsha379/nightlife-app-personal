@@ -27,7 +27,7 @@ import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
 class Splash extends StatefulWidget {
   static String routeName = './Splash';
 
-  Splash({super.key});
+  const Splash({super.key});
 
   @override
   _SplashState createState() => _SplashState();

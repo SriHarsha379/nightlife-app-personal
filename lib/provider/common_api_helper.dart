@@ -180,19 +180,29 @@ Future<void> _redirectToLogin(BuildContext context, String message) async {
 void _tryProviderReset(BuildContext context) {
   try {
     Provider.of<SocketProvider>(context, listen: false).disconnect();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('SocketProvider reset skipped: $e');
+  }
   try {
     Provider.of<UserController>(context, listen: false).reset();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('UserController reset skipped: $e');
+  }
   try {
     Provider.of<HomeController>(context, listen: false).clearAllData();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('HomeController reset skipped: $e');
+  }
   try {
     Provider.of<ProfileController>(context, listen: false).clearProfileData();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('ProfileController reset skipped: $e');
+  }
   try {
     Provider.of<GetMySwipeProfileController>(context, listen: false).resetState();
-  } catch (_) {}
+  } catch (e) {
+    debugPrint('GetMySwipeProfileController reset skipped: $e');
+  }
 }
 
 // ------------------ GET DATA (HEADERS ONLY - WITH TOKEN) ------------------

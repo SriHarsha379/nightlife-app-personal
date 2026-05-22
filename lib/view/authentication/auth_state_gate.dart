@@ -37,12 +37,12 @@ class AuthStateGate extends StatelessWidget {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
             snapshot.hasData == false) {
-          return loadingChild ?? Splash();
+          return loadingChild ?? const Splash();
         }
 
         final signedIn = snapshot.data ?? false;
         if (signedIn) {
-          return authenticatedChild ?? Splash();
+          return authenticatedChild ?? const Splash();
         }
 
         final getOnboardingFuture =
@@ -51,7 +51,7 @@ class AuthStateGate extends StatelessWidget {
           future: getOnboardingFuture(),
           builder: (context, onboardingSnapshot) {
             if (onboardingSnapshot.connectionState != ConnectionState.done) {
-              return loadingChild ?? Splash();
+              return loadingChild ?? const Splash();
             }
             final completed = onboardingSnapshot.data == true;
             if (completed) {

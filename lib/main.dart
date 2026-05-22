@@ -418,8 +418,8 @@ class _MyAppState extends State<MyApp> {
             theme: AppThemeConfig.lightTheme,
             home: AuthStateGate(
               authSessionService: _authSessionService,
-              loadingChild: Splash(),
-              authenticatedChild: Splash(),
+              loadingChild: const Splash(),
+              authenticatedChild: const Splash(),
             ),
           );
         },
