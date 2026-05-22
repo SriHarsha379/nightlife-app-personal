@@ -751,7 +751,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < membersList.length) {
@@ -779,7 +779,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < membersList.length) {
@@ -839,7 +839,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < eventsList.length) {
@@ -865,7 +865,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < eventsList.length) {
@@ -925,7 +925,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < venuesList.length) {
@@ -951,7 +951,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < venuesList.length) {
@@ -1585,6 +1585,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    membersSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onMessageTap: () {
                                                     showInviteMemberstypebottomsheet(
                                                       context,
@@ -1774,6 +1779,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    eventsSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onShareTap: () {
                                                     showEventTypesBottomSheet(
                                                       context,
@@ -1990,6 +2000,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    venuesSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onShareTap: () {
                                                     showEventTypesBottomSheet(
                                                       context,

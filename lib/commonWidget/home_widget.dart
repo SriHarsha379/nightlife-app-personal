@@ -340,6 +340,87 @@ class HomeWidget {
     );
   }
 
+  static Widget _buildDecisionBadge(
+    BuildContext context, {
+    required String label,
+    required IconData icon,
+    required Color color,
+    required bool isActive,
+    required VoidCallback onTap,
+    String? semanticsLabel,
+  }) {
+    final size = MediaQuery.of(context).size;
+    return Semantics(
+      button: true,
+      label: semanticsLabel ?? label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(
+            begin: isActive ? 0.92 : 1.0,
+            end: isActive ? 1.0 : 0.96,
+          ),
+          duration: const Duration(milliseconds: 240),
+          curve: Curves.easeOutBack,
+          builder: (context, value, child) {
+            return Opacity(
+              opacity: isActive ? 1.0 : 0.8,
+              child: Transform.scale(
+                scale: value,
+                child: child,
+              ),
+            );
+          },
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 240),
+            padding: EdgeInsets.symmetric(
+              horizontal: size.width * 0.032,
+              vertical: size.height * 0.009,
+            ),
+            decoration: BoxDecoration(
+              color: isActive
+                  ? color.withOpacity(0.96)
+                  : Colors.black.withOpacity(0.48),
+              borderRadius: BorderRadius.circular(22),
+              border: Border.all(
+                color: isActive ? color : Colors.white.withOpacity(0.28),
+                width: 1.4,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: color.withOpacity(isActive ? 0.42 : 0.18),
+                  blurRadius: isActive ? 18 : 10,
+                  offset: const Offset(0, 6),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  icon,
+                  color: Colors.white,
+                  size: size.width * 0.043,
+                ),
+                SizedBox(width: size.width * 0.015),
+                Text(
+                  label,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: size.width * 0.031,
+                    fontWeight: FontWeight.w700,
+                    fontFamily: AppFont.fontFamily,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   // Method to build members card
   static Widget membersCard(
     BuildContext context,
@@ -350,6 +431,7 @@ class HomeWidget {
     required bool showHeart,
     required bool showCross,
     required String? lastSwipeType,
+    required Function() onRejectTap,
     required Function() onMessageTap,
     required Function() onHeartTap,
     String? bio,
@@ -363,6 +445,11 @@ class HomeWidget {
         (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
     final bool hasBio = safeBio.isNotEmpty;
     final bool hasVibes = safeVibes.isNotEmpty;
+    final bool showAcceptFeedback =
+        (showHeart || showCross) && lastSwipeType == 'accept';
+    final bool showRejectFeedback =
+        (showHeart || showCross) && lastSwipeType == 'reject';
+    final double badgeTop = MediaQuery.of(context).size.height * 0.018;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -597,99 +684,32 @@ class HomeWidget {
                 ),
               ),
 
-              //! Nope - same top position as event/venue
-              if (showHeart && lastSwipeType == 'cross')
-                Positioned(
-                  left: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.redColor.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.redColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Nope",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+              Positioned(
+                left: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showRejectFeedback ? 'NO' : 'Reject',
+                  icon: Icons.close_rounded,
+                  color: AppColor.redColor,
+                  isActive: showRejectFeedback,
+                  onTap: onRejectTap,
+                  semanticsLabel: 'Reject member',
                 ),
-
-              //! Yes - same top position as event/venue
-              if (showCross && lastSwipeType == 'heart')
-                Positioned(
-                  right: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.greenColor.withOpacity(0.8),
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.greenColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Yes",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
+              ),
+              Positioned(
+                right: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showAcceptFeedback ? 'YES' : 'Accept',
+                  icon: Icons.favorite_rounded,
+                  color: AppColor.greenColor,
+                  isActive: showAcceptFeedback,
+                  onTap: onHeartTap,
+                  semanticsLabel: 'Accept member',
                 ),
+              ),
 
               //! Heart Button on Right Side
               Positioned(
@@ -749,6 +769,7 @@ class HomeWidget {
     required bool showHeart,
     required bool showCross,
     required String? lastSwipeType,
+    required Function() onRejectTap,
     required Function() onShareTap,
     required Function() onHeartTap,
     String? about,
@@ -761,6 +782,11 @@ class HomeWidget {
     int? recentCount,
     int? totalLikes,
   }) {
+    final bool showAcceptFeedback =
+        (showHeart || showCross) && lastSwipeType == 'accept';
+    final bool showRejectFeedback =
+        (showHeart || showCross) && lastSwipeType == 'reject';
+    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -1030,6 +1056,34 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
+              Positioned(
+                left: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showRejectFeedback ? 'NO' : 'Reject',
+                  icon: Icons.close_rounded,
+                  color: AppColor.redColor,
+                  isActive: showRejectFeedback,
+                  onTap: onRejectTap,
+                  semanticsLabel: 'Reject event',
+                ),
+              ),
+
+              Positioned(
+                right: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showAcceptFeedback ? 'YES' : 'Accept',
+                  icon: Icons.favorite_rounded,
+                  color: AppColor.greenColor,
+                  isActive: showAcceptFeedback,
+                  onTap: onHeartTap,
+                  semanticsLabel: 'Accept event',
+                ),
+              ),
+
               //! Heart Button on Right Side
               Positioned(
                 right: 0,
@@ -1072,99 +1126,6 @@ class HomeWidget {
                 ),
               ),
 
-              //! Yes - with fade animation
-              if (showHeart && lastSwipeType == 'cross')
-                Positioned(
-                  right: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.greenColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.greenColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Yes",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-              //! Nope - with fade animation
-              if (showCross && lastSwipeType == 'heart')
-                Positioned(
-                  left: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.redColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.redColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Nope",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
@@ -1183,6 +1144,7 @@ class HomeWidget {
     required bool showHeart,
     required bool showCross,
     required String? lastSwipeType,
+    required Function() onRejectTap,
     required Function() onShareTap,
     required Function() onHeartTap,
     String? about,
@@ -1194,6 +1156,11 @@ class HomeWidget {
     int? recentCount,
     int? totalLikes,
   }) {
+    final bool showAcceptFeedback =
+        (showHeart || showCross) && lastSwipeType == 'accept';
+    final bool showRejectFeedback =
+        (showHeart || showCross) && lastSwipeType == 'reject';
+    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -1462,6 +1429,34 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
+              Positioned(
+                left: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showRejectFeedback ? 'NO' : 'Reject',
+                  icon: Icons.close_rounded,
+                  color: AppColor.redColor,
+                  isActive: showRejectFeedback,
+                  onTap: onRejectTap,
+                  semanticsLabel: 'Reject venue',
+                ),
+              ),
+
+              Positioned(
+                right: 18,
+                top: badgeTop,
+                child: _buildDecisionBadge(
+                  context,
+                  label: showAcceptFeedback ? 'YES' : 'Accept',
+                  icon: Icons.favorite_rounded,
+                  color: AppColor.greenColor,
+                  isActive: showAcceptFeedback,
+                  onTap: onHeartTap,
+                  semanticsLabel: 'Accept venue',
+                ),
+              ),
+
               //! Heart Button on Right Side
               Positioned(
                 right: 0,
@@ -1504,99 +1499,6 @@ class HomeWidget {
                 ),
               ),
 
-              //! Yes - with fade animation
-              if (showHeart && lastSwipeType == 'cross')
-                Positioned(
-                  right: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.greenColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.greenColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Yes",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-              //! Nope - with fade animation
-              if (showCross && lastSwipeType == 'heart')
-                Positioned(
-                  left: 30,
-                  top: 80,
-                  child: TweenAnimationBuilder<double>(
-                    tween: Tween(begin: 0.0, end: 1.0),
-                    duration: const Duration(milliseconds: 300),
-                    curve: Curves.easeInOut,
-                    builder: (context, value, child) {
-                      return Opacity(
-                        opacity: value,
-                        child: Transform.scale(
-                          scale: 0.8 + (0.2 * value),
-                          child: child,
-                        ),
-                      );
-                    },
-                    child: Container(
-                      width: MediaQuery.of(context).size.width * 20 / 100,
-                      height: MediaQuery.of(context).size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.redColor,
-                        borderRadius: BorderRadius.circular(8),
-                        boxShadow: [
-                          BoxShadow(
-                            color: AppColor.redColor.withOpacity(0.5),
-                            blurRadius: 10,
-                            spreadRadius: 2,
-                          ),
-                        ],
-                      ),
-                      child: Center(
-                        child: Text(
-                          "Nope",
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
             ],
           ),
         ),
@@ -3034,13 +2936,6 @@ class HomeWidget {
 //     );
 //   }
 // }
-
-
-
-
-
-
-
 
 
 
