@@ -27,6 +27,8 @@ class _CityPreferenceState extends State<CityPreference> {
   static const double _mapCardRadius = 18.0;
   static const double _mapHeightRatio = 0.38;
   static const double _mapWidthRatio = 0.90;
+  static const double _cityChipSpacingRatio = 0.02;
+  static const double _cityChipRunSpacingRatio = 0.012;
 
   TextEditingController searchController = TextEditingController();
   DateTime? lastPressed;
@@ -489,9 +491,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       )
                                                     : Wrap(
                                                         spacing:
-                                                           size.width * 2 / 100,
+                                                           size.width *
+                                                               _cityChipSpacingRatio,
                                                         runSpacing:
-                                                           size.height * 1.2 / 100,
+                                                           size.height *
+                                                               _cityChipRunSpacingRatio,
                                                         children: _getFilteredCities(
                                                                controller
                                                                    .getCityList)
