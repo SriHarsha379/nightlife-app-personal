@@ -252,6 +252,10 @@ class _HomeState extends State<Home> {
 
   /// Called after every real (non-ad) card swipe.
   /// Checks whether an ad or poll popup is due and shows it if so.
+  ///
+  /// NOTE: [PopupManager.pollSwipeTriggerCount] must be an integer multiple of
+  /// [PopupManager.adSwipeTriggerCount] so that poll and ad triggers never fall
+  /// on the same swipe. Poll is checked first and given priority.
   void _onRealCardSwiped() {
     _totalSwipeCount++;
     final count = _totalSwipeCount;
@@ -300,9 +304,7 @@ class _HomeState extends State<Home> {
       _isShowingPopup = false;
       return;
     }
-    final poll = polls[(_totalSwipeCount ~/ PopupManager.pollSwipeTriggerCount -
-            1) %
-        polls.length];
+    final poll = polls[_totalSwipeCount % polls.length];
     await PollPopup.show(context, poll);
     if (mounted) _isShowingPopup = false;
   }

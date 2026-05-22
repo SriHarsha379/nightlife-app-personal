@@ -33,16 +33,12 @@ const List<AdvertisementData> sampleAds = [
     title: 'Hot Events Near You 🔥',
     description:
         'Discover the hottest parties and nightlife events happening around you tonight.',
-    ctaText: 'Explore Now',
-    ctaUrl: '',
   ),
   AdvertisementData(
     imageUrl: 'assets/icons/eventstory1.jpg',
     title: 'VIP Access — Limited Seats',
     description:
         'Book your VIP table before they run out. Exclusive deals for Hii members.',
-    ctaText: 'Book Now',
-    ctaUrl: '',
   ),
 ];
 
