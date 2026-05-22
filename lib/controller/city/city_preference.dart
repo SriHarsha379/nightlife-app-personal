@@ -53,8 +53,8 @@ class CityPreferenceController with ChangeNotifier {
       _cityRadiusData[cityId] = {
         'city_id': cityId,
         'city_name': getCurrentConfigCity!['city_name'],
-        'latitude': getCurrentConfigCity!['latitude'] ?? 0.0,
-        'longitude': getCurrentConfigCity!['longitude'] ?? 0.0,
+        'latitude': _parseCoordinate(getCurrentConfigCity!['latitude']),
+        'longitude': _parseCoordinate(getCurrentConfigCity!['longitude']),
         'radius': _currentDistance,
         'is_broadened': _isBroadened,
       };
@@ -230,8 +230,8 @@ class CityPreferenceController with ChangeNotifier {
       _cityRadiusData[cityId] = {
         'city_id': cityId,
         'city_name': getCurrentConfigCity!['city_name'],
-        'latitude': getCurrentConfigCity!['latitude'] ?? 0.0,
-        'longitude': getCurrentConfigCity!['longitude'] ?? 0.0,
+        'latitude': _parseCoordinate(getCurrentConfigCity!['latitude']),
+        'longitude': _parseCoordinate(getCurrentConfigCity!['longitude']),
         'radius': _currentDistance,
         'is_broadened': _isBroadened,
       };
@@ -273,12 +273,19 @@ class CityPreferenceController with ChangeNotifier {
     return city['user_count'] ?? 0;
   }
 
+  double _parseCoordinate(dynamic value) {
+    if (value is num) {
+      return value.toDouble();
+    }
+    return double.tryParse(value?.toString() ?? '') ?? 0.0;
+  }
+
   // Get latitude and longitude for a city
   double getCityLatitude(Map<String, dynamic> city) {
-    return city['latitude']?.toDouble() ?? 0.0;
+    return _parseCoordinate(city['latitude']);
   }
 
   double getCityLongitude(Map<String, dynamic> city) {
-    return city['longitude']?.toDouble() ?? 0.0;
+    return _parseCoordinate(city['longitude']);
   }
 }
