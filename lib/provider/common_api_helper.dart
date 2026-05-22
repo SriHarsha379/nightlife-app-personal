@@ -57,7 +57,10 @@ Future<Map<String, dynamic>?> _handleStatusCode(
 
   // Success
   if (statusCode == 200) {
-    await SessionManager.captureSessionFromAuthPayload(body);
+    if (SessionManager.extractToken(body).isNotEmpty ||
+        SessionManager.extractRefreshToken(body).isNotEmpty) {
+      await SessionManager.captureSessionFromAuthPayload(body);
+    }
     return body;
   }
 

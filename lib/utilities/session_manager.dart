@@ -100,9 +100,7 @@ class SessionManager {
       if (decoded is Map) {
         return decoded.map((key, value) => MapEntry(key.toString(), value));
       }
-    } catch (e) {
-      log('Session refresh failed for endpoint=$endpoint error=$e');
-    }
+    } catch (_) {}
     return <String, dynamic>{};
   }
 
@@ -182,7 +180,9 @@ class SessionManager {
         await _mergeAuthPayloadIntoUserCache(authPayload);
         await captureSessionFromAuthPayload(authPayload);
         return true;
-      } catch (_) {}
+      } catch (e) {
+        log('Session refresh failed for endpoint=$endpoint error=$e');
+      }
     }
 
     return false;
