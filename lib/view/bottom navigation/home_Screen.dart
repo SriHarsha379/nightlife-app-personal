@@ -256,7 +256,8 @@ class _HomeState extends State<Home> {
   ///
   /// NOTE: [PopupManager.pollSwipeTriggerCount] must be an integer multiple of
   /// [PopupManager.adSwipeTriggerCount] so that poll and ad triggers never fall
-  /// on the same swipe. Poll is checked first and given priority.
+  /// on the same swipe. This is enforced by `PopupManager.validateConfiguration`
+  /// in `initState`, and poll is checked first and given priority here.
   void _onRealCardSwiped() {
     _totalSwipeCount++;
     final count = _totalSwipeCount;

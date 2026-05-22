@@ -14,8 +14,6 @@ class PopupManager {
   // ── Trigger thresholds ───────────────────────────────────────────────────────
   static const int adSwipeTriggerCount = 5;
   static const int pollSwipeTriggerCount = 10;
-  static const bool _validTriggerRatio =
-      pollSwipeTriggerCount % adSwipeTriggerCount == 0;
 
   // ── Frequency limits ─────────────────────────────────────────────────────────
   static const int _maxAdsPerDay = 3;
@@ -32,7 +30,7 @@ class PopupManager {
 
   static void validateConfiguration() {
     assert(
-      _validTriggerRatio,
+      pollSwipeTriggerCount % adSwipeTriggerCount == 0,
       'pollSwipeTriggerCount must be a multiple of adSwipeTriggerCount',
     );
   }
