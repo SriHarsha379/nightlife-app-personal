@@ -38,6 +38,8 @@ class LikedEventDetail extends StatefulWidget {
 }
 
 class _LikedEventDetailState extends State<LikedEventDetail> {
+  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
+  static const double _fullActionBarWidthFactor = 0.85;
   static const String _limitedTimeText = "🔥 Limited time";
   static const String _endedText = "🔥 Ended";
   Timer? _countdownTimer;
@@ -463,8 +465,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                 borderRadius: BorderRadius.circular(25),
               ),
               width: showDislikeOnly
-                  ? size.width * 68 / 100
-                  : size.width * 85 / 100,
+                  ? size.width * _dislikeOnlyActionBarWidthFactor
+                  : size.width * _fullActionBarWidthFactor,
               height: size.height * 7 / 100,
               child: Row(
                 children: [

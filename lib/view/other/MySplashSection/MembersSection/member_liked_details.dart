@@ -47,6 +47,8 @@ class LikedMemberDetail extends StatefulWidget {
 }
 
 class _LikedMemberDetailState extends State<LikedMemberDetail> {
+  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
+  static const double _fullActionBarWidthFactor = 0.85;
   Map<String, dynamic>? _memberData;
   bool _isLoading = false;
   Map<String, String>? _swipeResult;
@@ -452,8 +454,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                 borderRadius: BorderRadius.circular(25),
               ),
               width: _showDislikeOnly
-                  ? size.width * 68 / 100
-                  : size.width * 85 / 100,
+                  ? size.width * _dislikeOnlyActionBarWidthFactor
+                  : size.width * _fullActionBarWidthFactor,
               height: size.height * 7 / 100,
               child: Padding(
                 padding: EdgeInsets.symmetric(horizontal: 9),

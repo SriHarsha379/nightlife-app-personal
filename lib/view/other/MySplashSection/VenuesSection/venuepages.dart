@@ -35,6 +35,8 @@ class VenuePages extends StatefulWidget {
 }
 
 class _VenuePagesState extends State<VenuePages> {
+  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
+  static const double _fullActionBarWidthFactor = 0.85;
   late TextEditingController searchController;
   Map<String, String>? _swipeResult;
 
@@ -376,8 +378,8 @@ class _VenuePagesState extends State<VenuePages> {
                       borderRadius: BorderRadius.circular(25),
                     ),
                     width: showDislikeOnly
-                        ? size.width * 68 / 100
-                        : size.width * 85 / 100,
+                        ? size.width * _dislikeOnlyActionBarWidthFactor
+                        : size.width * _fullActionBarWidthFactor,
                     height: size.height * 7 / 100,
                     child: Row(
                       children: [
