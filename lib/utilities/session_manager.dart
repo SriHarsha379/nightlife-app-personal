@@ -86,8 +86,8 @@ class SessionManager {
   static bool isJwtToken(String token) {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return false;
-    // Structural JWT check only (header.payload.signature); full signature
-    // verification is intentionally delegated to backend validation.
+    // Structural JWT check only (header.payload.signature). This does not
+    // verify token authenticity, signature, or integrity.
     return trimmed.split('.').length == 3;
   }
 

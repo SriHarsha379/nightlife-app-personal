@@ -95,6 +95,8 @@ class _SplashState extends State<Splash> {
           duration: const Duration(milliseconds: 400),
         ),
       );
+      debugPrint(
+          'Authenticated Firebase user with no cached user_details; routing to app footer.');
       return;
     }
     if (signupStep >= 3) {
