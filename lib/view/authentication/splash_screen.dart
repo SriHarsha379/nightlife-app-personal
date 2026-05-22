@@ -185,16 +185,17 @@ class _SplashState extends State<Splash> {
           );
           return;
         }
-        var isExpired = _isTokenExpired(token);
-        if (isExpired) {
+        final isInitiallyExpired = _isTokenExpired(token);
+        var isStillExpired = isInitiallyExpired;
+        if (isInitiallyExpired) {
           final didRefresh = await SessionManager.tryRefreshSession();
           if (didRefresh) {
             data = await SessionManager.readCachedUserDetailsMap();
             token = SessionManager.extractToken(data);
-            isExpired = _isTokenExpired(token);
+            isStillExpired = _isTokenExpired(token);
           }
         }
-        if (token.isEmpty || isExpired) {
+        if (token.isEmpty || isStillExpired) {
           await _clearSessionAndNavigateUnauthenticated(
             userController,
             homeController,

@@ -11,6 +11,11 @@ class SessionManager {
   static const String _userDetailsKey = 'user_details';
   static const String _refreshTokenKey = 'session_refresh_token';
   static const String _tokenExpiryEpochKey = 'session_token_expiry_epoch';
+  static const List<String> _refreshEndpoints = <String>[
+    'auth/refresh_token',
+    'auth/refresh',
+    'auth/token/refresh',
+  ];
 
   static Future<bool>? _refreshInFlight;
 
@@ -115,15 +120,21 @@ class SessionManager {
     final expEpoch = decodeJwtExpiryEpoch(token);
 
     if (refreshToken.isNotEmpty) {
-      await CacheHelper.save(_refreshTokenKey, refreshToken);
+      await Future.wait([
+        CacheHelper.save(_refreshTokenKey, refreshToken),
+        if (expEpoch != null)
+          CacheHelper.save(_tokenExpiryEpochKey, expEpoch.toString())
+        else
+          CacheHelper.remove(_tokenExpiryEpochKey),
+      ]);
     } else {
-      await CacheHelper.remove(_refreshTokenKey);
-    }
-
-    if (expEpoch != null) {
-      await CacheHelper.save(_tokenExpiryEpochKey, expEpoch.toString());
-    } else {
-      await CacheHelper.remove(_tokenExpiryEpochKey);
+      await Future.wait([
+        CacheHelper.remove(_refreshTokenKey),
+        if (expEpoch != null)
+          CacheHelper.save(_tokenExpiryEpochKey, expEpoch.toString())
+        else
+          CacheHelper.remove(_tokenExpiryEpochKey),
+      ]);
     }
 
     if (token.isNotEmpty) {
@@ -147,13 +158,7 @@ class SessionManager {
     }
     if (refreshToken.isEmpty) return false;
 
-    final endpoints = <String>[
-      'auth/refresh_token',
-      'auth/refresh',
-      'auth/token/refresh',
-    ];
-
-    for (final endpoint in endpoints) {
+    for (final endpoint in _refreshEndpoints) {
       try {
         final response = await http.post(
           Uri.parse('${AppConfigProvider.apiUrl}$endpoint'),
