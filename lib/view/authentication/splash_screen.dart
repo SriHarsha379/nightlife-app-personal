@@ -203,7 +203,6 @@ class _SplashState extends State<Splash> {
           );
           return;
         }
-        AppConstant.token = token;
         await SessionManager.captureSessionFromAuthPayload(data);
         log("app token----->>>>${AppConstant.token}");
         final authUserId =

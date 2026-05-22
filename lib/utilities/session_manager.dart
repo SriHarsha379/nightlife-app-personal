@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:http/http.dart' as http;
 
@@ -56,6 +57,8 @@ class SessionManager {
   static bool isJwtToken(String token) {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return false;
+    // Structural JWT check only (header.payload.signature); full signature
+    // verification is intentionally delegated to backend validation.
     return trimmed.split('.').length == 3;
   }
 
@@ -97,7 +100,9 @@ class SessionManager {
       if (decoded is Map) {
         return decoded.map((key, value) => MapEntry(key.toString(), value));
       }
-    } catch (_) {}
+    } catch (e) {
+      log('Session refresh failed for endpoint=$endpoint error=$e');
+    }
     return <String, dynamic>{};
   }
 

@@ -33,6 +33,8 @@ Future<Map<String, dynamic>?> _handleRequest(
     if (response.statusCode == 401 || response.statusCode == 403) {
       final didRefresh = await SessionManager.tryRefreshSession();
       if (didRefresh) {
+        // Retry exactly once with the refreshed token to avoid infinite
+        // refresh/retry loops when backend still rejects credentials.
         requestHeaders = SessionManager.withAuthorizationHeader(requestHeaders);
         response = await requestFn(url, requestHeaders);
       }
