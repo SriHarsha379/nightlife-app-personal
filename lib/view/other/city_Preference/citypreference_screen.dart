@@ -128,6 +128,8 @@ class _CityPreferenceState extends State<CityPreference> {
     final cardColor = AppColor.pastbookeventcontainercolor(context);
     const cityChipRadius = 24.0;
     const mapCardRadius = 18.0;
+    const mapHeightRatio = 0.38;
+    const mapWidthRatio = 0.90;
     return Consumer<CityPreferenceController>(
       builder: (context, controller, child) {
         return PopScope(
@@ -500,16 +502,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                                           String cityName =
                                                               city['city_name'] ??
                                                                   'Unknown';
+                                                          String cityImage =
+                                                              city['city_image'] ??
+                                                                  '';
 
                                                           bool isSelected =
                                                               controller
                                                                   .isCitySelected(
                                                                       cityId);
 
-                                                          return InkWell(
-                                                            borderRadius: BorderRadius
-                                                                .circular(
-                                                                    cityChipRadius),
+                                                          return GestureDetector(
                                                             onTap: () {
                                                               if (!isSelected &&
                                                                   controller
@@ -605,6 +607,30 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                    MainAxisSize
                                                                        .min,
                                                                children: [
+                                                                 if (cityImage
+                                                                     .isNotEmpty)
+                                                                   Container(
+                                                                     width: 20,
+                                                                     height: 20,
+                                                                     margin: const EdgeInsets
+                                                                         .only(
+                                                                         right:
+                                                                             8),
+                                                                     decoration:
+                                                                         BoxDecoration(
+                                                                       shape: BoxShape
+                                                                           .circle,
+                                                                       image:
+                                                                           DecorationImage(
+                                                                         image:
+                                                                             NetworkImage(
+                                                                           controller.getCityImageUrl(cityImage),
+                                                                         ),
+                                                                         fit: BoxFit
+                                                                             .cover,
+                                                                       ),
+                                                                     ),
+                                                                   ),
                                                                  Text(
                                                                    cityName,
                                                                    style:
@@ -677,8 +703,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                 SizedBox(height: size.height * 2.5 / 100),
 
                                 Container(
-                                 height: size.height * 38 / 100,
-                                 width: size.width * 90 / 100,
+                                 height: size.height * mapHeightRatio,
+                                 width: size.width * mapWidthRatio,
                                    decoration: BoxDecoration(
                                    borderRadius: BorderRadius.circular(
                                        mapCardRadius),
