@@ -838,7 +838,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
           ),
           child: Container(
             decoration: const BoxDecoration(
@@ -940,7 +940,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       builder: (BuildContext context) {
         return Padding(
           padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
+            bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
           ),
           child: Container(
             decoration: const BoxDecoration(

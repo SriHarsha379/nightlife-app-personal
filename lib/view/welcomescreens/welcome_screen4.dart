@@ -113,7 +113,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                         ),
                       ),
                       padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                        bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,

@@ -846,7 +846,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                  // bottom: MediaQuery.of(context).viewInsets.bottom,
+                  // bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
                   ),
               child: Container(
                 decoration: BoxDecoration(
@@ -950,7 +950,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                      bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
                     ),
                     child: Container(
                       width: double.infinity,
@@ -1063,7 +1063,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                      bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
                     ),
                     child: Container(
                       width: double.infinity,
@@ -1174,7 +1174,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                 child: SingleChildScrollView(
                   child: Padding(
                     padding: EdgeInsets.only(
-                      bottom: MediaQuery.of(context).viewInsets.bottom,
+                      bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity),
                     ),
                     child: Container(
                       width: double.infinity,

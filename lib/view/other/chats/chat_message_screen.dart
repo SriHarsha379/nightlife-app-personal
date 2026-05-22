@@ -2735,7 +2735,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                         duration: const Duration(milliseconds: 180),
                         curve: Curves.easeOut,
                         padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                            bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity)),
                         child: Column(
                           children: [
                             SizedBox(height: size.height * 1 / 100),

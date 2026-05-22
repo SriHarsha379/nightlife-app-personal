@@ -55,7 +55,7 @@ class SnackBarToastMessage {
 
     _currentOverlay = OverlayEntry(
       builder: (context) => Positioned(
-        bottom: MediaQuery.of(context).viewInsets.bottom + 60,
+        bottom: MediaQuery.of(context).viewInsets.bottom.clamp(0.0, double.infinity) + 60,
         left: 16,
         right: 16,
         child: IgnorePointer(
