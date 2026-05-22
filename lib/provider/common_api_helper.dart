@@ -11,8 +11,8 @@ import 'package:share_plus/share_plus.dart';
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
+import '../utilities/session_manager.dart';
 import '../view/authentication/login_screen.dart';
-import 'common_sharedpreferences.dart';
 import 'post_api_provider.dart';
 
 // ------------------ COMMON REQUEST HANDLER ------------------
@@ -27,11 +27,20 @@ Future<Map<String, dynamic>?> _handleRequest(
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
     print('url $url');
 
-    final response = await requestFn(url, headers ?? {});
+    Map<String, String> requestHeaders = Map<String, String>.from(headers ?? {});
+    http.Response response = await requestFn(url, requestHeaders);
+
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      final didRefresh = await SessionManager.tryRefreshSession();
+      if (didRefresh) {
+        requestHeaders = SessionManager.withAuthorizationHeader(requestHeaders);
+        response = await requestFn(url, requestHeaders);
+      }
+    }
     print("Status Code: ${response.statusCode}");
     print("Response Body: ${response.body}");
 
-    return _handleStatusCode(response, context);
+    return await _handleStatusCode(response, context);
   } catch (e) {
     print("API error: $e");
     return null;
@@ -39,13 +48,14 @@ Future<Map<String, dynamic>?> _handleRequest(
 }
 
 // ------------------ STATUS CODE HANDLER ------------------
-Map<String, dynamic>? _handleStatusCode(
-    http.Response response, BuildContext? context) {
+Future<Map<String, dynamic>?> _handleStatusCode(
+    http.Response response, BuildContext? context) async {
   final statusCode = response.statusCode;
   final body = jsonDecode(response.body);
 
   // Success
   if (statusCode == 200) {
+    await SessionManager.captureSessionFromAuthPayload(body);
     return body;
   }
 
@@ -109,8 +119,7 @@ String _getErrorMessage(dynamic body) {
 // ------------------ REDIRECT TO LOGIN ------------------
 void _redirectToLogin(BuildContext context, String message) {
   TopNotification.error(context, message);
-  CacheHelper.clearAll();
-  AppConstant.token = '';
+  SessionManager.clearAuthSession();
   AppConstant.selectFooterIndex = 0;
   AppContentCache().clear();
   Navigator.pushAndRemoveUntil(

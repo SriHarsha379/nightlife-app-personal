@@ -18,6 +18,7 @@ import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_footer.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
+import '../utilities/session_manager.dart';
 import '../view/authentication/login_screen.dart';
 import '../view/authentication/otp_verify_screen.dart';
 import '../view/other/city_Preference/citypreference_screen.dart';
@@ -1236,7 +1237,7 @@ class PostApiProvider with ChangeNotifier {
     _clearSessionState(context);
     await Provider.of<UserController>(context, listen: false)
         .clearSelectedSearchLocation(notify: false);
-    await CacheHelper.clearAll();
+    await SessionManager.clearAuthSession();
     setSecondaryLoading(false);
   }
 
@@ -1481,10 +1482,9 @@ class PostApiProvider with ChangeNotifier {
 
     if (res != null) {
       _clearSessionState(context);
-      AppConstant.token = '';
       await Provider.of<UserController>(context, listen: false)
           .clearSelectedSearchLocation(notify: false);
-      await CacheHelper.clearAll();
+      await SessionManager.clearAuthSession();
       if (!context.mounted) return;
 
       setLoading(false);
