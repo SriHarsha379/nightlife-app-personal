@@ -126,6 +126,8 @@ class _CityPreferenceState extends State<CityPreference> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
     final cardColor = AppColor.pastbookeventcontainercolor(context);
+    const cityChipRadius = 24.0;
+    const mapCardRadius = 18.0;
     return Consumer<CityPreferenceController>(
       builder: (context, controller, child) {
         return PopScope(
@@ -505,10 +507,9 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                       cityId);
 
                                                           return InkWell(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        24),
+                                                            borderRadius: BorderRadius
+                                                                .circular(
+                                                                    cityChipRadius),
                                                             onTap: () {
                                                               if (!isSelected &&
                                                                   controller
@@ -578,7 +579,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                borderRadius:
                                                                    BorderRadius
                                                                        .circular(
-                                                                           24),
+                                                                           cityChipRadius),
                                                                color: isSelected
                                                                    ? AppColor
                                                                        .pinkColor
@@ -678,14 +679,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                 Container(
                                  height: size.height * 38 / 100,
                                  width: size.width * 90 / 100,
-                                  decoration: BoxDecoration(
-                                   borderRadius: BorderRadius.circular(18),
+                                   decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.circular(
+                                       mapCardRadius),
                                    border: Border.all(
                                        color: AppColor.darkPurpleColor,
                                        width: 1.5),
                                  ),
                                  child: ClipRRect(
-                                   borderRadius: BorderRadius.circular(16),
+                                   borderRadius: BorderRadius.circular(
+                                       mapCardRadius),
                                    child: GoogleMap(
                                      initialCameraPosition: CameraPosition(
                                        target: LatLng(
