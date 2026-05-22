@@ -190,7 +190,7 @@ class _SplashState extends State<Splash> {
             profileController.clearProfileData();
             swipeProfileController.resetState();
             await CacheHelper.remove('user_details');
-            _navigateToWelcome();
+            await _navigateToUnauthenticatedEntry();
             return;
           }
           if (_isTokenExpired(token)) {
@@ -200,7 +200,7 @@ class _SplashState extends State<Splash> {
             profileController.clearProfileData();
             swipeProfileController.resetState();
             await CacheHelper.remove('user_details');
-            _navigateToWelcome();
+            await _navigateToUnauthenticatedEntry();
             return;
           }
           AppConstant.token = token;
@@ -238,16 +238,26 @@ class _SplashState extends State<Splash> {
       swipeProfileController.resetState();
     }
 
-    _navigateToWelcome();
+    await _navigateToUnauthenticatedEntry();
   }
+ 
+  Future<void> _navigateToUnauthenticatedEntry() async {
+    final hasCompletedOnboarding =
+        await CacheHelper.get(AppOnboardingScreen.completionStorageKey) ==
+            'true';
 
-  void _navigateToWelcome() {
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => const AppOnboardingScreen()),
-      );
-    }
+    if (!mounted) return;
+
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: hasCompletedOnboarding
+            ? const LoginScreen()
+            : const AppOnboardingScreen(),
+        duration: const Duration(milliseconds: 400),
+      ),
+    );
   }
 
   @override
@@ -261,7 +271,7 @@ class _SplashState extends State<Splash> {
       backgroundColor: AppColor.transparentColor,
       body: GestureDetector(
         onTap: () {
-          _navigateToWelcome();
+          _navigateToUnauthenticatedEntry();
         },
         child: Container(
           width: MediaQuery.of(context).size.width,
