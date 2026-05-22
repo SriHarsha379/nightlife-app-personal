@@ -466,7 +466,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                         ),
                         SizedBox(height: size.height * 0.018),
                         Text(
-                          'Discover the best venues, explore events, and connect with people who share your vibe before you enter the app.',
+                          'Get ready to discover the best venues, explore events, and connect with people who share your vibe.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             color: Colors.white.withOpacity(0.88),

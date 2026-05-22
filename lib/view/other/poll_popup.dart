@@ -94,7 +94,7 @@ const List<PollData> samplePolls = [
 class PollPopup extends StatefulWidget {
   final PollData data;
 
-  const PollPopup({Key? key, required this.data}) : super(key: key);
+  const PollPopup({super.key, required this.data});
 
   /// Shows [data] as a modal poll overlay.
   ///

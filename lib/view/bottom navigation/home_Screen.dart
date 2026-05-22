@@ -47,6 +47,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    PopupManager.validateConfiguration();
     _homeController = Provider.of<HomeController>(context, listen: false);
     // Fetch initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {

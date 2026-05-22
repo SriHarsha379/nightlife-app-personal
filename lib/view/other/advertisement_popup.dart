@@ -54,7 +54,7 @@ const List<AdvertisementData> sampleAds = [
 class AdvertisementPopup extends StatefulWidget {
   final AdvertisementData data;
 
-  const AdvertisementPopup({Key? key, required this.data}) : super(key: key);
+  const AdvertisementPopup({super.key, required this.data});
 
   /// Shows [data] as a modal advertisement overlay.
   ///

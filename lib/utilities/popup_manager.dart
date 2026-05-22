@@ -14,6 +14,8 @@ class PopupManager {
   // ── Trigger thresholds ───────────────────────────────────────────────────────
   static const int adSwipeTriggerCount = 5;
   static const int pollSwipeTriggerCount = 10;
+  static const bool _validTriggerRatio =
+      pollSwipeTriggerCount % adSwipeTriggerCount == 0;
 
   // ── Frequency limits ─────────────────────────────────────────────────────────
   static const int _maxAdsPerDay = 3;
@@ -27,6 +29,13 @@ class PopupManager {
   static const String _kPollLastShownMs = 'popup_poll_last_shown_ms';
   static const String _kPollCountToday = 'popup_poll_count_today';
   static const String _kPollCountDate = 'popup_poll_count_date';
+
+  static void validateConfiguration() {
+    assert(
+      _validTriggerRatio,
+      'pollSwipeTriggerCount must be a multiple of adSwipeTriggerCount',
+    );
+  }
 
   // ── Advertisement ─────────────────────────────────────────────────────────────
 
