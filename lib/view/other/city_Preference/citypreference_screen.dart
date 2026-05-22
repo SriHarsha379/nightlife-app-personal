@@ -23,6 +23,13 @@ class CityPreference extends StatefulWidget {
 }
 
 class _CityPreferenceState extends State<CityPreference> {
+  static const double _cityChipRadius = 24.0;
+  static const double _mapCardRadius = 18.0;
+  static const double _mapHeightRatio = 0.38;
+  static const double _mapWidthRatio = 0.90;
+  static const double _cityChipSpacingRatio = 0.02;
+  static const double _cityChipRunSpacingRatio = 0.012;
+
   TextEditingController searchController = TextEditingController();
   DateTime? lastPressed;
   GoogleMapController? mapController;
@@ -393,33 +400,53 @@ class _CityPreferenceState extends State<CityPreference> {
                                     Container(
                                       width: size.width * 0.9,
                                       constraints: BoxConstraints(
-                                        minHeight: size.height * 0.28,
+                                        minHeight: size.height * 0.24,
                                       ),
                                       decoration: BoxDecoration(
                                         color: cardColor,
-                                        borderRadius: BorderRadius.circular(15),
+                                        borderRadius: BorderRadius.circular(18),
                                         border: Border.all(
-                                          width: 0.3,
+                                          width: 0.7,
                                           color: AppColor.pinkColor,
                                         ),
                                       ),
                                       child: Padding(
                                         padding: const EdgeInsets.symmetric(
-                                            vertical: 15, horizontal: 20),
+                                            vertical: 18, horizontal: 18),
                                         child: Column(
                                           crossAxisAlignment:
                                               CrossAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              AppLanguage
-                                                  .popularCitiesText[language],
-                                              style: TextStyle(
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColor.secondryColor(
-                                                      context)),
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  AppLanguage.popularCitiesText[
+                                                      language],
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontSize: 16,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColor
+                                                        .secondryColor(context),
+                                                  ),
+                                                ),
+                                                Text(
+                                                  "${controller.getSelectedCities.length}/4",
+                                                  style: TextStyle(
+                                                    fontFamily:
+                                                        AppFont.fontFamily,
+                                                    fontSize: 12,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColor
+                                                        .pinkColor
+                                                        .withOpacity(0.9),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                             SizedBox(
                                                 height:
@@ -463,18 +490,16 @@ class _CityPreferenceState extends State<CityPreference> {
                                                         ),
                                                       )
                                                     : Wrap(
-                                                        spacing: size.width *
-                                                            5 /
-                                                            100,
+                                                        spacing:
+                                                           size.width *
+                                                               _cityChipSpacingRatio,
                                                         runSpacing:
-                                                            size.height *
-                                                                2 /
-                                                                100,
-                                                        children:
-                                                            _getFilteredCities(
-                                                                    controller
-                                                                        .getCityList)
-                                                                .map((city) {
+                                                           size.height *
+                                                               _cityChipRunSpacingRatio,
+                                                        children: _getFilteredCities(
+                                                               controller
+                                                                   .getCityList)
+                                                           .map((city) {
                                                           String cityId =
                                                               city['_id'] ?? '';
                                                           String cityName =
@@ -542,93 +567,115 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                 });
                                                               }
                                                             },
-                                                            child: Column(
-                                                              mainAxisSize:
-                                                                  MainAxisSize
-                                                                      .min,
-                                                              children: [
-                                                                Container(
-                                                                  height:
-                                                                      size.width *
-                                                                          14 /
-                                                                          100,
-                                                                  width:
-                                                                      size.width *
-                                                                          14 /
-                                                                          100,
-                                                                  decoration:
-                                                                      BoxDecoration(
-                                                                    color: AppColor
-                                                                        .filledcolor(
-                                                                            context),
-                                                                    border:
-                                                                        Border
-                                                                            .all(
-                                                                      color: isSelected
-                                                                          ? AppColor
-                                                                              .buttonColor
-                                                                          : AppColor
-                                                                              .borderColor,
-                                                                      width: 2,
-                                                                    ),
-                                                                    shape: BoxShape
-                                                                        .circle,
-                                                                    image: cityImage
-                                                                            .isNotEmpty
-                                                                        ? DecorationImage(
-                                                                            image:
-                                                                                NetworkImage(
-                                                                              controller.getCityImageUrl(cityImage),
-                                                                            ),
-                                                                            fit:
-                                                                                BoxFit.cover,
-                                                                            onError:
-                                                                                (exception, stackTrace) {
-                                                                              print("Image load error: $exception");
-                                                                            },
-                                                                          )
-                                                                        : null,
-                                                                  ),
-                                                                  child: cityImage
-                                                                          .isEmpty
-                                                                      ? Center(
-                                                                          child:
-                                                                              Text(
-                                                                            cityName.isNotEmpty
-                                                                                ? cityName[0].toUpperCase()
-                                                                                : '?',
-                                                                            style:
-                                                                                TextStyle(
-                                                                              fontFamily: AppFont.fontFamily,
-                                                                              fontSize: 24,
-                                                                              fontWeight: FontWeight.bold,
-                                                                              color: AppColor.whiteBlackcolor(context),
-                                                                            ),
-                                                                          ),
-                                                                        )
-                                                                      : null,
-                                                                ),
-                                                                SizedBox(
-                                                                    height: size
-                                                                            .height *
-                                                                        1 /
-                                                                        100),
-                                                                Text(
-                                                                  cityName,
-                                                                  style: TextStyle(
-                                                                      fontFamily:
-                                                                          AppFont
-                                                                              .fontFamily,
-                                                                      fontSize:
-                                                                          12,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color: AppColor
-                                                                          .secondryColor(
-                                                                              context)),
-                                                                ),
-                                                              ],
+                                                            child: AnimatedContainer(
+                                                             duration:
+                                                                 const Duration(
+                                                                     milliseconds:
+                                                                         180),
+                                                             padding:
+                                                                 const EdgeInsets
+                                                                     .symmetric(
+                                                                     horizontal:
+                                                                         14,
+                                                                     vertical:
+                                                                         9),
+                                                             decoration:
+                                                                 BoxDecoration(
+                                                               borderRadius:
+                                                                   BorderRadius
+                                                                       .circular(
+                                                                           _cityChipRadius),
+                                                               color: isSelected
+                                                                   ? AppColor
+                                                                       .pinkColor
+                                                                       .withOpacity(
+                                                                           0.18)
+                                                                   : AppColor
+                                                                       .filledcolor(
+                                                                           context),
+                                                               border:
+                                                                   Border.all(
+                                                                 color: isSelected
+                                                                     ? AppColor
+                                                                         .pinkColor
+                                                                     : AppColor
+                                                                         .borderColor
+                                                                         .withOpacity(
+                                                                             0.55),
+                                                                 width: 1.1,
+                                                               ),
+                                                             ),
+                                                             child: Row(
+                                                               mainAxisSize:
+                                                                   MainAxisSize
+                                                                       .min,
+                                                               children: [
+                                                                 if (cityImage
+                                                                     .isNotEmpty)
+                                                                   Container(
+                                                                     width: 20,
+                                                                     height: 20,
+                                                                     margin: const EdgeInsets
+                                                                         .only(
+                                                                         right:
+                                                                             8),
+                                                                     decoration:
+                                                                         BoxDecoration(
+                                                                       shape: BoxShape
+                                                                           .circle,
+                                                                       image:
+                                                                           DecorationImage(
+                                                                         image:
+                                                                             NetworkImage(
+                                                                           controller.getCityImageUrl(cityImage),
+                                                                         ),
+                                                                         fit: BoxFit
+                                                                             .cover,
+                                                                         onError:
+                                                                             (error, stackTrace) {
+                                                                           print(
+                                                                               "Image load error: $error");
+                                                                         },
+                                                                       ),
+                                                                     ),
+                                                                   ),
+                                                                 Text(
+                                                                   cityName,
+                                                                   style:
+                                                                       TextStyle(
+                                                                     fontFamily:
+                                                                         AppFont
+                                                                             .fontFamily,
+                                                                     fontSize:
+                                                                         13,
+                                                                     fontWeight:
+                                                                         FontWeight
+                                                                             .w500,
+                                                                     color: isSelected
+                                                                         ? AppColor
+                                                                             .pinkColor
+                                                                         : AppColor
+                                                                             .secondryColor(context),
+                                                                   ),
+                                                                 ),
+                                                                 if (isSelected)
+                                                                   const Padding(
+                                                                     padding: EdgeInsets
+                                                                         .only(
+                                                                         left:
+                                                                             6),
+                                                                     child:
+                                                                         Icon(
+                                                                       Icons
+                                                                           .check_circle,
+                                                                       size:
+                                                                           16,
+                                                                       color: AppColor
+                                                                           .pinkColor,
+                                                                     ),
+                                                                   ),
+                                                               ],
+                                                             ),
                                                             ),
                                                           );
                                                         }).toList(),
@@ -664,49 +711,55 @@ class _CityPreferenceState extends State<CityPreference> {
                                 SizedBox(height: size.height * 2.5 / 100),
 
                                 Container(
-                                  height: size.height * 45 / 100,
-                                  width: size.width * 100 / 100,
-                                  decoration: BoxDecoration(
-                                    border: Border.all(
-                                        color: AppColor.darkPurpleColor,
-                                        width: 2),
-                                  ),
-                                  child: GoogleMap(
-                                    initialCameraPosition: CameraPosition(
-                                      target: LatLng(
-                                        controller.getCityLatitude(
-                                            controller.getCurrentConfigCity!),
-                                        controller.getCityLongitude(
-                                            controller.getCurrentConfigCity!),
-                                      ),
-                                      zoom: _getZoomLevel(
-                                          controller.getCurrentDistance),
-                                    ),
-                                    circles: circles,
-                                    markers: markers,
-                                    onMapCreated:
-                                        (GoogleMapController gController) {
-                                      print("Map created callback");
-                                      mapController = gController;
+                                 height: size.height * _mapHeightRatio,
+                                 width: size.width * _mapWidthRatio,
+                                 decoration: BoxDecoration(
+                                   borderRadius: BorderRadius.circular(
+                                       _mapCardRadius),
+                                   border: Border.all(
+                                       color: AppColor.darkPurpleColor,
+                                       width: 1.5),
+                                 ),
+                                 child: ClipRRect(
+                                   borderRadius: BorderRadius.circular(
+                                       _mapCardRadius),
+                                   child: GoogleMap(
+                                     initialCameraPosition: CameraPosition(
+                                       target: LatLng(
+                                         controller.getCityLatitude(
+                                             controller.getCurrentConfigCity!),
+                                         controller.getCityLongitude(
+                                             controller.getCurrentConfigCity!),
+                                       ),
+                                       zoom: _getZoomLevel(
+                                           controller.getCurrentDistance),
+                                     ),
+                                     circles: circles,
+                                     markers: markers,
+                                     onMapCreated:
+                                         (GoogleMapController gController) {
+                                       print("Map created callback");
+                                       mapController = gController;
 
-                                      Future.delayed(
-                                          const Duration(milliseconds: 500),
-                                          () {
-                                        print("Map is now ready");
-                                        setState(() {
-                                          _isMapReady = true;
-                                        });
-                                        _updateMapCircles(controller);
-                                      });
-                                    },
-                                    myLocationButtonEnabled: false,
-                                    zoomControlsEnabled: false,
-                                    mapToolbarEnabled: false,
-                                    scrollGesturesEnabled: true,
-                                    zoomGesturesEnabled: true,
-                                    tiltGesturesEnabled: true,
-                                    rotateGesturesEnabled: true,
-                                  ),
+                                       Future.delayed(
+                                           const Duration(milliseconds: 500),
+                                           () {
+                                         print("Map is now ready");
+                                         setState(() {
+                                           _isMapReady = true;
+                                         });
+                                         _updateMapCircles(controller);
+                                       });
+                                     },
+                                     myLocationButtonEnabled: false,
+                                     zoomControlsEnabled: false,
+                                     mapToolbarEnabled: false,
+                                     scrollGesturesEnabled: true,
+                                     zoomGesturesEnabled: true,
+                                     tiltGesturesEnabled: true,
+                                     rotateGesturesEnabled: true,
+                                   ),
+                                 ),
                                 ),
 
                                 // Distance Section
@@ -756,7 +809,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                               padding: const EdgeInsets.only(
                                                   left: 18),
                                               child: Text(
-                                                "Upto ${controller.getCurrentDistance.toInt()} kilometres away",
+                                                "Up to ${controller.getCurrentDistance.toInt()} kilometres away",
                                                 style: TextStyle(
                                                   fontFamily:
                                                       AppFont.fontFamily,
@@ -931,10 +984,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                 ),
                               ],
 
-                              SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      20 /
-                                      100),
+                              SizedBox(height: size.height * 14 / 100),
                             ],
                           ),
                         ),
