@@ -13,16 +13,16 @@ class SessionManager {
 
   static Future<bool>? _refreshInFlight;
 
+  static String _firstNonEmpty(Iterable<dynamic> values) {
+    for (final value in values) {
+      final candidate = (value ?? '').toString().trim();
+      if (candidate.isNotEmpty) return candidate;
+    }
+    return '';
+  }
+
   static String extractToken(dynamic payload) {
     if (payload is! Map) return '';
-
-    String _firstNonEmpty(Iterable<dynamic> values) {
-      for (final value in values) {
-        final candidate = (value ?? '').toString().trim();
-        if (candidate.isNotEmpty) return candidate;
-      }
-      return '';
-    }
 
     final data = payload['data'];
     final user = payload['user'];
@@ -39,14 +39,6 @@ class SessionManager {
 
   static String extractRefreshToken(dynamic payload) {
     if (payload is! Map) return '';
-
-    String _firstNonEmpty(Iterable<dynamic> values) {
-      for (final value in values) {
-        final candidate = (value ?? '').toString().trim();
-        if (candidate.isNotEmpty) return candidate;
-      }
-      return '';
-    }
 
     final data = payload['data'];
     final user = payload['user'];
@@ -121,6 +113,8 @@ class SessionManager {
 
     if (refreshToken.isNotEmpty) {
       await CacheHelper.save(_refreshTokenKey, refreshToken);
+    } else {
+      await CacheHelper.remove(_refreshTokenKey);
     }
 
     if (expEpoch != null) {

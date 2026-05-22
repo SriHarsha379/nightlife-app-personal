@@ -70,13 +70,13 @@ Future<Map<String, dynamic>?> _handleStatusCode(
 
   if (statusCode == 401 || statusCode == 403) {
     if (context != null) {
-      _redirectToLogin(context, errorMessage);
+      await _redirectToLogin(context, errorMessage);
     }
     return null;
   }
   if (statusCode == 423) {
     if (context != null) {
-      _redirectToLogin(context, errorMessage);
+      await _redirectToLogin(context, errorMessage);
     }
     return null;
   }
@@ -117,9 +117,9 @@ String _getErrorMessage(dynamic body) {
 }
 
 // ------------------ REDIRECT TO LOGIN ------------------
-void _redirectToLogin(BuildContext context, String message) {
+Future<void> _redirectToLogin(BuildContext context, String message) async {
   TopNotification.error(context, message);
-  SessionManager.clearAuthSession();
+  await SessionManager.clearAuthSession();
   AppConstant.selectFooterIndex = 0;
   AppContentCache().clear();
   Navigator.pushAndRemoveUntil(

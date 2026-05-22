@@ -44,6 +44,21 @@ class _SplashState extends State<Splash> {
     return 0;
   }
 
+  Future<void> _clearSessionAndNavigateUnauthenticated(
+    UserController userController,
+    HomeController homeController,
+    ProfileController profileController,
+    GetMySwipeProfileController swipeProfileController,
+  ) async {
+    AppConstant.token = '';
+    userController.reset();
+    homeController.clearAllData();
+    profileController.clearProfileData();
+    swipeProfileController.resetState();
+    await SessionManager.clearAuthSession();
+    await _navigateToUnauthenticatedEntry();
+  }
+
   void _navigateForAuthenticatedUser(Map<String, dynamic> userData) {
     final bool isVerified =
         userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
@@ -162,30 +177,30 @@ class _SplashState extends State<Splash> {
         String token = SessionManager.extractToken(data);
 
         if (token.isEmpty) {
-          AppConstant.token = '';
-          userController.reset();
-          homeController.clearAllData();
-          profileController.clearProfileData();
-          swipeProfileController.resetState();
-          await SessionManager.clearAuthSession();
-          await _navigateToUnauthenticatedEntry();
+          await _clearSessionAndNavigateUnauthenticated(
+            userController,
+            homeController,
+            profileController,
+            swipeProfileController,
+          );
           return;
         }
-        if (_isTokenExpired(token)) {
+        var isExpired = _isTokenExpired(token);
+        if (isExpired) {
           final didRefresh = await SessionManager.tryRefreshSession();
           if (didRefresh) {
             data = await SessionManager.readCachedUserDetailsMap();
             token = SessionManager.extractToken(data);
+            isExpired = _isTokenExpired(token);
           }
         }
-        if (token.isEmpty || _isTokenExpired(token)) {
-          AppConstant.token = '';
-          userController.reset();
-          homeController.clearAllData();
-          profileController.clearProfileData();
-          swipeProfileController.resetState();
-          await SessionManager.clearAuthSession();
-          await _navigateToUnauthenticatedEntry();
+        if (token.isEmpty || isExpired) {
+          await _clearSessionAndNavigateUnauthenticated(
+            userController,
+            homeController,
+            profileController,
+            swipeProfileController,
+          );
           return;
         }
         AppConstant.token = token;
