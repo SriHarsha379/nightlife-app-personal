@@ -29,10 +29,11 @@ class PopupManager {
   static const String _kPollCountDate = 'popup_poll_count_date';
 
   static void validateConfiguration() {
-    assert(
-      pollSwipeTriggerCount % adSwipeTriggerCount == 0,
-      'pollSwipeTriggerCount must be a multiple of adSwipeTriggerCount',
-    );
+    if (pollSwipeTriggerCount % adSwipeTriggerCount != 0) {
+      throw StateError(
+        'pollSwipeTriggerCount must be a multiple of adSwipeTriggerCount',
+      );
+    }
   }
 
   // ── Advertisement ─────────────────────────────────────────────────────────────
