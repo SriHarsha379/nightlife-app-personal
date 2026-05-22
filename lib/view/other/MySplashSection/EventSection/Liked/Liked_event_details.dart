@@ -38,6 +38,8 @@ class LikedEventDetail extends StatefulWidget {
 }
 
 class _LikedEventDetailState extends State<LikedEventDetail> {
+  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
+  static const double _fullActionBarWidthFactor = 0.85;
   static const String _limitedTimeText = "🔥 Limited time";
   static const String _endedText = "🔥 Ended";
   Timer? _countdownTimer;
@@ -351,6 +353,58 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     Navigator.pop(context, _swipeResult);
   }
 
+  Widget _buildDecisionButton({
+    required String label,
+    required IconData icon,
+    required Color backgroundColor,
+    required Color foregroundColor,
+    required VoidCallback onTap,
+    bool filled = true,
+  }) {
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        onTap: onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 180),
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          decoration: BoxDecoration(
+            color: filled ? backgroundColor : Colors.transparent,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: backgroundColor, width: 1.4),
+            boxShadow: filled
+                ? [
+                    BoxShadow(
+                      color: backgroundColor.withOpacity(0.28),
+                      blurRadius: 14,
+                      offset: const Offset(0, 6),
+                    ),
+                  ]
+                : const [],
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: foregroundColor, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: AppFont.fontFamily,
+                  color: foregroundColor,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -411,34 +465,25 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                 borderRadius: BorderRadius.circular(25),
               ),
               width: showDislikeOnly
-                  ? size.width * 52 / 100
-                  : size.width * 85 / 100,
+                  ? size.width * _dislikeOnlyActionBarWidthFactor
+                  : size.width * _fullActionBarWidthFactor,
               height: size.height * 7 / 100,
               child: Row(
                 children: [
                   SizedBox(
                     width: size.width * 3 / 100,
                   ),
-                  GestureDetector(
-                    behavior: HitTestBehavior.translucent,
+                  _buildDecisionButton(
+                    label: 'Reject',
+                    icon: Icons.close_rounded,
+                    backgroundColor: AppColor.redColor,
+                    foregroundColor: Colors.white,
                     onTap: () async {
                       await _submitEventSwipeAction(
                         'dislike',
                         targetEventId: targetEventId,
                       );
                     },
-                    child: SizedBox(
-                      width: size.width * 12 / 100,
-                      child: ClipRRect(
-                          borderRadius: const BorderRadius.only(
-                            topLeft: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                          ),
-                          child: Image.asset(
-                            AppImage.crossIcon,
-                            fit: BoxFit.cover,
-                          )),
-                    ),
                   ),
                   SizedBox(
                     width: size.width * 3 / 100,
@@ -478,40 +523,17 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     SizedBox(
                       width: size.width * 3 / 100,
                     ),
-                    GestureDetector(
+                    _buildDecisionButton(
+                      label: 'Accept',
+                      icon: Icons.favorite_rounded,
+                      backgroundColor: AppColor.buttonColor,
+                      foregroundColor: Colors.white,
                       onTap: () async {
                         await _submitEventSwipeAction(
                           'like',
                           targetEventId: targetEventId,
                         );
                       },
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 35, vertical: 10),
-                        decoration: BoxDecoration(
-                          color: AppColor.buttonColor,
-                          borderRadius: BorderRadius.circular(50),
-                        ),
-                        child: Row(
-                          children: [
-                            Image.asset(
-                              AppImage.heartImg,
-                              height: 20,
-                              width: 20,
-                              color: Colors.white, // optional tint color
-                            ),
-                            Text(
-                              AppLanguage.likeText[language],
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                                fontFamily: AppFont.fontFamily,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                     ),
                   ],
                 ],

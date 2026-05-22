@@ -203,12 +203,14 @@ class UserController with ChangeNotifier {
   }
 
   Future<void> saveSelectedSearchLocation({
+    String? cityId,
     required String cityName,
     required double latitude,
     required double longitude,
     required double radius,
   }) async {
     _selectedSearchLocation = {
+      'city_id': cityId?.trim() ?? '',
       'city_name': cityName.trim(),
       'latitude': latitude,
       'longitude': longitude,

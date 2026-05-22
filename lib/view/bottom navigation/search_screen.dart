@@ -54,6 +54,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   int tapBarStatus = 0;
   bool _isInitialLoading = true;
+  String selectedCityId = '';
   String cityName = '';
   double latitude = 0.0;
   double longitude = 0.0;
@@ -98,6 +99,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
         if (!mounted) return;
         setState(() {
+          selectedCityId = (cityData['city_id'] ?? cityData['_id'] ?? '')
+              .toString()
+              .trim();
           cityName = (cityData['city_name'] ?? "").toString();
           latitude = _parseDouble(cityData['latitude'], 22.7196);
           longitude = _parseDouble(cityData['longitude'], 75.8577);
@@ -165,6 +169,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
     await controller.fetchFilterEventsVenues(
       context,
+      cityId: selectedCityId,
       latitude: latitude,
       longitude: longitude,
       type: type,
@@ -2391,6 +2396,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       isScrollControlled: true,
       builder: (_) => LocationFilterBottomSheet(
+        initialCityId: selectedCityId,
         initialCityName: cityName,
         initialLatitude: latitude,
         initialLongitude: longitude,
@@ -2401,6 +2407,7 @@ class _SearchScreenState extends State<SearchScreen> {
     if (result == null || !mounted) return;
     final userController = context.read<UserController>();
     await userController.saveSelectedSearchLocation(
+      cityId: result.cityId,
       cityName: result.cityName,
       latitude: result.latitude,
       longitude: result.longitude,
@@ -2408,6 +2415,7 @@ class _SearchScreenState extends State<SearchScreen> {
     );
 
     setState(() {
+      selectedCityId = result.cityId;
       cityName = result.cityName;
       latitude = result.latitude;
       longitude = result.longitude;

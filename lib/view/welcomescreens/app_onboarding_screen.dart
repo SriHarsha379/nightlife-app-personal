@@ -1,21 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/animation/purple_screen.dart';
+import 'package:night_life/provider/common_sharedpreferences.dart';
 import 'package:night_life/utilities/page_transition.dart';
+import 'package:night_life/view/authentication/login_screen.dart';
+import 'package:night_life/view/authentication/signup.dart';
 
 import '../../utilities/app_color.dart';
-import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
-import '../../utilities/app_language.dart';
-import 'welcome_screen4.dart';
 
-/// Unified onboarding flow (screens 1-3). Replaces the three separate
-/// WelcomeScreen widgets with a single PageView so that:
-///   • Page transitions are smooth with shared animation state.
-///   • Dot indicators correctly reflect the active page index.
-///   • Back-navigation is disabled throughout the onboarding flow.
 class AppOnboardingScreen extends StatefulWidget {
   static String routeName = './AppOnboarding';
+  static const String completionStorageKey = 'onboarding_completed_v1';
 
   const AppOnboardingScreen({super.key});
 
@@ -23,438 +20,718 @@ class AppOnboardingScreen extends StatefulWidget {
   State<AppOnboardingScreen> createState() => _AppOnboardingScreenState();
 }
 
-class _AppOnboardingScreenState extends State<AppOnboardingScreen>
-    with SingleTickerProviderStateMixin {
+class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
+  static const int _lastPageIndex = 3;
+
   final PageController _pageController = PageController();
 
-  late AnimationController _animController;
-  late Animation<Offset> _slideAnim;
-  late Animation<double> _fadeAnim;
+  final List<_OnboardingSlideData> _slides = const [
+    _OnboardingSlideData(
+      title: 'Connect with people who vibe like you',
+      description:
+          'Chat, connect, and meet people at the clubs and events you love.',
+      imageAsset: AppImage.chatWelcomescreenIcon,
+      accentIcon: Icons.people_alt_rounded,
+      highlights: [
+        'Match with like-minded people',
+        'Start chats instantly',
+        'Build your nightlife circle',
+      ],
+    ),
+    _OnboardingSlideData(
+      title: 'Find the hottest events near you',
+      description:
+          'Discover trending parties, gigs, and open mics happening around your city.',
+      imageAsset: AppImage.micWelcomscreenIcon,
+      accentIcon: Icons.celebration_rounded,
+      highlights: [
+        'Explore curated event picks',
+        'See what is trending nearby',
+        'Plan your next night out quickly',
+      ],
+    ),
+    _OnboardingSlideData(
+      title: 'Discover spaces that define your vibe',
+      description:
+          'From cozy lounges to high-energy clubs, explore the best places in one app.',
+      imageAsset: AppImage.locationwelcomeScreenIcon,
+      accentIcon: Icons.location_city_rounded,
+      highlights: [
+        'Browse venues by mood',
+        'Check details before you go',
+        'Find the right spot faster',
+      ],
+    ),
+  ];
 
   int _currentPage = 0;
 
-  /// 3 onboarding slides + WelcomeScreen4 = 4 total steps → 4 dots
-  static const int _slidesCount = 3;
-  static const int _totalDots = 4;
+  bool get _isLastPage => _currentPage == _lastPageIndex;
 
-  @override
-  void initState() {
-    super.initState();
-    _animController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 1000),
-    );
-    _createAnimations();
-    _animController.forward();
+  Future<void> _markOnboardingCompleted() {
+    return CacheHelper.save(AppOnboardingScreen.completionStorageKey, 'true');
   }
 
-  void _createAnimations() {
-    _slideAnim = Tween<Offset>(
-      begin: const Offset(0, 1),
-      end: Offset.zero,
-    ).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOutCubic),
+  Future<void> _goToLogin() async {
+    await _markOnboardingCompleted();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: const LoginScreen(),
+        duration: const Duration(milliseconds: 350),
+      ),
     );
+  }
 
-    _fadeAnim = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _animController, curve: Curves.easeOut),
+  Future<void> _goToSignup() async {
+    await _markOnboardingCompleted();
+    if (!mounted) return;
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.bottomToTop,
+        child: const PurpleScreen(
+          nextScreen: SignUp(),
+        ),
+        duration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
+  void _skipToLastPage() {
+    _pageController.animateToPage(
+      _lastPageIndex,
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _goToNextPage() {
+    if (_isLastPage) {
+      _goToSignup();
+      return;
+    }
+    _pageController.nextPage(
+      duration: const Duration(milliseconds: 350),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  void _goToPreviousPage() {
+    if (_currentPage == 0) return;
+    _pageController.previousPage(
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
     );
   }
 
   @override
   void dispose() {
     _pageController.dispose();
-    _animController.dispose();
     super.dispose();
   }
 
-  void _onPageChanged(int index) {
-    setState(() => _currentPage = index);
-    _animController.forward(from: 0);
-  }
-
-  void _onNext() {
-    if (_currentPage < _slidesCount - 1) {
-      _pageController.nextPage(
-        duration: const Duration(milliseconds: 400),
-        curve: Curves.easeInOut,
-      );
-    } else {
-      // Navigate to the final "All in One Place" CTA screen
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const WelcomeScreen4(),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    final h = MediaQuery.of(context).size.height;
-    final w = MediaQuery.of(context).size.width;
+    final size = MediaQuery.of(context).size;
+    final safeTop = MediaQuery.of(context).padding.top;
 
-    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
-      systemNavigationBarColor: Colors.transparent,
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ));
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        systemNavigationBarColor: Colors.transparent,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+      ),
+      child: PopScope(
+        canPop: false,
+        onPopInvoked: (_) {},
+        child: Scaffold(
+          body: Container(
+            decoration: const BoxDecoration(
+              gradient: AppColor.backgroundGradientcolor1,
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Column(
+                children: [
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(
+                      size.width * 0.05,
+                      safeTop > 0 ? size.height * 0.006 : size.height * 0.02,
+                      size.width * 0.05,
+                      size.height * 0.012,
+                    ),
+                    child: _buildTopBar(context),
+                  ),
+                  Expanded(
+                    child: PageView.builder(
+                      controller: _pageController,
+                      itemCount: _slides.length + 1,
+                      onPageChanged: (index) {
+                        setState(() {
+                          _currentPage = index;
+                        });
+                      },
+                      itemBuilder: (context, index) {
+                        if (index == _lastPageIndex) {
+                          return _buildFinalPage(context);
+                        }
+                        return _buildIntroPage(context, _slides[index]);
+                      },
+                    ),
+                  ),
+                  _buildBottomBar(context),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 
-    return PopScope(
-      canPop: false,
-      onPopInvoked: (didPop) {},
-      child: Scaffold(
-        body: Stack(
-          children: [
-            // ── Background gradient ──────────────────────────────────────
-            Container(
-              width: w,
-              height: h,
+  Widget _buildTopBar(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return Row(
+      children: [
+        Container(
+          padding: EdgeInsets.symmetric(
+            horizontal: size.width * 0.035,
+            vertical: size.height * 0.008,
+          ),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.08),
+            borderRadius: BorderRadius.circular(30),
+            border: Border.all(color: Colors.white.withOpacity(0.10)),
+          ),
+          child: Text(
+            'Hii',
+            style: TextStyle(
+              color: Colors.white,
+              fontFamily: AppFont.fontFamily,
+              fontWeight: FontWeight.w700,
+              fontSize: size.width * 0.042,
+            ),
+          ),
+        ),
+        const Spacer(),
+        Text(
+          '${_currentPage + 1}/4',
+          style: TextStyle(
+            color: Colors.white70,
+            fontFamily: AppFont.fontFamily,
+            fontWeight: FontWeight.w500,
+            fontSize: size.width * 0.035,
+          ),
+        ),
+        SizedBox(width: size.width * 0.03),
+        if (!_isLastPage)
+          GestureDetector(
+            onTap: _skipToLastPage,
+            child: Container(
+              padding: EdgeInsets.symmetric(
+                horizontal: size.width * 0.04,
+                vertical: size.height * 0.008,
+              ),
               decoration: BoxDecoration(
-                gradient: AppColor.welcomebackgroundGradientcolor(context),
+                color: Colors.white.withOpacity(0.08),
+                borderRadius: BorderRadius.circular(24),
+                border: Border.all(color: Colors.white.withOpacity(0.12)),
+              ),
+              child: Text(
+                'Skip',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: AppFont.fontFamily,
+                  fontWeight: FontWeight.w600,
+                  fontSize: size.width * 0.034,
+                ),
               ),
             ),
+          ),
+      ],
+    );
+  }
 
-            // ── Slide pages ──────────────────────────────────────────────
-            PageView(
-              controller: _pageController,
-              onPageChanged: _onPageChanged,
-              physics: const ClampingScrollPhysics(),
-              children: [
-                _Slide1(h: h, w: w, slideAnim: _slideAnim, fadeAnim: _fadeAnim),
-                _Slide2(h: h, w: w, slideAnim: _slideAnim, fadeAnim: _fadeAnim),
-                _Slide3(h: h, w: w, slideAnim: _slideAnim, fadeAnim: _fadeAnim),
-              ],
-            ),
+  Widget _buildIntroPage(
+    BuildContext context,
+    _OnboardingSlideData slide,
+  ) {
+    final size = MediaQuery.of(context).size;
 
-            // ── Dot page indicator ───────────────────────────────────────
-            Positioned(
-              bottom: h * 0.04,
-              left: 0,
-              right: 0,
-              child: Row(
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final heroHeight = constraints.maxHeight * 0.44;
+          final cardHeight = constraints.maxHeight * 0.68;
+
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: List.generate(
-                  _totalDots,
-                  (i) => _Dot(active: i == _currentPage),
-                ),
-              ),
-            ),
-
-            // ── Next button ──────────────────────────────────────────────
-            Positioned(
-              bottom: h * 0.11,
-              right: 0,
-              child: GestureDetector(
-                onTap: _onNext,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: w * 0.12,
-                    vertical: h * 0.016,
-                  ),
-                  decoration: const BoxDecoration(
-                    color: AppColor.nextButtoncolor,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(25),
-                      bottomLeft: Radius.circular(25),
+                children: [
+                  SizedBox(height: constraints.maxHeight * 0.02),
+                  AnimatedContainer(
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOut,
+                    width: double.infinity,
+                    constraints: BoxConstraints(minHeight: cardHeight),
+                    padding: EdgeInsets.fromLTRB(
+                      size.width * 0.06,
+                      size.height * 0.03,
+                      size.width * 0.06,
+                      size.height * 0.025,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: AppColor.welcomefrontCardcolor(context),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.08),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.24),
+                          blurRadius: 20,
+                          offset: const Offset(0, 12),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Container(
+                          width: size.width * 0.12,
+                          height: size.width * 0.12,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.12),
+                          ),
+                          child: Icon(
+                            slide.accentIcon,
+                            color: Colors.white,
+                            size: size.width * 0.06,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.024),
+                        Text(
+                          slide.title,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: size.width * 0.085,
+                            height: 1.12,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.016),
+                        Text(
+                          slide.description,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.88),
+                            fontSize: size.width * 0.038,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.026),
+                        ...slide.highlights.map(
+                          (highlight) => Padding(
+                            padding: EdgeInsets.only(
+                              bottom: size.height * 0.012,
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(
+                                    top: size.height * 0.004,
+                                  ),
+                                  width: size.width * 0.018,
+                                  height: size.width * 0.018,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFF2CDF),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: size.width * 0.03),
+                                Expanded(
+                                  child: Text(
+                                    highlight,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.94),
+                                      fontSize: size.width * 0.035,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.02),
+                        Center(
+                          child: AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 350),
+                            child: Image.asset(
+                              slide.imageAsset,
+                              key: ValueKey(slide.imageAsset),
+                              height: heroHeight,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  child: Text(
-                    AppLanguage.nextText[language],
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: w * 0.045,
-                      fontWeight: FontWeight.w600,
-                      fontFamily: AppFont.fontFamily,
-                    ),
-                  ),
-                ),
+                  SizedBox(height: constraints.maxHeight * 0.03),
+                ],
               ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
-}
 
-// ──────────────────────────────────────────────────────────────────────────────
-// Individual slide widgets (stateless – animation objects are passed in)
-// ──────────────────────────────────────────────────────────────────────────────
+  Widget _buildFinalPage(BuildContext context) {
+    final size = MediaQuery.of(context).size;
 
-/// Slide 1 – "Connect with people who vibe like you"
-class _Slide1 extends StatelessWidget {
-  final double h, w;
-  final Animation<Offset> slideAnim;
-  final Animation<double> fadeAnim;
-
-  const _Slide1({
-    required this.h,
-    required this.w,
-    required this.slideAnim,
-    required this.fadeAnim,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Content card
-        Positioned(
-          top: h * 0.10,
-          left: w * 0.09,
-          child: Container(
-            width: w * 0.82,
-            padding: EdgeInsets.symmetric(
-              horizontal: w * 0.065,
-              vertical: h * 0.045,
+    return Padding(
+      padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(minHeight: constraints.maxHeight),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(
+                      size.width * 0.07,
+                      size.height * 0.04,
+                      size.width * 0.07,
+                      size.height * 0.035,
+                    ),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(32),
+                      gradient: AppColor.welcomefrontCardcolor(context),
+                      border: Border.all(
+                        color: Colors.white.withOpacity(0.08),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.25),
+                          blurRadius: 22,
+                          offset: const Offset(0, 14),
+                        ),
+                      ],
+                    ),
+                    child: Column(
+                      children: [
+                        Container(
+                          width: size.width * 0.18,
+                          height: size.width * 0.18,
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.12),
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.auto_awesome_rounded,
+                            color: Colors.white,
+                            size: size.width * 0.09,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.03),
+                        Text(
+                          'All in One Place',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: size.width * 0.09,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.018),
+                        Text(
+                          'Get ready to discover the best venues, explore events, and connect with people who share your vibe.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.88),
+                            fontSize: size.width * 0.039,
+                            height: 1.55,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.03),
+                        _buildCtaRow(
+                          icon: Icons.people_alt_rounded,
+                          text: 'Meet people with your vibe',
+                        ),
+                        _buildCtaRow(
+                          icon: Icons.celebration_rounded,
+                          text: 'Explore the best events nearby',
+                        ),
+                        _buildCtaRow(
+                          icon: Icons.location_city_rounded,
+                          text: 'Find venues that match your mood',
+                        ),
+                        SizedBox(height: size.height * 0.04),
+                        SizedBox(
+                          width: double.infinity,
+                          child: ElevatedButton(
+                            onPressed: _goToSignup,
+                            style: ElevatedButton.styleFrom(
+                              elevation: 0,
+                              backgroundColor: AppColor.buttonColor,
+                              foregroundColor: Colors.white,
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.height * 0.018,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                            child: Text(
+                              'Create Account',
+                              style: TextStyle(
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w700,
+                                fontSize: size.width * 0.04,
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.014),
+                        SizedBox(
+                          width: double.infinity,
+                          child: OutlinedButton(
+                            onPressed: _goToLogin,
+                            style: OutlinedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              side: BorderSide(
+                                color: Colors.white.withOpacity(0.24),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: size.height * 0.018,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(18),
+                              ),
+                            ),
+                            child: Text(
+                              'Sign In',
+                              style: TextStyle(
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w600,
+                                fontSize: size.width * 0.04,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildCtaRow({
+    required IconData icon,
+    required String text,
+  }) {
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.only(bottom: size.height * 0.014),
+      child: Row(
+        children: [
+          Container(
+            width: size.width * 0.1,
+            height: size.width * 0.1,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              gradient: AppColor.welcomefrontCardcolor(context),
+              shape: BoxShape.circle,
+              color: Colors.white.withOpacity(0.10),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Connect with people who\nvibe like you\n.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.075,
-                    height: 1.2,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-                SizedBox(height: h * 0.30),
-                SizedBox(height: h * 0.03),
-                Text(
-                  "Chat, connect, and meet\npeople at the clubs and\nevents you love.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.035,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-              ],
+            child: Icon(
+              icon,
+              color: Colors.white,
+              size: size.width * 0.05,
             ),
           ),
-        ),
-
-        // Animated hero image
-        Positioned(
-          bottom: h * 0.19,
-          left: w * 0.19,
-          child: FadeTransition(
-            opacity: fadeAnim,
-            child: SlideTransition(
-              position: slideAnim,
-              child: Image.asset(
-                AppImage.chatWelcomescreenIcon,
-                height: h * 0.60,
+          SizedBox(width: size.width * 0.03),
+          Expanded(
+            child: Text(
+              text,
+              style: TextStyle(
+                color: Colors.white.withOpacity(0.95),
+                fontSize: size.width * 0.036,
+                fontWeight: FontWeight.w500,
+                fontFamily: AppFont.fontFamily,
               ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
-}
 
-/// Slide 2 – "Find the hottest events near you!"
-class _Slide2 extends StatelessWidget {
-  final double h, w;
-  final Animation<Offset> slideAnim;
-  final Animation<double> fadeAnim;
+  Widget _buildBottomBar(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    final progress = (_currentPage + 1) / (_slides.length + 1);
 
-  const _Slide2({
-    required this.h,
-    required this.w,
-    required this.slideAnim,
-    required this.fadeAnim,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Content card
-        Positioned(
-          top: h * 0.10,
-          left: w * 0.09,
-          child: Container(
-            width: w * 0.82,
-            height: h * 0.70,
-            padding: EdgeInsets.symmetric(
-              horizontal: w * 0.045,
-              vertical: h * 0.045,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              gradient: AppColor.welcomefrontCardcolor2,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Find the hottest events near\nyou!\n.\n.\n.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.075,
-                    height: 1.2,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-                SizedBox(height: h * 0.19),
-                SizedBox(height: h * 0.03),
-                Text(
-                  "Discover the hottest\nparties, gigs, and open\nmics near you.",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.037,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Animated hero image
-        Positioned(
-          bottom: h * 0.07,
-          left: w * 0.22,
-          child: FadeTransition(
-            opacity: fadeAnim,
-            child: SlideTransition(
-              position: slideAnim,
-              child: Image.asset(
-                AppImage.micWelcomscreenIcon,
-                height: h * 0.75,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-/// Slide 3 – "Discover spaces that define your vibe!" (right-aligned)
-class _Slide3 extends StatelessWidget {
-  final double h, w;
-  final Animation<Offset> slideAnim;
-  final Animation<double> fadeAnim;
-
-  const _Slide3({
-    required this.h,
-    required this.w,
-    required this.slideAnim,
-    required this.fadeAnim,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        // Content card
-        Positioned(
-          top: h * 0.10,
-          left: w * 0.09,
-          child: Container(
-            width: w * 0.82,
-            height: h * 0.70,
-            padding: EdgeInsets.symmetric(
-              horizontal: w * 0.065,
-              vertical: h * 0.045,
-            ),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(28),
-              gradient: AppColor.welcomefrontCardcolor1,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  "Discover spaces that\ndefine your vibe!\n.\n.",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.075,
-                    height: 1.2,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-                SizedBox(height: h * 0.22),
-                SizedBox(height: h * 0.03),
-                Text(
-                  "From cozy cafés to high-\nenergy clubs — your\ncity's best places await.",
-                  textAlign: TextAlign.right,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: w * 0.028,
-                    height: 1.4,
-                    fontWeight: FontWeight.w500,
-                    fontFamily: AppFont.fontFamily,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-
-        // Animated hero image (placed on the right)
-        Positioned(
-          bottom: h * 0.11,
-          right: w * 0.13,
-          child: FadeTransition(
-            opacity: fadeAnim,
-            child: SlideTransition(
-              position: slideAnim,
-              child: Image.asset(
-                AppImage.locationwelcomeScreenIcon,
-                height: h * 0.68,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-}
-
-// ──────────────────────────────────────────────────────────────────────────────
-// Animated dot indicator
-// ──────────────────────────────────────────────────────────────────────────────
-
-class _Dot extends StatelessWidget {
-  final bool active;
-
-  const _Dot({required this.active});
-
-  @override
-  Widget build(BuildContext context) {
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 300),
-      curve: Curves.easeInOut,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
-      width: active ? 12 : 5,
-      height: active ? 10 : 5,
+    return Container(
+      width: double.infinity,
+      padding: EdgeInsets.fromLTRB(
+        size.width * 0.06,
+        size.height * 0.018,
+        size.width * 0.06,
+        size.height * 0.032,
+      ),
       decoration: BoxDecoration(
-        color: active
-            ? const Color(0xFFFF2CDF)
-            : const Color.fromARGB(255, 251, 249, 253),
-        shape: BoxShape.circle,
+        color: Colors.black.withOpacity(0.18),
+        borderRadius: const BorderRadius.only(
+          topLeft: Radius.circular(28),
+          topRight: Radius.circular(28),
+        ),
+        border: Border(
+          top: BorderSide(color: Colors.white.withOpacity(0.08)),
+        ),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: LinearProgressIndicator(
+              value: progress,
+              minHeight: 6,
+              backgroundColor: Colors.white.withOpacity(0.12),
+              valueColor: const AlwaysStoppedAnimation<Color>(
+                Color(0xFFFF2CDF),
+              ),
+            ),
+          ),
+          SizedBox(height: size.height * 0.014),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              _slides.length + 1,
+              (index) => AnimatedContainer(
+                duration: const Duration(milliseconds: 250),
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                width: index == _currentPage ? 18 : 6,
+                height: 6,
+                decoration: BoxDecoration(
+                  color: index == _currentPage
+                      ? const Color(0xFFFF2CDF)
+                      : Colors.white.withOpacity(0.28),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(height: size.height * 0.02),
+          if (!_isLastPage)
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: _currentPage == 0 ? null : _goToPreviousPage,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.white,
+                      disabledForegroundColor: Colors.white38,
+                      side: BorderSide(color: Colors.white.withOpacity(0.18)),
+                      padding: EdgeInsets.symmetric(
+                        vertical: size.height * 0.018,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    child: Text(
+                      'Back',
+                      style: TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w600,
+                        fontSize: size.width * 0.038,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(width: size.width * 0.03),
+                Expanded(
+                  flex: 2,
+                  child: ElevatedButton(
+                    onPressed: _goToNextPage,
+                    style: ElevatedButton.styleFrom(
+                      elevation: 0,
+                      backgroundColor: AppColor.buttonColor,
+                      foregroundColor: Colors.white,
+                      padding: EdgeInsets.symmetric(
+                        vertical: size.height * 0.018,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                    ),
+                    child: Text(
+                      'Continue',
+                      style: TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w700,
+                        fontSize: size.width * 0.04,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            )
+          else
+            Text(
+              'Choose how you want to continue',
+              style: TextStyle(
+                color: Colors.white70,
+                fontFamily: AppFont.fontFamily,
+                fontSize: size.width * 0.035,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+        ],
       ),
     );
   }
+}
+
+class _OnboardingSlideData {
+  final String title;
+  final String description;
+  final String imageAsset;
+  final IconData accentIcon;
+  final List<String> highlights;
+
+  const _OnboardingSlideData({
+    required this.title,
+    required this.description,
+    required this.imageAsset,
+    required this.accentIcon,
+    required this.highlights,
+  });
 }

@@ -6,6 +6,7 @@ import '../../utilities/app_constant.dart';
 /// Immutable snapshot of the parameters used for a filter request.
 /// Used to skip redundant network calls when nothing has changed.
 class _SearchParams {
+  final String cityId;
   final double latitude;
   final double longitude;
   final int radius;
@@ -13,6 +14,7 @@ class _SearchParams {
   final String type;
 
   const _SearchParams({
+    required this.cityId,
     required this.latitude,
     required this.longitude,
     required this.radius,
@@ -24,6 +26,7 @@ class _SearchParams {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is _SearchParams &&
+        other.cityId == cityId &&
         other.latitude == latitude &&
         other.longitude == longitude &&
         other.radius == radius &&
@@ -33,7 +36,7 @@ class _SearchParams {
 
   @override
   int get hashCode =>
-      Object.hash(latitude, longitude, radius, search, type);
+      Object.hash(cityId, latitude, longitude, radius, search, type);
 }
 
 class SearchFilterController with ChangeNotifier {
@@ -66,6 +69,7 @@ class SearchFilterController with ChangeNotifier {
 
   Future<void> fetchFilterEventsVenues(
     BuildContext context, {
+    String cityId = '',
     required double latitude,
     required double longitude,
     required String type,
@@ -74,6 +78,7 @@ class SearchFilterController with ChangeNotifier {
     bool forceRefresh = false,
   }) async {
     final params = _SearchParams(
+      cityId: cityId.trim(),
       latitude: latitude,
       longitude: longitude,
       radius: radius,
@@ -102,10 +107,20 @@ class SearchFilterController with ChangeNotifier {
     }
 
     final searchQuery = search.trim();
-    final encodedSearch = Uri.encodeQueryComponent(searchQuery);
-    final endpoint = searchQuery.isEmpty
-        ? 'common/filter_events_venues?latitude=$latitude&longitude=$longitude&type=$type&radius=$radius'
-        : 'common/filter_events_venues?search=$encodedSearch&latitude=$latitude&longitude=$longitude&type=$type&radius=$radius';
+    final queryParameters = <String, String>{
+      'latitude': latitude.toString(),
+      'longitude': longitude.toString(),
+      'type': type,
+      'radius': radius.toString(),
+    };
+    if (params.cityId.isNotEmpty) {
+      queryParameters['city_id'] = params.cityId;
+    }
+    if (searchQuery.isNotEmpty) {
+      queryParameters['search'] = searchQuery;
+    }
+    final endpoint =
+        'common/filter_events_venues?${Uri(queryParameters: queryParameters).query}';
 
     final response = await getData(
       endpoint,

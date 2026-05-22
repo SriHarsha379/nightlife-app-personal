@@ -22,9 +22,12 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_snack_bar_toast_message.dart';
+import '../../utilities/popup_manager.dart';
 import '../../utilities/url_utils.dart';
+import '../other/advertisement_popup.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
+import '../other/poll_popup.dart';
 
 class Home extends StatefulWidget {
   static String routeName = './Home';
@@ -44,6 +47,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
+    PopupManager.validateConfiguration();
     _homeController = Provider.of<HomeController>(context, listen: false);
     // Fetch initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -104,6 +108,11 @@ class _HomeState extends State<Home> {
   double _adProgress = 0.0;
   int _adSecondsRemaining = 5;
   bool _isAdPlaybackPaused = false;
+
+  /// Counts every non-ad card swipe since the home screen was loaded.
+  /// Used to trigger ad and poll popups at regular intervals.
+  int _totalSwipeCount = 0;
+  bool _isShowingPopup = false;
 
   String _itemId(dynamic item) =>
       (item is Map ? (item['_id'] ?? '') : '').toString().trim();
@@ -239,6 +248,70 @@ class _HomeState extends State<Home> {
     }
     return _visibleItems(homeController.getVenuesList, _hiddenVenueIds);
   }
+
+  // ── Popup trigger helpers ──────────────────────────────────────────────────
+
+  /// Called after every real (non-ad) card swipe.
+  /// Checks whether an ad or poll popup is due and shows it if so.
+  ///
+  /// NOTE: [PopupManager.pollSwipeTriggerCount] must be an integer multiple of
+  /// [PopupManager.adSwipeTriggerCount] so that poll and ad triggers never fall
+  /// on the same swipe. This is enforced during widget initialization by
+  /// `PopupManager.validateConfiguration()`, and poll is checked first here.
+  void _onRealCardSwiped() {
+    _totalSwipeCount++;
+    final count = _totalSwipeCount;
+
+    // Poll popup takes priority over ad on its trigger swipes (since poll
+    // trigger is a multiple of ad trigger, we check it first).
+    if (count % PopupManager.pollSwipeTriggerCount == 0) {
+      _maybeShowPollPopup();
+      return;
+    }
+
+    // Ad popup: every [adSwipeTriggerCount] swipes.
+    if (count % PopupManager.adSwipeTriggerCount == 0) {
+      _maybeShowAdPopup();
+    }
+  }
+
+  Future<void> _maybeShowAdPopup() async {
+    if (_isShowingPopup || !mounted) return;
+    final allowed = await PopupManager.shouldShowAdPopup();
+    if (!allowed || !mounted) return;
+
+    _isShowingPopup = true;
+    await PopupManager.recordAdShown();
+
+    final ads = sampleAds;
+    if (ads.isEmpty || !mounted) {
+      _isShowingPopup = false;
+      return;
+    }
+    final ad = ads[_totalSwipeCount % ads.length];
+    await AdvertisementPopup.show(context, ad);
+    if (mounted) _isShowingPopup = false;
+  }
+
+  Future<void> _maybeShowPollPopup() async {
+    if (_isShowingPopup || !mounted) return;
+    final allowed = await PopupManager.shouldShowPollPopup();
+    if (!allowed || !mounted) return;
+
+    _isShowingPopup = true;
+    await PopupManager.recordPollShown();
+
+    final polls = samplePolls;
+    if (polls.isEmpty || !mounted) {
+      _isShowingPopup = false;
+      return;
+    }
+    final poll = polls[_totalSwipeCount % polls.length];
+    await PollPopup.show(context, poll);
+    if (mounted) _isShowingPopup = false;
+  }
+
+  // ── End popup helpers ──────────────────────────────────────────────────────
 
   void _resetAdPlayback({bool shouldRebuild = true}) {
     _adProgressTimer?.cancel();
@@ -678,7 +751,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < membersList.length) {
@@ -706,7 +779,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < membersList.length) {
@@ -735,6 +808,7 @@ class _HomeState extends State<Home> {
       currentMemberIndex = currentIndex ?? 0;
       membersTabVersion++;
     });
+    _onRealCardSwiped();
     _tryLoadMoreForType('member', currentIndex, membersList.length);
     return true;
   }
@@ -765,7 +839,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < eventsList.length) {
@@ -791,7 +865,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < eventsList.length) {
@@ -820,6 +894,7 @@ class _HomeState extends State<Home> {
       currentEventIndex = currentIndex ?? 0;
       eventTabVersion++;
     });
+    _onRealCardSwiped();
     _tryLoadMoreForType('event', currentIndex, eventsList.length);
 
     return true;
@@ -850,7 +925,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showHeart = true;
         showCross = false;
-        lastSwipeType = 'cross';
+        lastSwipeType = 'accept';
       });
 
       if (previousIndex < venuesList.length) {
@@ -876,7 +951,7 @@ class _HomeState extends State<Home> {
       setState(() {
         showCross = true;
         showHeart = false;
-        lastSwipeType = 'heart';
+        lastSwipeType = 'reject';
       });
 
       if (previousIndex < venuesList.length) {
@@ -904,6 +979,7 @@ class _HomeState extends State<Home> {
       currentVenueIndex = currentIndex ?? 0;
       venusTabVersion++;
     });
+    _onRealCardSwiped();
     _tryLoadMoreForType('venue', currentIndex, venuesList.length);
     return true;
   }
@@ -1509,6 +1585,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    membersSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onMessageTap: () {
                                                     showInviteMemberstypebottomsheet(
                                                       context,
@@ -1698,6 +1779,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    eventsSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onShareTap: () {
                                                     showEventTypesBottomSheet(
                                                       context,
@@ -1914,6 +2000,11 @@ class _HomeState extends State<Home> {
                                                   showHeart: showHeart,
                                                   showCross: showCross,
                                                   lastSwipeType: lastSwipeType,
+                                                  onRejectTap: () {
+                                                    venuesSwiperController.swipe(
+                                                      CardSwiperDirection.left,
+                                                    );
+                                                  },
                                                   onShareTap: () {
                                                     showEventTypesBottomSheet(
                                                       context,

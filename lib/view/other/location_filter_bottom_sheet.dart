@@ -2,8 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:provider/provider.dart';
 
-import '../../provider/common_api_helper.dart';
+import '../../controller/city/city_preference.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_font.dart';
@@ -11,12 +12,14 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 
 class LocationFilterResult {
+  final String cityId;
   final String cityName;
   final double latitude;
   final double longitude;
   final double radiusKm;
 
   const LocationFilterResult({
+    required this.cityId,
     required this.cityName,
     required this.latitude,
     required this.longitude,
@@ -25,6 +28,7 @@ class LocationFilterResult {
 }
 
 class LocationFilterBottomSheet extends StatefulWidget {
+  final String initialCityId;
   final String initialCityName;
   final double initialLatitude;
   final double initialLongitude;
@@ -32,6 +36,7 @@ class LocationFilterBottomSheet extends StatefulWidget {
 
   const LocationFilterBottomSheet({
     super.key,
+    required this.initialCityId,
     required this.initialCityName,
     required this.initialLatitude,
     required this.initialLongitude,
@@ -69,34 +74,33 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
   }
 
   Future<void> _fetchCities() async {
+    final cityController = context.read<CityPreferenceController>();
     setState(() {
       _isCitiesLoading = true;
     });
 
-    final headers = <String, String>{};
-    if (AppConstant.token.isNotEmpty) {
-      headers['Authorization'] = 'Bearer ${AppConstant.token}';
+    if (cityController.getCityList.isEmpty) {
+      await cityController.fetchCityList(context);
     }
 
-    final response = await getFormData(
-      'auth/popular_cities',
-      context,
-      headers: headers.isEmpty ? null : headers,
-    );
-
     final cities = <Map<String, dynamic>>[];
-    if (response != null &&
-        response['success'] == true &&
-        response['data'] is List) {
-      final rawList = (response['data'] as List).whereType<Map>();
-      for (final item in rawList) {
-        cities.add(Map<String, dynamic>.from(item));
-      }
+    final rawList = cityController.getCityList.whereType<Map>();
+    for (final item in rawList) {
+      cities.add(Map<String, dynamic>.from(item));
     }
 
     Map<String, dynamic>? selected;
     if (cities.isNotEmpty) {
-      selected = cities.firstWhere(
+      final initialId = widget.initialCityId.trim();
+      if (initialId.isNotEmpty) {
+        for (final city in cities) {
+          if (_cityId(city) == initialId) {
+            selected = city;
+            break;
+          }
+        }
+      }
+      selected ??= cities.firstWhere(
         (city) =>
             (city['city_name'] ?? '').toString().toLowerCase() ==
             widget.initialCityName.toLowerCase(),
@@ -106,6 +110,7 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
 
     if (selected == null) {
       selected = {
+        'city_id': widget.initialCityId,
         'city_name': widget.initialCityName,
         'latitude': widget.initialLatitude,
         'longitude': widget.initialLongitude,
@@ -119,6 +124,11 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
       _isCitiesLoading = false;
     });
     _moveCamera();
+  }
+
+  String _cityId(Map<String, dynamic>? city) {
+    if (city == null) return '';
+    return (city['_id'] ?? city['city_id'] ?? '').toString().trim();
   }
 
   List<Map<String, dynamic>> _filteredCities() {
@@ -142,6 +152,11 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
       _toDouble(_selectedCity?['longitude'], widget.initialLongitude);
   String get _selectedCityName =>
       (_selectedCity?['city_name'] ?? widget.initialCityName).toString();
+  String get _selectedCityId {
+    final selectedId = _cityId(_selectedCity);
+    if (selectedId.isNotEmpty) return selectedId;
+    return widget.initialCityId.trim();
+  }
 
   double _zoomForRadius(double radiusKm) {
     if (radiusKm <= 10) return 11.5;
@@ -294,8 +309,11 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                   runSpacing: 10,
                   children: visibleCities.map((city) {
                     final cityName = (city['city_name'] ?? '').toString();
-                    final selected = cityName.toLowerCase() ==
-                        _selectedCityName.toLowerCase();
+                    final candidateId = _cityId(city);
+                    final selected = candidateId.isNotEmpty
+                        ? candidateId == _selectedCityId
+                        : cityName.toLowerCase() ==
+                            _selectedCityName.toLowerCase();
                     return GestureDetector(
                       onTap: () {
                         setState(() {
@@ -433,9 +451,10 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                     Navigator.pop(
                       context,
                       LocationFilterResult(
-                        cityName: _selectedCityName,
-                        latitude: _selectedLat,
-                        longitude: _selectedLng,
+                       cityId: _selectedCityId,
+                       cityName: _selectedCityName,
+                       latitude: _selectedLat,
+                       longitude: _selectedLng,
                         radiusKm: _currentDistance,
                       ),
                     );
