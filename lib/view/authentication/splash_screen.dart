@@ -176,6 +176,7 @@ class _SplashState extends State<Splash> {
     try {
       const initialAuthResolutionTimeout = Duration(seconds: 10);
       const restartGraceRecheckTimeout = Duration(seconds: 2);
+      final authStateStream = SessionManager.authStateChanges().asBroadcastStream();
 
       // Wait for Firebase to emit its auth state rather than reading
       // currentUser synchronously.  On hot-restart the Dart VM re-initialises
@@ -184,7 +185,7 @@ class _SplashState extends State<Splash> {
       // actually signed in.
       bool isAuthenticated;
       try {
-        isAuthenticated = await SessionManager.authStateChanges()
+        isAuthenticated = await authStateStream
             .firstWhere(
               (_) => true,
               orElse: () => SessionManager.hasAuthenticatedUser,
@@ -205,7 +206,7 @@ class _SplashState extends State<Splash> {
         // This second subscription intentionally waits for a "true" emission
         // shortly after the initial read to absorb transient restart races.
         try {
-          final recoveredAuth = await SessionManager.authStateChanges()
+          final recoveredAuth = await authStateStream
               .firstWhere(
                 (signedIn) => signedIn,
                 orElse: () => false,
