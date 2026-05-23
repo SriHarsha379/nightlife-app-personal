@@ -193,6 +193,26 @@ class _SplashState extends State<Splash> {
       }
 
       if (!isAuthenticated) {
+        // Firebase can briefly emit/appear as signed-out during hot-restart
+        // while native session restoration is still settling. Give it one
+        // short grace re-check before performing destructive sign-out.
+        try {
+          final recoveredAuth = await SessionManager.authStateChanges()
+              .firstWhere((signedIn) => signedIn)
+              .timeout(
+                const Duration(seconds: 2),
+                onTimeout: () => false,
+              );
+          if (recoveredAuth) {
+            isAuthenticated = true;
+            log('Recovered authenticated state after grace re-check.');
+          }
+        } catch (e) {
+          log('Grace auth re-check failed: $e');
+        }
+      }
+
+      if (!isAuthenticated) {
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
