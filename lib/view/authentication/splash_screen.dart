@@ -191,9 +191,9 @@ class _SplashState extends State<Splash> {
       // actually signed in.
       bool isAuthenticated;
       try {
-        isAuthenticated = await authStateStream.timeout(
-          _initialAuthResolutionTimeout,
-        ).first;
+        isAuthenticated = await authStateStream
+            .first
+            .timeout(_initialAuthResolutionTimeout);
       } on TimeoutException {
         isAuthenticated = SessionManager.hasAuthenticatedUser;
         log('Firebase auth state stream timed out; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
@@ -206,19 +206,10 @@ class _SplashState extends State<Splash> {
         // Firebase can briefly emit/appear as signed-out during hot-restart
         // while native session restoration is still settling. Give it one
         // short grace re-check before performing destructive sign-out.
-        // This second subscription intentionally waits for a "true" emission
-        // shortly after the initial read to absorb transient restart races.
         try {
-          final recoveredAuth = await authStateStream
-              .firstWhere(
-                (signedIn) => signedIn,
-                orElse: () => false,
-              )
-              .timeout(
-                _restartGraceRecheckTimeout,
-                onTimeout: () => false,
-              );
-          if (recoveredAuth) {
+          await Future<void>.delayed(_restartGraceRecheckTimeout);
+          isAuthenticated = SessionManager.hasAuthenticatedUser;
+          if (isAuthenticated) {
             isAuthenticated = true;
             log('Recovered authenticated state after grace re-check.');
           }
