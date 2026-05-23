@@ -32,11 +32,13 @@ class AuthStateGate extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      initialData: authSessionService.isSignedIn,
       stream: authSessionService.authStateChanges(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            snapshot.hasData == false) {
+        // Wait for the first Firebase emission before routing.
+        // Using a synchronous initialData can return false on hot-restart
+        // because Firebase restores its auth state asynchronously; this
+        // would flash the login screen even for a fully authenticated user.
+        if (!snapshot.hasData) {
           return loadingChild ?? const Splash();
         }
 

@@ -173,7 +173,21 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      if (!SessionManager.hasAuthenticatedUser) {
+      // Wait for Firebase to emit its auth state rather than reading
+      // currentUser synchronously.  On hot-restart the Dart VM re-initialises
+      // but Firebase restores its session from native storage asynchronously,
+      // so currentUser can be null for a short window even when the user is
+      // actually signed in.
+      bool isAuthenticated;
+      try {
+        isAuthenticated = await SessionManager.authStateChanges()
+            .first
+            .timeout(const Duration(seconds: 10));
+      } catch (_) {
+        isAuthenticated = SessionManager.hasAuthenticatedUser;
+      }
+
+      if (!isAuthenticated) {
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
