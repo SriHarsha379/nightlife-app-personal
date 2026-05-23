@@ -198,7 +198,10 @@ class _SplashState extends State<Splash> {
         // short grace re-check before performing destructive sign-out.
         try {
           final recoveredAuth = await SessionManager.authStateChanges()
-              .firstWhere((signedIn) => signedIn)
+              .firstWhere(
+                (signedIn) => signedIn,
+                orElse: () => false,
+              )
               .timeout(
                 const Duration(seconds: 2),
                 onTimeout: () => false,
