@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -183,7 +184,11 @@ class _SplashState extends State<Splash> {
         isAuthenticated = await SessionManager.authStateChanges()
             .first
             .timeout(const Duration(seconds: 10));
-      } catch (_) {
+      } on TimeoutException {
+        log('Firebase auth state stream timed out; falling back to synchronous check');
+        isAuthenticated = SessionManager.hasAuthenticatedUser;
+      } catch (e) {
+        log('Firebase auth state stream error: $e; falling back to synchronous check');
         isAuthenticated = SessionManager.hasAuthenticatedUser;
       }
 

@@ -29,6 +29,22 @@ class AuthStateGate extends StatelessWidget {
         'true';
   }
 
+  Widget _buildUnauthenticatedWidget() {
+    return FutureBuilder<bool>(
+      future: (hasCompletedOnboarding ?? _defaultHasCompletedOnboarding)(),
+      builder: (context, onboardingSnapshot) {
+        if (onboardingSnapshot.connectionState != ConnectionState.done) {
+          return loadingChild ?? const Splash();
+        }
+        final completed = onboardingSnapshot.data == true;
+        if (completed) {
+          return loginChild ?? const LoginScreen();
+        }
+        return onboardingChild ?? const AppOnboardingScreen();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
@@ -38,8 +54,14 @@ class AuthStateGate extends StatelessWidget {
         // Using a synchronous initialData can return false on hot-restart
         // because Firebase restores its auth state asynchronously; this
         // would flash the login screen even for a fully authenticated user.
-        if (!snapshot.hasData) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
           return loadingChild ?? const Splash();
+        }
+
+        // On stream error treat the user as unauthenticated so the app does
+        // not hang on the loading screen indefinitely.
+        if (snapshot.hasError || !snapshot.hasData) {
+          return _buildUnauthenticatedWidget();
         }
 
         final signedIn = snapshot.data ?? false;
@@ -47,21 +69,7 @@ class AuthStateGate extends StatelessWidget {
           return authenticatedChild ?? const Splash();
         }
 
-        final getOnboardingFuture =
-            hasCompletedOnboarding ?? _defaultHasCompletedOnboarding;
-        return FutureBuilder<bool>(
-          future: getOnboardingFuture(),
-          builder: (context, onboardingSnapshot) {
-            if (onboardingSnapshot.connectionState != ConnectionState.done) {
-              return loadingChild ?? const Splash();
-            }
-            final completed = onboardingSnapshot.data == true;
-            if (completed) {
-              return loginChild ?? const LoginScreen();
-            }
-            return onboardingChild ?? const AppOnboardingScreen();
-          },
-        );
+        return _buildUnauthenticatedWidget();
       },
     );
   }
