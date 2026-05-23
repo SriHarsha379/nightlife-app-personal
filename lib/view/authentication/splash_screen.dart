@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +35,14 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  // Upper bound to wait for Firebase auth stream to emit the first state
+  // after app/restart initialization.
+  static const Duration _initialAuthResolutionTimeout = Duration(seconds: 10);
+
+  // Short extra window to recover from transient restart races where auth may
+  // briefly appear signed-out before native session restoration settles.
+  static const Duration _restartGraceRecheckTimeout = Duration(seconds: 2);
+
   bool _isTokenExpired(String token) {
     return SessionManager.isTokenExpired(token);
   }
@@ -173,7 +182,42 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      if (!SessionManager.hasAuthenticatedUser) {
+      final authStateStream = SessionManager.authStateChanges().asBroadcastStream();
+
+      // Wait for Firebase to emit its auth state rather than reading
+      // currentUser synchronously.  On hot-restart the Dart VM re-initialises
+      // but Firebase restores its session from native storage asynchronously,
+      // so currentUser can be null for a short window even when the user is
+      // actually signed in.
+      bool isAuthenticated;
+      try {
+        isAuthenticated = await authStateStream
+            .first
+            .timeout(_initialAuthResolutionTimeout);
+      } on TimeoutException {
+        isAuthenticated = SessionManager.hasAuthenticatedUser;
+        log('Firebase auth state stream timed out; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
+      } catch (e) {
+        isAuthenticated = SessionManager.hasAuthenticatedUser;
+        log('Firebase auth state stream error: $e; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
+      }
+
+      if (!isAuthenticated) {
+        // Firebase can briefly emit/appear as signed-out during hot-restart
+        // while native session restoration is still settling. Give it one
+        // short grace re-check before performing destructive sign-out.
+        try {
+          await Future<void>.delayed(_restartGraceRecheckTimeout);
+          isAuthenticated = SessionManager.hasAuthenticatedUser;
+          if (isAuthenticated) {
+            log('Recovered authenticated state after grace re-check.');
+          }
+        } catch (e) {
+          log('Grace auth re-check failed: $e');
+        }
+      }
+
+      if (!isAuthenticated) {
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,

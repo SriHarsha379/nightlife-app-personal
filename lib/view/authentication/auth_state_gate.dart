@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/welcomescreens/app_onboarding_screen.dart';
@@ -29,14 +31,45 @@ class AuthStateGate extends StatelessWidget {
         'true';
   }
 
+  Widget _buildUnauthenticatedWidget() {
+    return FutureBuilder<bool>(
+      future: (hasCompletedOnboarding ?? _defaultHasCompletedOnboarding)(),
+      builder: (context, onboardingSnapshot) {
+        if (onboardingSnapshot.connectionState != ConnectionState.done) {
+          return loadingChild ?? const Splash();
+        }
+        final completed = onboardingSnapshot.data == true;
+        if (completed) {
+          return loginChild ?? const LoginScreen();
+        }
+        return onboardingChild ?? const AppOnboardingScreen();
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<bool>(
-      initialData: authSessionService.isSignedIn,
       stream: authSessionService.authStateChanges(),
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting &&
-            snapshot.hasData == false) {
+        // Wait for the first Firebase emission before routing.
+        // Using a synchronous initialData can return false on hot-restart
+        // because Firebase restores its auth state asynchronously; this
+        // would flash the login screen even for a fully authenticated user.
+        // This intentionally waits for fresh stream data instead of making a
+        // route decision from pre-emission/no-data states.
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return loadingChild ?? const Splash();
+        }
+
+        // On stream error treat the user as unauthenticated so the app does
+        // not hang on the loading screen indefinitely.
+        if (snapshot.hasError) {
+          log('AuthStateGate auth stream error: ${snapshot.error}');
+          return _buildUnauthenticatedWidget();
+        }
+
+        if (!snapshot.hasData) {
           return loadingChild ?? const Splash();
         }
 
@@ -45,21 +78,7 @@ class AuthStateGate extends StatelessWidget {
           return authenticatedChild ?? const Splash();
         }
 
-        final getOnboardingFuture =
-            hasCompletedOnboarding ?? _defaultHasCompletedOnboarding;
-        return FutureBuilder<bool>(
-          future: getOnboardingFuture(),
-          builder: (context, onboardingSnapshot) {
-            if (onboardingSnapshot.connectionState != ConnectionState.done) {
-              return loadingChild ?? const Splash();
-            }
-            final completed = onboardingSnapshot.data == true;
-            if (completed) {
-              return loginChild ?? const LoginScreen();
-            }
-            return onboardingChild ?? const AppOnboardingScreen();
-          },
-        );
+        return _buildUnauthenticatedWidget();
       },
     );
   }
