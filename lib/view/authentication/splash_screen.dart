@@ -174,6 +174,9 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
+      const initialAuthResolutionTimeout = Duration(seconds: 10);
+      const restartGraceRecheckTimeout = Duration(seconds: 2);
+
       // Wait for Firebase to emit its auth state rather than reading
       // currentUser synchronously.  On hot-restart the Dart VM re-initialises
       // but Firebase restores its session from native storage asynchronously,
@@ -183,7 +186,7 @@ class _SplashState extends State<Splash> {
       try {
         isAuthenticated = await SessionManager.authStateChanges()
             .first
-            .timeout(const Duration(seconds: 10));
+            .timeout(initialAuthResolutionTimeout);
       } on TimeoutException {
         isAuthenticated = SessionManager.hasAuthenticatedUser;
         log('Firebase auth state stream timed out; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
@@ -196,6 +199,8 @@ class _SplashState extends State<Splash> {
         // Firebase can briefly emit/appear as signed-out during hot-restart
         // while native session restoration is still settling. Give it one
         // short grace re-check before performing destructive sign-out.
+        // This second subscription intentionally waits for a "true" emission
+        // shortly after the initial read to absorb transient restart races.
         try {
           final recoveredAuth = await SessionManager.authStateChanges()
               .firstWhere(
@@ -203,7 +208,7 @@ class _SplashState extends State<Splash> {
                 orElse: () => false,
               )
               .timeout(
-                const Duration(seconds: 2),
+                restartGraceRecheckTimeout,
                 onTimeout: () => false,
               );
           if (recoveredAuth) {

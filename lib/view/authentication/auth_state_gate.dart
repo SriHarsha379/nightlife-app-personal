@@ -61,6 +61,9 @@ class AuthStateGate extends StatelessWidget {
         // On stream error treat the user as unauthenticated so the app does
         // not hang on the loading screen indefinitely.
         if (snapshot.hasError || !snapshot.hasData) {
+          if (snapshot.hasError) {
+            debugPrint('AuthStateGate auth stream error: ${snapshot.error}');
+          }
           return _buildUnauthenticatedWidget();
         }
 
