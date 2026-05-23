@@ -185,11 +185,11 @@ class _SplashState extends State<Splash> {
             .first
             .timeout(const Duration(seconds: 10));
       } on TimeoutException {
-        log('Firebase auth state stream timed out; falling back to synchronous check');
         isAuthenticated = SessionManager.hasAuthenticatedUser;
+        log('Firebase auth state stream timed out; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
       } catch (e) {
-        log('Firebase auth state stream error: $e; falling back to synchronous check');
         isAuthenticated = SessionManager.hasAuthenticatedUser;
+        log('Firebase auth state stream error: $e; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
       }
 
       if (!isAuthenticated) {
