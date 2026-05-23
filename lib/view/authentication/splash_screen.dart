@@ -35,6 +35,14 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  // Upper bound to wait for Firebase auth stream to emit the first state
+  // after app/restart initialization.
+  static const Duration _initialAuthResolutionTimeout = Duration(seconds: 10);
+
+  // Short extra window to recover from transient restart races where auth may
+  // briefly appear signed-out before native session restoration settles.
+  static const Duration _restartGraceRecheckTimeout = Duration(seconds: 2);
+
   bool _isTokenExpired(String token) {
     return SessionManager.isTokenExpired(token);
   }
@@ -174,8 +182,6 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      const initialAuthResolutionTimeout = Duration(seconds: 10);
-      const restartGraceRecheckTimeout = Duration(seconds: 2);
       final authStateStream = SessionManager.authStateChanges().asBroadcastStream();
 
       // Wait for Firebase to emit its auth state rather than reading
@@ -185,12 +191,9 @@ class _SplashState extends State<Splash> {
       // actually signed in.
       bool isAuthenticated;
       try {
-        isAuthenticated = await authStateStream
-            .firstWhere(
-              (_) => true,
-              orElse: () => SessionManager.hasAuthenticatedUser,
-            )
-            .timeout(initialAuthResolutionTimeout);
+        isAuthenticated = await authStateStream.timeout(
+          _initialAuthResolutionTimeout,
+        ).first;
       } on TimeoutException {
         isAuthenticated = SessionManager.hasAuthenticatedUser;
         log('Firebase auth state stream timed out; falling back to synchronous check (isAuthenticated=$isAuthenticated)');
@@ -212,7 +215,7 @@ class _SplashState extends State<Splash> {
                 orElse: () => false,
               )
               .timeout(
-                restartGraceRecheckTimeout,
+                _restartGraceRecheckTimeout,
                 onTimeout: () => false,
               );
           if (recoveredAuth) {
