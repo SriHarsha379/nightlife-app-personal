@@ -210,7 +210,6 @@ class _SplashState extends State<Splash> {
           await Future<void>.delayed(_restartGraceRecheckTimeout);
           isAuthenticated = SessionManager.hasAuthenticatedUser;
           if (isAuthenticated) {
-            isAuthenticated = true;
             log('Recovered authenticated state after grace re-check.');
           }
         } catch (e) {
