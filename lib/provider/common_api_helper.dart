@@ -5,15 +5,23 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:night_life/utilities/page_transition.dart';
+import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 
-
+import '../controller/home/home_controller.dart';
+import '../controller/my_profile/get_my_profile.dart';
+import '../controller/my_profile/get_my_swipe_profile_controller.dart';
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
+import '../utilities/auth_session_service.dart';
+import '../utilities/session_manager.dart';
 import '../view/authentication/login_screen.dart';
-import 'common_sharedpreferences.dart';
 import 'post_api_provider.dart';
+import 'socket_provider.dart';
+import 'user_controller.dart';
+
+class _SessionExpiredHandled implements Exception {}
 
 // ------------------ COMMON REQUEST HANDLER ------------------
 Future<Map<String, dynamic>?> _handleRequest(
@@ -27,25 +35,67 @@ Future<Map<String, dynamic>?> _handleRequest(
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
     print('url $url');
 
-    final response = await requestFn(url, headers ?? {});
+    Map<String, String> requestHeaders =
+        await _prepareRequestHeaders(headers ?? {}, context);
+    http.Response response = await requestFn(url, requestHeaders);
+
+    if (response.statusCode == 401 || response.statusCode == 403) {
+      final didRefresh = await SessionManager.tryRefreshSession();
+      if (didRefresh) {
+        // Retry exactly once with the refreshed token to avoid infinite
+        // refresh/retry loops when backend still rejects credentials.
+        requestHeaders = SessionManager.withAuthorizationHeader(requestHeaders);
+        response = await requestFn(url, requestHeaders);
+      }
+    }
     print("Status Code: ${response.statusCode}");
     print("Response Body: ${response.body}");
 
-    return _handleStatusCode(response, context);
+    return await _handleStatusCode(response, context);
+  } on _SessionExpiredHandled {
+    return null;
   } catch (e) {
     print("API error: $e");
     return null;
   }
 }
 
+Future<Map<String, String>> _prepareRequestHeaders(
+  Map<String, String> headers,
+  BuildContext? context,
+) async {
+  final requestHeaders = Map<String, String>.from(headers);
+  try {
+    final token = await SessionManager.getFreshFirebaseIdToken(
+      forceRefresh: true,
+    );
+    if (token != null && token.trim().isNotEmpty) {
+      return SessionManager.withAuthorizationHeader(
+        requestHeaders,
+        token: token,
+      );
+    }
+  } on SessionExpiredAuthException {
+    if (context != null) {
+      await _redirectToLogin(context, "Session expired. Please log in again.");
+      throw _SessionExpiredHandled();
+    }
+  } catch (_) {}
+  return requestHeaders;
+}
+
 // ------------------ STATUS CODE HANDLER ------------------
-Map<String, dynamic>? _handleStatusCode(
-    http.Response response, BuildContext? context) {
+Future<Map<String, dynamic>?> _handleStatusCode(
+    http.Response response, BuildContext? context) async {
   final statusCode = response.statusCode;
   final body = jsonDecode(response.body);
 
   // Success
   if (statusCode == 200) {
+    if (SessionManager.extractToken(body).isNotEmpty ||
+        SessionManager.extractRefreshToken(body).isNotEmpty) {
+      await SessionManager.captureSessionFromAuthPayload(body);
+    }
     return body;
   }
 
@@ -60,13 +110,13 @@ Map<String, dynamic>? _handleStatusCode(
 
   if (statusCode == 401 || statusCode == 403) {
     if (context != null) {
-      _redirectToLogin(context, errorMessage);
+      await _redirectToLogin(context, errorMessage);
     }
     return null;
   }
   if (statusCode == 423) {
     if (context != null) {
-      _redirectToLogin(context, errorMessage);
+      await _redirectToLogin(context, errorMessage);
     }
     return null;
   }
@@ -107,10 +157,13 @@ String _getErrorMessage(dynamic body) {
 }
 
 // ------------------ REDIRECT TO LOGIN ------------------
-void _redirectToLogin(BuildContext context, String message) {
+Future<void> _redirectToLogin(BuildContext context, String message) async {
   TopNotification.error(context, message);
-  CacheHelper.clearAll();
-  AppConstant.token = '';
+  _tryProviderReset(context);
+  await SessionManager.clearAuthSession(
+    signOutFromFirebase: true,
+    clearAllPreferences: true,
+  );
   AppConstant.selectFooterIndex = 0;
   AppContentCache().clear();
   Navigator.pushAndRemoveUntil(
@@ -122,6 +175,34 @@ void _redirectToLogin(BuildContext context, String message) {
     ),
     (route) => false,
   );
+}
+
+void _tryProviderReset(BuildContext context) {
+  try {
+    Provider.of<SocketProvider>(context, listen: false).disconnect();
+  } catch (e) {
+    debugPrint('SocketProvider reset skipped: $e');
+  }
+  try {
+    Provider.of<UserController>(context, listen: false).reset();
+  } catch (e) {
+    debugPrint('UserController reset skipped: $e');
+  }
+  try {
+    Provider.of<HomeController>(context, listen: false).clearAllData();
+  } catch (e) {
+    debugPrint('HomeController reset skipped: $e');
+  }
+  try {
+    Provider.of<ProfileController>(context, listen: false).clearProfileData();
+  } catch (e) {
+    debugPrint('ProfileController reset skipped: $e');
+  }
+  try {
+    Provider.of<GetMySwipeProfileController>(context, listen: false).resetState();
+  } catch (e) {
+    debugPrint('GetMySwipeProfileController reset skipped: $e');
+  }
 }
 
 // ------------------ GET DATA (HEADERS ONLY - WITH TOKEN) ------------------
@@ -164,7 +245,8 @@ Future<Map<String, dynamic>?> postFormData(
     log('url $url');
 
     var request = http.MultipartRequest('POST', url);
-    if (headers != null) request.headers.addAll(headers);
+    final preparedHeaders = await _prepareRequestHeaders(headers ?? {}, context);
+    request.headers.addAll(preparedHeaders);
     request.fields.addAll(fields);
 
     final streamedResponse = await request.send();
@@ -216,7 +298,8 @@ Future<Map<String, dynamic>?> postMultipartData(
     print('url $url');
 
     var request = http.MultipartRequest('POST', url);
-    if (headers != null) request.headers.addAll(headers);
+    final preparedHeaders = await _prepareRequestHeaders(headers ?? {}, context);
+    request.headers.addAll(preparedHeaders);
 
     request.fields.addAll(fields);
 

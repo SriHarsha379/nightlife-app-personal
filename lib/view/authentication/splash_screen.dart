@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,6 @@ import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 
 import '../../provider/socket_provider.dart';
-import '../../provider/user_chat_socket_provider.dart';
 import '../../view/authentication/otp_verify_screen.dart';
 import '../../view/other/city_Preference/citypreference_screen.dart';
 import '../../view/other/city_Preference/music_genres.dart';
@@ -18,6 +16,8 @@ import '../../utilities/app_color.dart';
 import '../../utilities/app_constant.dart';
 import '../../utilities/app_footer.dart';
 import '../../utilities/app_image.dart';
+import '../../utilities/auth_session_service.dart';
+import '../../utilities/session_manager.dart';
 import '../../provider/common_sharedpreferences.dart';
 import '../../provider/user_controller.dart';
 import '../../controller/home/home_controller.dart';
@@ -27,7 +27,7 @@ import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
 class Splash extends StatefulWidget {
   static String routeName = './Splash';
 
-  Splash({super.key});
+  const Splash({super.key});
 
   @override
   _SplashState createState() => _SplashState();
@@ -35,29 +35,28 @@ class Splash extends StatefulWidget {
 
 class _SplashState extends State<Splash> {
   bool _isTokenExpired(String token) {
-    final trimmed = token.trim();
-    if (trimmed.isEmpty) return true;
-    final parts = trimmed.split('.');
-    if (parts.length != 3) return true;
-    try {
-      final payload = parts[1];
-      final normalized = base64Url.normalize(payload);
-      final decoded = utf8.decode(base64Url.decode(normalized));
-      final map = jsonDecode(decoded);
-      if (map is! Map || map['exp'] == null) return true;
-      final exp = int.tryParse(map['exp'].toString());
-      if (exp == null) return true;
-      final expiry = DateTime.fromMillisecondsSinceEpoch(exp * 1000);
-      return DateTime.now().isAfter(expiry);
-    } catch (_) {
-      return true;
-    }
+    return SessionManager.isTokenExpired(token);
   }
 
   int _parseSignupStep(dynamic stepValue) {
     if (stepValue is int) return stepValue;
     if (stepValue is String) return int.tryParse(stepValue) ?? 0;
     return 0;
+  }
+
+  Future<void> _clearSessionAndNavigateUnauthenticated(
+    UserController userController,
+    HomeController homeController,
+    ProfileController profileController,
+    GetMySwipeProfileController swipeProfileController,
+  ) async {
+    AppConstant.token = '';
+    userController.reset();
+    homeController.clearAllData();
+    profileController.clearProfileData();
+    swipeProfileController.resetState();
+    await SessionManager.clearAuthSession(signOutFromFirebase: true);
+    await _navigateToUnauthenticatedEntry();
   }
 
   void _navigateForAuthenticatedUser(Map<String, dynamic> userData) {
@@ -96,6 +95,8 @@ class _SplashState extends State<Splash> {
           duration: const Duration(milliseconds: 400),
         ),
       );
+      debugPrint(
+          'Authenticated Firebase user with no cached user_details; routing to app footer.');
       return;
     }
     if (signupStep >= 3) {
@@ -172,61 +173,94 @@ class _SplashState extends State<Splash> {
         Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      final userDetails = await CacheHelper.get('user_details');
+      if (!SessionManager.hasAuthenticatedUser) {
+        await _clearSessionAndNavigateUnauthenticated(
+          userController,
+          homeController,
+          profileController,
+          swipeProfileController,
+        );
+        return;
+      }
 
-      if (userDetails != null && userDetails.isNotEmpty) {
-        final data = json.decode(userDetails);
+      try {
+        await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
+      } on SessionExpiredAuthException {
+        await _clearSessionAndNavigateUnauthenticated(
+          userController,
+          homeController,
+          profileController,
+          swipeProfileController,
+        );
+        return;
+      }
+
+      Map<String, dynamic> data = await SessionManager.readCachedUserDetailsMap();
+      if (data.isNotEmpty) {
         log("userdetails$data");
-        if (data is Map<String, dynamic>) {
-          String token = (data['token'] ?? '').toString().trim();
-          if (token.isEmpty && data['user'] is Map) {
-            token = (data['user']['token'] ?? '').toString().trim();
-          }
+        String token = SessionManager.extractToken(data);
 
-          if (token.isEmpty) {
-            AppConstant.token = '';
-            userController.reset();
-            homeController.clearAllData();
-            profileController.clearProfileData();
-            swipeProfileController.resetState();
-            await CacheHelper.remove('user_details');
-            await _navigateToUnauthenticatedEntry();
-            return;
-          }
-          if (_isTokenExpired(token)) {
-            AppConstant.token = '';
-            userController.reset();
-            homeController.clearAllData();
-            profileController.clearProfileData();
-            swipeProfileController.resetState();
-            await CacheHelper.remove('user_details');
-            await _navigateToUnauthenticatedEntry();
-            return;
-          }
-          AppConstant.token = token;
-          log("app token----->>>>${AppConstant.token}");
-          final authUserId =
-              ((data['user'] is Map ? data['user']['_id'] : data['_id']) ?? '')
-                  .toString()
-                  .trim();
-          Provider.of<SocketProvider>(context, listen: false)
-              .setToken(AppConstant.token, authUserId: authUserId);
-          if (data['player_id'] != null) {
-            AppConstant.playerID = data['player_id'].toString();
-          }
-
-          final Map<String, dynamic> userData =
-              (data['user'] is Map<String, dynamic>)
-                  ? Map<String, dynamic>.from(data['user'])
-                  : data;
-
-          if (!mounted) return;
-
-          userController.setUserFromMap(userData);
-          _navigateForAuthenticatedUser(userData);
+        if (token.isEmpty) {
+          await _clearSessionAndNavigateUnauthenticated(
+            userController,
+            homeController,
+            profileController,
+            swipeProfileController,
+          );
           return;
         }
+        final isInitiallyExpired = _isTokenExpired(token);
+        var isStillExpired = isInitiallyExpired;
+        if (isInitiallyExpired) {
+          final didRefresh = await SessionManager.tryRefreshSession();
+          if (didRefresh) {
+            data = await SessionManager.readCachedUserDetailsMap();
+            token = SessionManager.extractToken(data);
+            isStillExpired = _isTokenExpired(token);
+          }
+        }
+        if (token.isEmpty || isStillExpired) {
+          await _clearSessionAndNavigateUnauthenticated(
+            userController,
+            homeController,
+            profileController,
+            swipeProfileController,
+          );
+          return;
+        }
+        await SessionManager.captureSessionFromAuthPayload(data);
+        log("app token----->>>>${AppConstant.token}");
+        final authUserId =
+            ((data['user'] is Map ? data['user']['_id'] : data['_id']) ?? '')
+                .toString()
+                .trim();
+          Provider.of<SocketProvider>(context, listen: false)
+              .setToken(AppConstant.token, authUserId: authUserId);
+        if (data['player_id'] != null) {
+          AppConstant.playerID = data['player_id'].toString();
+        }
+
+        final Map<String, dynamic> userData =
+            (data['user'] is Map<String, dynamic>)
+                ? Map<String, dynamic>.from(data['user'])
+                : data;
+
+        if (!mounted) return;
+
+        userController.setUserFromMap(userData);
+        _navigateForAuthenticatedUser(userData);
+        return;
       }
+
+      Navigator.pushReplacement(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: const MyAppFooter(initialIndex: 0),
+          duration: const Duration(milliseconds: 400),
+        ),
+      );
+      return;
     } catch (e) {
       print("Error checking login status: $e");
     }

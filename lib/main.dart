@@ -12,8 +12,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'provider/app_providers.dart';
 import 'provider/darkmode_provider.dart';
 import 'utilities/app_theme.dart';
+import 'utilities/auth_session_service.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
+import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
 import 'view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
@@ -63,6 +65,7 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
+  final AuthSessionService _authSessionService = FirebaseAuthSessionService();
   late final List<SingleChildWidget> _appProviders;
   StreamSubscription<Uri>? _deepLinkSub;
   Uri? _lastHandledDeepLink;
@@ -413,7 +416,11 @@ class _MyAppState extends State<MyApp> {
             themeMode: themeProvider.themeMode,
             darkTheme: AppThemeConfig.darkTheme,
             theme: AppThemeConfig.lightTheme,
-            home: Splash(),
+            home: AuthStateGate(
+              authSessionService: _authSessionService,
+              loadingChild: const Splash(),
+              authenticatedChild: const Splash(),
+            ),
           );
         },
       ),

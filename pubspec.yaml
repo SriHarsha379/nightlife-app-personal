@@ -91,6 +91,7 @@ dependencies:
   cloud_firestore: ^5.0.0
   firebase_messaging: ^15.1.0
   firebase_core: ^3.4.0
+  firebase_auth: ^5.1.4
   flutter_local_notifications: ^17.2.3
   # For GeoLocation
   # geolocator: ^9.0.2
@@ -223,6 +224,5 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
-
 
 
