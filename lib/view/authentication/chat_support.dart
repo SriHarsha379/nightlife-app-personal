@@ -129,7 +129,12 @@ class _ChatSupportState extends State<ChatSupport> {
     try {
       final response = await http.get(
         Uri.parse('${AppConfigProvider.apiUrl}user/admin_details'),
-        headers: {'authorization': 'Bearer ${AppConstant.token}'},
+        headers: {
+          'authorization': 'Bearer ${AppConstant.token}',
+          'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
+          'Accept': 'application/json',
+          'X-Requested-With': 'com.example.nightLife',
+        },
       );
       if (response.statusCode != 200) return;
       final decoded = jsonDecode(response.body);

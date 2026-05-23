@@ -386,7 +386,7 @@ class _PollPopupState extends State<PollPopup>
                   color: isSelected
                       ? AppColor.buttonColor
                       : isDark
-                          ? Colors.white87
+                          ? Colors.white.withOpacity(0.87)
                           : Colors.black87,
                 ),
               ),
@@ -445,7 +445,7 @@ class _PollPopupState extends State<PollPopup>
                         color: isVoted
                             ? AppColor.buttonColor
                             : isDark
-                                ? Colors.white87
+                                ? Colors.white.withOpacity(0.87)
                                 : Colors.black87,
                       ),
                     ),

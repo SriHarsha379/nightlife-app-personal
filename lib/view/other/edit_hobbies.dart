@@ -493,7 +493,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                 _buildTextField(
                   hint: "Type here...",
                   controller: hobbyInputController,
-                  inputFormatters: AppConstant.alphabetFormatter,
+                  // inputFormatters: AppConstant.alphabetFormatter,
                   isDark: isDark,
                 ),
                 const SizedBox(height: 20),
@@ -625,7 +625,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                 _buildTextField(
                   hint: "Type here...",
                   controller: hobbyInputController,
-                  inputFormatters: AppConstant.alphabetFormatter,
+                  // inputFormatters: AppConstant.alphabetFormatter,
                   isDark: isDark,
                 ),
                 const SizedBox(height: 20),

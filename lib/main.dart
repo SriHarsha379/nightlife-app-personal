@@ -23,10 +23,13 @@ import 'view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venue_booking_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'view/other/chats/chat_message_screen.dart';
+import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
   final String? title = message.notification?.title?.trim();
@@ -41,7 +44,9 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,

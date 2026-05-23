@@ -364,7 +364,7 @@ class HomeWidget {
           curve: Curves.easeOutBack,
           builder: (context, value, child) {
             return Opacity(
-              opacity: isActive ? 1.0 : 0.8,
+              opacity: 1.0,
               child: Transform.scale(
                 scale: value,
                 child: child,
@@ -380,7 +380,7 @@ class HomeWidget {
             decoration: BoxDecoration(
               color: isActive
                   ? color.withOpacity(0.96)
-                  : Colors.black.withOpacity(0.48),
+                  : color.withOpacity(0.72),
               borderRadius: BorderRadius.circular(22),
               border: Border.all(
                 color: isActive ? color : Colors.white.withOpacity(0.28),
@@ -400,14 +400,14 @@ class HomeWidget {
                 Icon(
                   icon,
                   color: Colors.white,
-                  size: size.width * 0.043,
+                  size: size.width * 0.055,
                 ),
                 SizedBox(width: size.width * 0.015),
                 Text(
                   label,
                   style: TextStyle(
                     color: Colors.white,
-                    fontSize: size.width * 0.031,
+                    fontSize: size.width * 0.038,
                     fontWeight: FontWeight.w700,
                     fontFamily: AppFont.fontFamily,
                     letterSpacing: 0.3,
@@ -449,7 +449,7 @@ class HomeWidget {
         (showHeart || showCross) && lastSwipeType == 'accept';
     final bool showRejectFeedback =
         (showHeart || showCross) && lastSwipeType == 'reject';
-    final double badgeTop = MediaQuery.of(context).size.height * 0.018;
+    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),

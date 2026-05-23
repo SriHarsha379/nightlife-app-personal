@@ -176,7 +176,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         child: CustomPasswordField(
                           controller: newPasswordTextController,
                           hintText: AppLanguage.enterpassword[language],
-                          maxLength: 20,
+                          maxLength: AppConstant.passwordMaxLength,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
                           borderColor: AppColor.transparentColor,
@@ -192,7 +192,7 @@ class _CreateNewPasswordScreenState extends State<CreateNewPasswordScreen> {
                         child: CustomPasswordField(
                           controller: confirmPasswordTextEditingController,
                           hintText: AppLanguage.confirmPassword[language],
-                          maxLength: 20,
+                          maxLength: AppConstant.passwordMaxLength,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
                           borderColor: AppColor.transparentColor,

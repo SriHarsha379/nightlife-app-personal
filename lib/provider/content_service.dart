@@ -8,10 +8,21 @@ Future<void> fetchAllContent(Function(List) onDataReady) async {
     onDataReady(AppContentCache().contentArr!);
     return;
   }
+
   final url = Uri.parse("${AppConfigProvider.apiUrl}common/get_content");
+
   try {
-    final response = await http.get(url);
+    final response = await http.get(
+      url,
+      headers: {
+        'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
+        'Accept': 'application/json',
+        'X-Requested-With': 'com.example.nightLife',
+      },
+    );
+
     print('response.statusCode ${response.statusCode}');
+
     if (response.statusCode == 200) {
       final res = jsonDecode(response.body);
       print('res ${res['success']}');

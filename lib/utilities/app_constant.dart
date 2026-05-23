@@ -38,7 +38,7 @@ class AppConstant {
   ];
   static final List<TextInputFormatter> alphabetFormatter = [
     FilteringTextInputFormatter.allow(
-        RegExp(r'[a-zA-Z]')), // Only letters, no spaces
+        RegExp(r'.*')), // Allow all characters including numbers and special chars
   ];
 
   static List<TextInputFormatter> allAllowFormatter = [

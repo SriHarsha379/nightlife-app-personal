@@ -867,7 +867,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                   context: context,
                   hint: "Type here...",
                   controller: hobbyInputController,
-                  inputFormatters: AppConstant.alphabetFormatter,
+                  // inputFormatters: AppConstant.alphabetFormatter,
                 ),
                 const SizedBox(height: 20),
                 Row(
@@ -969,7 +969,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                   context: context,
                   hint: "Type here...",
                   controller: hobbyInputController,
-                  inputFormatters: AppConstant.alphabetFormatter,
+                  // inputFormatters: AppConstant.alphabetFormatter,
                 ),
                 const SizedBox(height: 20),
                 Row(

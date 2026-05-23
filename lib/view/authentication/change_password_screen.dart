@@ -149,7 +149,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         child: CustomPasswordField(
                           controller: currentController,
                           hintText: "Current Password",
-                          maxLength: 20,
+                          maxLength: AppConstant.passwordMaxLength,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
                           borderColor: AppColor.transparentColor,
@@ -165,7 +165,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         child: CustomPasswordField(
                           controller: newPasswordTextController,
                           hintText: "New Password",
-                          maxLength: 20,
+                          maxLength: AppConstant.passwordMaxLength,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
                           borderColor: AppColor.transparentColor,
@@ -181,7 +181,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                         child: CustomPasswordField(
                           controller: confirmPasswordTextEditingController,
                           hintText: "Confirm New Password",
-                          maxLength: 20,
+                          maxLength: AppConstant.passwordMaxLength,
                           fillColor: AppColor.otpboxColor(context),
                           textColor: Colors.black,
                           borderColor: AppColor.transparentColor,

@@ -1,12 +1,12 @@
-// ignore_for_file: avoid_print, use_build_context_synchronously
-
 import 'dart:convert';
 import 'dart:developer';
+
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
-import 'package:share_plus/share_plus.dart';
 
 import '../controller/home/home_controller.dart';
 import '../controller/my_profile/get_my_profile.dart';
@@ -14,142 +14,258 @@ import '../controller/my_profile/get_my_swipe_profile_controller.dart';
 import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
-import '../utilities/auth_session_service.dart';
 import '../utilities/session_manager.dart';
 import '../view/authentication/login_screen.dart';
-import 'post_api_provider.dart';
 import 'socket_provider.dart';
 import 'user_controller.dart';
 
 class _SessionExpiredHandled implements Exception {}
 
 // ------------------ COMMON REQUEST HANDLER ------------------
+
 Future<Map<String, dynamic>?> _handleRequest(
-  Future<http.Response> Function(Uri url, Map<String, String> headers)
-      requestFn,
-  String endpoint,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
+    Future<http.Response> Function(
+        Uri url,
+        Map<String, String> headers,
+        ) requestFn,
+    String endpoint,
+    BuildContext? context, {
+      Map<String, String>? headers,
+    }) async {
   try {
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
-    print('url $url');
 
-    Map<String, String> requestHeaders =
-        await _prepareRequestHeaders(headers ?? {}, context);
+    print("URL: $url");
+
+    Map<String, String> requestHeaders = await _prepareRequestHeaders(
+      headers ?? {},
+      context,
+    );
+
+    print("REQUEST HEADERS: $requestHeaders");
+
     http.Response response = await requestFn(url, requestHeaders);
 
+    // Retry once if token expired
     if (response.statusCode == 401 || response.statusCode == 403) {
       final didRefresh = await SessionManager.tryRefreshSession();
+
       if (didRefresh) {
-        // Retry exactly once with the refreshed token to avoid infinite
-        // refresh/retry loops when backend still rejects credentials.
-        requestHeaders = SessionManager.withAuthorizationHeader(requestHeaders);
+        requestHeaders = SessionManager.withAuthorizationHeader(
+          requestHeaders,
+        );
+
         response = await requestFn(url, requestHeaders);
       }
     }
-    print("Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
 
-    return await _handleStatusCode(response, context);
+    print("STATUS CODE: ${response.statusCode}");
+    print("RESPONSE BODY: ${response.body}");
+
+    return await _handleStatusCode(
+      response,
+      context,
+    );
   } on _SessionExpiredHandled {
     return null;
-  } catch (e) {
-    print("API error: $e");
+  } catch (e, s) {
+    print("API ERROR: $e");
+    log("API ERROR", error: e, stackTrace: s);
     return null;
   }
 }
 
+// ------------------ PREPARE HEADERS ------------------
+
 Future<Map<String, String>> _prepareRequestHeaders(
-  Map<String, String> headers,
-  BuildContext? context,
-) async {
+    Map<String, String> headers,
+    BuildContext? context,
+    ) async {
   final requestHeaders = Map<String, String>.from(headers);
+
+  // ── Baseline headers to prevent Imunify360 bot-detection ──
+  // putIfAbsent means we never overwrite headers already set by the caller.
+  requestHeaders.putIfAbsent(
+    'User-Agent',
+        () => 'NightLifeApp/1.0 (Flutter; iOS)',
+  );
+  requestHeaders.putIfAbsent('Accept', () => 'application/json');
+  requestHeaders.putIfAbsent(
+    'X-Requested-With',
+        () => 'com.example.nightLife',
+  );
+  // ──────────────────────────────────────────────────────────
+
   try {
-    final token = await SessionManager.getFreshFirebaseIdToken(
+    // ── Token priority: backend JWT > Firebase token ──
+    // Always prefer the backend JWT stored in AppConstant.token.
+    // Only fall back to Firebase token when no backend token exists
+    // (e.g. unauthenticated calls like login/signup).
+    final backendToken = AppConstant.token.trim();
+
+    if (backendToken.isNotEmpty) {
+      // Use backend JWT — do NOT call getFreshFirebaseIdToken()
+      // as it returns a Firebase anonymous token that the backend rejects.
+      print("TOKEN FROM SESSION: [backend JWT present]");
+      final updatedHeaders = SessionManager.withAuthorizationHeader(
+        requestHeaders,
+        token: backendToken,
+      );
+      print("FINAL HEADERS: $updatedHeaders");
+      return updatedHeaders;
+    }
+
+    // No backend token — try Firebase token (for unauthenticated endpoints)
+    final firebaseToken = await SessionManager.getFreshFirebaseIdToken(
       forceRefresh: true,
     );
-    if (token != null && token.trim().isNotEmpty) {
-      return SessionManager.withAuthorizationHeader(
+
+    print("TOKEN FROM SESSION: $firebaseToken");
+
+    if (firebaseToken != null && firebaseToken.trim().isNotEmpty) {
+      final updatedHeaders = SessionManager.withAuthorizationHeader(
         requestHeaders,
-        token: token,
+        token: firebaseToken,
       );
+
+      print("FINAL HEADERS: $updatedHeaders");
+
+      return updatedHeaders;
+    } else {
+      print("TOKEN IS NULL OR EMPTY");
     }
-  } on SessionExpiredAuthException {
-    if (context != null) {
-      await _redirectToLogin(context, "Session expired. Please log in again.");
+  } catch (e, s) {
+    print("HEADER PREPARATION ERROR: $e");
+    log("HEADER PREPARATION ERROR", error: e, stackTrace: s);
+
+    final errorText = e.toString().toLowerCase();
+
+    final looksLikeSessionExpired =
+        errorText.contains('session expired') ||
+            errorText.contains('token expired') ||
+            errorText.contains('user token has expired') ||
+            errorText.contains('requires recent login') ||
+            errorText.contains('credential') ||
+            errorText.contains('unauthenticated');
+
+    if (looksLikeSessionExpired && context != null) {
+      print("SESSION EXPIRED");
+
+      await _redirectToLogin(
+        context,
+        "Session expired. Please log in again.",
+      );
+
       throw _SessionExpiredHandled();
     }
-  } catch (_) {}
+  }
+
   return requestHeaders;
 }
 
 // ------------------ STATUS CODE HANDLER ------------------
-Future<Map<String, dynamic>?> _handleStatusCode(
-    http.Response response, BuildContext? context) async {
-  final statusCode = response.statusCode;
-  final body = jsonDecode(response.body);
 
-  // Success
-  if (statusCode == 200) {
-    if (SessionManager.extractToken(body).isNotEmpty ||
-        SessionManager.extractRefreshToken(body).isNotEmpty) {
-      await SessionManager.captureSessionFromAuthPayload(body);
-    }
-    return body;
+Future<Map<String, dynamic>?> _handleStatusCode(
+    http.Response response,
+    BuildContext? context,
+    ) async {
+  final statusCode = response.statusCode;
+
+  dynamic body;
+  try {
+    body = jsonDecode(response.body);
+  } catch (_) {
+    body = {'message': response.body};
   }
 
-  String errorMessage = _getErrorMessage(body);
+  final String errorMessage = _getErrorMessage(body).trim().toLowerCase();
+
+  final bool blockedByFirewall =
+      errorMessage.contains('access denied by imunify360') ||
+          errorMessage.contains('bot-protection') ||
+          errorMessage.contains('whitelisted');
+
+  if (statusCode == 200 && !blockedByFirewall) {
+    if (body is Map<String, dynamic>) {
+      if (SessionManager.extractToken(body).isNotEmpty ||
+          SessionManager.extractRefreshToken(body).isNotEmpty) {
+        await SessionManager.captureSessionFromAuthPayload(body);
+
+        if (FirebaseAuth.instance.currentUser == null) {
+          try {
+            await FirebaseAuth.instance.signInAnonymously();
+            debugPrint('Firebase anonymous login success');
+          } catch (e) {
+            debugPrint('Firebase anonymous login failed: $e');
+          }
+        }
+      }
+
+      return body;
+    }
+
+    return null;
+  }
+
+  if (blockedByFirewall) {
+    if (context != null) {
+      TopNotification.error(
+        context,
+        "Server blocked this request. Please contact admin or try again later.",
+      );
+    }
+    return null;
+  }
 
   if (statusCode == 400) {
     if (context != null) {
-      TopNotification.error(context, errorMessage);
+      TopNotification.error(context, _getErrorMessage(body));
     }
     return null;
   }
 
-  if (statusCode == 401 || statusCode == 403) {
+  if (statusCode == 401 || statusCode == 403 || statusCode == 423) {
     if (context != null) {
-      await _redirectToLogin(context, errorMessage);
-    }
-    return null;
-  }
-  if (statusCode == 423) {
-    if (context != null) {
-      await _redirectToLogin(context, errorMessage);
+      await _redirectToLogin(
+        context,
+        _getErrorMessage(body),
+      );
     }
     return null;
   }
 
   if (statusCode == 500) {
     if (context != null) {
-      TopNotification.error(context, "Server error. Please try again later.");
+      TopNotification.error(
+        context,
+        "Server error. Please try again later.",
+      );
     }
     return null;
   }
 
   if (context != null) {
-    TopNotification.error(context, errorMessage);
+    TopNotification.error(
+      context,
+      _getErrorMessage(body),
+    );
   }
+
   return null;
 }
 
-// ------------------ GET ERROR MESSAGE ------------------
-String _getErrorMessage(dynamic body) {
-  if (body == null) return "An error occurred";
+// ------------------ ERROR MESSAGE ------------------
 
-  // Check message field
-  if (body['message'] != null) {
-    if (body['message'] is List) {
-      return body['message'][language].toString();
-    }
-    return body['message'].toString();
+String _getErrorMessage(dynamic body) {
+  if (body == null) {
+    return "An error occurred";
   }
 
-  if (body['message'] != null) {
-    if (body['message'] is Map && body['message'][language] != null) {
-      return body['message'][language].toString();
+  if (body is Map && body['message'] != null) {
+    if (body['message'] is List && body['message'].isNotEmpty) {
+      return body['message'][0].toString();
     }
+
     return body['message'].toString();
   }
 
@@ -157,15 +273,22 @@ String _getErrorMessage(dynamic body) {
 }
 
 // ------------------ REDIRECT TO LOGIN ------------------
-Future<void> _redirectToLogin(BuildContext context, String message) async {
+
+Future<void> _redirectToLogin(
+    BuildContext context,
+    String message,
+    ) async {
   TopNotification.error(context, message);
+
   _tryProviderReset(context);
+
   await SessionManager.clearAuthSession(
     signOutFromFirebase: true,
     clearAllPreferences: true,
   );
+
   AppConstant.selectFooterIndex = 0;
-  AppContentCache().clear();
+
   Navigator.pushAndRemoveUntil(
     context,
     PageTransition(
@@ -173,104 +296,113 @@ Future<void> _redirectToLogin(BuildContext context, String message) async {
       child: const LoginScreen(),
       duration: const Duration(milliseconds: 100),
     ),
-    (route) => false,
+        (route) => false,
   );
 }
+
+// ------------------ RESET PROVIDERS ------------------
 
 void _tryProviderReset(BuildContext context) {
   try {
-    Provider.of<SocketProvider>(context, listen: false).disconnect();
-  } catch (e) {
-    debugPrint('SocketProvider reset skipped: $e');
-  }
+    Provider.of<SocketProvider>(
+      context,
+      listen: false,
+    ).disconnect();
+  } catch (_) {}
+
   try {
-    Provider.of<UserController>(context, listen: false).reset();
-  } catch (e) {
-    debugPrint('UserController reset skipped: $e');
-  }
+    Provider.of<UserController>(
+      context,
+      listen: false,
+    ).reset();
+  } catch (_) {}
+
   try {
-    Provider.of<HomeController>(context, listen: false).clearAllData();
-  } catch (e) {
-    debugPrint('HomeController reset skipped: $e');
-  }
+    Provider.of<HomeController>(
+      context,
+      listen: false,
+    ).clearAllData();
+  } catch (_) {}
+
   try {
-    Provider.of<ProfileController>(context, listen: false).clearProfileData();
-  } catch (e) {
-    debugPrint('ProfileController reset skipped: $e');
-  }
+    Provider.of<ProfileController>(
+      context,
+      listen: false,
+    ).clearProfileData();
+  } catch (_) {}
+
   try {
-    Provider.of<GetMySwipeProfileController>(context, listen: false).resetState();
-  } catch (e) {
-    debugPrint('GetMySwipeProfileController reset skipped: $e');
-  }
+    Provider.of<GetMySwipeProfileController>(
+      context,
+      listen: false,
+    ).resetState();
+  } catch (_) {}
 }
 
-// ------------------ GET DATA (HEADERS ONLY - WITH TOKEN) ------------------
+// ------------------ GET DATA ------------------
+
 Future<Map<String, dynamic>?> getData(
-  String endpoint,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
+    String endpoint,
+    BuildContext? context, {
+      Map<String, String>? headers,
+    }) async {
   return _handleRequest(
-    (url, h) => http.get(url, headers: h),
+        (url, h) => http.get(
+      url,
+      headers: h,
+    ),
     endpoint,
     context,
     headers: headers,
   );
 }
 
-// ------------------ POST DATA (HEADERS ONLY - WITH TOKEN, NO BODY) ------------------
+// ------------------ POST DATA ------------------
+
 Future<Map<String, dynamic>?> postData(
-  String endpoint,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
+    String endpoint,
+    BuildContext? context, {
+      Map<String, String>? headers,
+    }) async {
   return _handleRequest(
-    (url, h) => http.post(url, headers: h),
+        (url, h) => http.post(
+      url,
+      headers: h,
+    ),
     endpoint,
     context,
     headers: headers,
   );
 }
 
-// ------------------ POST FORM DATA ------------------
-Future<Map<String, dynamic>?> postFormData(
-  String endpoint,
-  Map<String, String> fields,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
-  try {
-    final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
-    log('url $url');
+// ------------------ GET FORM DATA ------------------
 
-    var request = http.MultipartRequest('POST', url);
-    final preparedHeaders = await _prepareRequestHeaders(headers ?? {}, context);
-    request.headers.addAll(preparedHeaders);
-    request.fields.addAll(fields);
-
-    final streamedResponse = await request.send();
-    final response = await http.Response.fromStream(streamedResponse);
-
-    print("Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
-
-    return _handleStatusCode(response, context);
-  } catch (e) {
-    print("API error: $e");
-    return null;
-  }
+Future<Map<String, dynamic>?> getFormData(
+    String endpoint,
+    BuildContext? context, {
+      Map<String, String>? headers,
+    }) async {
+  return _handleRequest(
+        (url, h) => http.get(
+      url,
+      headers: h,
+    ),
+    endpoint,
+    context,
+    headers: headers,
+  );
 }
 
 // ------------------ POST JSON DATA ------------------
+
 Future<Map<String, dynamic>?> postJsonData(
-  String endpoint,
-  Map<String, dynamic> jsonData,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
+    String endpoint,
+    Map<String, dynamic> jsonData,
+    BuildContext? context, {
+      Map<String, String>? headers,
+    }) async {
   return _handleRequest(
-    (url, h) => http.post(
+        (url, h) => http.post(
       url,
       headers: {
         'Content-Type': 'application/json',
@@ -285,73 +417,70 @@ Future<Map<String, dynamic>?> postJsonData(
   );
 }
 
-// ------------------ POST MULTIPART DATA (FOR FILE UPLOAD) ------------------
+// ------------------ POST MULTIPART DATA ------------------
+
 Future<Map<String, dynamic>?> postMultipartData(
-  String endpoint,
-  Map<String, String> fields,
-  BuildContext? context, {
-  Map<String, String>? headers,
-  Map<String, XFile>? files,
-}) async {
+    String endpoint,
+    Map<String, String> fields,
+    BuildContext? context, {
+      Map<String, String>? headers,
+      Map<String, XFile>? files,
+    }) async {
   try {
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
-    print('url $url');
 
     var request = http.MultipartRequest('POST', url);
-    final preparedHeaders = await _prepareRequestHeaders(headers ?? {}, context);
-    request.headers.addAll(preparedHeaders);
 
+    final preparedHeaders = await _prepareRequestHeaders(
+      headers ?? {},
+      context,
+    );
+
+    request.headers.addAll(preparedHeaders);
     request.fields.addAll(fields);
 
     if (files != null) {
       for (var entry in files.entries) {
-        if (entry.value != null) {
-          List<int> imageBytes = await entry.value.readAsBytes();
-          http.MultipartFile imageFile = http.MultipartFile.fromBytes(
-            entry.key,
-            imageBytes,
-            filename: '${entry.key}.jpg',
-          );
-          request.files.add(imageFile);
-        }
+        List<int> imageBytes = await entry.value.readAsBytes();
+
+        http.MultipartFile imageFile = http.MultipartFile.fromBytes(
+          entry.key,
+          imageBytes,
+          filename: '${entry.key}.jpg',
+        );
+
+        request.files.add(imageFile);
       }
     }
-
-    print("request.fields: ${request.fields}");
-    print("request.files: ${request.files}");
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
 
-    print("Status Code: ${response.statusCode}");
-    print("Response Body: ${response.body}");
-
-    return _handleStatusCode(response, context);
-  } catch (e) {
-    print("API error: $e");
+    return _handleStatusCode(
+      response,
+      context,
+    );
+  } on _SessionExpiredHandled {
+    return null;
+  } catch (e, s) {
+    print("MULTIPART ERROR: $e");
+    log("MULTIPART ERROR", error: e, stackTrace: s);
     return null;
   }
 }
 
-// ------------------ GET FORM DATA (LEGACY - USE getData INSTEAD) ------------------
-Future<Map<String, dynamic>?> getFormData(
-  String endpoint,
-  BuildContext? context, {
-  Map<String, String>? headers,
-}) async {
-  return _handleRequest(
-    (url, h) => http.get(url, headers: headers),
-    endpoint,
-    context,
-    headers: headers,
-  );
-}
-
 // ------------------ COMMON HELPER ------------------
+
 class CommonHelper {
-  static void handleInactiveUserRedirect(BuildContext context, dynamic res) {
+  static void handleInactiveUserRedirect(
+      BuildContext context,
+      dynamic res,
+      ) {
     if (res != null && res['active_flag'] == 0) {
-      _redirectToLogin(context, res['message'][language]);
+      _redirectToLogin(
+        context,
+        res['message'][0].toString(),
+      );
     }
   }
 }

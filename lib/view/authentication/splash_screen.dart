@@ -34,6 +34,9 @@ class Splash extends StatefulWidget {
 }
 
 class _SplashState extends State<Splash> {
+  // Guard: ensures navigation only happens once, even if async tasks overlap.
+  bool _hasNavigated = false;
+
   bool _isTokenExpired(String token) {
     return SessionManager.isTokenExpired(token);
   }
@@ -44,12 +47,27 @@ class _SplashState extends State<Splash> {
     return 0;
   }
 
+  // Safe navigate — only navigates once, guards against mounted + double-nav.
+  void _safeNavigate(Widget child) {
+    if (_hasNavigated) return;
+    if (!mounted) return;
+    _hasNavigated = true;
+    Navigator.pushReplacement(
+      context,
+      PageTransition(
+        type: PageTransitionType.rightToLeftWithFade,
+        child: child,
+        duration: const Duration(milliseconds: 400),
+      ),
+    );
+  }
+
   Future<void> _clearSessionAndNavigateUnauthenticated(
-    UserController userController,
-    HomeController homeController,
-    ProfileController profileController,
-    GetMySwipeProfileController swipeProfileController,
-  ) async {
+      UserController userController,
+      HomeController homeController,
+      ProfileController profileController,
+      GetMySwipeProfileController swipeProfileController,
+      ) async {
     AppConstant.token = '';
     userController.reset();
     homeController.clearAllData();
@@ -73,86 +91,35 @@ class _SplashState extends State<Splash> {
     if (signupStep >= 3 &&
         anotherEmail.trim().isNotEmpty &&
         !isAnotherEmailVerify) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: StayConnectedOTPVerify(
-            isEmail: true,
-            email: anotherEmail,
-          ),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
+      _safeNavigate(StayConnectedOTPVerify(
+        isEmail: true,
+        email: anotherEmail,
+      ));
       return;
     }
     if (isProfileCompleted) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const MyAppFooter(initialIndex: 0),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
-      debugPrint(
-          'Authenticated Firebase user with no cached user_details; routing to app footer.');
+      _safeNavigate(const MyAppFooter(initialIndex: 0));
       return;
     }
     if (signupStep >= 3) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: StayConnectedScreen(),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
+      _safeNavigate(StayConnectedScreen());
       return;
     }
     if (signupStep == 2) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const MusicGenresScreen(),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
+      _safeNavigate(const MusicGenresScreen());
       return;
     }
     if (signupStep == 1 && isVerified) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const CityPreference(),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
+      _safeNavigate(const CityPreference());
       return;
     }
     if (signupStep == 1 && !isVerified) {
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: OtpVerify(
-            mobile: userData['phone_number']?.toString() ?? '',
-          ),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
+      _safeNavigate(OtpVerify(
+        mobile: userData['phone_number']?.toString() ?? '',
+      ));
       return;
     }
-    Navigator.pushReplacement(
-      context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: const LoginScreen(),
-        duration: const Duration(milliseconds: 400),
-      ),
-    );
+    _safeNavigate(const LoginScreen());
   }
 
   @override
@@ -162,18 +129,27 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 3));
+    await Future.delayed(const Duration(seconds: 1));
 
     if (!mounted) return;
+
+    final cachedData = await SessionManager.readCachedUserDetailsMap();
+    final cachedToken = SessionManager.extractToken(cachedData);
+    print('🔍 CACHE CHECK  → keys: ${cachedData.keys.toList()}');
+    print('🔍 HAS AUTH USER → ${SessionManager.hasAuthenticatedUser}');
+    print('🔍 TOKEN IN CACHE → ${cachedToken.isEmpty ? "EMPTY ❌" : "${cachedToken.substring(0, cachedToken.length.clamp(0, 20))}... ✅"}');
+    print('🔍 TOKEN EXPIRED? → ${cachedToken.isEmpty ? "N/A" : SessionManager.isTokenExpired(cachedToken)}');
+
     final userController = Provider.of<UserController>(context, listen: false);
     final homeController = Provider.of<HomeController>(context, listen: false);
     final profileController =
-        Provider.of<ProfileController>(context, listen: false);
+    Provider.of<ProfileController>(context, listen: false);
     final swipeProfileController =
-        Provider.of<GetMySwipeProfileController>(context, listen: false);
+    Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
       if (!SessionManager.hasAuthenticatedUser) {
+        print('🔍 DECISION → No Firebase user, going to unauthenticated ❌');
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
@@ -182,10 +158,15 @@ class _SplashState extends State<Splash> {
         );
         return;
       }
+
+      print('🔍 DECISION → Firebase user found, refreshing token...');
 
       try {
         await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
+        print('🔍 TOKEN REFRESH → Success ✅');
       } on SessionExpiredAuthException {
+        print('🔍 TOKEN REFRESH → SessionExpiredAuthException ❌');
+        if (!mounted) return; // ← GUARD: stop if already navigated away
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
@@ -195,12 +176,19 @@ class _SplashState extends State<Splash> {
         return;
       }
 
-      Map<String, dynamic> data = await SessionManager.readCachedUserDetailsMap();
+      if (!mounted) return; // ← GUARD after async Firebase call
+
+      Map<String, dynamic> data =
+      await SessionManager.readCachedUserDetailsMap();
+
       if (data.isNotEmpty) {
         log("userdetails$data");
         String token = SessionManager.extractToken(data);
+        print('🔍 EXTRACTED TOKEN → ${token.isEmpty ? "EMPTY ❌" : "Present ✅ (${token.length} chars)"}');
 
         if (token.isEmpty) {
+          print('🔍 DECISION → Token empty after cache read, going unauthenticated ❌');
+          if (!mounted) return;
           await _clearSessionAndNavigateUnauthenticated(
             userController,
             homeController,
@@ -209,17 +197,27 @@ class _SplashState extends State<Splash> {
           );
           return;
         }
+
         final isInitiallyExpired = _isTokenExpired(token);
+        print('🔍 TOKEN INITIALLY EXPIRED? → $isInitiallyExpired');
         var isStillExpired = isInitiallyExpired;
+
         if (isInitiallyExpired) {
+          print('🔍 Attempting session refresh...');
           final didRefresh = await SessionManager.tryRefreshSession();
+          print('🔍 SESSION REFRESH → ${didRefresh ? "Success ✅" : "Failed ❌"}');
           if (didRefresh) {
             data = await SessionManager.readCachedUserDetailsMap();
             token = SessionManager.extractToken(data);
             isStillExpired = _isTokenExpired(token);
+            print('🔍 TOKEN AFTER REFRESH EXPIRED? → $isStillExpired');
           }
         }
+
+        if (!mounted) return; // ← GUARD after all async refresh calls
+
         if (token.isEmpty || isStillExpired) {
+          print('🔍 DECISION → Token still expired/empty, going unauthenticated ❌');
           await _clearSessionAndNavigateUnauthenticated(
             userController,
             homeController,
@@ -228,70 +226,78 @@ class _SplashState extends State<Splash> {
           );
           return;
         }
+
         await SessionManager.captureSessionFromAuthPayload(data);
         log("app token----->>>>${AppConstant.token}");
+
         final authUserId =
-            ((data['user'] is Map ? data['user']['_id'] : data['_id']) ?? '')
-                .toString()
-                .trim();
-          Provider.of<SocketProvider>(context, listen: false)
-              .setToken(AppConstant.token, authUserId: authUserId);
+        ((data['user'] is Map ? data['user']['_id'] : data['_id']) ?? '')
+            .toString()
+            .trim();
+
+        if (!mounted) return; // ← GUARD before Provider/context access
+
+        Provider.of<SocketProvider>(context, listen: false)
+            .setToken(AppConstant.token, authUserId: authUserId);
+
         if (data['player_id'] != null) {
           AppConstant.playerID = data['player_id'].toString();
         }
 
         final Map<String, dynamic> userData =
-            (data['user'] is Map<String, dynamic>)
-                ? Map<String, dynamic>.from(data['user'])
-                : data;
+        (data['user'] is Map<String, dynamic>)
+            ? Map<String, dynamic>.from(data['user'])
+            : data;
 
-        if (!mounted) return;
+        if (!mounted) return; // ← GUARD before navigation
 
+        print('🔍 DECISION → Session valid, routing to Home ✅');
         userController.setUserFromMap(userData);
         _navigateForAuthenticatedUser(userData);
-        return;
+        return; // ← explicit return — nothing runs after navigation
       }
 
-      Navigator.pushReplacement(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: const MyAppFooter(initialIndex: 0),
-          duration: const Duration(milliseconds: 400),
-        ),
-      );
-      return;
-    } catch (e) {
-      print("Error checking login status: $e");
+      // Cache was empty but Firebase user exists — go to home
+      if (!mounted) return; // ← GUARD before navigation
+      print('🔍 DECISION → Cache empty but Firebase user exists, routing to Home footer ✅');
+      _safeNavigate(const MyAppFooter(initialIndex: 0));
+      return; // ← explicit return — nothing runs after navigation
+
+    } catch (e, stack) {
+      print('🔍 ERROR in _checkLoginStatus → $e');
+      print('🔍 STACK → $stack');
+
+      // ── CRITICAL FIX ──
+      // Only navigate to unauthenticated if we haven't already navigated
+      // somewhere else. Without this guard, a dispose exception after a
+      // successful navigation would bounce the user back to login.
+      if (_hasNavigated) return;
+      if (!mounted) return;
     }
 
-    if (mounted) {
-      userController.reset();
-      homeController.clearAllData();
-      profileController.clearProfileData();
-      swipeProfileController.resetState();
-    }
+    // Only reached if catch block didn't already return
+    if (_hasNavigated) return;
 
+    userController.reset();
+    homeController.clearAllData();
+    profileController.clearProfileData();
+    swipeProfileController.resetState();
+
+    print('🔍 DECISION → Fell through to unauthenticated (catch block) ❌');
     await _navigateToUnauthenticatedEntry();
   }
- 
+
   Future<void> _navigateToUnauthenticatedEntry() async {
     final hasCompletedOnboarding =
         await CacheHelper.get(AppOnboardingScreen.completionStorageKey) ==
             'true';
 
     if (!mounted) return;
+    if (_hasNavigated) return; // ← don't double-navigate
 
-    Navigator.pushReplacement(
-      context,
-      PageTransition(
-        type: PageTransitionType.rightToLeftWithFade,
-        child: hasCompletedOnboarding
-            ? const LoginScreen()
-            : const AppOnboardingScreen(),
-        duration: const Duration(milliseconds: 400),
-      ),
-    );
+    _safeNavigate(hasCompletedOnboarding
+        ? const LoginScreen()
+        : const AppOnboardingScreen());
   }
 
   @override
@@ -303,19 +309,14 @@ class _SplashState extends State<Splash> {
         statusBarIconBrightness: Brightness.light));
     return Scaffold(
       backgroundColor: AppColor.transparentColor,
-      body: GestureDetector(
-        onTap: () {
-          _navigateToUnauthenticatedEntry();
-        },
-        child: Container(
+      body: SizedBox(
+        width: MediaQuery.of(context).size.width,
+        height: MediaQuery.of(context).size.height,
+        child: Image.asset(
+          AppImage.newGif,
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: Image.asset(
-            AppImage.newGif,
-            width: MediaQuery.of(context).size.width,
-            height: MediaQuery.of(context).size.height,
-            fit: BoxFit.cover,
-          ),
+          fit: BoxFit.cover,
         ),
       ),
     );

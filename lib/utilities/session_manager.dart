@@ -33,9 +33,9 @@ class SessionManager {
     bool forceRefresh = true,
   }) async {
     final token =
-        (await _authSessionService.getFreshIdToken(forceRefresh: forceRefresh) ??
-                '')
-            .trim();
+    (await _authSessionService.getFreshIdToken(forceRefresh: forceRefresh) ??
+        '')
+        .trim();
     if (token.isNotEmpty) {
       AppConstant.token = token;
       return token;
@@ -86,8 +86,6 @@ class SessionManager {
   static bool isJwtToken(String token) {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return false;
-    // Structural JWT check only (header.payload.signature). This does not
-    // verify token authenticity, signature, or integrity.
     return trimmed.split('.').length == 3;
   }
 
@@ -108,10 +106,10 @@ class SessionManager {
   }
 
   static bool isTokenExpired(
-    String token, {
-    Duration skew = const Duration(seconds: 30),
-    bool treatNonJwtAsExpired = false,
-  }) {
+      String token, {
+        Duration skew = const Duration(seconds: 30),
+        bool treatNonJwtAsExpired = false,
+      }) {
     final trimmed = token.trim();
     if (trimmed.isEmpty) return true;
     final expEpoch = decodeJwtExpiryEpoch(trimmed);
@@ -184,20 +182,25 @@ class SessionManager {
 
     for (final endpoint in _refreshEndpoints) {
       try {
+        // ── Bot-detection headers added ──
         final response = await http.post(
           Uri.parse('${AppConfigProvider.apiUrl}$endpoint'),
           headers: const {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
+            'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
+            'X-Requested-With': 'com.example.nightLife',
           },
           body: jsonEncode({'refresh_token': refreshToken}),
         );
+        // ────────────────────────────────
+
         if (response.statusCode != 200) continue;
 
         final body = jsonDecode(response.body);
         if (body is! Map) continue;
         final bodyMap =
-            body.map((key, value) => MapEntry(key.toString(), value));
+        body.map((key, value) => MapEntry(key.toString(), value));
         final dynamic data = bodyMap['data'];
         final authPayload = data is Map
             ? data.map((key, value) => MapEntry(key.toString(), value))
@@ -218,8 +221,8 @@ class SessionManager {
   }
 
   static Future<void> _mergeAuthPayloadIntoUserCache(
-    Map<String, dynamic> authPayload,
-  ) async {
+      Map<String, dynamic> authPayload,
+      ) async {
     final existing = await readCachedUserDetailsMap();
     if (existing.isEmpty) {
       await CacheHelper.save(_userDetailsKey, jsonEncode(authPayload));
@@ -255,9 +258,9 @@ class SessionManager {
   }
 
   static Map<String, String> withAuthorizationHeader(
-    Map<String, String> headers, {
-    String? token,
-  }) {
+      Map<String, String> headers, {
+        String? token,
+      }) {
     final next = Map<String, String>.from(headers);
     final authToken = (token ?? AppConstant.token).trim();
     if (authToken.isEmpty) return next;

@@ -276,7 +276,7 @@ class _LoginScreenState extends State<LoginScreen>
                             child: CustomPasswordField(
                               controller: passwordController,
                               hintText: "Enter Password",
-                              maxLength: 20,
+                              maxLength: AppConstant.passwordMaxLength,
                               fillColor: AppColor.otpboxColor(context),
                               textColor: Colors.black,
                               borderColor: AppColor.transparentColor,

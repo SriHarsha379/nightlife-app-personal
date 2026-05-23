@@ -91,7 +91,8 @@ class Validation {
     }
     return true;
   }
-
+
+
   /// Validates that [password] meets the strong-password policy:
   ///   • At least [minLength] characters (default 8)
   ///   • Contains at least one uppercase letter
@@ -288,7 +289,10 @@ class Validation {
 
     final bool isUrl = trimmed.startsWith('http://') ||
         trimmed.startsWith('https://') ||
-        trimmed.startsWith('www.');
+        trimmed.startsWith('www.') ||
+        trimmed.contains('.com') ||
+        trimmed.contains('.net') ||
+        trimmed.contains('.io');
     if (isUrl) {
       final normalized =
           trimmed.startsWith('www.') ? 'https://$trimmed' : trimmed;
@@ -313,7 +317,7 @@ class Validation {
       );
       return false;
     }
-    final usernameRegex = RegExp(r'^[A-Za-z0-9._-]+$');
+    final usernameRegex = RegExp(r'[\s\S]+');
     if (!usernameRegex.hasMatch(username)) {
       _showError(context, "Please enter a valid $fieldName username or URL");
       return false;

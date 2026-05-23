@@ -25,6 +25,7 @@ class CityPreferenceController with ChangeNotifier {
 
   // Current working values (for the city being configured)
   double _currentDistance = 1.0;
+  double _prebroadenDistance = 1.0;
   bool _isBroadened = false;
 
   double get getCurrentDistance => _currentDistance;
@@ -104,7 +105,10 @@ class CityPreferenceController with ChangeNotifier {
   void toggleBroadened(bool value) {
     _isBroadened = value;
     if (value) {
+      _prebroadenDistance = _currentDistance; // Remember current value
       _currentDistance = 60.0; // Set to maximum when broadened
+    } else {
+      _currentDistance = _prebroadenDistance; // Restore previous value
     }
     notifyListeners();
   }
