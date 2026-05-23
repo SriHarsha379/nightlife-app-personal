@@ -185,7 +185,10 @@ class _SplashState extends State<Splash> {
       bool isAuthenticated;
       try {
         isAuthenticated = await SessionManager.authStateChanges()
-            .first
+            .firstWhere(
+              (_) => true,
+              orElse: () => SessionManager.hasAuthenticatedUser,
+            )
             .timeout(initialAuthResolutionTimeout);
       } on TimeoutException {
         isAuthenticated = SessionManager.hasAuthenticatedUser;

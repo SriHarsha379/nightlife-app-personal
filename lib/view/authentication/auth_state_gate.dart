@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
 import 'package:night_life/view/welcomescreens/app_onboarding_screen.dart';
@@ -62,7 +64,7 @@ class AuthStateGate extends StatelessWidget {
         // not hang on the loading screen indefinitely.
         if (snapshot.hasError || !snapshot.hasData) {
           if (snapshot.hasError) {
-            debugPrint('AuthStateGate auth stream error: ${snapshot.error}');
+            log('AuthStateGate auth stream error: ${snapshot.error}');
           }
           return _buildUnauthenticatedWidget();
         }
