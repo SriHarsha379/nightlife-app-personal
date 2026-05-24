@@ -115,21 +115,122 @@ lib/
 
 ### Prerequisites
 
-- Flutter SDK (compatible with `pubspec.yaml`)
-- Dart SDK (bundled with Flutter)
-- Android Studio / Xcode (for platform builds)
+Everything you need before you can run the app for the first time.
 
-### Setup
+#### Version reference table
+
+| Tool / SDK | Required version | Notes |
+|---|---|---|
+| **Flutter SDK** | `>=3.3.1 <4.0.0` (recommend latest stable 3.x) | Dart SDK is bundled — no separate install |
+| **Dart SDK** | `>=3.3.1 <4.0.0` | Comes with Flutter |
+| **Java JDK** | **17** | Use OpenJDK 17 or Eclipse Temurin 17 |
+| **Gradle wrapper** | **8.13** | Managed automatically by the wrapper |
+| **Android Gradle Plugin (AGP)** | **8.11.1** | Declared in `android/settings.gradle` |
+| **Kotlin** | **2.2.20** | Declared in `android/settings.gradle` |
+| **Android `compileSdk` / `targetSdk`** | **36** (Android 16) | Install via Android Studio SDK Manager |
+| **Android `minSdk`** | **24** (Android 7.0) | Devices below Android 7 are not supported |
+| **Android NDK** | **28.2.13676358** | Install via Android Studio SDK Manager |
+| **Android Studio** | **Meerkat (2024.3) or later** | Earlier versions may not support AGP 8.x |
+| **Xcode** | **15 or later** | Required for iOS builds; macOS only |
+| **CocoaPods** | **1.14 or later** | Required for iOS dependency management |
+| **iOS deployment target** | **14.0** | Devices below iOS 14 are not supported |
+
+---
+
+### Step-by-step local setup
+
+#### 1. Install Flutter
+
+1. Download the Flutter SDK from <https://docs.flutter.dev/get-started/install> and choose your OS.
+2. Extract it to a folder (e.g. `~/flutter` on macOS/Linux or `C:\flutter` on Windows).
+3. Add the `flutter/bin` directory to your system `PATH`.
+4. Run `flutter doctor` in a terminal — it will tell you exactly what is still missing.
+
+#### 2. Install Java 17
+
+Flutter's Android toolchain requires **JDK 17** (not 8, 11, or 21).
+
+- **macOS/Linux:** Use [SDKMAN](https://sdkman.io/) — `sdk install java 17-tem`
+- **Windows:** Download [Eclipse Temurin 17](https://adoptium.net/temurin/releases/?version=17) and install.
+- Set the `JAVA_HOME` environment variable to the JDK 17 installation directory.
+
+#### 3. Install Android Studio (Meerkat 2024.3+)
+
+1. Download from <https://developer.android.com/studio>.
+2. During installation, include **Android SDK**, **Android SDK Platform**, and the **Android Virtual Device (AVD)**.
+3. After installation open **SDK Manager** (`Tools → SDK Manager`) and install:
+   - **SDK Platforms tab:** Android 16 (API level 36)
+   - **SDK Tools tab:** Check and install **NDK (Side by side)** version `28.2.13676358`
+4. In **SDK Manager → SDK Tools**, ensure **Android SDK Build-Tools 36** is also installed.
+
+> **Tip:** If `flutter doctor` shows Android toolchain issues, run:
+> ```bash
+> flutter doctor --android-licenses
+> ```
+> and accept all licences.
+
+#### 4. (iOS only) Install Xcode and CocoaPods
+
+> **macOS only.** Skip this section if you are only building for Android.
+
+1. Install **Xcode 15+** from the Mac App Store.
+2. Open Xcode, accept the licence agreement, and install the command-line tools:
+   ```bash
+   sudo xcode-select --switch /Applications/Xcode.app/Contents/Developer
+   sudo xcodebuild -runFirstLaunch
+   ```
+3. Install CocoaPods (requires Ruby):
+   ```bash
+   sudo gem install cocoapods
+   ```
+4. Inside the `ios/` directory run:
+   ```bash
+   pod install
+   ```
+
+#### 5. Add required Firebase configuration files
+
+This app uses Firebase. Each platform needs its own config file (these are **not** committed to the repository because they contain project-specific credentials).
+
+| Platform | File to create | Where to put it |
+|---|---|---|
+| Android | `google-services.json` | `android/app/google-services.json` |
+| iOS | `GoogleService-Info.plist` | `ios/Runner/GoogleService-Info.plist` |
+
+Obtain these files from your Firebase project console under **Project Settings → Your apps**.
+
+#### 6. Install Flutter dependencies
 
 ```bash
 flutter pub get
 ```
 
-### Run
+#### 7. Run the app
+
+Connect a physical device or start an emulator/simulator, then:
 
 ```bash
 flutter run
 ```
+
+To target a specific device when you have more than one connected:
+
+```bash
+flutter devices          # list available devices
+flutter run -d <device-id>
+```
+
+---
+
+### Verify your environment
+
+Run Flutter's built-in health check at any time:
+
+```bash
+flutter doctor -v
+```
+
+All items should show a green ✓ before the app can be built and run successfully.
 
 ## Quality Checks
 
