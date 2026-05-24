@@ -115,9 +115,21 @@ lib/
 
 ### Prerequisites
 
-- Flutter SDK (compatible with `pubspec.yaml`)
-- Dart SDK (bundled with Flutter)
-- Android Studio / Xcode (for platform builds)
+| Tool / SDK | Required Version |
+|---|---|
+| Flutter SDK | `>=3.3.1 <4.0.0` |
+| Dart SDK | `>=3.3.1 <4.0.0` (bundled with Flutter) |
+| Java (JDK) | **17** |
+| Gradle (wrapper) | **8.13** |
+| Android Gradle Plugin (AGP) | **8.11.1** |
+| Kotlin | **2.2.20** |
+| Android `compileSdk` / `targetSdk` | **36** |
+| Android `minSdk` | **24** |
+| Android NDK | **28.2.13676358** |
+| iOS minimum deployment target | **14.0** |
+| Google Services plugin | **4.3.15** |
+| Android Studio | Latest stable recommended |
+| Xcode | Compatible with iOS 14+ target |
 
 ### Setup
 
