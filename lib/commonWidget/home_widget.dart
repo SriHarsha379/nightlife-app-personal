@@ -481,7 +481,7 @@ class HomeWidget {
           width: MediaQuery.of(context).size.width * 85 / 100,
           height: MediaQuery.of(context).size.height * 57.5 / 100,
           child: Stack(
-            clipBehavior: Clip.none,
+            clipBehavior: Clip.hardEdge,
             children: [
               //! Main Card
               Container(
@@ -800,7 +800,7 @@ class HomeWidget {
           width: MediaQuery.of(context).size.width * 85 / 100,
           height: MediaQuery.of(context).size.height * 57.5 / 100,
           child: Stack(
-            clipBehavior: Clip.none,
+            clipBehavior: Clip.hardEdge,
             children: [
               //! Main Card
               Container(
@@ -1174,7 +1174,7 @@ class HomeWidget {
           width: MediaQuery.of(context).size.width * 85 / 100,
           height: MediaQuery.of(context).size.height * 57.5 / 100,
           child: Stack(
-            clipBehavior: Clip.none,
+            clipBehavior: Clip.hardEdge,
             children: [
               //! Main Card
               Container(

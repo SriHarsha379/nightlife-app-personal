@@ -1503,6 +1503,8 @@ class _HomeState extends State<Home> {
                                   padding: EdgeInsets.zero,
                                   onSwipe: _onSwipeMembers,
                                   cardsCount: visibleMembers.length,
+                                  threshold: 80,
+                                  maxAngle: 20,
                                   allowedSwipeDirection:
                                       const AllowedSwipeDirection.only(
                                     left: true,
