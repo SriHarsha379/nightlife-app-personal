@@ -933,6 +933,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
       currentDate.month,
       currentDate.day,
     );
+    final DateTime maximumAllowedDate = DateTime(
+      currentDate.year - 18,
+      12,
+      31,
+    );
 
     selectedDate = eighteenYearsAgo;
 
@@ -994,7 +999,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                     ),
                   ),
                   child: CupertinoDatePicker(
-                    maximumDate: eighteenYearsAgo,
+                    maximumDate: maximumAllowedDate,
                     initialDateTime: eighteenYearsAgo,
                     mode: CupertinoDatePickerMode.date,
                     use24hFormat: true,

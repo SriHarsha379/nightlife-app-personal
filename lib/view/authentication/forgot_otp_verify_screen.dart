@@ -103,7 +103,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
       );
       return;
     }
-    if (!Validation.isOtpLength(context, otp)) return;
+    if (!Validation.isOtpLength(context, otp, minLength: 4)) return;
 
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     final res = await apiProvider.forgotOtpVerificationApiCalling(
@@ -256,7 +256,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                           height: MediaQuery.of(context).size.height * 7 / 100,
                         ),
                         Pinput(
-                          length: 6,
+                          length: 4,
                           controller: pinputInputController,
                           defaultPinTheme: PinTheme(
                             width:

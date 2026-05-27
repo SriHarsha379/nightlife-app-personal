@@ -48,6 +48,7 @@ class _ContentScreenState extends State<ContentScreen>
     with SingleTickerProviderStateMixin {
   bool isApiCalling = false;
   late WebViewController _webViewController;
+  late final WebViewController _controller;
   late AnimationController _animationController;
   @override
   void initState() {
@@ -58,6 +59,25 @@ class _ContentScreenState extends State<ContentScreen>
     )..repeat();
 
     log("++++++++++++++++++++++++${widget.contenttype}");
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(Colors.black)
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onPageStarted: (String url) {
+            if (mounted) setState(() { isApiCalling = true; });
+          },
+          onPageFinished: (String url) {
+            Future.delayed(const Duration(milliseconds: 800), () {
+              if (mounted) setState(() { isApiCalling = false; });
+            });
+          },
+          onProgress: (int progress) {
+            print("WebView is loading (progress : \$progress%)");
+          },
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.contenttype));
   }
 
   @override
@@ -111,36 +131,8 @@ class _ContentScreenState extends State<ContentScreen>
                           AnimatedOpacity(
                             opacity: isApiCalling ? 0.0 : 1.0,
                             duration: const Duration(milliseconds: 300),
-                            child: WebView(
-                              initialUrl: widget.contenttype,
-                              backgroundColor: AppColor.secondryColor(context),
-                              onWebViewCreated:
-                                  (WebViewController webViewController) {
-                                _webViewController = webViewController;
-                              },
-                              onProgress: (int progress) {
-                                print(
-                                    "WebView is loading (progress : $progress%)");
-                              },
-                              onPageStarted: (String url) {
-                                print('Page started loading: $url');
-                                if (mounted) {
-                                  setState(() {
-                                    isApiCalling = true;
-                                  });
-                                }
-                              },
-                              onPageFinished: (String url) {
-                                print('Page finished loading: $url');
-                                Future.delayed(
-                                    const Duration(milliseconds: 800), () {
-                                  if (mounted) {
-                                    setState(() {
-                                      isApiCalling = false;
-                                    });
-                                  }
-                                });
-                              },
+                            child: WebViewWidget(
+                              controller: _controller,
                             ),
                           ),
 

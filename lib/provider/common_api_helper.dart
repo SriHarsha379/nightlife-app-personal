@@ -225,7 +225,8 @@ Future<Map<String, dynamic>?> _handleStatusCode(
   }
 
   if (statusCode == 401 || statusCode == 403 || statusCode == 423) {
-    if (context != null) {
+    final isLogout = response.request?.url.toString().contains('auth/logout') ?? false;
+    if (context != null && !isLogout) {
       await _redirectToLogin(
         context,
         _getErrorMessage(body),

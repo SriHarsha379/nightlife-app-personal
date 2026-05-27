@@ -466,6 +466,13 @@ class PostApiProvider with ChangeNotifier {
   ) async {
     if (_loading) return false;
     setLoading(true);
+    // TODO: Remove static OTP bypass when SMS provider is integrated
+    if (otp.trim() == '123456' || otp.trim() == '1234') {
+      setLoading(false);
+      if (!context.mounted) return false;
+      Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeftWithFade, child: CityPreference(), duration: const Duration(milliseconds: 500)));
+      return true;
+    }
 
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),

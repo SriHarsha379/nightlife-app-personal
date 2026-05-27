@@ -109,7 +109,7 @@ class _OtpVerifyState extends State<OtpVerify> {
       return;
     }
 
-    if (!Validation.isOtpLength(context, pinputInputController.text)) return;
+    if (!Validation.isOtpLength(context, pinputInputController.text, minLength: 4)) return;
 
     print("Verifying OTP: ${pinputInputController.text}");
 
@@ -165,6 +165,13 @@ class _OtpVerifyState extends State<OtpVerify> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 6 / 100,
                       ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: IconButton(
+                          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+                          onPressed: () => Navigator.pop(context),
+                        ),
+                      ),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 90 / 100,
                       ),
@@ -192,7 +199,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                         alignment: Alignment.center,
                         width: MediaQuery.of(context).size.width * 80 / 100,
                         child: Text(
-                          "We have sent a 6-digit verification code to",
+                          "We have sent a 4-digit verification code to",
                           textAlign: TextAlign.center,
                           style: const TextStyle(
                             color: Colors.grey,
@@ -233,7 +240,7 @@ class _OtpVerifyState extends State<OtpVerify> {
 
                       // OTP Input Pinput
                       Pinput(
-                        length: 6,
+                        length: 4,
                         controller: pinputInputController,
                         defaultPinTheme: PinTheme(
                           width: MediaQuery.of(context).size.width * 12 / 100,
