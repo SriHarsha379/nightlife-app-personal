@@ -1231,15 +1231,18 @@ class PostApiProvider with ChangeNotifier {
 
     // FIX: disconnect() clears _activeSocketToken + _authUserId properly
     Provider.of<SocketProvider>(context, listen: false).disconnect();
+    // Fire and forget logout — bypass common_api_helper
+    if (logoutToken.trim().isNotEmpty) {
+      http.post(
+        Uri.parse('${AppConfigProvider.apiUrl}auth/logout'),
+        headers: {
+          'authorization': 'Bearer $logoutToken',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ).catchError((_) => http.Response('' , 0));
+    }
     AppConstant.token = '';
-
-    final res = logoutToken.trim().isEmpty
-        ? null
-        : await postData(
-            'auth/logout',
-            context,
-            headers: {'authorization': 'Bearer $logoutToken'},
-          );
 
     _clearSessionState(context);
     await Provider.of<UserController>(context, listen: false)
