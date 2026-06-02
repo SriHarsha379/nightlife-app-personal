@@ -763,6 +763,12 @@ class _HomeState extends State<Home> {
             targetUserId: targetUserId,
             action: 'right',
           );
+          // Record vibes of accepted profile for recommendations
+          final acceptedVibes = List<String>.from(
+              membersList[previousIndex]['vibes'] ?? []);
+          if (acceptedVibes.isNotEmpty) {
+            homeController.recordAcceptedVibes(acceptedVibes);
+          }
         }
       }
 

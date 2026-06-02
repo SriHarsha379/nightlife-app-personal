@@ -15,6 +15,14 @@ class HomeController with ChangeNotifier {
   List<dynamic> _membersList = [];
   List<dynamic> _eventsList = [];
   List<dynamic> _venuesList = [];
+  // Tracks vibes of accepted profiles for recommendation
+  final Set<String> _preferredVibes = {};
+  List<String> get getPreferredVibes => _preferredVibes.toList();
+
+  void recordAcceptedVibes(List<String> vibes) {
+    _preferredVibes.addAll(vibes);
+    notifyListeners();
+  }
 
   // Current data type
   String _currentType = _memberType; // member, event, venue
@@ -96,7 +104,7 @@ class HomeController with ChangeNotifier {
 
     try {
       final response = await getFormData(
-        'feed/home_data?type=$type&page=$page&limit=$limit',
+        'feed/home_data?type=$type&page=$page&limit=$limit${_preferredVibes.isNotEmpty ? '&preferred_vibes=${Uri.encodeComponent(_preferredVibes.join(','))}' : ''}',
         context,
         headers: headers,
       );

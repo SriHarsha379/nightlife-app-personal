@@ -30,6 +30,8 @@ import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
 
+import 'package:firebase_auth/firebase_auth.dart';
+
 import 'socket_provider.dart';
 import 'user_controller.dart';
 
@@ -72,7 +74,7 @@ class PostApiProvider with ChangeNotifier {
   /// sign-ups (Google / Apple), where the user has not supplied a password.
   ///
   /// The result always satisfies the strong-password policy:
-  ///   • At least 12 characters  
+  ///   • At least 12 characters
   ///   • Contains uppercase, lowercase, digit and a special character
   ///
   /// The special character set is limited to URL-safe and form-safe characters
@@ -132,19 +134,19 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<void> _syncAuthSession(
-    BuildContext context,
-    dynamic authPayload,
-  ) async {
+      BuildContext context,
+      dynamic authPayload,
+      ) async {
     final authData = authPayload is Map
         ? Map<String, dynamic>.from(authPayload)
         : <String, dynamic>{};
     final userData =
-        authData.isNotEmpty ? _extractUserData(authData) : <String, dynamic>{};
+    authData.isNotEmpty ? _extractUserData(authData) : <String, dynamic>{};
 
     // FIX: use safe extractor — no '12345' fallback
     final token = _extractToken(authData);
     final authUserId =
-        (userData['_id'] ?? authData['_id'] ?? '').toString().trim();
+    (userData['_id'] ?? authData['_id'] ?? '').toString().trim();
 
     log('_syncAuthSession token=${token.isEmpty ? "EMPTY" : token.substring(0, token.length.clamp(0, 20))}... userId=$authUserId');
 
@@ -169,17 +171,30 @@ class PostApiProvider with ChangeNotifier {
     if (token.isNotEmpty) {
       AppConstant.token = token;
       final socketProvider =
-          Provider.of<SocketProvider>(context, listen: false);
+      Provider.of<SocketProvider>(context, listen: false);
       await socketProvider.forceReconnect(token, authUserId: authUserId);
+    }
+
+    // Step 4 — sign into Firebase with custom token returned by backend.
+    // Backend must return a 'firebase_token' field in the auth payload.
+    // Generate it server-side: admin.auth().createCustomToken(userId)
+    final firebaseToken = (authData['firebase_token'] ?? '').toString().trim();
+    if (firebaseToken.isNotEmpty) {
+      try {
+        await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
+        log('_syncAuthSession Firebase sign-in success userId=$authUserId');
+      } catch (e) {
+        log('_syncAuthSession Firebase sign-in failed: $e');
+      }
     }
   }
 
   void _navigateFromAuthState(
-    BuildContext context,
-    Map<String, dynamic> userData, {
-    Map<String, dynamic>? socialUser,
-    Duration footerDuration = const Duration(milliseconds: 500),
-  }) {
+      BuildContext context,
+      Map<String, dynamic> userData, {
+        Map<String, dynamic>? socialUser,
+        Duration footerDuration = const Duration(milliseconds: 500),
+      }) {
     final bool isNewUser = userData['is_new_user'] == true;
     if (isNewUser && socialUser != null) {
       Navigator.push(
@@ -272,13 +287,13 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<bool> _completeAuthSuccess(
-    BuildContext context, {
-    required dynamic authPayload,
-    required String successMessage,
-    Map<String, dynamic>? socialUser,
-    bool showSuccessToast = true,
-    Duration footerDuration = const Duration(milliseconds: 500),
-  }) async {
+      BuildContext context, {
+        required dynamic authPayload,
+        required String successMessage,
+        Map<String, dynamic>? socialUser,
+        bool showSuccessToast = true,
+        Duration footerDuration = const Duration(milliseconds: 500),
+      }) async {
     await _syncAuthSession(context, authPayload);
     if (!context.mounted) return false;
 
@@ -335,14 +350,14 @@ class PostApiProvider with ChangeNotifier {
     setLoading(true);
 
     final String fullName =
-        (user['full_name'] ?? user['name'] ?? '').toString();
+    (user['full_name'] ?? user['name'] ?? '').toString();
     final String firstName = (user['first_name'] ?? '').toString().trim();
     final String lastName = (user['last_name'] ?? '').toString().trim();
     final List<String> fullNameParts = fullName.trim().split(' ');
     final String fallbackFirstName =
-        fullNameParts.isNotEmpty ? fullNameParts.first : '';
+    fullNameParts.isNotEmpty ? fullNameParts.first : '';
     final String fallbackLastName =
-        fullNameParts.length > 1 ? fullNameParts.sublist(1).join(' ') : '';
+    fullNameParts.length > 1 ? fullNameParts.sublist(1).join(' ') : '';
 
     Map<String, String> fields = {
       'socialType': (user['login_type'] ?? '').toString(),
@@ -388,8 +403,8 @@ class PostApiProvider with ChangeNotifier {
       String height,
       String cityId,
       XFile? profileImage,
-       {String loginType = 'email',
-       bool isSocialSignup = false}) async {
+      {String loginType = 'email',
+        bool isSocialSignup = false}) async {
     if (_loading) return;
     setLoading(true);
 
@@ -460,10 +475,10 @@ class PostApiProvider with ChangeNotifier {
 
   // --------------- Otp Verification -----------
   Future<bool> otpVerificationApiCalling(
-    BuildContext context,
-    String otp,
-    String mobile,
-  ) async {
+      BuildContext context,
+      String otp,
+      String mobile,
+      ) async {
     if (_loading) return false;
     setLoading(true);
     // TODO: Remove static OTP bypass when SMS provider is integrated
@@ -534,15 +549,15 @@ class PostApiProvider with ChangeNotifier {
 
   // ================Signup Step Two Api================//
   signupStepTwoUserApi(
-    BuildContext context,
-    List<Map<String, dynamic>>? preferredCities,
-    String bio,
-    String instagramAccount,
-    String spotify,
-    String snapchat,
-    List<String> hobbies,
-    int? status,
-  ) async {
+      BuildContext context,
+      List<Map<String, dynamic>>? preferredCities,
+      String bio,
+      String instagramAccount,
+      String spotify,
+      String snapchat,
+      List<String> hobbies,
+      int? status,
+      ) async {
     setLoading(true);
 
     final Map<String, dynamic> fields = {
@@ -587,27 +602,27 @@ class PostApiProvider with ChangeNotifier {
 
   // ================Signup Step Three Api================//
   signupStepThreeUserApi(
-    BuildContext context, {
-    required String musicGenre,
-    String? customMusicGenres,
-    required String eventPreferences,
-    String? customEventPreferences,
-    required String vibes,
-    String? customVibes,
-    required List<Map<String, String>> vibeChecks,
-    required String sexuality,
-    required String interestedIn,
-    required String pronouns,
-    String? anotherEmail,
-    required List<XFile> images,
-    required List<XFile> videos,
-    required List<XFile> thumbnails,
-  }) async {
+      BuildContext context, {
+        required String musicGenre,
+        String? customMusicGenres,
+        required String eventPreferences,
+        String? customEventPreferences,
+        required String vibes,
+        String? customVibes,
+        required List<Map<String, String>> vibeChecks,
+        required String sexuality,
+        required String interestedIn,
+        required String pronouns,
+        String? anotherEmail,
+        required List<XFile> images,
+        required List<XFile> videos,
+        required List<XFile> thumbnails,
+      }) async {
     setLoading(true);
 
     try {
       final Uri url =
-          Uri.parse("${AppConfigProvider.apiUrl}auth/signup_step_three");
+      Uri.parse("${AppConfigProvider.apiUrl}auth/signup_step_three");
 
       var request = http.MultipartRequest('POST', url);
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
@@ -674,7 +689,7 @@ class PostApiProvider with ChangeNotifier {
             thumbnailFileName = thumbnails[i].path.split('/').last;
           } else {
             thumbnailFileName =
-                'thumbnail_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+            'thumbnail_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.jpg';
           }
           request.files.add(http.MultipartFile.fromBytes(
             'thumbnails',
@@ -708,10 +723,10 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> verifyEmailOtpApiCalling(
-    BuildContext context, {
-    required String otp,
-    String? email,
-  }) async {
+      BuildContext context, {
+        required String otp,
+        String? email,
+      }) async {
     setLoading(true);
 
     final Map<String, String> fields = {'otp': otp.trim()};
@@ -743,9 +758,9 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> resendEmailOtpApiCalling(
-    BuildContext context, {
-    String? email,
-  }) async {
+      BuildContext context, {
+        String? email,
+      }) async {
     setSecondaryLoading(true);
 
     final Map<String, String> fields = {};
@@ -774,10 +789,10 @@ class PostApiProvider with ChangeNotifier {
 
   // ===================== forgot password =====================//
   Future<Map<String, dynamic>?> forgotPasswordApiCalling(
-    BuildContext context, {
-    String? email,
-    String? phoneNumber,
-  }) async {
+      BuildContext context, {
+        String? email,
+        String? phoneNumber,
+      }) async {
     setLoading(true);
 
     final Map<String, String> fields = {};
@@ -810,11 +825,11 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> forgotOtpVerificationApiCalling(
-    BuildContext context, {
-    required String otp,
-    String? email,
-    String? phoneNumber,
-  }) async {
+      BuildContext context, {
+        required String otp,
+        String? email,
+        String? phoneNumber,
+      }) async {
     setLoading(true);
 
     final Map<String, String> fields = {'otp': otp.toString()};
@@ -851,10 +866,10 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> forgotResendotpApiCalling(
-    BuildContext context, {
-    String? email,
-    String? phoneNumber,
-  }) async {
+      BuildContext context, {
+        String? email,
+        String? phoneNumber,
+      }) async {
     setSecondaryLoading(true);
 
     final Map<String, String> fields = {};
@@ -885,10 +900,10 @@ class PostApiProvider with ChangeNotifier {
   }
 
   resetPasswordApiCalling(
-    BuildContext context,
-    String newPassword,
-    String email,
-  ) async {
+      BuildContext context,
+      String newPassword,
+      String email,
+      ) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -908,9 +923,9 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> confirmPasswordApiCalling(
-    BuildContext context, {
-    required String newPassword,
-  }) async {
+      BuildContext context, {
+        required String newPassword,
+      }) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -931,10 +946,10 @@ class PostApiProvider with ChangeNotifier {
   }
 
   chnagePasswordApiCalling(
-    BuildContext context,
-    String currentPassword,
-    String newPassword,
-  ) async {
+      BuildContext context,
+      String currentPassword,
+      String newPassword,
+      ) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -958,20 +973,20 @@ class PostApiProvider with ChangeNotifier {
 
   // ================Edit profile Api================//
   editProfileApi(
-    BuildContext context,
-    String firstName,
-    String lastName,
-    String userName,
-    String bio,
-    String instagramAccount,
-    String snapchatAccount,
-    String spotifyAccount,
-    String email,
-    String mobile,
-    String gender,
-    String cityId,
-    XFile? profileImage,
-  ) async {
+      BuildContext context,
+      String firstName,
+      String lastName,
+      String userName,
+      String bio,
+      String instagramAccount,
+      String snapchatAccount,
+      String spotifyAccount,
+      String email,
+      String mobile,
+      String gender,
+      String cityId,
+      XFile? profileImage,
+      ) async {
     setLoading(true);
 
     Map<String, String> fields = {
@@ -1018,7 +1033,7 @@ class PostApiProvider with ChangeNotifier {
         context,
         MaterialPageRoute(
             builder: (context) => const MyAppFooter(initialIndex: 4)),
-        (route) => false,
+            (route) => false,
       );
     }
     setLoading(false);
@@ -1026,19 +1041,19 @@ class PostApiProvider with ChangeNotifier {
 
   // ================ Add Event Preferences Api ================//
   Future<bool> addEventPreferencesApi(
-    BuildContext context, {
-    String? eventPreferencesCsv,
-    List<String>? eventPreferenceIds,
-    List<String>? customEventPreferences,
-  }) async {
+      BuildContext context, {
+        String? eventPreferencesCsv,
+        List<String>? eventPreferenceIds,
+        List<String>? customEventPreferences,
+      }) async {
     setLoading(true);
 
     final List<String> ids = (eventPreferenceIds ??
-            (eventPreferencesCsv ?? '')
-                .split(',')
-                .map((id) => id.trim())
-                .where((id) => id.isNotEmpty)
-                .toList())
+        (eventPreferencesCsv ?? '')
+            .split(',')
+            .map((id) => id.trim())
+            .where((id) => id.isNotEmpty)
+            .toList())
         .toSet()
         .toList();
 
@@ -1071,18 +1086,18 @@ class PostApiProvider with ChangeNotifier {
 
   // ================ Add Vibes Api ================//
   Future<bool> addVibesApi(
-    BuildContext context, {
-    String? vibesCsv,
-    List<String>? vibeIds,
-  }) async {
+      BuildContext context, {
+        String? vibesCsv,
+        List<String>? vibeIds,
+      }) async {
     setLoading(true);
 
     final List<String> ids = (vibeIds ??
-            (vibesCsv ?? '')
-                .split(',')
-                .map((id) => id.trim())
-                .where((id) => id.isNotEmpty)
-                .toList())
+        (vibesCsv ?? '')
+            .split(',')
+            .map((id) => id.trim())
+            .where((id) => id.isNotEmpty)
+            .toList())
         .toSet()
         .toList();
 
@@ -1104,9 +1119,9 @@ class PostApiProvider with ChangeNotifier {
 
   // ================ Update Hobbies Api ================//
   Future<Map<String, dynamic>?> updateHobbiesApi(
-    BuildContext context,
-    List<String> hobbies,
-  ) async {
+      BuildContext context,
+      List<String> hobbies,
+      ) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -1138,9 +1153,9 @@ class PostApiProvider with ChangeNotifier {
 
   // ================ Delete Gallery Item Api ================//
   Future<Map<String, dynamic>?> deleteGalleryItemApi(
-    BuildContext context,
-    String url,
-  ) async {
+      BuildContext context,
+      String url,
+      ) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -1162,20 +1177,20 @@ class PostApiProvider with ChangeNotifier {
 
   // Booking Event API
   Future<Map<String, dynamic>?> bookingEventApi(
-    BuildContext context, {
-    required String eventId,
-    required int numberOfGuests,
-    required String transactionId,
-    required num discount,
-    required num allTicketsPrice,
-    required num total,
-    required String cityName,
-    required String countryCode,
-    required String phoneNumber,
-    required String email,
-    required String fullName,
-    required List<dynamic> ticketList,
-  }) async {
+      BuildContext context, {
+        required String eventId,
+        required int numberOfGuests,
+        required String transactionId,
+        required num discount,
+        required num allTicketsPrice,
+        required num total,
+        required String cityName,
+        required String countryCode,
+        required String phoneNumber,
+        required String email,
+        required String fullName,
+        required List<dynamic> ticketList,
+      }) async {
     final token = AppConstant.token;
     if (token.isEmpty) return null;
     setLoading(true);
@@ -1184,14 +1199,14 @@ class PostApiProvider with ChangeNotifier {
       "event_id": eventId.toString(),
       "ticket_id": ticketList
           .map((ticket) => {
-                "_id": ticket["_id"],
-                "count": ticket["count"],
-                "base_price": ticket["base_price"],
-                "total_price": ticket["total_price"],
-                "title": ticket["title"],
-                "isOneDay":
-                    ticket["isOneDay"] == 1 || ticket["isOneDay"] == true,
-              })
+        "_id": ticket["_id"],
+        "count": ticket["count"],
+        "base_price": ticket["base_price"],
+        "total_price": ticket["total_price"],
+        "title": ticket["title"],
+        "isOneDay":
+        ticket["isOneDay"] == 1 || ticket["isOneDay"] == true,
+      })
           .toList(),
       "quantity": numberOfGuests,
       "transaction_id": transactionId.toString(),
@@ -1284,12 +1299,12 @@ class PostApiProvider with ChangeNotifier {
 
   // ================Report Problem Api================//
   Future<Map<String, dynamic>?> reportProblemApi(
-    BuildContext context, {
-    required String description,
-    required List<XFile> images,
-    required List<XFile> videos,
-    required List<XFile> thumbnails,
-  }) async {
+      BuildContext context, {
+        required String description,
+        required List<XFile> images,
+        required List<XFile> videos,
+        required List<XFile> thumbnails,
+      }) async {
     final trimmedDescription = description.trim();
     final totalMedia = images.length + videos.length;
     if (trimmedDescription.isEmpty) {
@@ -1305,7 +1320,7 @@ class PostApiProvider with ChangeNotifier {
 
     try {
       final Uri url =
-          Uri.parse("${AppConfigProvider.apiUrl}user/report_problem");
+      Uri.parse("${AppConfigProvider.apiUrl}user/report_problem");
       var request = http.MultipartRequest('POST', url);
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
       request.fields['description'] = trimmedDescription;
@@ -1351,7 +1366,7 @@ class PostApiProvider with ChangeNotifier {
       }
 
       final streamedResponse =
-          await request.send().timeout(const Duration(seconds: 90));
+      await request.send().timeout(const Duration(seconds: 90));
       final response = await http.Response.fromStream(streamedResponse)
           .timeout(const Duration(seconds: 90));
       final result = _handleStatusCode(response, context);
@@ -1375,9 +1390,9 @@ class PostApiProvider with ChangeNotifier {
   }
 
   Future<Map<String, dynamic>?> reportUserApi(
-    BuildContext context, {
-    required String otherUserId,
-  }) async {
+      BuildContext context, {
+        required String otherUserId,
+      }) async {
     final targetUserId = otherUserId.trim();
     final token = AppConstant.token.trim();
     if (targetUserId.isEmpty || token.isEmpty) {
@@ -1403,7 +1418,7 @@ class PostApiProvider with ChangeNotifier {
           response['message'] is List
               ? response['message'][language].toString()
               : (response['message']?.toString() ??
-                  'User reported successfully'),
+              'User reported successfully'),
         );
       }
       return response;
@@ -1456,11 +1471,11 @@ class PostApiProvider with ChangeNotifier {
 
   //============ contact us api===========//
   contactUsApiCalling(
-    BuildContext context,
-    String name,
-    String email,
-    String message,
-  ) async {
+      BuildContext context,
+      String name,
+      String email,
+      String message,
+      ) async {
     setLoading(true);
 
     final res = await postJsonData(
@@ -1516,7 +1531,7 @@ class PostApiProvider with ChangeNotifier {
           child: const PurpleScreen(nextScreen: LoginScreen()),
           duration: const Duration(milliseconds: 400),
         ),
-        (route) => false,
+            (route) => false,
       );
     }
 

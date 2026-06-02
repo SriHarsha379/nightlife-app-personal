@@ -52,7 +52,7 @@ dependencies:
   # image_cropper: ^1.4.0
   image_picker: ^0.8.5+1
   cached_network_image: ^3.0.0
-
+  crypto: ^3.0.3
   # For LocalStorage
   shared_preferences: ^2.2.3
   carousel_slider: ^5.1.1
