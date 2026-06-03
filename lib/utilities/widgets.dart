@@ -166,6 +166,7 @@ class CustomTextField extends StatefulWidget {
   final bool isPassword;
   final Widget? prefixIcon;
   final List<TextInputFormatter>? inputFormatters;
+  final Function(String)? onChanged;
 
   const CustomTextField({
     Key? key,
@@ -176,6 +177,7 @@ class CustomTextField extends StatefulWidget {
     this.isPassword = false,
     this.prefixIcon,
     this.inputFormatters,
+    this.onChanged,
   }) : super(key: key);
 
   @override
@@ -212,6 +214,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       readOnly: widget.readOnly,
       obscureText: widget.isPassword && !isPasswordVisible,
       inputFormatters: widget.inputFormatters,
+      onChanged: widget.onChanged,
       keyboardType: widget.isPassword
           ? TextInputType.visiblePassword
           : TextInputType.text,

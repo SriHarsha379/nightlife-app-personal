@@ -160,30 +160,21 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       return;
     }
 
-    if (!Validation.isOptionalSocialValueValid(
+    if (!Validation.isInstagramValid(
       context,
       value: instagramTextEditingController.text,
-      fieldName: "Instagram",
-      usernameMinLength: 1,
-      usernameMaxLength: 30,
     )) {
       return;
     }
-    if (!Validation.isOptionalSocialValueValid(
+    if (!Validation.isSpotifyValid(
       context,
       value: spotifyTextEditingController.text,
-      fieldName: "Spotify",
-      usernameMinLength: 2,
-      usernameMaxLength: 100,
     )) {
       return;
     }
-    if (!Validation.isOptionalSocialValueValid(
+    if (!Validation.isSnapchatValid(
       context,
       value: snapchattexteditingController.text,
-      fieldName: "Snapchat",
-      usernameMinLength: 3,
-      usernameMaxLength: 15,
     )) {
       return;
     }

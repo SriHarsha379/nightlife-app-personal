@@ -181,7 +181,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         emailController.text,
         mobileNumberTextEditingController.text,
         passwordTextEditingController.text,
-        dobtexteditingController.text,
+        _formatDobForApi(dobtexteditingController.text),
         selectedGender.toString(),
         heightTextEditingController.text,
         selectedCityId.toString(),
@@ -244,6 +244,14 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   DateTime initalDate = DateTime.now();
   String selectDate = '';
   TextEditingController birthTextEditingController = TextEditingController();
+
+  String _formatDobForApi(String dob) {
+    final parts = dob.split('/');
+    if (parts.length == 3 && parts[2].length == 4) {
+      return '${parts[2]}-${parts[1]}-${parts[0]}'; // DD/MM/YYYY → YYYY-MM-DD
+    }
+    return dob;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -486,6 +494,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.emailMaxLength,
                                     controller: emailController,
                                     readOnly: _isSocialSignup,
+                                    onChanged: (value) {
+                                      // Clear any shown error when user types
+                                      SnackBarToastMessage.dismiss(context);
+                                    },
                                   ),
                                 ),
                               ),
@@ -538,6 +550,17 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     ),
                                   ),
                                 ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 4),
+                                  child: Text(
+                                    "Password must be 8+ characters with uppercase, lowercase, number & special character",
+                                    style: TextStyle(
+                                      fontSize: 11,
+                                      color: AppColor.greyLightColor(context),
+                                      fontFamily: AppFont.fontFamily,
+                                    ),
+                                  ),
+                                ),
                                 SizedBox(
                                   height: MediaQuery.of(context).size.height *
                                       2 /
@@ -585,11 +608,11 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       LengthLimitingTextInputFormatter(10),
                                       TextInputFormatter.withFunction((oldValue, newValue) {
                                         String text = newValue.text.replaceAll('/', '');
-                                        if (text.length > 4) {
-                                          text = text.substring(0, 4) + '/' + text.substring(4);
+                                        if (text.length > 2) {
+                                          text = text.substring(0, 2) + '/' + text.substring(2);
                                         }
-                                        if (text.length > 7) {
-                                          text = text.substring(0, 7) + '/' + text.substring(7);
+                                        if (text.length > 5) {
+                                          text = text.substring(0, 5) + '/' + text.substring(5);
                                         }
                                         if (text.length > 10) text = text.substring(0, 10);
                                         return newValue.copyWith(
@@ -604,9 +627,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           final parts = value.split('/');
                                           if (parts.length == 3) {
                                             final date = DateTime(
-                                              int.parse(parts[0]),
-                                              int.parse(parts[1]),
-                                              int.parse(parts[2]),
+                                              int.parse(parts[2]), // year
+                                              int.parse(parts[1]), // month
+                                              int.parse(parts[0]), // day
                                             );
                                             final minAge = DateTime.now().subtract(const Duration(days: 365 * 18));
                                             if (date.isAfter(minAge)) {
@@ -668,7 +691,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           : AppColor.textFieldColor(context),
                                       filled: true,
                                       counterText: '',
-                                      hintText: 'YYYY/MM/DD (or tap 📅)',
+                                      hintText: 'DD/MM/YYYY (or tap 📅)',
                                       hintStyle: TextStyle(
                                         color: AppColor.hinttextcolor(context),
                                         fontWeight: FontWeight.w400,
@@ -976,96 +999,48 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Future<void> _showDatePicker() async {
-    final DateTime currentDate = DateTime.now();
-    final DateTime eighteenYearsAgo = DateTime(
-      currentDate.year - 18,
-      currentDate.month,
-      currentDate.day,
+    final DateTime maxDate = DateTime(
+      DateTime.now().year - 18,
+      DateTime.now().month,
+      DateTime.now().day,
     );
-    final DateTime maximumAllowedDate = DateTime(
-      currentDate.year - 18,
-      12,
-      31,
-    );
-
-    selectedDate = eighteenYearsAgo;
-
-    showModalBottomSheet(
-      backgroundColor: AppColor.themeColor,
+    final DateTime initialDate = (selectedDate != null && selectedDate!.isBefore(maxDate))
+        ? selectedDate!
+        : maxDate;
+    final DateTime? picked = await showDatePicker(
       context: context,
-      builder: (context) {
-        return SizedBox(
-          height: MediaQuery.of(context).size.height * 0.4,
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  CupertinoButton(
-                    child: const Text(
-                      'Cancel',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontFamily: AppFont.fontFamily,
-                        fontWeight: FontWeight.w500,
-                        fontSize: 16,
-                      ),
-                    ),
-                    onPressed: () => Navigator.pop(context),
-                  ),
-                  CupertinoButton(
-                      child: const Text(
-                        'Done',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: AppFont.fontFamily,
-                          fontWeight: FontWeight.w500,
-                          fontSize: 16,
-                        ),
-                      ),
-                      onPressed: () {
-                        if (selectedDate != null) {
-                          setState(() {
-                            String dateStr =
-                                DateFormat('yyyy/MM/dd').format(selectedDate!);
-                            dobtexteditingController.text = dateStr;
-                            selectDate = dateStr;
-                            log("Selected DOB: $dateStr");
-                          });
-                        }
-                        Navigator.pop(context);
-                      }),
-                ],
+      initialDate: initialDate,
+      firstDate: DateTime(1940),
+      lastDate: maxDate,
+      builder: (context, child) {
+        return Theme(
+          data: ThemeData.dark().copyWith(
+            colorScheme: const ColorScheme.dark(
+              primary: Color(0xFFE91E8C),
+              onPrimary: Colors.white,
+              surface: Color(0xFF341A41),
+              onSurface: Colors.white,
+            ),
+            dialogBackgroundColor: const Color(0xFF341A41),
+            textButtonTheme: TextButtonThemeData(
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFFE91E8C),
               ),
-              Expanded(
-                child: CupertinoTheme(
-                  data: const CupertinoThemeData(
-                    textTheme: CupertinoTextThemeData(
-                      dateTimePickerTextStyle: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                      ),
-                    ),
-                  ),
-                  child: CupertinoDatePicker(
-                    maximumDate: maximumAllowedDate,
-                    initialDateTime: eighteenYearsAgo,
-                    mode: CupertinoDatePickerMode.date,
-                    use24hFormat: true,
-                    onDateTimeChanged: (DateTime dateTime) {
-                      setState(() {
-                        selectedDate = dateTime;
-                      });
-                      print("selectedDate $selectedDate");
-                    },
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
+          child: child!,
         );
       },
     );
+    if (picked != null) {
+      setState(() {
+        selectedDate = picked;
+        final dateStr = DateFormat('dd/MM/yyyy').format(picked);
+        dobtexteditingController.text = dateStr;
+        selectDate = dateStr;
+        log("Selected DOB: $dateStr");
+      });
+    }
   }
 
   void _showImagePickerSheet() {

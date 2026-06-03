@@ -266,15 +266,100 @@ class Validation {
     return true;
   }
 
-  /// Validates an optional social-account field that can hold either a
-  /// full URL (http/https/www prefix) or a plain username string.
-  ///
-  /// Returns `true` immediately if [value] is empty (field is optional).
-  /// For URL values, checks that the URI is structurally valid.
-  /// For plain usernames, checks length constraints ([usernameMinLength]–[usernameMaxLength])
-  /// and that only allowed characters are present.
-  ///
-  /// Shows a SnackBar error and returns `false` on any violation.
+  /// Extracts a plain username from a social profile URL or returns the
+  /// value as-is if it is already a plain username.
+  static String _extractUsername(String value, String domain) {
+    final trimmed = value.trim();
+    // Handle full URLs: https://instagram.com/username or instagram.com/username
+    final domainPattern = RegExp(
+      r'(?:https?://)?(?:www\.)?' + RegExp.escape(domain) + r'/([^/?#\s]+)',
+      caseSensitive: false,
+    );
+    final match = domainPattern.firstMatch(trimmed);
+    if (match != null) return match.group(1) ?? trimmed;
+    return trimmed;
+  }
+
+  /// Validates an Instagram account field.
+  /// Accepts a plain username or a full instagram.com URL.
+  /// Rules: 1–30 chars, only letters/digits/periods/underscores,
+  /// no consecutive periods, cannot start or end with a period.
+  static bool isInstagramValid(BuildContext context, {required String value}) {
+    if (!context.mounted) return false;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return true;
+
+    final username = _extractUsername(trimmed, 'instagram.com');
+
+    if (username.length < 1 || username.length > 30) {
+      _showError(context, "Instagram username must be 1–30 characters");
+      return false;
+    }
+    if (!RegExp(r'^[a-zA-Z0-9._]+$').hasMatch(username)) {
+      _showError(context, "Instagram username can only contain letters, numbers, periods and underscores");
+      return false;
+    }
+    if (username.contains('..')) {
+      _showError(context, "Instagram username cannot have consecutive periods");
+      return false;
+    }
+    if (username.startsWith('.') || username.endsWith('.')) {
+      _showError(context, "Instagram username cannot start or end with a period");
+      return false;
+    }
+    return true;
+  }
+
+  /// Validates a Snapchat account field.
+  /// Accepts a plain username or a full snapchat.com URL.
+  /// Rules: 3–15 chars, only letters/digits/hyphens/underscores,
+  /// must start with a letter.
+  static bool isSnapchatValid(BuildContext context, {required String value}) {
+    if (!context.mounted) return false;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return true;
+
+    final username = _extractUsername(trimmed, 'snapchat.com');
+
+    if (username.length < 3 || username.length > 15) {
+      _showError(context, "Snapchat username must be 3–15 characters");
+      return false;
+    }
+    if (!RegExp(r'^[a-zA-Z][a-zA-Z0-9_-]*$').hasMatch(username)) {
+      _showError(context, "Snapchat username must start with a letter and contain only letters, numbers, hyphens or underscores");
+      return false;
+    }
+    return true;
+  }
+
+  /// Validates a Spotify account field.
+  /// Accepts a plain username or a full open.spotify.com/user/... URL.
+  /// Rules: 3–25 chars, only letters/digits/underscores/hyphens.
+  static bool isSpotifyValid(BuildContext context, {required String value}) {
+    if (!context.mounted) return false;
+    final trimmed = value.trim();
+    if (trimmed.isEmpty) return true;
+
+    // Handle Spotify's URL format: open.spotify.com/user/username
+    final spotifyPattern = RegExp(
+      r'(?:https?://)?(?:www\.)?open\.spotify\.com/user/([^/?#\s]+)',
+      caseSensitive: false,
+    );
+    final match = spotifyPattern.firstMatch(trimmed);
+    final username = match != null ? (match.group(1) ?? trimmed) : trimmed;
+
+    if (username.length < 3 || username.length > 25) {
+      _showError(context, "Spotify username must be 3–25 characters");
+      return false;
+    }
+    if (!RegExp(r'^[a-zA-Z0-9_-]+$').hasMatch(username)) {
+      _showError(context, "Spotify username can only contain letters, numbers, underscores and hyphens");
+      return false;
+    }
+    return true;
+  }
+
+  /// Kept for backward compatibility — prefer the platform-specific validators.
   static bool isOptionalSocialValueValid(
     BuildContext context, {
     required String value,
@@ -283,30 +368,8 @@ class Validation {
     int usernameMaxLength = 50,
   }) {
     if (!context.mounted) return false;
-
     final trimmed = value.trim();
     if (trimmed.isEmpty) return true;
-
-    final bool isUrl = trimmed.startsWith('http://') ||
-        trimmed.startsWith('https://') ||
-        trimmed.startsWith('www.') ||
-        trimmed.contains('.com') ||
-        trimmed.contains('.net') ||
-        trimmed.contains('.io');
-    if (isUrl) {
-      final normalized =
-          trimmed.startsWith('www.') ? 'https://$trimmed' : trimmed;
-      final uri = Uri.tryParse(normalized);
-      final valid = uri != null &&
-          uri.hasScheme &&
-          (uri.scheme == 'http' || uri.scheme == 'https') &&
-          uri.host.isNotEmpty;
-      if (!valid) {
-        _showError(context, "Please enter a valid $fieldName link");
-        return false;
-      }
-      return true;
-    }
 
     final username = trimmed.startsWith('@') ? trimmed.substring(1) : trimmed;
     if (username.length < usernameMinLength ||

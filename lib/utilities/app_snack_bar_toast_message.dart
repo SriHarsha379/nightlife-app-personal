@@ -43,6 +43,11 @@ class SnackBarToastMessage {
     _showOverlayToast(context, message, icon, colors, duration);
   }
 
+  static void dismiss(BuildContext context) {
+    _currentOverlay?.remove();
+    _currentOverlay = null;
+  }
+
   // Overlay-based toast for all cases
   static void _showOverlayToast(
     BuildContext context,
