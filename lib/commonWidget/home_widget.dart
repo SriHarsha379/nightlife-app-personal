@@ -373,47 +373,32 @@ class HomeWidget {
           },
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 240),
-            padding: EdgeInsets.symmetric(
-              horizontal: size.width * 0.032,
-              vertical: size.height * 0.009,
-            ),
+            width: size.width * 0.13,
+            height: size.width * 0.13,
             decoration: BoxDecoration(
               color: isActive
-                  ? color.withOpacity(0.96)
-                  : color.withOpacity(0.72),
-              borderRadius: BorderRadius.circular(22),
+                  ? color.withOpacity(0.95)
+                  : Colors.black.withOpacity(0.45),
+              shape: BoxShape.circle,
               border: Border.all(
-                color: isActive ? color : Colors.white.withOpacity(0.28),
-                width: 1.4,
+                color: isActive ? color : color.withOpacity(0.6),
+                width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(isActive ? 0.42 : 0.18),
-                  blurRadius: isActive ? 18 : 10,
-                  offset: const Offset(0, 6),
+                  color: color.withOpacity(isActive ? 0.5 : 0.25),
+                  blurRadius: isActive ? 20 : 10,
+                  spreadRadius: isActive ? 2 : 0,
+                  offset: const Offset(0, 4),
                 ),
               ],
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Icon(
-                  icon,
-                  color: Colors.white,
-                  size: size.width * 0.055,
-                ),
-                SizedBox(width: size.width * 0.015),
-                Text(
-                  label,
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: size.width * 0.038,
-                    fontWeight: FontWeight.w700,
-                    fontFamily: AppFont.fontFamily,
-                    letterSpacing: 0.3,
-                  ),
-                ),
-              ],
+            child: Center(
+              child: Icon(
+                icon,
+                color: Colors.white,
+                size: size.width * 0.065,
+              ),
             ),
           ),
         ),
@@ -690,7 +675,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close_rounded,
+                  icon: Icons.close,
                   color: AppColor.redColor,
                   isActive: showRejectFeedback,
                   onTap: onRejectTap,
@@ -703,7 +688,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.favorite_rounded,
+                  icon: Icons.check_rounded,
                   color: AppColor.greenColor,
                   isActive: showAcceptFeedback,
                   onTap: onHeartTap,
@@ -1062,7 +1047,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close_rounded,
+                  icon: Icons.close,
                   color: AppColor.redColor,
                   isActive: showRejectFeedback,
                   onTap: onRejectTap,
@@ -1076,7 +1061,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.favorite_rounded,
+                  icon: Icons.check_rounded,
                   color: AppColor.greenColor,
                   isActive: showAcceptFeedback,
                   onTap: onHeartTap,
@@ -1435,7 +1420,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close_rounded,
+                  icon: Icons.close,
                   color: AppColor.redColor,
                   isActive: showRejectFeedback,
                   onTap: onRejectTap,
@@ -1449,7 +1434,7 @@ class HomeWidget {
                 child: _buildDecisionBadge(
                   context,
                   label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.favorite_rounded,
+                  icon: Icons.check_rounded,
                   color: AppColor.greenColor,
                   isActive: showAcceptFeedback,
                   onTap: onHeartTap,

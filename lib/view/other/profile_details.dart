@@ -406,6 +406,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.fullNameText,
                                     controller: NameTextEditingController,
                                     readOnly: false,
+                                    inputFormatters: [
+                                      TextInputFormatter.withFunction((oldValue, newValue) {
+                                        if (newValue.text.isEmpty) return newValue;
+                                        final text = newValue.text[0].toUpperCase() + newValue.text.substring(1);
+                                        return newValue.copyWith(text: text);
+                                      }),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -429,6 +436,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.fullNameText,
                                     controller: lastnameTextEditingController,
                                     readOnly: false,
+                                    inputFormatters: [
+                                      TextInputFormatter.withFunction((oldValue, newValue) {
+                                        if (newValue.text.isEmpty) return newValue;
+                                        final text = newValue.text[0].toUpperCase() + newValue.text.substring(1);
+                                        return newValue.copyWith(text: text);
+                                      }),
+                                    ],
                                   ),
                                 ),
                               ),
@@ -561,34 +575,69 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       7 /
                                       100,
                                   child: TextFormField(
-                                    readOnly: true,
-                                    onTap: () {
-                                      _showDatePicker();
-                                    },
+                                    readOnly: false,
+                                    onTap: () {},
                                     style: TextStyle(
                                         color: AppColor.secondryColor(context)),
-                                    keyboardType: TextInputType.name,
+                                    keyboardType: TextInputType.datetime,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
+                                      LengthLimitingTextInputFormatter(10),
+                                      TextInputFormatter.withFunction((oldValue, newValue) {
+                                        String text = newValue.text.replaceAll('/', '');
+                                        if (text.length > 4) {
+                                          text = text.substring(0, 4) + '/' + text.substring(4);
+                                        }
+                                        if (text.length > 7) {
+                                          text = text.substring(0, 7) + '/' + text.substring(7);
+                                        }
+                                        if (text.length > 10) text = text.substring(0, 10);
+                                        return newValue.copyWith(
+                                          text: text,
+                                          selection: TextSelection.collapsed(offset: text.length),
+                                        );
+                                      }),
+                                    ],
+                                    onChanged: (value) {
+                                      if (value.length == 10) {
+                                        try {
+                                          final parts = value.split('/');
+                                          if (parts.length == 3) {
+                                            final date = DateTime(
+                                              int.parse(parts[0]),
+                                              int.parse(parts[1]),
+                                              int.parse(parts[2]),
+                                            );
+                                            final minAge = DateTime.now().subtract(const Duration(days: 365 * 18));
+                                            if (date.isAfter(minAge)) {
+                                              SnackBarToastMessage.error(context, "You must be at least 18 years old");
+                                              dobtexteditingController.clear();
+                                            } else {
+                                              setState(() {
+                                                selectDate = value;
+                                                selectedDate = date;
+                                              });
+                                            }
+                                          }
+                                        } catch (e) {
+                                          // Invalid date format
+                                        }
+                                      }
+                                    },
                                     controller: dobtexteditingController,
                                     focusNode: _dobFocusNode,
-                                    maxLength: AppConstant.fullNameText,
+                                    maxLength: null,
                                     decoration: InputDecoration(
-                                      suffixIcon: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 20),
-                                        child: Image.asset(
-                                          AppImage.dobCalendericon,
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              4 /
-                                              100,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              5 /
-                                              100,
-                                          color:
-                                              AppColor.greyLightColor(context),
+                                      suffixIcon: GestureDetector(
+                                        onTap: () => _showDatePicker(),
+                                        child: Padding(
+                                          padding: const EdgeInsets.only(right: 20),
+                                          child: Image.asset(
+                                            AppImage.dobCalendericon,
+                                            width: MediaQuery.of(context).size.width * 4 / 100,
+                                            height: MediaQuery.of(context).size.width * 5 / 100,
+                                            color: AppColor.greyLightColor(context),
+                                          ),
                                         ),
                                       ),
                                       suffixIconConstraints:
@@ -619,7 +668,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           : AppColor.textFieldColor(context),
                                       filled: true,
                                       counterText: '',
-                                      hintText: 'DOB',
+                                      hintText: 'YYYY/MM/DD (or tap 📅)',
                                       hintStyle: TextStyle(
                                         color: AppColor.hinttextcolor(context),
                                         fontWeight: FontWeight.w400,

@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:flutter/material.dart';
 import 'app_color.dart';
 import 'app_constant.dart';
@@ -11,6 +12,7 @@ class CustomTextFieldInput extends StatefulWidget {
   final String? prefixIcon;
   final Color? fillColor;
   final bool readOnly;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextFieldInput({
     Key? key,
@@ -20,6 +22,7 @@ class CustomTextFieldInput extends StatefulWidget {
     required this.keyboardType,
     this.fillColor,
     this.prefixIcon,
+    this.inputFormatters,
     this.readOnly = false,
   }) : super(key: key);
 
@@ -88,12 +91,14 @@ class CustomDescriptionBox extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
   final String? prefixIcon;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomDescriptionBox({
     Key? key,
     required this.controller,
     required this.hintText,
     this.prefixIcon,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -160,6 +165,7 @@ class CustomTextField extends StatefulWidget {
   final bool readOnly;
   final bool isPassword;
   final Widget? prefixIcon;
+  final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextField({
     Key? key,
@@ -169,6 +175,7 @@ class CustomTextField extends StatefulWidget {
     this.readOnly = false,
     this.isPassword = false,
     this.prefixIcon,
+    this.inputFormatters,
   }) : super(key: key);
 
   @override
@@ -204,6 +211,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
       maxLength: widget.maxLength,
       readOnly: widget.readOnly,
       obscureText: widget.isPassword && !isPasswordVisible,
+      inputFormatters: widget.inputFormatters,
       keyboardType: widget.isPassword
           ? TextInputType.visiblePassword
           : TextInputType.text,
@@ -397,6 +405,7 @@ class CustomTextAreaField extends StatelessWidget {
   final EdgeInsets? contentPadding;
   final int? maxLines;
   final Widget? prefixIcon;
+  final List<TextInputFormatter>? inputFormatters;
   final String? prefixText;
   const CustomTextAreaField({
     super.key,
@@ -406,6 +415,7 @@ class CustomTextAreaField extends StatelessWidget {
     required this.keyboardtype,
     this.maxLines,
     this.prefixIcon,
+    this.inputFormatters,
     this.prefixText,
     required this.readOnly,
     this.contentPadding,
@@ -527,6 +537,7 @@ class CustomLoginTextField extends StatelessWidget {
   final EdgeInsets? contentPadding;
   final int? maxLines;
   final Widget? prefixIcon;
+  final List<TextInputFormatter>? inputFormatters;
   final String? prefixText;
   final Widget? suffixIcon;
   final Function(String)? onChanged;
@@ -549,6 +560,7 @@ class CustomLoginTextField extends StatelessWidget {
     this.contentPadding,
     this.maxLines,
     this.prefixIcon,
+    this.inputFormatters,
     this.prefixText,
     this.suffixIcon,
     this.onChanged,

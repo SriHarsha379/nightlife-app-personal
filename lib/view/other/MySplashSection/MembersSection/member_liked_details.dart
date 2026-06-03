@@ -462,8 +462,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                 child: Row(
                   children: [
                     _buildDecisionButton(
-                      label: 'Reject',
-                      icon: Icons.close_rounded,
+                      label: '',
+                      icon: Icons.close,
                       backgroundColor: AppColor.redColor,
                       foregroundColor: Colors.white,
                       onTap: () async {
@@ -517,8 +517,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                           width: size.width * 3 / 100,
                         ),
                         _buildDecisionButton(
-                          label: 'Accept',
-                          icon: Icons.favorite_rounded,
+                          label: '',
+                          icon: Icons.check_rounded,
                           backgroundColor: AppColor.buttonColor,
                           foregroundColor: Colors.white,
                           onTap: () async {
