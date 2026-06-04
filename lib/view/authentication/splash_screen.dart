@@ -20,6 +20,7 @@ import '../../utilities/auth_session_service.dart';
 import '../../utilities/session_manager.dart';
 import '../../provider/common_sharedpreferences.dart';
 import '../../provider/user_controller.dart';
+import '../../utilities/location_service.dart';
 import '../../controller/home/home_controller.dart';
 import '../../controller/my_profile/get_my_profile.dart';
 import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
@@ -130,6 +131,13 @@ class _SplashState extends State<Splash> {
 
   Future<void> _checkLoginStatus() async {
     await Future.delayed(const Duration(seconds: 1));
+
+    // Request location on app start
+    LocationService.requestAndGetLocation().then((position) {
+      if (position != null) {
+        debugPrint('📍 App start location: ${position.latitude}, ${position.longitude}');
+      }
+    });
 
     if (!mounted) return;
 

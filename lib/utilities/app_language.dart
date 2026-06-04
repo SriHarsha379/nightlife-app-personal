@@ -767,7 +767,7 @@ class AppLanguage {
   static const distanceText = ["Distance"];
   static const currentLocationText = ["Use current location"];
   static const whereDoYouGoOutText = ["Where do you go out?"];
-  static const selectYourPrefferedCityText = ["Select your Preferred Cities"];
+  static const selectYourPrefferedCityText = ["Add cities you are interested in"];
   static const calendarText = ["Calendar"];
   static const viewdetailsText = ["View details"];
   static const pastEventsText = ["Past Events"];
