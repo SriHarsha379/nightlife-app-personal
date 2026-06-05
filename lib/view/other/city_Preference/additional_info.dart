@@ -14,6 +14,7 @@ import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
   final List<Map<String, dynamic>>? preferredCities;
@@ -426,6 +427,25 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       minWidth: 0,
                                       minHeight: 0,
                                     ),
+                                    suffixIcon: ValueListenableBuilder(
+                                      valueListenable: instagramTextEditingController,
+                                      builder: (context, value, _) {
+                                        final username = value.text.trim();
+                                        if (username.isEmpty) return const SizedBox.shrink();
+                                        return IconButton(
+                                          icon: const Icon(Icons.open_in_new, size: 18),
+                                          color: AppColor.greyLightColor(context),
+                                          tooltip: 'Verify on Instagram',
+                                          onPressed: () async {
+                                            final extracted = Validation.extractSocialUsername(username, 'instagram.com');
+                                            final url = Uri.parse('https://instagram.com/\$extracted');
+                                            if (await canLaunchUrl(url)) {
+                                              launchUrl(url, mode: LaunchMode.externalApplication);
+                                            }
+                                          },
+                                        );
+                                      },
+                                    ),
                                     suffixIconConstraints: const BoxConstraints(
                                       minWidth: 35,
                                       minHeight: 10,
@@ -512,6 +532,25 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   prefixIconConstraints: const BoxConstraints(
                                     minWidth: 0,
                                     minHeight: 0,
+                                  ),
+                                  suffixIcon: ValueListenableBuilder(
+                                    valueListenable: snapchattexteditingController,
+                                    builder: (context, value, _) {
+                                      final username = value.text.trim();
+                                      if (username.isEmpty) return const SizedBox.shrink();
+                                      return IconButton(
+                                        icon: const Icon(Icons.open_in_new, size: 18),
+                                        color: AppColor.greyLightColor(context),
+                                        tooltip: 'Verify on Snapchat',
+                                        onPressed: () async {
+                                          final extracted = Validation.extractSocialUsername(username, 'snapchat.com');
+                                          final url = Uri.parse('https://snapchat.com/add/\$extracted');
+                                          if (await canLaunchUrl(url)) {
+                                            launchUrl(url, mode: LaunchMode.externalApplication);
+                                          }
+                                        },
+                                      );
+                                    },
                                   ),
                                   suffixIconConstraints: const BoxConstraints(
                                     minWidth: 35,

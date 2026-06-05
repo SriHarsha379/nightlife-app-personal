@@ -54,8 +54,26 @@ class _VibePreferenceState extends State<VibePreference> {
     });
   }
 
+  TextEditingController searchController = TextEditingController();
+  List<dynamic> filteredVibes = [];
+
+  void _filterVibes(List<dynamic> allVibes) {
+    final query = searchController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        filteredVibes = allVibes;
+      } else {
+        filteredVibes = allVibes.where((vibe) {
+          final name = (vibe['name'] ?? vibe['vibe_name'] ?? '').toString().toLowerCase();
+          return name.contains(query);
+        }).toList();
+      }
+    });
+  }
+
   @override
   void dispose() {
+    searchController.dispose();
     super.dispose();
   }
 
@@ -303,7 +321,13 @@ class _VibePreferenceState extends State<VibePreference> {
 
   // Build vibes from API in grid layout (2 items per row)
   Widget _buildVibesFromAPI(VibePreferenceController controller, Size size) {
-    List<dynamic> apiVibes = controller.getVibesList;
+    // Use filtered list if search is active, otherwise use full list
+    if (filteredVibes.isEmpty && searchController.text.isEmpty) {
+      filteredVibes = controller.getVibesList;
+    }
+    List<dynamic> apiVibes = searchController.text.isEmpty 
+        ? controller.getVibesList 
+        : filteredVibes;
 
     return SingleChildScrollView(
       scrollDirection: Axis.vertical,

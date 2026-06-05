@@ -33,6 +33,22 @@ class _EventPreferenceState extends State<EventPreference> {
   var fileName;
 
   TextEditingController otherEventController = TextEditingController();
+  TextEditingController searchEventController = TextEditingController();
+  List<dynamic> filteredEvents = [];
+
+  void _filterEvents(List<dynamic> allEvents) {
+    final query = searchEventController.text.toLowerCase();
+    setState(() {
+      if (query.isEmpty) {
+        filteredEvents = allEvents;
+      } else {
+        filteredEvents = allEvents.where((event) {
+          final name = (event['category_name'] ?? '').toString().toLowerCase();
+          return name.contains(query);
+        }).toList();
+      }
+    });
+  }
 
   @override
   void initState() {
@@ -236,6 +252,28 @@ class _EventPreferenceState extends State<EventPreference> {
                     SizedBox(height: size.height * 3 / 100),
 
                     // Loading or Events List
+                    // Search bar
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      child: TextField(
+                        controller: searchEventController,
+                        style: TextStyle(color: AppColor.secondryColor(context)),
+                        cursorColor: AppColor.buttonColor,
+                        decoration: InputDecoration(
+                          hintText: 'Search events...',
+                          hintStyle: TextStyle(color: AppColor.greyLightColor(context)),
+                          prefixIcon: Icon(Icons.search, color: AppColor.greyLightColor(context)),
+                          filled: true,
+                          fillColor: AppColor.textFieldColor(context),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(30),
+                            borderSide: BorderSide.none,
+                          ),
+                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                        ),
+                        onChanged: (value) => _filterEvents(controller.getEventsList),
+                      ),
+                    ),
                     if (controller.getIsLoading)
                       SizedBox(
                         height: size.height * 30 / 100,
@@ -266,9 +304,9 @@ class _EventPreferenceState extends State<EventPreference> {
                           spacing: 10,
                           runSpacing: 10,
                           children: List.generate(
-                            controller.getEventsList.length,
+                            (searchEventController.text.isEmpty ? controller.getEventsList : filteredEvents).length,
                             (index) {
-                              var event = controller.getEventsList[index];
+                              var event = (searchEventController.text.isEmpty ? controller.getEventsList : filteredEvents)[index];
                               String eventId = event['_id'] ?? '';
                               String eventName =
                                   event['category_name'] ?? 'Unknown';

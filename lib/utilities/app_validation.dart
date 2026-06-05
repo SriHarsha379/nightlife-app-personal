@@ -268,7 +268,7 @@ class Validation {
 
   /// Extracts a plain username from a social profile URL or returns the
   /// value as-is if it is already a plain username.
-  static String _extractUsername(String value, String domain) {
+  static String extractSocialUsername(String value, String domain) {
     final trimmed = value.trim();
     // Handle full URLs: https://instagram.com/username or instagram.com/username
     final domainPattern = RegExp(
@@ -289,7 +289,7 @@ class Validation {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return true;
 
-    final username = _extractUsername(trimmed, 'instagram.com');
+    final username = extractSocialUsername(trimmed, 'instagram.com');
 
     if (username.length < 1 || username.length > 30) {
       _showError(context, "Instagram username must be 1–30 characters");
@@ -319,7 +319,7 @@ class Validation {
     final trimmed = value.trim();
     if (trimmed.isEmpty) return true;
 
-    final username = _extractUsername(trimmed, 'snapchat.com');
+    final username = extractSocialUsername(trimmed, 'snapchat.com');
 
     if (username.length < 3 || username.length > 15) {
       _showError(context, "Snapchat username must be 3–15 characters");
