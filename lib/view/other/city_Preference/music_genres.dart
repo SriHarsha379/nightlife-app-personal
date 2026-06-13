@@ -63,7 +63,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
   }
 
   String _genreNameFrom(dynamic genre) {
-    return (genre['genre_name'] ?? genre['name'] ?? '').toString();
+    return (genre['genre_name'] ?? '').toString();
   }
 
   @override

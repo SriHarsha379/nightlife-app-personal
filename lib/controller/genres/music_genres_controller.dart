@@ -52,10 +52,13 @@ class MusicGenresController with ChangeNotifier {
 
       if (response != null && response['success'] == true) {
         if (response['data'] != null && response['data'] is List) {
-          _genresList = response['data'];
+          final rawGenres = List<dynamic>.from(response['data']);
+          _genresList = rawGenres.where(_isMusicGenreRecord).toList();
 
           print("======================================");
           print("TOTAL GENRES RECEIVED: ${_genresList.length}");
+          print("DROPPED NON-GENRE RECORDS: "
+              "${rawGenres.length - _genresList.length}");
           print("======================================");
 
           for (int i = 0; i < _genresList.length; i++) {
@@ -102,6 +105,13 @@ class MusicGenresController with ChangeNotifier {
       _isLoading = false;
       notifyListeners();
     }
+  }
+
+  bool _isMusicGenreRecord(dynamic item) {
+    if (item is! Map) return false;
+
+    final genreName = item['genre_name']?.toString().trim() ?? '';
+    return genreName.isNotEmpty;
   }
 
   // Toggle genre selection
