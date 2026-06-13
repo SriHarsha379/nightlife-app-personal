@@ -113,9 +113,27 @@ class MusicGenresController with ChangeNotifier {
     final genreName =
         (item['genre_name'] ?? item['name'] ?? '').toString().trim();
     if (genreName.isEmpty) return false;
+    if (_looksLikeEventPreference(genreName)) return false;
 
     final category = item['category']?.toString().trim().toLowerCase() ?? '';
     return category.isEmpty || category == 'music';
+  }
+
+  bool _looksLikeEventPreference(String value) {
+    final normalized = value.toLowerCase();
+    const blockedTokens = [
+      'festival',
+      'event',
+      'concert',
+      'battle',
+      'drama',
+      'theater',
+      'theatre',
+      'comedy',
+      'adventure',
+      'special',
+    ];
+    return blockedTokens.any(normalized.contains);
   }
 
   // Toggle genre selection
