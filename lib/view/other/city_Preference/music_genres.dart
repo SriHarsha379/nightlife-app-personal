@@ -49,16 +49,21 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
       if (query.isEmpty) {
         filteredGenres = controller.getGenresList;
       } else {
-        filteredGenres = controller.getGenresList
-            .where((genre) =>
-                genre['name'].toString().toLowerCase().contains(query))
-            .toList();
-        filteredGenres = controller.getGenresList
-            .where((genre) =>
-                genre['category'].toString().toLowerCase().contains(query))
-            .toList();
+        filteredGenres = controller.getGenresList.where((genre) {
+          final name = _genreNameFrom(genre).toLowerCase();
+          final category = (genre['category'] ?? '').toString().toLowerCase();
+          return name.contains(query) || category.contains(query);
+        }).toList();
       }
     });
+  }
+
+  String _genreIdFrom(dynamic genre) {
+    return (genre['_id'] ?? genre['id'] ?? genre['genre_id'] ?? '').toString();
+  }
+
+  String _genreNameFrom(dynamic genre) {
+    return (genre['genre_name'] ?? genre['name'] ?? '').toString();
   }
 
   @override
@@ -351,7 +356,6 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
   }
 
   Widget _buildGenresGrid(MusicGenresController controller) {
-    final size = MediaQuery.of(context).size;
     List<dynamic> genres = controller.getGenresList;
 
     // Create pairs for 2-column layout
@@ -397,11 +401,11 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
 
   Widget _buildGenreCard(MusicGenresController controller, dynamic genre) {
     final size = MediaQuery.of(context).size;
-    String genreId = genre['_id'] ?? '';
-    String genreName = genre['name'] ?? '';
-    String genreCategory = genre['category'] ?? '';
+    String genreId = _genreIdFrom(genre);
+    String genreName = _genreNameFrom(genre);
+    String genreCategory = (genre['category'] ?? '').toString();
 
-    String? imageUrl = genre['image'];
+    String? imageUrl = (genre['image'] ?? genre['genre_image'])?.toString();
     bool isSelected = controller.isGenreSelected(genreId);
 
     return GestureDetector(

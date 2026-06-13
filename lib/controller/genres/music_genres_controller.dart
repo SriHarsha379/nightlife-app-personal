@@ -19,8 +19,7 @@ class MusicGenresController with ChangeNotifier {
   // Fetch genres from API
   Future<void> fetchGenresData(BuildContext context) async {
     String token = AppConstant.token;
-    // String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ2NDhjNzUzMDc2MDY5MDg0ZmIzNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTIzNjUzOSwiZXhwIjoxNzcxODI4NTM5fQ.AC6BJrsvAvqoAFhwWWDR8AuKkaVr5k4ShjdNlFWDw2A";
+
     if (token.isEmpty) {
       print("Token is missing!");
       return;
@@ -30,38 +29,74 @@ class MusicGenresController with ChangeNotifier {
       'Authorization': 'Bearer $token',
     };
 
-    // Show loading only if list is empty
     if (_genresList.isEmpty) {
       _isLoading = true;
       notifyListeners();
     }
 
     try {
+      print("======================================");
+      print("CALLING API: auth/music-genres");
+      print("======================================");
+
       final response = await getFormData(
         'auth/music-genres',
         context,
         headers: headers,
       );
 
-      print("API Response: $response");
+      print("======================================");
+      print("FULL API RESPONSE");
+      print(response);
+      print("======================================");
 
       if (response != null && response['success'] == true) {
         if (response['data'] != null && response['data'] is List) {
           _genresList = response['data'];
-          print("Genres List: $_genresList");
+
+          print("======================================");
+          print("TOTAL GENRES RECEIVED: ${_genresList.length}");
+          print("======================================");
+
+          for (int i = 0; i < _genresList.length; i++) {
+            final genre = _genresList[i];
+
+            print(
+              "[$i] "
+              "ID: ${genre['_id']} | "
+              "NAME: ${genre['genre_name'] ?? genre['name']} | "
+              "CATEGORY: ${genre['category']}",
+            );
+          }
+
+          print("======================================");
+          print("END OF GENRE LIST");
+          print("======================================");
         } else {
           _genresList = [];
           print("No genres data found");
         }
+
         notifyListeners();
       } else {
         _genresList = [];
+
+        print("======================================");
+        print("API FAILED OR RETURNED FALSE");
+        print(response);
+        print("======================================");
+
         if (response != null) {
           // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
-    } catch (e) {
-      print("Exception in fetchGenresData: $e");
+    } catch (e, stackTrace) {
+      print("======================================");
+      print("EXCEPTION IN fetchGenresData");
+      print(e);
+      print(stackTrace);
+      print("======================================");
+
       _genresList = [];
     } finally {
       _isLoading = false;

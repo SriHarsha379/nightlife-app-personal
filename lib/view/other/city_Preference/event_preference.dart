@@ -5,7 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:provider/provider.dart';
 
-import 'package:night_life/view/other/city_Preference/vibe_preference.dart';
+import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
 import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../controller/event_preference/event_preference_controller.dart';
@@ -43,11 +43,24 @@ class _EventPreferenceState extends State<EventPreference> {
         filteredEvents = allEvents;
       } else {
         filteredEvents = allEvents.where((event) {
-          final name = (event['category_name'] ?? '').toString().toLowerCase();
+          final name = _eventNameFrom(event).toLowerCase();
           return name.contains(query);
         }).toList();
       }
     });
+  }
+
+  String _eventIdFrom(dynamic event) {
+    return (event['_id'] ?? event['id'] ?? event['event_preference_id'] ?? '')
+        .toString();
+  }
+
+  String _eventNameFrom(dynamic event) {
+    return (event['category_name'] ??
+            event['name'] ??
+            event['event_name'] ??
+            '')
+        .toString();
   }
 
   @override
@@ -66,6 +79,7 @@ class _EventPreferenceState extends State<EventPreference> {
   @override
   void dispose() {
     otherEventController.dispose();
+    searchEventController.dispose();
     super.dispose();
   }
 
@@ -114,11 +128,12 @@ class _EventPreferenceState extends State<EventPreference> {
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: VibePreference(
+                      child: AboutYouScreen(
                         selectedGenres: widget.selectedGenres,
                         customGenre: widget.customGenre,
                         selectedEvents: selectedEvents,
                         customEvent: customEvent,
+                        selectedVibes: '',
                       ),
                       duration: const Duration(milliseconds: 500),
                     ),
@@ -254,24 +269,30 @@ class _EventPreferenceState extends State<EventPreference> {
                     // Loading or Events List
                     // Search bar
                     Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
                       child: TextField(
                         controller: searchEventController,
-                        style: TextStyle(color: AppColor.secondryColor(context)),
+                        style:
+                            TextStyle(color: AppColor.secondryColor(context)),
                         cursorColor: AppColor.buttonColor,
                         decoration: InputDecoration(
                           hintText: 'Search events...',
-                          hintStyle: TextStyle(color: AppColor.greyLightColor(context)),
-                          prefixIcon: Icon(Icons.search, color: AppColor.greyLightColor(context)),
+                          hintStyle: TextStyle(
+                              color: AppColor.greyLightColor(context)),
+                          prefixIcon: Icon(Icons.search,
+                              color: AppColor.greyLightColor(context)),
                           filled: true,
                           fillColor: AppColor.textFieldColor(context),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(30),
                             borderSide: BorderSide.none,
                           ),
-                          contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                          contentPadding: const EdgeInsets.symmetric(
+                              horizontal: 20, vertical: 12),
                         ),
-                        onChanged: (value) => _filterEvents(controller.getEventsList),
+                        onChanged: (value) =>
+                            _filterEvents(controller.getEventsList),
                       ),
                     ),
                     if (controller.getIsLoading)
@@ -304,12 +325,19 @@ class _EventPreferenceState extends State<EventPreference> {
                           spacing: 10,
                           runSpacing: 10,
                           children: List.generate(
-                            (searchEventController.text.isEmpty ? controller.getEventsList : filteredEvents).length,
+                            (searchEventController.text.isEmpty
+                                    ? controller.getEventsList
+                                    : filteredEvents)
+                                .length,
                             (index) {
-                              var event = (searchEventController.text.isEmpty ? controller.getEventsList : filteredEvents)[index];
-                              String eventId = event['_id'] ?? '';
-                              String eventName =
-                                  event['category_name'] ?? 'Unknown';
+                              var event = (searchEventController.text.isEmpty
+                                  ? controller.getEventsList
+                                  : filteredEvents)[index];
+                              String eventId = _eventIdFrom(event);
+                              String eventName = _eventNameFrom(event);
+                              if (eventName.isEmpty) {
+                                eventName = 'Unknown';
+                              }
                               bool isSelected =
                                   controller.isEventSelected(eventId);
 
