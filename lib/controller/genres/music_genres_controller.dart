@@ -110,8 +110,12 @@ class MusicGenresController with ChangeNotifier {
   bool _isMusicGenreRecord(dynamic item) {
     if (item is! Map) return false;
 
-    final genreName = item['genre_name']?.toString().trim() ?? '';
-    return genreName.isNotEmpty;
+    final genreName =
+        (item['genre_name'] ?? item['name'] ?? '').toString().trim();
+    if (genreName.isEmpty) return false;
+
+    final category = item['category']?.toString().trim().toLowerCase() ?? '';
+    return category.isEmpty || category == 'music';
   }
 
   // Toggle genre selection
