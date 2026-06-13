@@ -116,7 +116,18 @@ class MusicGenresController with ChangeNotifier {
     if (_looksLikeEventPreference(genreName)) return false;
 
     final category = item['category']?.toString().trim().toLowerCase() ?? '';
-    return category == 'music';
+    return !_isBlockedEventCategory(category);
+  }
+
+  bool _isBlockedEventCategory(String category) {
+    const blockedCategories = {
+      'dance',
+      'comedy',
+      'theater',
+      'theatre',
+      'concert',
+    };
+    return blockedCategories.contains(category);
   }
 
   bool _looksLikeEventPreference(String value) {
