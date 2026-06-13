@@ -116,7 +116,7 @@ class MusicGenresController with ChangeNotifier {
     if (_looksLikeEventPreference(genreName)) return false;
 
     final category = item['category']?.toString().trim().toLowerCase() ?? '';
-    return category.isEmpty || category == 'music';
+    return category == 'music';
   }
 
   bool _looksLikeEventPreference(String value) {
