@@ -245,6 +245,30 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   String selectDate = '';
   TextEditingController birthTextEditingController = TextEditingController();
 
+  Widget _buildPasswordRule(String label, bool met) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 3),
+      child: Row(
+        children: [
+          Icon(
+            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+            size: 13,
+            color: met ? Colors.greenAccent : Colors.white38,
+          ),
+          const SizedBox(width: 6),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: met ? Colors.greenAccent : Colors.white54,
+              fontFamily: AppFont.fontFamily,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   String _formatDobForApi(String dob) {
     final parts = dob.split('/');
     if (parts.length == 3 && parts[2].length == 4) {
@@ -553,7 +577,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                 Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 4),
                                   child: Text(
-                                    "Password must be 8+ characters with uppercase, lowercase, number & special character",
+                                    "Password must be 8+ characters with uppercase, lowercase, a number & special character",
                                     style: TextStyle(
                                       fontSize: 11,
                                       color: AppColor.greyLightColor(context),
@@ -824,28 +848,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     2 /
                                     100,
                               ),
-                              Center(
-                                child: SizedBox(
-                                  width: MediaQuery.of(context).size.width *
-                                      90 /
-                                      100,
-                                  height: MediaQuery.of(context).size.height *
-                                      7 /
-                                      100,
-                                  child: CustomTextField(
-                                    hintText: AppLanguage
-                                        .heightOptionalText[language],
-                                    maxLength: AppConstant.mobileMaxLenth,
-                                    controller: heightTextEditingController,
-                                    readOnly: false,
-                                  ),
-                                ),
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    2 /
-                                    100,
-                              ),
                               if (widget.screen == "refer")
                                 Center(
                                   child: SizedBox(
@@ -856,7 +858,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         7 /
                                         100,
                                     child: CustomTextField(
-                                      hintText: "ReferCode",
+                                      hintText: "Referral Code",
                                       maxLength: AppConstant.fullNameText,
                                       controller:
                                           referCodeTextEditingController,

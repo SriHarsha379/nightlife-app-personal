@@ -165,7 +165,10 @@ class HomeController with ChangeNotifier {
         if (!loadMore) {
           _clearListByType(type);
         }
-        if (response != null) {
+        if (response == null) {
+          // Connection error — stop retrying
+          _hasMorePages[type] = false;
+        } else {
           // CommonHelper.handleInactiveUserRedirect(context, response);
         }
       }
@@ -175,6 +178,8 @@ class HomeController with ChangeNotifier {
       if (!loadMore) {
         _clearListByType(type);
       }
+      // Stop infinite retry on connection errors
+      _hasMorePages[type] = false;
     } finally {
       _isLoading = false;
       _setPaginationLoading(type, false);

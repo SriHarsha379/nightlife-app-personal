@@ -669,32 +669,56 @@ class HomeWidget {
                 ),
               ),
 
-              Positioned(
-                left: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close,
-                  color: AppColor.redColor,
-                  isActive: showRejectFeedback,
-                  onTap: onRejectTap,
-                  semanticsLabel: 'Reject member',
+              // Swipe LEFT indicator (❌ red) - shows when dragging left
+              if (showRejectFeedback)
+                Positioned(
+                  left: 16,
+                  top: badgeTop,
+                  child: Transform.rotate(
+                    angle: -0.3,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColor.redColor, width: 3),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'NOPE',
+                        style: TextStyle(
+                          color: AppColor.redColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
-              Positioned(
-                right: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.check_rounded,
-                  color: AppColor.greenColor,
-                  isActive: showAcceptFeedback,
-                  onTap: onHeartTap,
-                  semanticsLabel: 'Accept member',
+              // Swipe RIGHT indicator (✓ green) - shows when dragging right
+              if (showAcceptFeedback)
+                Positioned(
+                  right: 16,
+                  top: badgeTop,
+                  child: Transform.rotate(
+                    angle: 0.3,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColor.greenColor, width: 3),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Text(
+                        'LIKE',
+                        style: TextStyle(
+                          color: AppColor.greenColor,
+                          fontSize: 24,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: 2,
+                        ),
+                      ),
+                    ),
+                  ),
                 ),
-              ),
 
               //! Heart Button on Right Side
               Positioned(

@@ -261,147 +261,126 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
     _OnboardingSlideData slide,
   ) {
     final size = MediaQuery.of(context).size;
-
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
       child: LayoutBuilder(
         builder: (context, constraints) {
-          final heroHeight = constraints.maxHeight * 0.44;
-          final cardHeight = constraints.maxHeight * 0.68;
-
-          return SingleChildScrollView(
-            physics: const BouncingScrollPhysics(),
-            child: ConstrainedBox(
-              constraints: BoxConstraints(minHeight: constraints.maxHeight),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SizedBox(height: constraints.maxHeight * 0.02),
-                  AnimatedContainer(
-                    duration: const Duration(milliseconds: 350),
-                    curve: Curves.easeOut,
-                    width: double.infinity,
-                    constraints: BoxConstraints(minHeight: cardHeight),
-                    padding: EdgeInsets.fromLTRB(
-                      size.width * 0.06,
-                      size.height * 0.03,
-                      size.width * 0.06,
-                      size.height * 0.025,
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.fromLTRB(
+                  size.width * 0.06,
+                  size.height * 0.025,
+                  size.width * 0.06,
+                  size.height * 0.025,
+                ),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(30),
+                  gradient: AppColor.welcomefrontCardcolor(context),
+                  border: Border.all(color: Colors.white.withOpacity(0.08)),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.24),
+                      blurRadius: 20,
+                      offset: const Offset(0, 12),
                     ),
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(30),
-                      gradient: AppColor.welcomefrontCardcolor(context),
-                      border: Border.all(
-                        color: Colors.white.withOpacity(0.08),
+                  ],
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      width: size.width * 0.12,
+                      height: size.width * 0.12,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Colors.white.withOpacity(0.12),
                       ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.24),
-                          blurRadius: 20,
-                          offset: const Offset(0, 12),
-                        ),
-                      ],
+                      child: Icon(
+                        slide.accentIcon,
+                        color: Colors.white,
+                        size: size.width * 0.06,
+                      ),
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: size.width * 0.12,
-                          height: size.width * 0.12,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.12),
-                          ),
-                          child: Icon(
-                            slide.accentIcon,
-                            color: Colors.white,
-                            size: size.width * 0.06,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.024),
-                        Text(
-                          slide.title,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: size.width * 0.085,
-                            height: 1.12,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFont.fontFamily,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.016),
-                        Text(
-                          slide.description,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.88),
-                            fontSize: size.width * 0.038,
-                            height: 1.5,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.026),
-                        ...slide.highlights.map(
-                          (highlight) => Padding(
-                            padding: EdgeInsets.only(
-                              bottom: size.height * 0.012,
+                    SizedBox(height: size.height * 0.018),
+                    Text(
+                      slide.title,
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: size.width * 0.075,
+                        height: 1.12,
+                        fontWeight: FontWeight.w700,
+                        fontFamily: AppFont.fontFamily,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.012),
+                    Text(
+                      slide.description,
+                      style: TextStyle(
+                        color: Colors.white.withOpacity(0.88),
+                        fontSize: size.width * 0.036,
+                        height: 1.5,
+                        fontWeight: FontWeight.w500,
+                        fontFamily: AppFont.fontFamily,
+                      ),
+                    ),
+                    SizedBox(height: size.height * 0.018),
+                    ...slide.highlights.map(
+                      (highlight) => Padding(
+                        padding: EdgeInsets.only(bottom: size.height * 0.010),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              margin: EdgeInsets.only(top: size.height * 0.004),
+                              width: size.width * 0.018,
+                              height: size.width * 0.018,
+                              decoration: const BoxDecoration(
+                                color: Color(0xFFFF2CDF),
+                                shape: BoxShape.circle,
+                              ),
                             ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(
-                                    top: size.height * 0.004,
-                                  ),
-                                  width: size.width * 0.018,
-                                  height: size.width * 0.018,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFF2CDF),
-                                    shape: BoxShape.circle,
-                                  ),
+                            SizedBox(width: size.width * 0.03),
+                            Expanded(
+                              child: Text(
+                                highlight,
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.94),
+                                  fontSize: size.width * 0.035,
+                                  height: 1.4,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
                                 ),
-                                SizedBox(width: size.width * 0.03),
-                                Expanded(
-                                  child: Text(
-                                    highlight,
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.94),
-                                      fontSize: size.width * 0.035,
-                                      height: 1.4,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFont.fontFamily,
-                                    ),
-                                  ),
-                                ),
-                              ],
+                              ),
                             ),
-                          ),
+                          ],
                         ),
-                        SizedBox(height: size.height * 0.02),
-                        Center(
-                          child: AnimatedSwitcher(
-                            duration: const Duration(milliseconds: 350),
-                            child: Image.asset(
-                              slide.imageAsset,
-                              key: ValueKey(slide.imageAsset),
-                              height: heroHeight,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                        ),
-                      ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                child: Center(
+                  child: AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 350),
+                    child: Image.asset(
+                      slide.imageAsset,
+                      key: ValueKey(slide.imageAsset),
+                      fit: BoxFit.contain,
                     ),
                   ),
-                  SizedBox(height: constraints.maxHeight * 0.03),
-                ],
+                ),
               ),
-            ),
+            ],
           );
         },
       ),
     );
   }
-
   Widget _buildFinalPage(BuildContext context) {
     final size = MediaQuery.of(context).size;
 

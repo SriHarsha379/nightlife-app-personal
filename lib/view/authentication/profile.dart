@@ -527,22 +527,42 @@ class _ProfileState extends State<Profile> {
   }
 
   Widget buildTaskRow(String text, Color color) {
-    return Row(
-      children: [
-        Icon(Icons.fiber_manual_record, size: 14, color: color),
-        SizedBox(width: MediaQuery.of(context).size.width * 2 / 100),
-        SizedBox(height: MediaQuery.of(context).size.height * 3 / 100),
-        Flexible(
-          child: Text(
-            text,
-            style: TextStyle(
-              fontSize: 14,
-              fontFamily: AppFont.fontFamily,
-              color: AppColor.secondryColor(context),
-            ),
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: const EditProfile(),
+            duration: const Duration(milliseconds: 500),
           ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 3),
+        child: Row(
+          children: [
+            Icon(Icons.fiber_manual_record, size: 14, color: color),
+            SizedBox(width: MediaQuery.of(context).size.width * 2 / 100),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: AppFont.fontFamily,
+                  color: AppColor.secondryColor(context),
+                ),
+              ),
+            ),
+            Icon(
+              Icons.chevron_right,
+              size: 18,
+              color: AppColor.secondryColor(context).withOpacity(0.4),
+            ),
+          ],
         ),
-      ],
+      ),
     );
   }
 

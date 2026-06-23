@@ -68,15 +68,15 @@ class SearchFilterController with ChangeNotifier {
   List<Map<String, String>> get eventRecommendedList => _eventRecommendedList;
 
   Future<void> fetchFilterEventsVenues(
-    BuildContext context, {
-    String cityId = '',
-    required double latitude,
-    required double longitude,
-    required String type,
-    int radius = 10,
-    String search = '',
-    bool forceRefresh = false,
-  }) async {
+      BuildContext context, {
+        String cityId = '',
+        required double latitude,
+        required double longitude,
+        required String type,
+        int radius = 10,
+        String search = '',
+        bool forceRefresh = false,
+      }) async {
     final params = _SearchParams(
       cityId: cityId.trim(),
       latitude: latitude,
@@ -85,6 +85,17 @@ class SearchFilterController with ChangeNotifier {
       search: search.trim(),
       type: type,
     );
+
+    // FIX: When search is cleared (empty), always invalidate the cached params
+    // so that clearing and re-searching the same term re-fetches from server
+    // instead of being skipped by the dedup check below.
+    if (params.search.isEmpty) {
+      if (type == 'venue') {
+        _lastVenueParams = null;
+      } else {
+        _lastEventParams = null;
+      }
+    }
 
     // Skip the network call when params are identical to the last fetch.
     if (!forceRefresh) {
@@ -118,6 +129,9 @@ class SearchFilterController with ChangeNotifier {
     }
     if (searchQuery.isNotEmpty) {
       queryParameters['search'] = searchQuery;
+    } else {
+      // Ensure no stale search key leaks through on clear
+      queryParameters.remove('search');
     }
     final endpoint =
         'common/filter_events_venues?${Uri(queryParameters: queryParameters).query}';
@@ -201,13 +215,13 @@ class SearchFilterController with ChangeNotifier {
   Map<String, String> _toFeaturedMap(Map<String, dynamic> item) {
     final tags = item['tags'];
     final categories =
-        _categoryNames(item['category_ids'] ?? item['categories']);
+    _categoryNames(item['category_ids'] ?? item['categories']);
     final categoryName = categories.isNotEmpty ? categories.first : '';
     final subtitle = tags is List && tags.isNotEmpty
         ? _readString(tags.first)
         : categoryName.isNotEmpty
-            ? categoryName
-            : _readString(item['location']);
+        ? categoryName
+        : _readString(item['location']);
 
     return {
       'id': _readString(
@@ -215,7 +229,7 @@ class SearchFilterController with ChangeNotifier {
       'image': _readString(
           item['image'] ?? item['venue_image'] ?? item['event_image']),
       'title':
-          _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
+      _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'subtitle': subtitle,
       'event_date': _readString(item['event_date']),
       'categories': categories.join('||'),
@@ -230,7 +244,7 @@ class SearchFilterController with ChangeNotifier {
       'image': _readString(
           item['image'] ?? item['venue_image'] ?? item['event_image']),
       'title':
-          _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
+      _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'distance': _distance(item['distance_km']),
       'location': _readString(item['location'] ?? item['address']),
     };
@@ -245,7 +259,7 @@ class SearchFilterController with ChangeNotifier {
       'image': _readString(
           item['image'] ?? item['venue_image'] ?? item['event_image']),
       'title':
-          _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
+      _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'location': _locationLabel(distance, location),
       'distance': distance,
     };
@@ -265,8 +279,8 @@ class SearchFilterController with ChangeNotifier {
     return categories
         .whereType<Map>()
         .map((category) {
-          return _readString(category['category_name']);
-        })
+      return _readString(category['category_name']);
+    })
         .where((name) => name.isNotEmpty)
         .toList();
   }
