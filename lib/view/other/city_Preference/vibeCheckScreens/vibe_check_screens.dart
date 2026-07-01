@@ -26,15 +26,15 @@ class VibeCheckScreen extends StatefulWidget {
 
   const VibeCheckScreen(
       {super.key,
-      this.selectedGenres,
-      this.customGenre,
-      this.selectedEvents,
-      this.customEvent,
-      this.selectedVibes,
-      this.sexuality,
-      this.interestedIn,
-      this.pronouns,
-      this.selectedMediaList});
+        this.selectedGenres,
+        this.customGenre,
+        this.selectedEvents,
+        this.customEvent,
+        this.selectedVibes,
+        this.sexuality,
+        this.interestedIn,
+        this.pronouns,
+        this.selectedMediaList});
 
   @override
   State<VibeCheckScreen> createState() => _VibeCheckScreenState();
@@ -43,6 +43,10 @@ class VibeCheckScreen extends StatefulWidget {
 class _VibeCheckScreenState extends State<VibeCheckScreen> {
   final PageController _pageController = PageController();
   int currentPage = 0;
+
+  // Only the FIRST page (index 0) enforces the
+  // "answer at least one question before continuing/skipping" rule.
+  static const int _restrictedPageIndex = 0;
 
   final List<String> progressImages = [
     AppImage.frequencyOneicon,
@@ -60,7 +64,7 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
   void _fetchVibeCheckData() {
     final vibeCheckProvider =
-        Provider.of<VibeCheckController>(context, listen: false);
+    Provider.of<VibeCheckController>(context, listen: false);
     vibeCheckProvider.fetchVibeCheckData(context);
   }
 
@@ -70,9 +74,35 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     super.dispose();
   }
 
+  bool _hasAnyAnswerOnPage(
+      VibeCheckController vibeCheckProvider, int pageIndex) {
+    List<List<dynamic>> distributedQuestions =
+    vibeCheckProvider.distributeQuestionsToPages();
+    if (distributedQuestions.length <= pageIndex) return false;
+
+    for (final question in distributedQuestions[pageIndex]) {
+      final questionId = question['_id'] ?? '';
+      final answer = vibeCheckProvider.getAnswer(questionId);
+      if (answer.trim().isNotEmpty) return true;
+    }
+    return false;
+  }
+
   void _nextPage() {
     final vibeCheckProvider =
-        Provider.of<VibeCheckController>(context, listen: false);
+    Provider.of<VibeCheckController>(context, listen: false);
+
+    // Rule only applies to the first page.
+    if (currentPage == _restrictedPageIndex &&
+        !_hasAnyAnswerOnPage(vibeCheckProvider, currentPage)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please answer at least one question to continue.'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
 
     if (currentPage < 2) {
       setState(() {
@@ -91,11 +121,11 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
 
   void _submitAndNavigate() {
     final vibeCheckProvider =
-        Provider.of<VibeCheckController>(context, listen: false);
+    Provider.of<VibeCheckController>(context, listen: false);
 
     // Get formatted answers
     List<Map<String, String>> formattedAnswers =
-        vibeCheckProvider.getFormattedAnswers();
+    vibeCheckProvider.getFormattedAnswers();
 
     // Print for debugging
     print("Formatted Answers for API: $formattedAnswers");
@@ -158,55 +188,64 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
           _previousPage();
           return false;
         },
-        child: Scaffold(
-          floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 30),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                AppButton(
-                  text: AppLanguage.continueText[language],
-                  onPress: _nextPage,
-                ),
-                SizedBox(height: size.height * 1 / 100),
-                GestureDetector(
-                  onTap: _skipToNext,
-                  child: Text(
-                    textAlign: TextAlign.center,
-                    AppLanguage.skip[language],
-                    style: TextStyle(
-                      fontFamily: AppFont.fontFamily,
-                      fontSize: 14,
-                      fontWeight: FontWeight.w700,
-                      color: AppColor.greyLightColor(context),
-                    ),
+        child: Consumer<VibeCheckController>(
+          builder: (context, vibeCheckProvider, child) {
+            if (vibeCheckProvider.getIsLoading) {
+              return const Scaffold(
+                body: Center(
+                  child: CircularProgressIndicator(
+                    color: AppColor.pinkColor,
                   ),
                 ),
-              ],
-            ),
-          ),
-          body: Container(
-            width: size.width,
-            height: size.height,
-            decoration: BoxDecoration(
-              gradient: AppColor.backgroundGradientcolor(context),
-            ),
-            child: Consumer<VibeCheckController>(
-              builder: (context, vibeCheckProvider, child) {
-                if (vibeCheckProvider.getIsLoading) {
-                  return const Center(
-                    child: CircularProgressIndicator(
-                      color: AppColor.pinkColor,
+              );
+            }
+
+            List<List<dynamic>> distributedQuestions =
+            vibeCheckProvider.distributeQuestionsToPages();
+
+            // Skip is only gated on the first page. On pages 2 and 3
+            // it is always shown, regardless of answer state.
+            final bool showSkip = currentPage == _restrictedPageIndex
+                ? _hasAnyAnswerOnPage(vibeCheckProvider, currentPage)
+                : true;
+
+            return Scaffold(
+              floatingActionButtonLocation:
+              FloatingActionButtonLocation.centerFloat,
+              floatingActionButton: Padding(
+                padding: const EdgeInsets.only(bottom: 30),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AppButton(
+                      text: AppLanguage.continueText[language],
+                      onPress: _nextPage,
                     ),
-                  );
-                }
-
-                List<List<dynamic>> distributedQuestions =
-                    vibeCheckProvider.distributeQuestionsToPages();
-
-                return Column(
+                    SizedBox(height: size.height * 1 / 100),
+                    if (showSkip)
+                      GestureDetector(
+                        onTap: _skipToNext,
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          AppLanguage.skip[language],
+                          style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w700,
+                            color: AppColor.greyLightColor(context),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              body: Container(
+                width: size.width,
+                height: size.height,
+                decoration: BoxDecoration(
+                  gradient: AppColor.backgroundGradientcolor(context),
+                ),
+                child: Column(
                   children: [
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 4 / 100,
@@ -289,19 +328,19 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                           return VibeCheckPageContent(
                             key: ValueKey(pageIndex),
                             questionList:
-                                distributedQuestions.length > pageIndex
-                                    ? distributedQuestions[pageIndex]
-                                    : [],
+                            distributedQuestions.length > pageIndex
+                                ? distributedQuestions[pageIndex]
+                                : [],
                             pageNumber: pageIndex + 1,
                           );
                         },
                       ),
                     ),
                   ],
-                );
-              },
-            ),
-          ),
+                ),
+              ),
+            );
+          },
         ),
       ),
     );
@@ -353,7 +392,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
 
   void _initializeControllers() {
     final vibeCheckProvider =
-        Provider.of<VibeCheckController>(context, listen: false);
+    Provider.of<VibeCheckController>(context, listen: false);
 
     for (int i = 0; i < widget.questionList.length; i++) {
       final question = widget.questionList[i];
@@ -427,21 +466,21 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final bool isAnswered =
-                              vibeCheckProvider.isQuestionAnswered(questionId);
+                          vibeCheckProvider.isQuestionAnswered(questionId);
                           final double trailingWidth = isAnswered ? 60 : 28;
                           final double availableTextWidth =
                               constraints.maxWidth - 36 - trailingWidth;
                           final String questionText =
-                              (question['question'] ?? 'Question').toString();
+                          (question['question'] ?? 'Question').toString();
                           final String descriptionText =
-                              (question['description'] ?? 'Description')
-                                  .toString();
+                          (question['description'] ?? 'Description')
+                              .toString();
 
                           final bool showArrow = _doesTextOverflow(
-                                text: questionText,
-                                style: questionStyle,
-                                maxWidth: availableTextWidth,
-                              ) ||
+                            text: questionText,
+                            style: questionStyle,
+                            maxWidth: availableTextWidth,
+                          ) ||
                               _doesTextOverflow(
                                 text: descriptionText,
                                 style: descriptionStyle,
@@ -450,7 +489,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
 
                           return GestureDetector(
                             onTap:
-                                showArrow ? () => _toggleDropdown(index) : null,
+                            showArrow ? () => _toggleDropdown(index) : null,
                             child: Container(
                               width: size.width * 0.9,
                               padding: const EdgeInsets.symmetric(
@@ -467,7 +506,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           questionText,
@@ -511,7 +550,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                                       child: AnimatedRotation(
                                         turns: isDropdownOpen ? 0.5 : 0,
                                         duration:
-                                            const Duration(milliseconds: 200),
+                                        const Duration(milliseconds: 200),
                                         child: const Icon(
                                           Icons.keyboard_arrow_down_rounded,
                                           color: Colors.white,
@@ -552,7 +591,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                           controller: controller,
                           cursorColor: AppColor.secondryColor(context),
                           style:
-                              TextStyle(color: AppColor.secondryColor(context)),
+                          TextStyle(color: AppColor.secondryColor(context)),
                           textAlignVertical: TextAlignVertical.center,
                           onChanged: (value) {
                             vibeCheckProvider.saveAnswer(questionId, value);
@@ -571,7 +610,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                             ),
                             hintText: AppLanguage.myperfectNight[language],
                             hintStyle:
-                                AppConstant.textFilledStyle1(context).copyWith(
+                            AppConstant.textFilledStyle1(context).copyWith(
                               color: AppColor.hintPlaceHolderText,
                             ),
                             contentPadding: EdgeInsets.only(

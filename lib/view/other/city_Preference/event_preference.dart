@@ -6,6 +6,7 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:provider/provider.dart';
 
 import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
+import 'package:night_life/view/other/city_Preference/vibe_preference.dart';
 import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../controller/event_preference/event_preference_controller.dart';
@@ -128,12 +129,11 @@ class _EventPreferenceState extends State<EventPreference> {
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: AboutYouScreen(
+                      child: VibePreference(
                         selectedGenres: widget.selectedGenres,
                         customGenre: widget.customGenre,
                         selectedEvents: selectedEvents,
                         customEvent: customEvent,
-                        selectedVibes: '',
                       ),
                       duration: const Duration(milliseconds: 500),
                     ),

@@ -77,3 +77,5 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => BlockedUsersController()),
   ];
 }
+
+// Add ChangeNotifierProvider(create: (_) => AIChatProvider()) to your MultiProvider list

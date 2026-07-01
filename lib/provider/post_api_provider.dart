@@ -481,17 +481,19 @@ class PostApiProvider with ChangeNotifier {
       ) async {
     if (_loading) return false;
     setLoading(true);
-    // TODO: Remove static OTP bypass when SMS provider is integrated
-    if (otp.trim() == '123456' || otp.trim() == '1234') {
+
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    final firebaseIdToken = await firebaseUser?.getIdToken();
+    if (firebaseIdToken == null) {
       setLoading(false);
       if (!context.mounted) return false;
-      Navigator.push(context, PageTransition(type: PageTransitionType.rightToLeftWithFade, child: CityPreference(), duration: const Duration(milliseconds: 500)));
-      return true;
+      TopNotification.error(context, "OTP verification failed. Please try again.");
+      return false;
     }
 
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
-      'otp': otp.toString(),
+      'firebase_id_token': firebaseIdToken,
     };
 
     final res = await postJsonData(

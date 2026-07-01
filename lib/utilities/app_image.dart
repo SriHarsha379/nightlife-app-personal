@@ -327,10 +327,10 @@ class AppImage {
   static const newGif = "./assets/icons/newsplashgif.gif";
 
   static const locationwelcomeScreenIcon =
-      "./assets/icons/locationwelcomeScreenIcon.png";
+      "./assets/icons/8c1df6b2-8a50-4ec6-a401-87ddbab10939.png";
   static const chatWelcomescreenIcon =
-      "./assets/icons/chatwelcomescreenIcon.png";
-  static const micWelcomscreenIcon = "./assets/icons/micWelcomscreenIcon.png";
+      "./assets/icons/ChatGPT Image Jun 28, 2026, 02_36_19 PM.png";
+  static const micWelcomscreenIcon = "./assets/icons/eeb2b4ff-8e07-47c5-9b36-9f4a031cad88.png";
   static const msgCardicon = "./assets/icons/msgCard.png";
   static const Line = "./assets/icons/Line.png";
 

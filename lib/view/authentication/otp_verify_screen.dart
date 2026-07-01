@@ -13,6 +13,7 @@ import '../../../utilities/app_snack_bar_toast_message.dart';
 import '../../../utilities/app_validation.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
+import '../../utilities/firebase_otp_service.dart';
 
 class OtpVerify extends StatefulWidget {
   final String? mobile;
@@ -36,10 +37,30 @@ class _OtpVerifyState extends State<OtpVerify> {
   bool _isOtpExpired = false;
   int _retryCount = 0;
 
+  bool _isSendingInitialOtp = false;
+
   @override
   void initState() {
     super.initState();
     _startTimer();
+    _sendInitialFirebaseOtp();
+  }
+
+  Future<void> _sendInitialFirebaseOtp() async {
+    setState(() => _isSendingInitialOtp = true);
+    await FirebaseOtpService.sendOtp(
+      phoneNumber: widget.mobile.toString(),
+      context: context,
+      onError: (error) {
+        if (!mounted) return;
+        setState(() => _isSendingInitialOtp = false);
+        SnackBarToastMessage.error(context, error);
+      },
+      onCodeSent: () {
+        if (!mounted) return;
+        setState(() => _isSendingInitialOtp = false);
+      },
+    );
   }
 
   @override
@@ -77,10 +98,21 @@ class _OtpVerifyState extends State<OtpVerify> {
   // Resend OTP
   Future<void> _resendOTP() async {
     if (!_canResend) return;
-    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    if (apiProvider.secondaryLoading) return;
-    final res = await apiProvider.resendotpApiCalling(context);
-    if (res != null) {
+    setState(() => _isSendingInitialOtp = true);
+    final sent = await FirebaseOtpService.resendOtp(
+      phoneNumber: widget.mobile.toString(),
+      context: context,
+      onError: (error) {
+        if (!mounted) return;
+        setState(() => _isSendingInitialOtp = false);
+        SnackBarToastMessage.error(context, error);
+      },
+      onCodeSent: () {
+        if (!mounted) return;
+        setState(() => _isSendingInitialOtp = false);
+      },
+    );
+    if (sent) {
       _startTimer();
     }
   }
@@ -113,6 +145,23 @@ class _OtpVerifyState extends State<OtpVerify> {
 
     print("Verifying OTP: ${pinputInputController.text}");
 
+    final firebaseVerified = await FirebaseOtpService.verifyOtp(
+      otp: pinputInputController.text,
+      onError: (error) {
+        if (!mounted) return;
+        SnackBarToastMessage.error(context, error);
+      },
+    );
+
+    if (!firebaseVerified) {
+      if (!mounted) return;
+      setState(() {
+        _retryCount++;
+      });
+      return;
+    }
+
+    if (!mounted) return;
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     final isVerified = await apiProvider.otpVerificationApiCalling(
       context,

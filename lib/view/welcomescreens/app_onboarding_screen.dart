@@ -29,7 +29,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
     _OnboardingSlideData(
       title: 'Connect with people who vibe like you',
       description:
-          'Chat, connect, and meet people at the clubs and events you love.',
+      'Chat, connect, and meet people at the clubs and events you love.',
       imageAsset: AppImage.chatWelcomescreenIcon,
       accentIcon: Icons.people_alt_rounded,
       highlights: [
@@ -41,7 +41,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
     _OnboardingSlideData(
       title: 'Find the hottest events near you',
       description:
-          'Discover trending parties, gigs, and open mics happening around your city.',
+      'Discover trending parties, gigs, and open mics happening around your city.',
       imageAsset: AppImage.micWelcomscreenIcon,
       accentIcon: Icons.celebration_rounded,
       highlights: [
@@ -53,7 +53,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
     _OnboardingSlideData(
       title: 'Discover spaces that define your vibe',
       description:
-          'From cozy lounges to high-energy clubs, explore the best places in one app.',
+      'From cozy lounges to high-energy clubs, explore the best places in one app.',
       imageAsset: AppImage.locationwelcomeScreenIcon,
       accentIcon: Icons.location_city_rounded,
       highlights: [
@@ -257,10 +257,16 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
   }
 
   Widget _buildIntroPage(
-    BuildContext context,
-    _OnboardingSlideData slide,
-  ) {
+      BuildContext context,
+      _OnboardingSlideData slide,
+      ) {
     final size = MediaQuery.of(context).size;
+    // Clamp icon height to an absolute pixel range so it stays visually
+    // consistent across very different screen sizes (small Android phones
+    // vs large iPhones), instead of relying purely on a screen-height
+    // percentage which makes it shrink/grow too aggressively.
+    final double iconHeight = (size.height * 0.30).clamp(140.0, 260.0);
+
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
       child: LayoutBuilder(
@@ -268,109 +274,132 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.fromLTRB(
-                  size.width * 0.06,
-                  size.height * 0.025,
-                  size.width * 0.06,
-                  size.height * 0.025,
-                ),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(30),
-                  gradient: AppColor.welcomefrontCardcolor(context),
-                  border: Border.all(color: Colors.white.withOpacity(0.08)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.24),
-                      blurRadius: 20,
-                      offset: const Offset(0, 12),
+              Flexible(
+                flex: 3,
+                child: SingleChildScrollView(
+                  physics: const NeverScrollableScrollPhysics(),
+                  child: Container(
+                    width: double.infinity,
+                    padding: EdgeInsets.fromLTRB(
+                      size.width * 0.06,
+                      size.height * 0.025,
+                      size.width * 0.06,
+                      size.height * 0.025,
                     ),
-                  ],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: size.width * 0.12,
-                      height: size.width * 0.12,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Colors.white.withOpacity(0.12),
-                      ),
-                      child: Icon(
-                        slide.accentIcon,
-                        color: Colors.white,
-                        size: size.width * 0.06,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.018),
-                    Text(
-                      slide.title,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: size.width * 0.075,
-                        height: 1.12,
-                        fontWeight: FontWeight.w700,
-                        fontFamily: AppFont.fontFamily,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.012),
-                    Text(
-                      slide.description,
-                      style: TextStyle(
-                        color: Colors.white.withOpacity(0.88),
-                        fontSize: size.width * 0.036,
-                        height: 1.5,
-                        fontWeight: FontWeight.w500,
-                        fontFamily: AppFont.fontFamily,
-                      ),
-                    ),
-                    SizedBox(height: size.height * 0.018),
-                    ...slide.highlights.map(
-                      (highlight) => Padding(
-                        padding: EdgeInsets.only(bottom: size.height * 0.010),
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Container(
-                              margin: EdgeInsets.only(top: size.height * 0.004),
-                              width: size.width * 0.018,
-                              height: size.width * 0.018,
-                              decoration: const BoxDecoration(
-                                color: Color(0xFFFF2CDF),
-                                shape: BoxShape.circle,
-                              ),
-                            ),
-                            SizedBox(width: size.width * 0.03),
-                            Expanded(
-                              child: Text(
-                                highlight,
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.94),
-                                  fontSize: size.width * 0.035,
-                                  height: 1.4,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: AppFont.fontFamily,
-                                ),
-                              ),
-                            ),
-                          ],
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(30),
+                      gradient: AppColor.welcomefrontCardcolor(context),
+                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.24),
+                          blurRadius: 20,
+                          offset: const Offset(0, 12),
                         ),
-                      ),
+                      ],
                     ),
-                  ],
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: size.width * 0.12,
+                          height: size.width * 0.12,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.white.withOpacity(0.12),
+                          ),
+                          child: Icon(
+                            slide.accentIcon,
+                            color: Colors.white,
+                            size: size.width * 0.06,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.012),
+                        Text(
+                          slide.title,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: size.width * 0.075,
+                            height: 1.12,
+                            fontWeight: FontWeight.w700,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.008),
+                        Text(
+                          slide.description,
+                          style: TextStyle(
+                            color: Colors.white.withOpacity(0.88),
+                            fontSize: size.width * 0.036,
+                            height: 1.5,
+                            fontWeight: FontWeight.w500,
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
+                        SizedBox(height: size.height * 0.012),
+                        ...slide.highlights.map(
+                              (highlight) => Padding(
+                            padding: EdgeInsets.only(bottom: size.height * 0.008),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(top: size.height * 0.004),
+                                  width: size.width * 0.018,
+                                  height: size.width * 0.018,
+                                  decoration: const BoxDecoration(
+                                    color: Color(0xFFFF2CDF),
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: size.width * 0.03),
+                                Expanded(
+                                  child: Text(
+                                    highlight,
+                                    style: TextStyle(
+                                      color: Colors.white.withOpacity(0.94),
+                                      fontSize: size.width * 0.035,
+                                      height: 1.4,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
               Expanded(
+                flex: 2,
                 child: Center(
-                  child: AnimatedSwitcher(
-                    duration: const Duration(milliseconds: 350),
-                    child: Image.asset(
-                      slide.imageAsset,
-                      key: ValueKey(slide.imageAsset),
-                      fit: BoxFit.contain,
+                  child: ShaderMask(
+                    shaderCallback: (Rect bounds) {
+                      return LinearGradient(
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                        colors: [
+                          Colors.white,
+                          Colors.white,
+                          Colors.transparent,
+                        ],
+                        stops: const [0.0, 0.96, 1.0],  // fade only last 15%
+                      ).createShader(bounds);
+                    },
+                    blendMode: BlendMode.dstIn,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 350),
+                      child: Image.asset(
+                        slide.imageAsset,
+                        key: ValueKey(slide.imageAsset),
+                        fit: BoxFit.contain,
+                        height: iconHeight,
+                      ),
                     ),
                   ),
                 ),
@@ -613,7 +642,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: List.generate(
               _slides.length + 1,
-              (index) => AnimatedContainer(
+                  (index) => AnimatedContainer(
                 duration: const Duration(milliseconds: 250),
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 width: index == _currentPage ? 18 : 6,
