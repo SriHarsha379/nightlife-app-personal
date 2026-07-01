@@ -482,18 +482,10 @@ class PostApiProvider with ChangeNotifier {
     if (_loading) return false;
     setLoading(true);
 
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    final firebaseIdToken = await firebaseUser?.getIdToken();
-    if (firebaseIdToken == null) {
-      setLoading(false);
-      if (!context.mounted) return false;
-      TopNotification.error(context, "OTP verification failed. Please try again.");
-      return false;
-    }
 
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
-      'firebase_id_token': firebaseIdToken,
+      'otp': otp.toString(),
     };
 
     final res = await postJsonData(

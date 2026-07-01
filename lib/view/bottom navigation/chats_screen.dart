@@ -19,6 +19,7 @@ import '../../utilities/app_language.dart';
 import '../authentication/notification_screen.dart';
 import '../authentication/profile.dart';
 import '../other/chats/chat_message_screen.dart';
+import '../other/chats/ai_companion_chat_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   static String routeName = './ChatScreen';
@@ -838,6 +839,73 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             vertical: 12,
                             horizontal: size.width * 2 / 100,
                           ),
+                        ),
+                      ),
+                    ),
+
+                    // ── AI Companion entry point ──
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: const AiCompanionChatScreen(
+                              personaName: 'Aria',
+                              personaImage: AppImage.placeHolder2Icon,
+                            ),
+                            duration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: size.width * 90 / 100,
+                        margin: EdgeInsets.only(
+                            top: size.height * 0.02, bottom: size.height * 0.005),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: AppColor.secondryColor(context),
+                          borderRadius: BorderRadius.circular(16),
+                          border:
+                              Border.all(color: AppColor.textfieldfillColor),
+                        ),
+                        child: Row(
+                          children: [
+                            const CircleAvatar(
+                              radius: 22,
+                              backgroundImage:
+                                  AssetImage(AppImage.placeHolder2Icon),
+                              backgroundColor: Colors.transparent,
+                            ),
+                            SizedBox(width: size.width * 0.03),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'Aria',
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15,
+                                      color: AppColor.secondryColor(context),
+                                    ),
+                                  ),
+                                  const Text(
+                                    'Your AI companion • tap to chat',
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 12,
+                                      color: AppColor.buttonColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Icon(Icons.chevron_right,
+                                color: AppColor.secondryColor(context)),
+                          ],
                         ),
                       ),
                     ),

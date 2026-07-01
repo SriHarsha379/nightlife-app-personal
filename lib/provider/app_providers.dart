@@ -28,6 +28,7 @@ import '../controller/venues/my_venues_controller.dart';
 import '../controller/venues/venues_details_controller.dart';
 import '../controller/vibe_check/vibe_check_controller.dart';
 import '../controller/vibe_preference/vibe_prefernce_controller.dart';
+import 'ai_companion_provider.dart';
 import 'darkmode_provider.dart';
 import 'post_api_provider.dart';
 import 'socket_provider.dart';
@@ -46,6 +47,7 @@ List<SingleChildWidget> buildAppProviders() {
     ),
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ChangeNotifierProvider(create: (_) => PostApiProvider()),
+    ChangeNotifierProvider(create: (_) => AiCompanionProvider()),
     ChangeNotifierProvider(create: (_) => VibeCheckController()),
     ChangeNotifierProvider(create: (_) => UserController()),
     ChangeNotifierProvider(create: (_) => CityPreferenceController()),
@@ -77,5 +79,3 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => BlockedUsersController()),
   ];
 }
-
-// Add ChangeNotifierProvider(create: (_) => AIChatProvider()) to your MultiProvider list

@@ -232,7 +232,7 @@ class AppLanguage {
   static const mobilevalidMessage = ["Enter a valid mobile number"];
 
   static const otpMessage = ["Please enter OTP"];
-  static const otpMinLenthMessage = ["OTP can not be less than 4 digit"];
+  static const otpMinLenthMessage = ["OTP can not be less than 6 digit"];
 
 // Please enter your first name
 
