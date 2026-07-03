@@ -791,11 +791,11 @@ class HomeWidget {
     int? recentCount,
     int? totalLikes,
   }) {
-    final bool showAcceptFeedback =
-        (showHeart || showCross) && lastSwipeType == 'accept';
-    final bool showRejectFeedback =
-        (showHeart || showCross) && lastSwipeType == 'reject';
-    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
+    // final bool showAcceptFeedback =
+    //     (showHeart || showCross) && lastSwipeType == 'accept';
+    // final bool showRejectFeedback =
+    //     (showHeart || showCross) && lastSwipeType == 'reject';
+    // final double badgeTop = MediaQuery.of(context).size.height * 0.06;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -1065,33 +1065,33 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
-              Positioned(
-                left: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close,
-                  color: AppColor.redColor,
-                  isActive: showRejectFeedback,
-                  onTap: onRejectTap,
-                  semanticsLabel: 'Reject event',
-                ),
-              ),
-
-              Positioned(
-                right: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.check_rounded,
-                  color: AppColor.greenColor,
-                  isActive: showAcceptFeedback,
-                  onTap: onHeartTap,
-                  semanticsLabel: 'Accept event',
-                ),
-              ),
+              // Positioned(
+              //   left: 18,
+              //   top: badgeTop,
+              //   child: _buildDecisionBadge(
+              //     context,
+              //     label: showRejectFeedback ? 'NO' : 'Reject',
+              //     icon: Icons.close,
+              //     color: AppColor.redColor,
+              //     isActive: showRejectFeedback,
+              //     onTap: onRejectTap,
+              //     semanticsLabel: 'Reject event',
+              //   ),
+              // ),
+              //
+              // Positioned(
+              //   right: 18,
+              //   top: badgeTop,
+              //   child: _buildDecisionBadge(
+              //     context,
+              //     label: showAcceptFeedback ? 'YES' : 'Accept',
+              //     icon: Icons.check_rounded,
+              //     color: AppColor.greenColor,
+              //     isActive: showAcceptFeedback,
+              //     onTap: onHeartTap,
+              //     semanticsLabel: 'Accept event',
+              //   ),
+              // ),
 
               //! Heart Button on Right Side
               Positioned(
@@ -1438,33 +1438,33 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
-              Positioned(
-                left: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showRejectFeedback ? 'NO' : 'Reject',
-                  icon: Icons.close,
-                  color: AppColor.redColor,
-                  isActive: showRejectFeedback,
-                  onTap: onRejectTap,
-                  semanticsLabel: 'Reject venue',
-                ),
-              ),
-
-              Positioned(
-                right: 18,
-                top: badgeTop,
-                child: _buildDecisionBadge(
-                  context,
-                  label: showAcceptFeedback ? 'YES' : 'Accept',
-                  icon: Icons.check_rounded,
-                  color: AppColor.greenColor,
-                  isActive: showAcceptFeedback,
-                  onTap: onHeartTap,
-                  semanticsLabel: 'Accept venue',
-                ),
-              ),
+              // Positioned(
+              //   left: 18,
+              //   top: badgeTop,
+              //   child: _buildDecisionBadge(
+              //     context,
+              //     label: showRejectFeedback ? 'NO' : 'Reject',
+              //     icon: Icons.close,
+              //     color: AppColor.redColor,
+              //     isActive: showRejectFeedback,
+              //     onTap: onRejectTap,
+              //     semanticsLabel: 'Reject venue',
+              //   ),
+              // ),
+              //
+              // Positioned(
+              //   right: 18,
+              //   top: badgeTop,
+              //   child: _buildDecisionBadge(
+              //     context,
+              //     label: showAcceptFeedback ? 'YES' : 'Accept',
+              //     icon: Icons.check_rounded,
+              //     color: AppColor.greenColor,
+              //     isActive: showAcceptFeedback,
+              //     onTap: onHeartTap,
+              //     semanticsLabel: 'Accept venue',
+              //   ),
+              // ),
 
               //! Heart Button on Right Side
               Positioned(

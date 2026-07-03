@@ -548,6 +548,35 @@ class PostApiProvider with ChangeNotifier {
     return false;
   }
 
+
+  // ================ AI Chat Api ================//
+  Future<Map<String, dynamic>?> sendChatMessageApi(
+      BuildContext context,
+      List<Map<String, String>> messages,
+      ) async {
+    if (_secondaryLoading) return null;
+    setSecondaryLoading(true);
+
+    final res = await postJsonData(
+      'chat/send',
+      {'messages': messages},
+      context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
+    );
+
+    setSecondaryLoading(false);
+
+    if (res != null && res['success'] == true) {
+      return res;
+    }
+
+    if (context.mounted) {
+      TopNotification.error(context, "Couldn't reach the assistant. Please try again.");
+    }
+    return null;
+  }
+
+
   // =============== Resend Otp Api =================//
   Future<Map<String, dynamic>?> resendotpApiCalling(BuildContext context) async {
     if (_secondaryLoading) return null;
