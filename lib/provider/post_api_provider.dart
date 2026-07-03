@@ -473,7 +473,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-  // --------------- Otp Verification -----------
+// --------------- Otp Verification -----------
   Future<bool> otpVerificationApiCalling(
       BuildContext context,
       String otp,
@@ -482,38 +482,69 @@ class PostApiProvider with ChangeNotifier {
     if (_loading) return false;
     setLoading(true);
 
+    // Get the Firebase ID token from the currently signed-in user
+    // (Firebase phone auth sign-in must have already succeeded before this is called)
+    final firebaseUser = FirebaseAuth.instance.currentUser;
+    if (firebaseUser == null) {
+      setLoading(false);
+      if (context.mounted) {
+        TopNotification.error(context, "Verification session expired. Please try again.");
+      }
+      return false;
+    }
+
+    final String? firebaseIdToken = await firebaseUser.getIdToken();
+    if (firebaseIdToken == null || firebaseIdToken.isEmpty) {
+      setLoading(false);
+      // Keep Firebase and backend state in sync — sign out since we can't proceed
+      await FirebaseAuth.instance.signOut();
+      if (context.mounted) {
+        TopNotification.error(context, "Failed to verify. Please try again.");
+      }
+      return false;
+    }
 
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
-      'otp': otp.toString(),
+      'firebase_id_token': firebaseIdToken,
     };
 
     final res = await postJsonData(
       'auth/otp_verify',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
-    if (res != null) {
-      if (res['success'] == true && res['data'] != "NA") {
-        setLoading(false);
-        await _syncAuthSession(context, res['data']);
-        if (!context.mounted) return true;
-        TopNotification.success(context, res['message'][language]);
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: CityPreference(),
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
-        return true;
-      }
+    if (res != null && res['success'] == true && res['data'] != "NA") {
+      setLoading(false);
+      await _syncAuthSession(context, res['data']);
+      if (!context.mounted) return true;
+      TopNotification.success(context, res['message'][language]);
+      Navigator.push(
+        context,
+        PageTransition(
+          type: PageTransitionType.rightToLeftWithFade,
+          child: CityPreference(),
+          duration: const Duration(milliseconds: 500),
+        ),
+      );
+      return true;
     }
 
+    // ── Backend verification failed ──
+    // Firebase thinks the user is signed in, but the backend rejected it.
+    // Sign out of Firebase to keep both sides in sync, so no other part of
+    // the app later discovers this mismatch and silently redirects to login.
     setLoading(false);
+    await FirebaseAuth.instance.signOut();
+    if (context.mounted) {
+      final String errorMsg = (res != null &&
+          res['message'] is List &&
+          (res['message'] as List).isNotEmpty)
+          ? res['message'][0].toString()
+          : "OTP verification failed. Please try again.";
+      TopNotification.error(context, errorMsg);
+    }
     return false;
   }
 

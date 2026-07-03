@@ -27,9 +27,13 @@ import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
+  }
   await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
   final String? title = message.notification?.title?.trim();
@@ -44,9 +48,13 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
+  }
   await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
     alert: true,
     badge: true,
@@ -79,7 +87,7 @@ class _MyAppState extends State<MyApp> {
   static const int _maxHandledInitialRedirects = 40;
 
   static final GlobalKey<NavigatorState> _navigatorKey =
-      GlobalKey<NavigatorState>();
+  GlobalKey<NavigatorState>();
 
   @override
   void initState() {
@@ -109,7 +117,7 @@ class _MyAppState extends State<MyApp> {
     } catch (_) {}
 
     _deepLinkSub = _appLinks.uriLinkStream.listen(
-      (Uri? uri) {
+          (Uri? uri) {
         if (uri != null) {
           _dispatchDeepLink(uri);
         }
@@ -129,7 +137,7 @@ class _MyAppState extends State<MyApp> {
       _handleLocalNotificationTapPayload,
     );
     final String? pendingLocalPayload =
-        LocalNotificationService.consumePendingLaunchPayload();
+    LocalNotificationService.consumePendingLaunchPayload();
     if (pendingLocalPayload != null && pendingLocalPayload.trim().isNotEmpty) {
       final bool shouldHandle = await _markInitialRedirectIfNew(
         'local:${pendingLocalPayload.trim()}',
@@ -141,7 +149,7 @@ class _MyAppState extends State<MyApp> {
     FcmTokenService.setupNotificationTapRedirection(_handlePushRedirect);
 
     final RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
+    await FirebaseMessaging.instance.getInitialMessage();
     if (initialMessage != null) {
       final bool shouldHandle = await _markInitialRedirectIfNew(
         _buildInitialMessageKey(initialMessage),
@@ -188,7 +196,7 @@ class _MyAppState extends State<MyApp> {
       final dynamic decoded = jsonDecode(payload);
       if (decoded is Map) {
         final map = decoded.map(
-          (key, value) => MapEntry(key.toString(), value),
+              (key, value) => MapEntry(key.toString(), value),
         );
         _routeFromNotificationData(map);
         return;
@@ -244,7 +252,7 @@ class _MyAppState extends State<MyApp> {
 
     if (action == 'new_message' || type == 'new_message') {
       final Map<String, dynamic> src =
-          actionJson.isNotEmpty ? actionJson : data;
+      actionJson.isNotEmpty ? actionJson : data;
       final String otherUserId = _firstNonEmpty(
         src,
         <String>['other_user_id', 'sender_id', 'senderId'],
