@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "954804179384-f7tq7vmaevl5o0jg01lt9b49v8behkld.apps.googleusercontent.com",
+          "client_id": "954804179384-6nvkbk9jtb3ktq3747hmjr7p90vpo1cl.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.app.night_life",
-            "certificate_hash": "a623438cfc2038a288d6413caafb6576e029bef0"
+            "certificate_hash": "030d8c0ed57f2af73faaeba06e72ac70f72fd797"
           }
         },
         {

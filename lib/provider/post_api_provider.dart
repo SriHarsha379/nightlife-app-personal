@@ -507,6 +507,7 @@ class PostApiProvider with ChangeNotifier {
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
       'firebase_id_token': firebaseIdToken,
+      'otp': otp,
     };
 
     final res = await postJsonData(
@@ -514,6 +515,10 @@ class PostApiProvider with ChangeNotifier {
       fields,
       context,
     );
+
+// TEMP DEBUG — remove after diagnosing
+    log("OTP VERIFY REQUEST FIELDS: $fields");
+    log("OTP VERIFY RESPONSE: $res");
 
     if (res != null && res['success'] == true && res['data'] != "NA") {
       setLoading(false);

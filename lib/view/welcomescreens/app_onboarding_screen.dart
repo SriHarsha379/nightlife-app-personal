@@ -261,152 +261,122 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
       _OnboardingSlideData slide,
       ) {
     final size = MediaQuery.of(context).size;
-    // Clamp icon height to an absolute pixel range so it stays visually
-    // consistent across very different screen sizes (small Android phones
-    // vs large iPhones), instead of relying purely on a screen-height
-    // percentage which makes it shrink/grow too aggressively.
-    final double iconHeight = (size.height * 0.30).clamp(140.0, 260.0);
 
     return Padding(
-      padding: EdgeInsets.symmetric(horizontal: size.width * 0.06),
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Flexible(
-                flex: 3,
-                child: SingleChildScrollView(
-                  physics: const NeverScrollableScrollPhysics(),
+      padding: EdgeInsets.symmetric(
+        horizontal: size.width * 0.075,
+      ),
+      child: Column(
+        children: [
+
+          Expanded(
+            child: Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  top: size.height * .015,
+                ),
+                child: AspectRatio(
+                  aspectRatio: 0.64,
                   child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.fromLTRB(
-                      size.width * 0.06,
-                      size.height * 0.025,
-                      size.width * 0.06,
-                      size.height * 0.025,
-                    ),
+                    clipBehavior: Clip.hardEdge,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(30),
-                      gradient: AppColor.welcomefrontCardcolor(context),
-                      border: Border.all(color: Colors.white.withOpacity(0.08)),
+                      gradient:
+                      AppColor.welcomefrontCardcolor(context),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.24),
-                          blurRadius: 20,
+                          color: Colors.black.withOpacity(.20),
+                          blurRadius: 24,
                           offset: const Offset(0, 12),
                         ),
                       ],
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+
+
+                    child: Stack(
                       children: [
-                        Container(
-                          width: size.width * 0.12,
-                          height: size.width * 0.12,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.white.withOpacity(0.12),
-                          ),
-                          child: Icon(
-                            slide.accentIcon,
-                            color: Colors.white,
-                            size: size.width * 0.06,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.012),
-                        Text(
-                          slide.title,
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: size.width * 0.075,
-                            height: 1.12,
-                            fontWeight: FontWeight.w700,
-                            fontFamily: AppFont.fontFamily,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.008),
-                        Text(
-                          slide.description,
-                          style: TextStyle(
-                            color: Colors.white.withOpacity(0.88),
-                            fontSize: size.width * 0.036,
-                            height: 1.5,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily,
-                          ),
-                        ),
-                        SizedBox(height: size.height * 0.012),
-                        ...slide.highlights.map(
-                              (highlight) => Padding(
-                            padding: EdgeInsets.only(bottom: size.height * 0.008),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Container(
-                                  margin: EdgeInsets.only(top: size.height * 0.004),
-                                  width: size.width * 0.018,
-                                  height: size.width * 0.018,
-                                  decoration: const BoxDecoration(
-                                    color: Color(0xFFFF2CDF),
-                                    shape: BoxShape.circle,
-                                  ),
-                                ),
-                                SizedBox(width: size.width * 0.03),
-                                Expanded(
-                                  child: Text(
-                                    highlight,
-                                    style: TextStyle(
-                                      color: Colors.white.withOpacity(0.94),
-                                      fontSize: size.width * 0.035,
-                                      height: 1.4,
-                                      fontWeight: FontWeight.w500,
-                                      fontFamily: AppFont.fontFamily,
-                                    ),
-                                  ),
-                                ),
-                              ],
+
+
+                        /// TITLE
+                        Positioned(
+                          left: 24,
+                          right: 20,
+                          top: 48,
+                          child: Text(
+                            slide.title,
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize:
+                              size.width * .064,
+                              height: 1.08,
+                              fontWeight: FontWeight.w800,
+                              fontFamily:
+                              AppFont.fontFamily,
                             ),
                           ),
                         ),
+
+
+
+                        Positioned(
+                          right: -size.width * .26,
+                          bottom: -size.height * .015,
+                          child: ColorFiltered(
+                            colorFilter: const ColorFilter.matrix([
+                              1, 0, 0, 0, 0,
+                              0, 1, 0, 0, 0,
+                              0, 0, 1, 0, 0,
+                              0.2126, 0.7152, 0.0722, 0, 0, // alpha = luminance of the pixel
+                            ]),
+                            child: Image.asset(
+                              slide.imageAsset,
+                              key: ValueKey(slide.imageAsset),
+                              width: size.width * .82,
+                              fit: BoxFit.contain,
+                            ),
+                          ),
+                        ),
+
+
+
+                        /// DESCRIPTION
+                        Positioned(
+                          left: 24,
+                          bottom: 34,
+                          width:
+                          size.width * .43,
+                          child: Text(
+                            slide.description,
+                            style: TextStyle(
+                              color: Colors.white
+                                  .withOpacity(.9),
+                              fontSize:
+                              size.width * .031,
+                              height: 1.45,
+                              fontWeight:
+                              FontWeight.w500,
+                              fontFamily:
+                              AppFont.fontFamily,
+                            ),
+                          ),
+                        ),
+
                       ],
                     ),
                   ),
                 ),
               ),
-              Expanded(
-                flex: 2,
-                child: Center(
-                  child: ShaderMask(
-                    shaderCallback: (Rect bounds) {
-                      return LinearGradient(
-                        begin: Alignment.centerLeft,
-                        end: Alignment.centerRight,
-                        colors: [
-                          Colors.white,
-                          Colors.white,
-                          Colors.transparent,
-                        ],
-                        stops: const [0.0, 0.96, 1.0],  // fade only last 15%
-                      ).createShader(bounds);
-                    },
-                    blendMode: BlendMode.dstIn,
-                    child: AnimatedSwitcher(
-                      duration: const Duration(milliseconds: 350),
-                      child: Image.asset(
-                        slide.imageAsset,
-                        key: ValueKey(slide.imageAsset),
-                        fit: BoxFit.contain,
-                        height: iconHeight,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        },
+            ),
+          ),
+
+
+          /// only spacing
+          /// bottom controls already exist
+          SizedBox(
+            height: size.height * .005,
+          ),
+        ],
       ),
     );
   }
