@@ -54,7 +54,11 @@ class _AiCompanionChatScreenState extends State<AiCompanionChatScreen> {
 
   void _send() {
     final text = _controller.text;
-    if (text.trim().isEmpty || _userId.isEmpty) return;
+    print('🤖 AI SEND ATTEMPT: text="$text" userId="$_userId"');
+    if (text.trim().isEmpty || _userId.isEmpty) {
+      print('🤖 AI SEND BLOCKED: empty text or empty userId');
+      return;
+    }
     Provider.of<AiCompanionProvider>(context, listen: false).sendMessage(
       userId: _userId,
       text: text,

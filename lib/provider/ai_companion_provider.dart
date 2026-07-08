@@ -2,9 +2,12 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 
+import '../utilities/app_config_provider.dart';
+import '../utilities/app_constant.dart';
+
 class AiCompanionProvider extends ChangeNotifier {
-  static const String _chatEndpoint =
-      'https://your-backend.example.com/api/ai-companion/chat';
+  static String get _chatEndpoint =>
+      '${AppConfigProvider.apiUrl}chat/send';
 
   final List<Map<String, dynamic>> _messages = [];
   bool _isSending = false;
@@ -40,23 +43,28 @@ class AiCompanionProvider extends ChangeNotifier {
     notifyListeners();
 
     try {
+      // Backend expects: { messages: [{ role, content }] }
       final history = _messages
-          .map((m) => {'role': m['role'], 'content': m['message']})
+          .map((m) => {
+        'role': m['role'],
+        'content': m['message'],
+      })
           .toList();
 
       final response = await http.post(
         Uri.parse(_chatEndpoint),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({
-          'userId': userId,
-          'personaId': personaId,
-          'history': history,
-        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'authorization': 'Bearer ${AppConstant.token}',
+        },
+        body: jsonEncode({'messages': history}),
       );
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body) as Map<String, dynamic>;
-        final reply = (data['reply'] ?? '').toString().trim();
+        final innerData = data['data'] as Map<String, dynamic>?;
+        final reply = (innerData?['reply'] ?? '').toString().trim();
         _messages.add(<String, dynamic>{
           'id': 'ai_${DateTime.now().microsecondsSinceEpoch}',
           'role': 'assistant',
@@ -77,10 +85,10 @@ class AiCompanionProvider extends ChangeNotifier {
   }
 
   Map<String, dynamic> _errorBubble() => <String, dynamic>{
-        'id': 'err_${DateTime.now().microsecondsSinceEpoch}',
-        'role': 'assistant',
-        'message': "Couldn't reach the server. Please try again.",
-        'createdAt': DateTime.now().toIso8601String(),
-        '__error': true,
-      };
+    'id': 'err_${DateTime.now().microsecondsSinceEpoch}',
+    'role': 'assistant',
+    'message': "Couldn't reach the server. Please try again.",
+    'createdAt': DateTime.now().toIso8601String(),
+    '__error': true,
+  };
 }
