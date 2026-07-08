@@ -9,6 +9,7 @@ import 'app_constant.dart';
 import 'auth_session_service.dart';
 
 class SessionManager {
+  static bool authFlowInProgress = false;
   static const String _userDetailsKey = 'user_details';
   static const String _refreshTokenKey = 'session_refresh_token';
   static const String _tokenExpiryEpochKey = 'session_token_expiry_epoch';

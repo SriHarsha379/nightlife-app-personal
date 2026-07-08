@@ -14,6 +14,7 @@ import '../../../utilities/app_validation.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/firebase_otp_service.dart';
+import '../../utilities/session_manager.dart';
 
 class OtpVerify extends StatefulWidget {
   final String? mobile;
@@ -117,7 +118,7 @@ class _OtpVerifyState extends State<OtpVerify> {
     }
   }
 
-  // Verify OTP
+// Verify OTP
   Future<void> _verifyOTP() async {
     if (Validation.isFieldEmpty(
       context,
@@ -144,36 +145,41 @@ class _OtpVerifyState extends State<OtpVerify> {
     if (!Validation.isOtpLength(context, pinputInputController.text, minLength: 6)) return;
 
     print("Verifying OTP: ${pinputInputController.text}");
+    SessionManager.authFlowInProgress = true;
 
-    final firebaseVerified = await FirebaseOtpService.verifyOtp(
-      otp: pinputInputController.text,
-      onError: (error) {
+    try {
+      final firebaseVerified = await FirebaseOtpService.verifyOtp(
+        otp: pinputInputController.text,
+        onError: (error) {
+          if (!mounted) return;
+          SnackBarToastMessage.error(context, error);
+        },
+      );
+
+      if (!firebaseVerified) {
         if (!mounted) return;
-        SnackBarToastMessage.error(context, error);
-      },
-    );
+        setState(() {
+          _retryCount++;
+        });
+        return;
+      }
 
-    if (!firebaseVerified) {
       if (!mounted) return;
+      final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
+      final isVerified = await apiProvider.otpVerificationApiCalling(
+        context,
+        pinputInputController.text,
+        widget.mobile.toString(),
+      );
+      if (!mounted) return;
+      if (isVerified) return;
+
       setState(() {
         _retryCount++;
       });
-      return;
+    } finally {
+      SessionManager.authFlowInProgress = false;
     }
-
-    if (!mounted) return;
-    final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
-    final isVerified = await apiProvider.otpVerificationApiCalling(
-      context,
-      pinputInputController.text,
-      widget.mobile.toString(),
-    );
-    if (!mounted) return;
-    if (isVerified) return;
-
-    setState(() {
-      _retryCount++;
-    });
   }
 
   // Format timer display (00:30 format)

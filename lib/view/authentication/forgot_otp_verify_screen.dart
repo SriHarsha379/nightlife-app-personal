@@ -217,7 +217,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                           alignment: Alignment.center,
                           width: MediaQuery.of(context).size.width * 80 / 100,
                           child: Text(
-                            "We have sent a 6-digit verification code to",
+                            "We have sent a 4-digit verification code to",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Colors.grey,

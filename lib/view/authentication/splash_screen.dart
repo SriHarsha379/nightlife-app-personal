@@ -141,6 +141,12 @@ class _SplashState extends State<Splash> {
 
     if (!mounted) return;
 
+    if (SessionManager.authFlowInProgress) {
+      print('🔍 DECISION → Auth flow in progress elsewhere, deferring ⏸️');
+      return;
+    }
+
+
     final cachedData = await SessionManager.readCachedUserDetailsMap();
     final cachedToken = SessionManager.extractToken(cachedData);
     print('🔍 CACHE CHECK  → keys: ${cachedData.keys.toList()}');
