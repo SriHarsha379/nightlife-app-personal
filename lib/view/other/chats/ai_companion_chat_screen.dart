@@ -102,7 +102,23 @@ class _AiCompanionChatScreenState extends State<AiCompanionChatScreen> {
                         color: AppColor.secondryColor(context)),
                     onPressed: () => Navigator.pop(context),
                   ),
-                  CircleAvatar(backgroundImage: _avatar(), radius: 20),
+                  Container(
+                    width: 40,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFF4D9D), Color(0xFF7C3AED)],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                    ),
+                    child: const Icon(
+                      Icons.auto_awesome,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
                   SizedBox(width: size.width * 0.03),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -209,7 +225,7 @@ class _AiCompanionChatScreenState extends State<AiCompanionChatScreen> {
               padding: EdgeInsets.only(
                 left: size.width * 0.04,
                 right: size.width * 0.04,
-                bottom: MediaQuery.of(context).viewInsets.bottom + 10,
+                bottom: 10,
                 top: 6,
               ),
               child: Row(

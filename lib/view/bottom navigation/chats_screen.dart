@@ -872,11 +872,22 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                         ),
                         child: Row(
                           children: [
-                            const CircleAvatar(
-                              radius: 22,
-                              backgroundImage:
-                                  AssetImage(AppImage.placeHolder2Icon),
-                              backgroundColor: Colors.transparent,
+                            Container(
+                              width: 44,
+                              height: 44,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                gradient: const LinearGradient(
+                                  colors: [Color(0xFFFF4D9D), Color(0xFF7C3AED)],
+                                  begin: Alignment.topLeft,
+                                  end: Alignment.bottomRight,
+                                ),
+                              ),
+                              child: const Icon(
+                                Icons.auto_awesome,
+                                color: Colors.white,
+                                size: 22,
+                              ),
                             ),
                             SizedBox(width: size.width * 0.03),
                             Expanded(
