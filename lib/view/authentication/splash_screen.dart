@@ -49,9 +49,20 @@ class _SplashState extends State<Splash> {
   }
 
   // Safe navigate — only navigates once, guards against mounted + double-nav.
+// Safe navigate — only navigates once, guards against mounted + double-nav.
   void _safeNavigate(Widget child) {
     if (_hasNavigated) return;
     if (!mounted) return;
+
+    // If some other screen (e.g. the OTP screen's own explicit navigation)
+    // has already been pushed on top of Splash, Splash's route is no
+    // longer the current one. That means navigation already happened
+    // elsewhere — don't fight it with a redundant, stale navigation.
+    final route = ModalRoute.of(context);
+    if (route != null && !route.isCurrent) {
+      return;
+    }
+
     _hasNavigated = true;
     Navigator.pushReplacement(
       context,
