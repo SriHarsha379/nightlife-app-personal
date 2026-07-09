@@ -42,7 +42,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
 
   void _filterGenres() {
     final controller =
-        Provider.of<MusicGenresController>(context, listen: false);
+    Provider.of<MusicGenresController>(context, listen: false);
     final query = searchController.text.toLowerCase();
 
     setState(() {
@@ -89,7 +89,9 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
         floatingActionButton: Consumer<MusicGenresController>(
           builder: (context, controller, child) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 40),
+              padding: EdgeInsets.only(
+                bottom: 40 + MediaQuery.of(context).padding.bottom,
+              ),
               child: AppButton(
                 text: '${AppLanguage.continueText[language]}',
                 onPress: () {
@@ -302,7 +304,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                         controller: searchController,
                         cursorColor: AppColor.secondryColor(context),
                         style:
-                            TextStyle(color: AppColor.secondryColor(context)),
+                        TextStyle(color: AppColor.secondryColor(context)),
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                           prefixIcon: Padding(
@@ -331,7 +333,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                           ),
                           border: InputBorder.none,
                           hintText:
-                              AppLanguage.typeYourfavouritegenreText[language],
+                          AppLanguage.typeYourfavouritegenreText[language],
                           hintStyle: AppConstant.textFilledStyle1(context),
                           contentPadding: EdgeInsets.only(
                             right: size.width * 4 / 100,
@@ -399,14 +401,61 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
     );
   }
 
+  // Curated gradient palette, all within the app's existing dark
+  // purple/pink theme family so genre tiles feel native, not like a
+  // random color picker. Picked deterministically per genre name so the
+  // same genre always gets the same look across app restarts.
+  static const List<List<Color>> _genreGradients = [
+    [Color(0xFF3A1C71), Color(0xFFD76D77)],
+    [Color(0xFF8E2DE2), Color(0xFF4A00E0)],
+    [Color(0xFFEE0979), Color(0xFF8E2DE2)],
+    [Color(0xFF641E82), Color(0xFFEE0979)],
+    [Color(0xFF360033), Color(0xFF0B8793)],
+    [Color(0xFFC33764), Color(0xFF1D2671)],
+    [Color(0xFF7F00FF), Color(0xFFE100FF)],
+    [Color(0xFF41295A), Color(0xFF2F0743)],
+  ];
+
+  List<Color> _gradientForGenre(String genreName) {
+    if (genreName.trim().isEmpty) return _genreGradients.first;
+    final hash = genreName.toLowerCase().codeUnits.fold<int>(
+        0, (prev, unit) => (prev * 31 + unit) & 0x7fffffff);
+    return _genreGradients[hash % _genreGradients.length];
+  }
+
+  // Best-effort icon match by keyword; falls back to a generic music note
+  // for anything not explicitly listed (new genres added via admin panel
+  // still get a sensible default instead of breaking).
+  IconData _iconForGenre(String genreName) {
+    final name = genreName.toLowerCase();
+    if (name.contains('bollywood')) return Icons.theater_comedy_rounded;
+    if (name.contains('hip hop') || name.contains('rap')) return Icons.mic_rounded;
+    if (name.contains('r&b') || name.contains('rnb')) return Icons.favorite_rounded;
+    if (name.contains('techno')) return Icons.bolt_rounded;
+    if (name.contains('trance')) return Icons.auto_awesome_rounded;
+    if (name.contains('psychedelic')) return Icons.blur_circular_rounded;
+    if (name.contains('afrobeat')) return Icons.celebration_rounded;
+    if (name.contains('reggaeton')) return Icons.music_note_rounded;
+    if (name.contains('deep house')) return Icons.waves_rounded;
+    if (name.contains('progressive')) return Icons.trending_up_rounded;
+    if (name.contains('drum') || name.contains('bass')) return Icons.equalizer_rounded;
+    if (name.contains('house')) return Icons.graphic_eq_rounded;
+    if (name.contains('edm')) return Icons.electric_bolt_rounded;
+    if (name.contains('rock')) return Icons.piano_rounded;
+    if (name.contains('pop')) return Icons.star_rounded;
+    if (name.contains('acoustic')) return Icons.piano_rounded;
+    if (name.contains('commercial')) return Icons.trending_up_rounded;
+    return Icons.music_note_rounded;
+  }
+
   Widget _buildGenreCard(MusicGenresController controller, dynamic genre) {
     final size = MediaQuery.of(context).size;
     String genreId = _genreIdFrom(genre);
     String genreName = _genreNameFrom(genre);
     String genreCategory = (genre['category'] ?? '').toString();
 
-    String? imageUrl = (genre['image'] ?? genre['genre_image'])?.toString();
     bool isSelected = controller.isGenreSelected(genreId);
+    final gradientColors = _gradientForGenre(genreName);
 
     return GestureDetector(
       onTap: () {
@@ -434,29 +483,25 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
             child: Stack(
               fit: StackFit.expand,
               children: [
-                // Genre image or placeholder
-                if (imageUrl != null && imageUrl.isNotEmpty)
-                  Image.network(
-                    controller.getGenreImageUrl(imageUrl),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return _buildPlaceholder(genreName);
-                    },
-                    loadingBuilder: (context, child, loadingProgress) {
-                      if (loadingProgress == null) return child;
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: AppColor.buttonColor,
-                          value: loadingProgress.expectedTotalBytes != null
-                              ? loadingProgress.cumulativeBytesLoaded /
-                                  loadingProgress.expectedTotalBytes!
-                              : null,
-                        ),
-                      );
-                    },
-                  )
-                else
-                  _buildPlaceholder(genreName),
+                // Solid gradient background + genre icon, deterministic per
+                // genre name - no photo, so nothing can ever look
+                // mismatched or out of place.
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: gradientColors,
+                    ),
+                  ),
+                  child: Center(
+                    child: Icon(
+                      _iconForGenre(genreName),
+                      size: 40,
+                      color: Colors.white.withOpacity(0.35),
+                    ),
+                  ),
+                ),
 
                 // Gradient overlay
                 Container(
@@ -532,16 +577,4 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
     );
   }
 
-  Widget _buildPlaceholder(String genreName) {
-    return Container(
-      color: AppColor.filledcolor(context),
-      child: Center(
-        child: Icon(
-          Icons.music_note,
-          size: 48,
-          color: AppColor.secondryColor(context).withOpacity(0.3),
-        ),
-      ),
-    );
-  }
 }

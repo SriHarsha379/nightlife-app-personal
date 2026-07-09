@@ -14,6 +14,7 @@ import '../../../../controller/eventDetails/events_details_controller.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
+import '../../../../utilities/url_utils.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 
@@ -105,7 +106,9 @@ class _BookEventState extends State<BookEvent> {
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat,
                 floatingActionButton: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
+                  padding: EdgeInsets.only(
+                    bottom: 40 + MediaQuery.of(context).padding.bottom,
+                  ),
                   child: Consumer<BookingEventDetails>(
                     builder: (BuildContext context, controller, _) {
                       return AppButton(
@@ -164,8 +167,10 @@ class _BookEventState extends State<BookEvent> {
                                             ),
                                           ),
                                         ),
-                                        imageUrl:
-                                            "${AppConfigProvider.imageUrl}${controller.getEventDetails['event_image']}",
+                                        imageUrl: resolveImageUrl(
+                                            controller
+                                                .getEventDetails['event_image'],
+                                            AppConfigProvider.imageUrl),
                                         fit: BoxFit.cover,
                                         errorWidget: (context, url, error) =>
                                             Image.asset(
@@ -1064,7 +1069,7 @@ class _BookEventState extends State<BookEvent> {
           child: ClipRRect(
             borderRadius: BorderRadius.circular(15),
             child: CachedNetworkImage(
-              imageUrl: "${AppConfigProvider.imageUrl}$imageUrl",
+              imageUrl: resolveImageUrl(imageUrl, AppConfigProvider.imageUrl),
               width: double.infinity,
               fit: BoxFit.contain,
               errorWidget: (context, url, error) => Image.asset(

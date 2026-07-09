@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:night_life/utilities/url_utils.dart';
 import '../utilities/app_color.dart';
@@ -8,6 +9,30 @@ import '../view/other/MySplashSection/MembersSection/member_liked_details.dart';
 
 class HomeWidget {
   int selectedIndex = 0;
+
+  // The swipe card (members/events/venues) used to be sized as a flat 57.5%
+  // of total screen height. That works out fine on whatever device this was
+  // designed against, but on phones with a different aspect ratio (many
+  // budget Android phones, e.g. Moto G-series, are taller/narrower than a
+  // typical iPhone) the extra vertical space just becomes an empty gap
+  // between the card and the floating nav bar, instead of the card growing
+  // to use it.
+  //
+  // Fix: instead of "card = 57.5% of screen height" (scales proportionally,
+  // wrong), compute it as "card = screen height minus a fixed chrome
+  // estimate" (the header/search/tabs above + floating nav bar below don't
+  // meaningfully grow with screen height, so treating them as a roughly
+  // constant pixel amount - not a percentage - means any extra screen
+  // height on a taller device goes to the card itself, closing the gap).
+  //
+  // 359 is calibrated against a ~844pt-tall reference screen where the old
+  // 57.5%/42.5% split (card/chrome) was presumably tuned: 844 * 0.425 ≈ 359.
+  static double swipeCardHeight(BuildContext context) {
+    final double screenHeight = MediaQuery.of(context).size.height;
+    const double estimatedChromeHeight = 359;
+    return (screenHeight - estimatedChromeHeight)
+        .clamp(320.0, screenHeight * 0.78);
+  }
 
   static int _toInt(dynamic value) {
     if (value is int) return value;
@@ -24,11 +49,11 @@ class HomeWidget {
   }
 
   static Widget _buildLikesOverlay(
-    BuildContext context, {
-    List<String>? recentUserImages,
-    int? recentCount,
-    int? totalLikes,
-  }) {
+      BuildContext context, {
+        List<String>? recentUserImages,
+        int? recentCount,
+        int? totalLikes,
+      }) {
     final List<String> safeImages = (recentUserImages ?? const <String>[])
         .where((image) => image.trim().isNotEmpty)
         .take(2)
@@ -139,19 +164,19 @@ class HomeWidget {
       child: ClipOval(
         child: isNetworkUrl(image)
             ? Image.network(
-                image,
-                fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Image.asset(
-                    AppImage.placeHolder2Icon,
-                    fit: BoxFit.cover,
-                  );
-                },
-              )
+          image,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) {
+            return Image.asset(
+              AppImage.placeHolder2Icon,
+              fit: BoxFit.cover,
+            );
+          },
+        )
             : Image.asset(
-                AppImage.placeHolder2Icon,
-                fit: BoxFit.cover,
-              ),
+          AppImage.placeHolder2Icon,
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }
@@ -219,19 +244,19 @@ class HomeWidget {
   }
 
   static Widget adCard(
-    BuildContext context,
-    String image, {
-    Key? key,
-    required double progress,
-    required int secondsRemaining,
-  }) {
+      BuildContext context,
+      String image, {
+        Key? key,
+        required double progress,
+        required int secondsRemaining,
+      }) {
     final size = MediaQuery.of(context).size;
     final clampedProgress = progress.clamp(0.0, 1.0);
 
     return SizedBox(
       key: key,
       width: size.width * 85 / 100,
-      height: size.height * 57.5 / 100,
+      height: swipeCardHeight(context),
       child: Stack(
         children: [
           Container(
@@ -283,7 +308,7 @@ class HomeWidget {
               children: [
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
+                  const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
                     color: const Color(0xFF5F2A8B).withOpacity(0.95),
                     borderRadius: BorderRadius.circular(14),
@@ -341,14 +366,14 @@ class HomeWidget {
   }
 
   static Widget _buildDecisionBadge(
-    BuildContext context, {
-    required String label,
-    required IconData icon,
-    required Color color,
-    required bool isActive,
-    required VoidCallback onTap,
-    String? semanticsLabel,
-  }) {
+      BuildContext context, {
+        required String label,
+        required IconData icon,
+        required Color color,
+        required bool isActive,
+        required VoidCallback onTap,
+        String? semanticsLabel,
+      }) {
     final size = MediaQuery.of(context).size;
     return Semantics(
       button: true,
@@ -408,26 +433,26 @@ class HomeWidget {
 
   // Method to build members card
   static Widget membersCard(
-    BuildContext context,
-    String image,
-    String name,
-    VoidCallback onTap, {
-    Key? key,
-    required bool showHeart,
-    required bool showCross,
-    required String? lastSwipeType,
-    required Function() onRejectTap,
-    required Function() onMessageTap,
-    required Function() onHeartTap,
-    String? bio,
-    List<String>? vibes,
-    String? distance,
-    String? memberId,
-    Function(dynamic)? onDetailResult,
-  }) {
+      BuildContext context,
+      String image,
+      String name,
+      VoidCallback onTap, {
+        Key? key,
+        required bool showHeart,
+        required bool showCross,
+        required String? lastSwipeType,
+        required Function() onRejectTap,
+        required Function() onMessageTap,
+        required Function() onHeartTap,
+        String? bio,
+        List<String>? vibes,
+        String? distance,
+        String? memberId,
+        Function(dynamic)? onDetailResult,
+      }) {
     final String safeBio = (bio ?? '').trim();
     final List<String> safeVibes =
-        (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
+    (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
     final bool hasBio = safeBio.isNotEmpty;
     final bool hasVibes = safeVibes.isNotEmpty;
     final bool showAcceptFeedback =
@@ -464,7 +489,7 @@ class HomeWidget {
         onTap: onTap,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 85 / 100,
-          height: MediaQuery.of(context).size.height * 57.5 / 100,
+          height: swipeCardHeight(context),
           child: Stack(
             clipBehavior: Clip.hardEdge,
             children: [
@@ -511,41 +536,41 @@ class HomeWidget {
                               ),
                               child: isNetworkUrl(image)
                                   ? Image.network(
-                                      image,
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                        if (loadingProgress == null)
-                                          return child;
-                                        return _cardImageLoadingPlaceholder();
-                                      },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          AppImage.placeHolder2Icon,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        );
-                                      },
-                                    )
+                                image,
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                                loadingBuilder:
+                                    (context, child, loadingProgress) {
+                                  if (loadingProgress == null)
+                                    return child;
+                                  return _cardImageLoadingPlaceholder();
+                                },
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImage.placeHolder2Icon,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  );
+                                },
+                              )
                                   : Image.asset(
-                                      image, // Changed from AppImage.placeHolder2Icon to use actual image parameter
-                                      fit: BoxFit.cover,
-                                      width: double.infinity,
-                                      height: double.infinity,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          AppImage.placeHolder2Icon,
-                                          fit: BoxFit.cover,
-                                          width: double.infinity,
-                                          height: double.infinity,
-                                        );
-                                      },
-                                    ),
+                                image, // Changed from AppImage.placeHolder2Icon to use actual image parameter
+                                fit: BoxFit.cover,
+                                width: double.infinity,
+                                height: double.infinity,
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImage.placeHolder2Icon,
+                                    fit: BoxFit.cover,
+                                    width: double.infinity,
+                                    height: double.infinity,
+                                  );
+                                },
+                              ),
                             ),
                             // Shadow overlay that blends into the info section
                             Positioned(
@@ -598,8 +623,8 @@ class HomeWidget {
                               SizedBox(
                                 height: hasBio
                                     ? MediaQuery.of(context).size.height *
-                                        .5 /
-                                        100
+                                    .5 /
+                                    100
                                     : 0,
                               ),
                               Text(
@@ -615,8 +640,8 @@ class HomeWidget {
                               SizedBox(
                                 height: (hasBio && hasVibes)
                                     ? MediaQuery.of(context).size.height *
-                                        .5 /
-                                        100
+                                    .5 /
+                                    100
                                     : 0,
                               ),
                               Text(
@@ -770,27 +795,27 @@ class HomeWidget {
 
   // Method to build events card
   static Widget eventsCard(
-    BuildContext context,
-    String image,
-    String name,
-    VoidCallback onTap, {
-    Key? key,
-    required bool showHeart,
-    required bool showCross,
-    required String? lastSwipeType,
-    required Function() onRejectTap,
-    required Function() onShareTap,
-    required Function() onHeartTap,
-    String? about,
-    List<String>? categories,
-    String? date,
-    String? venueName,
-    String? address,
-    String? distance,
-    List<String>? recentUserImages,
-    int? recentCount,
-    int? totalLikes,
-  }) {
+      BuildContext context,
+      String image,
+      String name,
+      VoidCallback onTap, {
+        Key? key,
+        required bool showHeart,
+        required bool showCross,
+        required String? lastSwipeType,
+        required Function() onRejectTap,
+        required Function() onShareTap,
+        required Function() onHeartTap,
+        String? about,
+        List<String>? categories,
+        String? date,
+        String? venueName,
+        String? address,
+        String? distance,
+        List<String>? recentUserImages,
+        int? recentCount,
+        int? totalLikes,
+      }) {
     // final bool showAcceptFeedback =
     //     (showHeart || showCross) && lastSwipeType == 'accept';
     // final bool showRejectFeedback =
@@ -807,7 +832,7 @@ class HomeWidget {
         onTap: onTap,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 85 / 100,
-          height: MediaQuery.of(context).size.height * 57.5 / 100,
+          height: swipeCardHeight(context),
           child: Stack(
             clipBehavior: Clip.hardEdge,
             children: [
@@ -853,20 +878,20 @@ class HomeWidget {
                               ),
                               child: isNetworkUrl(image)
                                   ? Image.network(
-                                      image,
-                                      fit: BoxFit.fitHeight,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          AppImage.dummyImageIcon,
-                                          fit: BoxFit.fitHeight,
-                                        );
-                                      },
-                                    )
+                                image,
+                                fit: BoxFit.fitHeight,
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImage.dummyImageIcon,
+                                    fit: BoxFit.fitHeight,
+                                  );
+                                },
+                              )
                                   : Image.asset(
-                                      image,
-                                      fit: BoxFit.fitHeight,
-                                    ),
+                                image,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
                             // Shadow overlay
                             Positioned(
@@ -1015,43 +1040,43 @@ class HomeWidget {
                             width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                           ...categories.take(2).map((category) => Padding(
-                                padding: const EdgeInsets.only(right: 2.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: AppColor.themeColor.withOpacity(.7),
-                                    border: Border.all(
-                                      color: const Color(0xFF9C27B0),
-                                      width: 1,
-                                    ),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.7),
-                                        blurRadius: 12,
-                                        spreadRadius: 1,
-                                      ),
-                                      BoxShadow(
-                                        color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.3),
-                                        blurRadius: 4,
-                                        spreadRadius: 0,
-                                      ),
-                                    ],
+                            padding: const EdgeInsets.only(right: 2.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: AppColor.themeColor.withOpacity(.7),
+                                border: Border.all(
+                                  color: const Color(0xFF9C27B0),
+                                  width: 1,
+                                ),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF9C27B0)
+                                        .withOpacity(0.7),
+                                    blurRadius: 12,
+                                    spreadRadius: 1,
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 2.0, horizontal: 10),
-                                    child: Text(
-                                      category,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                  BoxShadow(
+                                    color: const Color(0xFF9C27B0)
+                                        .withOpacity(0.3),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 10),
+                                child: Text(
+                                  category,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
                                   ),
                                 ),
-                              )),
+                              ),
+                            ),
+                          )),
                         ],
                       ),
                     ),
@@ -1144,27 +1169,27 @@ class HomeWidget {
 
   // Method to build venues card
   static Widget venuesCard(
-    BuildContext context,
-    String image,
-    String name,
-    String venueId,
-    VoidCallback onTap, {
-    Key? key,
-    required bool showHeart,
-    required bool showCross,
-    required String? lastSwipeType,
-    required Function() onRejectTap,
-    required Function() onShareTap,
-    required Function() onHeartTap,
-    String? about,
-    List<String>? categories,
-    String? timing,
-    String? address,
-    String? distance,
-    List<String>? recentUserImages,
-    int? recentCount,
-    int? totalLikes,
-  }) {
+      BuildContext context,
+      String image,
+      String name,
+      String venueId,
+      VoidCallback onTap, {
+        Key? key,
+        required bool showHeart,
+        required bool showCross,
+        required String? lastSwipeType,
+        required Function() onRejectTap,
+        required Function() onShareTap,
+        required Function() onHeartTap,
+        String? about,
+        List<String>? categories,
+        String? timing,
+        String? address,
+        String? distance,
+        List<String>? recentUserImages,
+        int? recentCount,
+        int? totalLikes,
+      }) {
     final bool showAcceptFeedback =
         (showHeart || showCross) && lastSwipeType == 'accept';
     final bool showRejectFeedback =
@@ -1181,7 +1206,7 @@ class HomeWidget {
         onTap: onTap,
         child: SizedBox(
           width: MediaQuery.of(context).size.width * 85 / 100,
-          height: MediaQuery.of(context).size.height * 57.5 / 100,
+          height: swipeCardHeight(context),
           child: Stack(
             clipBehavior: Clip.hardEdge,
             children: [
@@ -1227,20 +1252,20 @@ class HomeWidget {
                               ),
                               child: isNetworkUrl(image)
                                   ? Image.network(
-                                      image,
-                                      fit: BoxFit.fitHeight,
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                        return Image.asset(
-                                          AppImage.dummyImageIcon,
-                                          fit: BoxFit.fitHeight,
-                                        );
-                                      },
-                                    )
+                                image,
+                                fit: BoxFit.fitHeight,
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImage.dummyImageIcon,
+                                    fit: BoxFit.fitHeight,
+                                  );
+                                },
+                              )
                                   : Image.asset(
-                                      image,
-                                      fit: BoxFit.fitHeight,
-                                    ),
+                                image,
+                                fit: BoxFit.fitHeight,
+                              ),
                             ),
                             // Shadow overlay
                             Positioned(
@@ -1389,42 +1414,42 @@ class HomeWidget {
                             width: MediaQuery.of(context).size.width * 5 / 100,
                           ),
                           ...categories.take(2).map((category) => Padding(
-                                padding: const EdgeInsets.only(right: 2.0),
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: AppColor.themeColor.withOpacity(.7),
-                                    border: Border.all(
-                                        color: const Color(0xFF9C27B0),
-                                        width: 1),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.7),
-                                        blurRadius: 12,
-                                        spreadRadius: 1,
-                                      ),
-                                      BoxShadow(
-                                        color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.3),
-                                        blurRadius: 4,
-                                        spreadRadius: 0,
-                                      ),
-                                    ],
+                            padding: const EdgeInsets.only(right: 2.0),
+                            child: Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(20),
+                                color: AppColor.themeColor.withOpacity(.7),
+                                border: Border.all(
+                                    color: const Color(0xFF9C27B0),
+                                    width: 1),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: const Color(0xFF9C27B0)
+                                        .withOpacity(0.7),
+                                    blurRadius: 12,
+                                    spreadRadius: 1,
                                   ),
-                                  child: Padding(
-                                    padding: const EdgeInsets.symmetric(
-                                        vertical: 2.0, horizontal: 10),
-                                    child: Text(
-                                      category,
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
-                                      ),
-                                    ),
+                                  BoxShadow(
+                                    color: const Color(0xFF9C27B0)
+                                        .withOpacity(0.3),
+                                    blurRadius: 4,
+                                    spreadRadius: 0,
+                                  ),
+                                ],
+                              ),
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 2.0, horizontal: 10),
+                                child: Text(
+                                  category,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 14,
                                   ),
                                 ),
-                              )),
+                              ),
+                            ),
+                          )),
                         ],
                       ),
                     ),
@@ -1757,7 +1782,7 @@ class HomeWidget {
 //         onTap: onTap,
 //         child: SizedBox(
 //           width: MediaQuery.of(context).size.width * 85 / 100,
-//           height: MediaQuery.of(context).size.height * 57.5 / 100,
+//           height: swipeCardHeight(context),
 //           child: Stack(
 //             clipBehavior: Clip.none,
 //             children: [
@@ -2113,7 +2138,7 @@ class HomeWidget {
 //         onTap: onTap,
 //         child: SizedBox(
 //           width: MediaQuery.of(context).size.width * 85 / 100,
-//           height: MediaQuery.of(context).size.height * 57.5 / 100,
+//           height: swipeCardHeight(context),
 //           child: Stack(
 //             clipBehavior: Clip.none,
 //             children: [
@@ -2546,7 +2571,7 @@ class HomeWidget {
 //         onTap: onTap,
 //         child: SizedBox(
 //           width: MediaQuery.of(context).size.width * 85 / 100,
-//           height: MediaQuery.of(context).size.height * 57.5 / 100,
+//           height: swipeCardHeight(context),
 //           child: Stack(
 //             clipBehavior: Clip.none,
 //             children: [
@@ -2945,22 +2970,3 @@ class HomeWidget {
 //     );
 //   }
 // }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

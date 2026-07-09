@@ -13,6 +13,7 @@ import '../../../../controller/venues/venues_details_controller.dart';
 import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
+import '../../../../utilities/url_utils.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_footer.dart';
 import '../../../../utilities/app_image.dart';
@@ -214,7 +215,9 @@ class _CompletePayment2State extends State<CompletePayment2>
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 40),
+          padding: EdgeInsets.only(
+            bottom: 40 + MediaQuery.of(context).padding.bottom,
+          ),
           child: AppButton(
             text:
                 '${AppLanguage.paySecurelyText[language]} \u20B9${_formatAmount(payableAmount)}',
@@ -419,8 +422,9 @@ class _CompletePayment2State extends State<CompletePayment2>
                                                 ),
                                               ),
                                             ),
-                                            imageUrl:
-                                                "${AppConfigProvider.imageUrl}$eventImage",
+                                            imageUrl: resolveImageUrl(
+                                                eventImage,
+                                                AppConfigProvider.imageUrl),
                                             fit: BoxFit.cover,
                                             errorWidget:
                                                 (context, url, error) =>

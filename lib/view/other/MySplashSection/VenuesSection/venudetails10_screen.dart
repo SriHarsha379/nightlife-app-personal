@@ -51,7 +51,9 @@ class _CompletePaymentState extends State<CompletePayment> {
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 40),
+          padding: EdgeInsets.only(
+            bottom: 40 + MediaQuery.of(context).padding.bottom,
+          ),
           child: AppButton(
             text: '${AppLanguage.paySecurelyText[language]} ₹${'450'}',
             onPress: () {

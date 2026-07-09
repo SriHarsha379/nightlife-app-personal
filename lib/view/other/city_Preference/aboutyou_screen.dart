@@ -180,7 +180,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: EdgeInsets.only(
+              bottom: 40 + MediaQuery.of(context).padding.bottom,
+            ),
             child: AppButton(
               text: '${AppLanguage.continueText[language]}',
               onPress: () {

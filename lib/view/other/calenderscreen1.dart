@@ -54,7 +54,9 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: EdgeInsets.only(
+              bottom: 40 + MediaQuery.of(context).padding.bottom,
+            ),
             child: AppButton(
               text: '${AppLanguage.continueText[language]}',
               onPress: () {

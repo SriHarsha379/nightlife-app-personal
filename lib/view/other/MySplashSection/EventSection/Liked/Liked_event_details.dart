@@ -38,8 +38,6 @@ class LikedEventDetail extends StatefulWidget {
 }
 
 class _LikedEventDetailState extends State<LikedEventDetail> {
-  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
-  static const double _fullActionBarWidthFactor = 0.85;
   static const String _limitedTimeText = "🔥 Limited time";
   static const String _endedText = "🔥 Ended";
   Timer? _countdownTimer;
@@ -67,7 +65,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final homeController =
-          Provider.of<EventDetailsController>(context, listen: false);
+      Provider.of<EventDetailsController>(context, listen: false);
       homeController.fetchEventData(context, widget.eventId.toString());
     });
   }
@@ -144,9 +142,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   DateTime? _resolveEventEndDateTime(
-    String? endDateString,
-    String? endTimeString,
-  ) {
+      String? endDateString,
+      String? endTimeString,
+      ) {
     final endDateRaw = (endDateString ?? '').trim();
     if (endDateRaw.isEmpty) return null;
 
@@ -160,8 +158,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
       final normalizedTime = timeRaw.contains('-')
           ? timeRaw.split('-').last.trim()
           : timeRaw.contains(',')
-              ? timeRaw.split(',').last.trim()
-              : timeRaw;
+          ? timeRaw.split(',').last.trim()
+          : timeRaw;
 
       final formats = <DateFormat>[
         DateFormat('h:mm a'),
@@ -315,8 +313,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   Future<void> _openEventLocationInMaps(
-    Map<String, dynamic> eventDetails,
-  ) async {
+      Map<String, dynamic> eventDetails,
+      ) async {
     final latitudeRaw = _str(eventDetails['latitude']);
     final longitudeRaw = _str(eventDetails['longitude']);
     final address = _str(eventDetails['address']);
@@ -341,9 +339,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   Future<void> _submitEventSwipeAction(
-    String action, {
-    required String targetEventId,
-  }) async {
+      String action, {
+        required String targetEventId,
+      }) async {
     if (targetEventId.isEmpty) return;
     _swipeResult = {
       'action': action, // like | dislike
@@ -368,38 +366,23 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
+            shape: BoxShape.circle,
             border: Border.all(color: backgroundColor, width: 1.4),
             boxShadow: filled
                 ? [
-                    BoxShadow(
-                      color: backgroundColor.withOpacity(0.28),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
+              BoxShadow(
+                color: backgroundColor.withOpacity(0.28),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ]
                 : const [],
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: foregroundColor, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: AppFont.fontFamily,
-                  color: foregroundColor,
-                ),
-              ),
-            ],
-          ),
+          child: Icon(icon, color: foregroundColor, size: 22),
         ),
       ),
     );
@@ -451,92 +434,98 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
           statusBarColor: Colors.transparent,
           statusBarIconBrightness: isDark ? Brightness.light : Brightness.dark,
           statusBarBrightness:
-              isDark ? Brightness.dark : Brightness.light, // iOS
+          isDark ? Brightness.dark : Brightness.light, // iOS
         ),
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Container(
-              decoration: BoxDecoration(
-                color:
-                    AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
-                borderRadius: BorderRadius.circular(25),
+            FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Padding(
+              padding: EdgeInsets.only(
+                bottom: 16 + MediaQuery.of(context).padding.bottom,
               ),
-              width: showDislikeOnly
-                  ? size.width * _dislikeOnlyActionBarWidthFactor
-                  : size.width * _fullActionBarWidthFactor,
-              height: size.height * 7 / 100,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: size.width * 3 / 100,
-                  ),
-                  _buildDecisionButton(
-                    label: 'Reject',
-                    icon: Icons.close_rounded,
-                    backgroundColor: AppColor.redColor,
-                    foregroundColor: Colors.white,
-                    onTap: () async {
-                      await _submitEventSwipeAction(
-                        'dislike',
-                        targetEventId: targetEventId,
-                      );
-                    },
-                  ),
-                  SizedBox(
-                    width: size.width * 3 / 100,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      eventstypebottomsheet(
-                        context,
-                        sharedEventData:
-                            Map<String, dynamic>.from(eventDetails),
-                      );
-                    },
-                    child: Container(
-                      width: size.width * 30 / 100,
-                      height: size.height * 4.6 / 100,
-                      decoration: BoxDecoration(
-                        color: AppColor.secondryColor(context),
-                        borderRadius: BorderRadius.circular(50),
-                        border: Border.all(
-                          color: AppColor.secondryColor(context),
-                        ),
-                      ),
-                      child: Center(
-                        child: Text(
-                          AppLanguage.sendInviteText[language],
-                          style: TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w500,
-                            fontFamily: AppFont.fontFamily,
-                            color: AppColor.pinkColor,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                  if (!showDislikeOnly) ...[
-                    SizedBox(
-                      width: size.width * 3 / 100,
-                    ),
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                  AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                width: size.width * 0.9,
+                height: 64,
+                padding: const EdgeInsets.symmetric(horizontal: 10),
+                child: Row(
+                  children: [
                     _buildDecisionButton(
-                      label: 'Accept',
-                      icon: Icons.favorite_rounded,
-                      backgroundColor: AppColor.buttonColor,
+                      label: 'Reject',
+                      icon: Icons.close_rounded,
+                      backgroundColor: AppColor.redColor,
                       foregroundColor: Colors.white,
                       onTap: () async {
                         await _submitEventSwipeAction(
-                          'like',
+                          'dislike',
                           targetEventId: targetEventId,
                         );
                       },
                     ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          eventstypebottomsheet(
+                            context,
+                            sharedEventData:
+                            Map<String, dynamic>.from(eventDetails),
+                          );
+                        },
+                        child: Container(
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColor.secondryColor(context),
+                            borderRadius: BorderRadius.circular(50),
+                            border: Border.all(
+                              color: AppColor.secondryColor(context),
+                            ),
+                          ),
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.send_rounded,
+                                    color: AppColor.pinkColor, size: 16),
+                                const SizedBox(width: 8),
+                                Text(
+                                  AppLanguage.sendInviteText[language],
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    fontFamily: AppFont.fontFamily,
+                                    color: AppColor.pinkColor,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (!showDislikeOnly) ...[
+                      const SizedBox(width: 10),
+                      _buildDecisionButton(
+                        label: 'Accept',
+                        icon: Icons.favorite_rounded,
+                        backgroundColor: AppColor.buttonColor,
+                        foregroundColor: Colors.white,
+                        onTap: () async {
+                          await _submitEventSwipeAction(
+                            'like',
+                            targetEventId: targetEventId,
+                          );
+                        },
+                      ),
+                    ],
                   ],
-                ],
+                ),
               ),
             ),
             body: Container(
@@ -567,8 +556,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                           _openLineupImagePreview(
                                             context,
                                             (controller.getEventDetails[
-                                                        'event_image'] ??
-                                                    "")
+                                            'event_image'] ??
+                                                "")
                                                 .toString(),
                                           );
                                         },
@@ -579,31 +568,31 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                             child: CachedNetworkImage(
                                               imageBuilder:
                                                   (context, imageProvider) =>
-                                                      Container(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
+                                                  Container(
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        image: imageProvider,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                    ),
                                                   ),
-                                                ),
-                                              ),
                                               imageUrl:
-                                                  "${AppConfigProvider.imageUrl}${controller.getEventDetails['event_image']}",
+                                              "${AppConfigProvider.imageUrl}${controller.getEventDetails['event_image']}",
                                               fit: BoxFit.cover,
                                               errorWidget:
                                                   (context, url, error) =>
-                                                      Image.asset(
-                                                AppImage.dummyImageIcon,
-                                                fit: BoxFit.cover,
-                                              ),
+                                                  Image.asset(
+                                                    AppImage.dummyImageIcon,
+                                                    fit: BoxFit.cover,
+                                                  ),
                                               placeholder: (context, url) =>
                                                   Center(
-                                                child: LoadingAnimationWidget
-                                                    .dotsTriangle(
-                                                  color: AppColor.themeColor,
-                                                  size: 35,
-                                                ),
-                                              ),
+                                                    child: LoadingAnimationWidget
+                                                        .dotsTriangle(
+                                                      color: AppColor.themeColor,
+                                                      size: 35,
+                                                    ),
+                                                  ),
                                             ),
                                           ),
                                         ),
@@ -618,7 +607,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                           child: Image.asset(
                                             AppImage.backarrow,
                                             color:
-                                                AppColor.secondryColor(context),
+                                            AppColor.secondryColor(context),
                                             fit: BoxFit.cover,
                                             height: size.width * 5 / 100,
                                           ),
@@ -639,22 +628,22 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     Container(
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
+                                        MainAxisAlignment.spaceBetween,
                                         children: [
                                           Expanded(
                                             child: Column(
                                               crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
+                                              CrossAxisAlignment.start,
                                               children: [
                                                 //! Event Name
                                                 Consumer<
                                                     EventDetailsController>(
                                                   builder:
                                                       (BuildContext context,
-                                                          controller, _) {
+                                                      controller, _) {
                                                     String eventName = controller
-                                                                .getEventDetails[
-                                                            'event_name'] ??
+                                                        .getEventDetails[
+                                                    'event_name'] ??
                                                         "";
                                                     return Text(
                                                       eventName,
@@ -663,10 +652,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
-                                                              FontWeight.w700,
+                                                          FontWeight.w700,
                                                           color: AppColor
                                                               .secondryColor(
-                                                                  context)),
+                                                              context)),
                                                     );
                                                   },
                                                 ),
@@ -679,11 +668,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     EventDetailsController>(
                                                   builder:
                                                       (BuildContext context,
-                                                          controller, _) {
+                                                      controller, _) {
                                                     List<dynamic>
-                                                        categoriesList =
+                                                    categoriesList =
                                                         controller.getEventDetails[
-                                                                'categories'] ??
+                                                        'categories'] ??
                                                             [];
                                                     if (categoriesList
                                                         .isEmpty) {
@@ -691,38 +680,38 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     }
                                                     return Wrap(
                                                       spacing:
-                                                          size.width * 2 / 100,
+                                                      size.width * 2 / 100,
                                                       runSpacing: 8,
                                                       children: categoriesList
                                                           .take(3)
                                                           .map((category) {
                                                         final categoryName = (category
-                                                                        is Map
-                                                                    ? category[
-                                                                        'name']
-                                                                    : '')
-                                                                ?.toString() ??
+                                                        is Map
+                                                            ? category[
+                                                        'name']
+                                                            : '')
+                                                            ?.toString() ??
                                                             '';
                                                         return Container(
                                                           decoration:
-                                                              BoxDecoration(
+                                                          BoxDecoration(
                                                             border: Border.all(
                                                               width: 1,
                                                               color: AppColor
                                                                   .pinkColor,
                                                             ),
                                                             borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
+                                                            BorderRadius
+                                                                .circular(
+                                                                20),
                                                           ),
                                                           child: Padding(
                                                             padding: EdgeInsets
                                                                 .symmetric(
                                                               horizontal:
-                                                                  size.width *
-                                                                      3 /
-                                                                      100,
+                                                              size.width *
+                                                                  3 /
+                                                                  100,
                                                               vertical: 1,
                                                             ),
                                                             child: Text(
@@ -732,11 +721,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 fontFamily: AppFont
                                                                     .fontFamily,
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
+                                                                FontWeight
+                                                                    .w500,
                                                                 color: AppColor
                                                                     .secondryColor(
-                                                                        context),
+                                                                    context),
                                                               ),
                                                             ),
                                                           ),
@@ -766,35 +755,35 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     EventDetailsController>(
                                                   builder:
                                                       (BuildContext context,
-                                                          controller, _) {
+                                                      controller, _) {
                                                     String likeCount = (controller
-                                                                        .getEventDetails[
-                                                                    'total_likes'] ==
-                                                                null ||
-                                                            controller.getEventDetails[
-                                                                    'total_likes'] ==
-                                                                0)
+                                                        .getEventDetails[
+                                                    'total_likes'] ==
+                                                        null ||
+                                                        controller.getEventDetails[
+                                                        'total_likes'] ==
+                                                            0)
                                                         ? ""
                                                         : controller
-                                                            .getEventDetails[
-                                                                'total_likes']
-                                                            .toString();
+                                                        .getEventDetails[
+                                                    'total_likes']
+                                                        .toString();
                                                     if (likeCount.isEmpty) {
                                                       return SizedBox();
                                                     }
                                                     return SizedBox(
                                                       width:
-                                                          size.width * 12 / 100,
+                                                      size.width * 12 / 100,
                                                       child: Text(
                                                         likeCount,
                                                         textAlign:
-                                                            TextAlign.center,
+                                                        TextAlign.center,
                                                         style: const TextStyle(
                                                             fontFamily: AppFont
                                                                 .fontFamily,
                                                             fontSize: 13,
                                                             fontWeight:
-                                                                FontWeight.w400,
+                                                            FontWeight.w400,
                                                             color: AppColor
                                                                 .textcolor),
                                                       ),
@@ -824,8 +813,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         ),
                                         SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               2 /
                                               100,
                                         ),
@@ -836,7 +825,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               controller, _) {
                                             String eventDate =
                                                 controller.getEventDetails[
-                                                        'event_date'] ??
+                                                'event_date'] ??
                                                     "";
 
                                             return Text(
@@ -844,7 +833,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w500,
                                                   color: AppColor.secondryColor(
                                                       context)),
@@ -870,8 +859,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         ),
                                         SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               2 /
                                               100,
                                         ),
@@ -882,14 +871,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               controller, _) {
                                             String eventTime =
                                                 controller.getEventDetails[
-                                                        'event_time'] ??
+                                                'event_time'] ??
                                                     "";
                                             return Text(
                                               eventTime,
                                               style: TextStyle(
                                                   fontSize: 15,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w500,
                                                   color: AppColor.secondryColor(
                                                       context)),
@@ -915,8 +904,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         ),
                                         SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               2 /
                                               100,
                                         ),
@@ -927,12 +916,12 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               controller, _) {
                                             String eventAddress =
                                                 controller.getEventDetails[
-                                                        'address'] ??
+                                                'address'] ??
                                                     "";
                                             String distance = controller
-                                                    .getEventDetails[
-                                                        'distance_km']
-                                                    ?.toString() ??
+                                                .getEventDetails[
+                                            'distance_km']
+                                                ?.toString() ??
                                                 "";
 
                                             return GestureDetector(
@@ -946,33 +935,33 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 child: Container(
                                                   child: Column(
                                                     crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
+                                                    CrossAxisAlignment
+                                                        .start,
                                                     children: [
                                                       Container(
                                                         child: SizedBox(
                                                           width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
+                                                              context)
+                                                              .size
+                                                              .width *
                                                               80 /
                                                               100,
                                                           child: Text(
                                                             eventAddress,
                                                             maxLines: 2,
                                                             overflow:
-                                                                TextOverflow
-                                                                    .ellipsis,
+                                                            TextOverflow
+                                                                .ellipsis,
                                                             style: TextStyle(
                                                                 fontSize: 15,
                                                                 fontFamily: AppFont
                                                                     .fontFamily,
                                                                 fontWeight:
-                                                                    FontWeight
-                                                                        .w500,
+                                                                FontWeight
+                                                                    .w500,
                                                                 color: AppColor
                                                                     .secondryColor(
-                                                                        context)),
+                                                                    context)),
                                                           ),
                                                         ),
                                                       ),
@@ -984,14 +973,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                               style: TextStyle(
                                                                   fontSize: 15,
                                                                   fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
+                                                                  AppFont
+                                                                      .fontFamily,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
+                                                                  FontWeight
+                                                                      .w400,
                                                                   color: AppColor
                                                                       .greyLightColor(
-                                                                          context)),
+                                                                      context)),
                                                             ),
                                                           ],
                                                         ),
@@ -1011,21 +1000,21 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       builder: (BuildContext context,
                                           controller, _) {
                                         List<dynamic> galleryList = (controller
-                                                            .getEventDetails[
-                                                        'gallery'] ==
-                                                    null ||
-                                                controller
-                                                    .getEventDetails['gallery']
-                                                    .isEmpty)
+                                            .getEventDetails[
+                                        'gallery'] ==
+                                            null ||
+                                            controller
+                                                .getEventDetails['gallery']
+                                                .isEmpty)
                                             ? []
                                             : controller
-                                                .getEventDetails['gallery'];
+                                            .getEventDetails['gallery'];
                                         if (galleryList.isEmpty) {
                                           return SizedBox();
                                         }
                                         return Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
+                                          MainAxisAlignment.spaceBetween,
                                           children: [
                                             Container(
                                               child: Text(
@@ -1034,11 +1023,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 style: TextStyle(
                                                     fontSize: 18,
                                                     fontFamily:
-                                                        AppFont.fontFamily,
+                                                    AppFont.fontFamily,
                                                     fontWeight: FontWeight.w500,
                                                     color:
-                                                        AppColor.secondryColor(
-                                                            context)),
+                                                    AppColor.secondryColor(
+                                                        context)),
                                               ),
                                             ),
                                             GestureDetector(
@@ -1057,11 +1046,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   style: const TextStyle(
                                                       fontSize: 16,
                                                       fontFamily:
-                                                          AppFont.fontFamily,
+                                                      AppFont.fontFamily,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                      FontWeight.w500,
                                                       color:
-                                                          AppColor.pinkColor),
+                                                      AppColor.pinkColor),
                                                 ),
                                               ),
                                             ),
@@ -1078,15 +1067,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       builder: (BuildContext context,
                                           controller, _) {
                                         List<dynamic> galleryList = (controller
-                                                            .getEventDetails[
-                                                        'gallery'] ==
-                                                    null ||
-                                                controller
-                                                    .getEventDetails['gallery']
-                                                    .isEmpty)
+                                            .getEventDetails[
+                                        'gallery'] ==
+                                            null ||
+                                            controller
+                                                .getEventDetails['gallery']
+                                                .isEmpty)
                                             ? []
                                             : controller
-                                                .getEventDetails['gallery'];
+                                            .getEventDetails['gallery'];
                                         if (galleryList.isEmpty) {
                                           return SizedBox();
                                         }
@@ -1099,7 +1088,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               galleryList.length > 3
                                                   ? 3
                                                   : galleryList.length,
-                                              (index) {
+                                                  (index) {
                                                 return InkWell(
                                                   onTap: () {
                                                     _openGalleryBottomSheet(
@@ -1109,51 +1098,51 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   },
                                                   child: Container(
                                                     width:
-                                                        size.width * 60 / 100,
+                                                    size.width * 60 / 100,
                                                     height:
-                                                        size.height * 15 / 100,
+                                                    size.height * 15 / 100,
                                                     margin:
-                                                        const EdgeInsets.only(
-                                                            right: 10),
+                                                    const EdgeInsets.only(
+                                                        right: 10),
                                                     child: ClipRRect(
                                                       borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
+                                                      BorderRadius.circular(
+                                                          20),
                                                       child: CachedNetworkImage(
                                                         imageBuilder: (context,
-                                                                imageProvider) =>
+                                                            imageProvider) =>
                                                             Container(
-                                                          decoration:
+                                                              decoration:
                                                               BoxDecoration(
-                                                            image:
+                                                                image:
                                                                 DecorationImage(
-                                                              image:
+                                                                  image:
                                                                   imageProvider,
-                                                              fit: BoxFit.cover,
+                                                                  fit: BoxFit.cover,
+                                                                ),
+                                                              ),
                                                             ),
-                                                          ),
-                                                        ),
                                                         imageUrl:
-                                                            "${AppConfigProvider.imageUrl}${galleryList[index]}",
+                                                        "${AppConfigProvider.imageUrl}${galleryList[index]}",
                                                         fit: BoxFit.cover,
                                                         errorWidget: (context,
-                                                                url, error) =>
+                                                            url, error) =>
                                                             Image.asset(
-                                                          AppImage
-                                                              .dummyImageIcon,
-                                                          fit: BoxFit.cover,
-                                                        ),
+                                                              AppImage
+                                                                  .dummyImageIcon,
+                                                              fit: BoxFit.cover,
+                                                            ),
                                                         placeholder:
                                                             (context, url) =>
-                                                                Center(
-                                                          child:
+                                                            Center(
+                                                              child:
                                                               LoadingAnimationWidget
                                                                   .dotsTriangle(
-                                                            color: AppColor
-                                                                .themeColor,
-                                                            size: 35,
-                                                          ),
-                                                        ),
+                                                                color: AppColor
+                                                                    .themeColor,
+                                                                size: 35,
+                                                              ),
+                                                            ),
                                                       ),
                                                     ),
                                                   ),
@@ -1174,7 +1163,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       builder: (BuildContext context,
                                           controller, _) {
                                         String about = controller
-                                                .getEventDetails['about'] ??
+                                            .getEventDetails['about'] ??
                                             "";
                                         return Column(
                                           children: [
@@ -1186,7 +1175,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   color: AppColor.secondryColor(
                                                       context),
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w600,
                                                   fontSize: 14,
                                                 ),
@@ -1205,25 +1194,25 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                 style: TextStyle(
                                                   fontSize: 15,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.normal,
                                                   color:
-                                                      AppColor.greyLightColor(
-                                                          context),
+                                                  AppColor.greyLightColor(
+                                                      context),
                                                 ),
                                                 moreStyle: const TextStyle(
                                                   fontSize: 15,
                                                   color: AppColor.buttonColor,
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                 ),
                                                 lessStyle: const TextStyle(
                                                   fontSize: 15,
                                                   color: AppColor.buttonColor,
                                                   fontWeight: FontWeight.w600,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                 ),
                                               ),
                                             ),
@@ -1242,12 +1231,12 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       builder: (BuildContext context,
                                           controller, _) {
                                         List<dynamic> lineUpList =
-                                            (controller.getEventDetails[
-                                                        'lineup'] ==
-                                                    null)
-                                                ? []
-                                                : controller
-                                                    .getEventDetails['lineup'];
+                                        (controller.getEventDetails[
+                                        'lineup'] ==
+                                            null)
+                                            ? []
+                                            : controller
+                                            .getEventDetails['lineup'];
                                         if (lineUpList.isEmpty) {
                                           return SizedBox();
                                         }
@@ -1255,8 +1244,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Container(
                                                   child: Text(
@@ -1265,12 +1254,12 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                     style: TextStyle(
                                                         fontSize: 16,
                                                         fontFamily:
-                                                            AppFont.fontFamily,
+                                                        AppFont.fontFamily,
                                                         fontWeight:
-                                                            FontWeight.w600,
+                                                        FontWeight.w600,
                                                         color: AppColor
                                                             .secondryColor(
-                                                                context)),
+                                                            context)),
                                                   ),
                                                 ),
                                                 InkWell(
@@ -1281,27 +1270,27 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                         type: PageTransitionType
                                                             .rightToLeftWithFade,
                                                         child:
-                                                            ViewAllLinupScreen(
+                                                        ViewAllLinupScreen(
                                                           viewAllLineUpList:
-                                                              lineUpList,
+                                                          lineUpList,
                                                         ),
                                                         duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500),
+                                                        const Duration(
+                                                            milliseconds:
+                                                            500),
                                                       ),
                                                     );
                                                   },
                                                   child: Container(
                                                     child: Text(
                                                       AppLanguage.viewAlltext[
-                                                          language],
+                                                      language],
                                                       style: const TextStyle(
                                                           fontSize: 14,
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
-                                                              FontWeight.w500,
+                                                          FontWeight.w500,
                                                           color: AppColor
                                                               .pinkColor),
                                                     ),
@@ -1314,8 +1303,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                             ),
                                             SizedBox(
                                               height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
+                                                  .size
+                                                  .height *
                                                   0.01,
                                             ),
                                             SizedBox(
@@ -1324,131 +1313,131 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   .width,
                                               child: SingleChildScrollView(
                                                 scrollDirection:
-                                                    Axis.horizontal,
+                                                Axis.horizontal,
                                                 child: Row(
                                                   children: List.generate(
                                                       lineUpList.length,
-                                                      (index) {
-                                                    return Padding(
-                                                      padding: const EdgeInsets
-                                                          .symmetric(
-                                                          horizontal: 8.0),
-                                                      child: Column(
-                                                        children: [
-                                                          GestureDetector(
-                                                            onTap: () {
-                                                              _openLineupImagePreview(
-                                                                context,
-                                                                (lineUpList[index]
-                                                                            [
-                                                                            "image"] ??
+                                                          (index) {
+                                                        return Padding(
+                                                          padding: const EdgeInsets
+                                                              .symmetric(
+                                                              horizontal: 8.0),
+                                                          child: Column(
+                                                            children: [
+                                                              GestureDetector(
+                                                                onTap: () {
+                                                                  _openLineupImagePreview(
+                                                                    context,
+                                                                    (lineUpList[index]
+                                                                    [
+                                                                    "image"] ??
                                                                         "")
-                                                                    .toString(),
-                                                              );
-                                                            },
-                                                            child: Container(
-                                                              width: 80,
-                                                              height: 80,
-                                                              decoration:
+                                                                        .toString(),
+                                                                  );
+                                                                },
+                                                                child: Container(
+                                                                  width: 80,
+                                                                  height: 80,
+                                                                  decoration:
                                                                   BoxDecoration(
-                                                                borderRadius:
+                                                                    borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            35),
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
+                                                                        35),
+                                                                    boxShadow: [
+                                                                      BoxShadow(
+                                                                        color: Colors
+                                                                            .black
+                                                                            .withOpacity(
                                                                             0.25),
-                                                                    blurRadius:
+                                                                        blurRadius:
                                                                         4,
-                                                                    offset:
+                                                                        offset:
                                                                         const Offset(
                                                                             0,
                                                                             4),
+                                                                      ),
+                                                                    ],
                                                                   ),
-                                                                ],
-                                                              ),
-                                                              child: ClipRRect(
-                                                                borderRadius:
+                                                                  child: ClipRRect(
+                                                                    borderRadius:
                                                                     BorderRadius
                                                                         .circular(
-                                                                            35),
-                                                                child:
+                                                                        35),
+                                                                    child:
                                                                     CachedNetworkImage(
-                                                                  imageUrl:
+                                                                      imageUrl:
                                                                       "${AppConfigProvider.imageUrl}${lineUpList[index]['image']}",
-                                                                  fit: BoxFit
-                                                                      .cover,
-                                                                  errorWidget: (context,
+                                                                      fit: BoxFit
+                                                                          .cover,
+                                                                      errorWidget: (context,
                                                                           url,
                                                                           error) =>
-                                                                      Image
-                                                                          .asset(
-                                                                    AppImage
-                                                                        .placeHolderIcon,
-                                                                    fit: BoxFit
-                                                                        .cover,
-                                                                  ),
-                                                                  placeholder:
-                                                                      (context,
-                                                                              url) =>
+                                                                          Image
+                                                                              .asset(
+                                                                            AppImage
+                                                                                .placeHolderIcon,
+                                                                            fit: BoxFit
+                                                                                .cover,
+                                                                          ),
+                                                                      placeholder:
+                                                                          (context,
+                                                                          url) =>
                                                                           Center(
-                                                                    child: LoadingAnimationWidget
-                                                                        .dotsTriangle(
-                                                                      color: AppColor
-                                                                          .themeColor,
-                                                                      size: 35,
+                                                                            child: LoadingAnimationWidget
+                                                                                .dotsTriangle(
+                                                                              color: AppColor
+                                                                                  .themeColor,
+                                                                              size: 35,
+                                                                            ),
+                                                                          ),
                                                                     ),
                                                                   ),
                                                                 ),
                                                               ),
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                            height: MediaQuery.of(
-                                                                        context)
+                                                              SizedBox(
+                                                                height: MediaQuery.of(
+                                                                    context)
                                                                     .size
                                                                     .height *
-                                                                2 /
-                                                                100,
-                                                          ),
-                                                          Text(
-                                                            lineUpList[index]
-                                                                    ["name"] ??
-                                                                "No Name",
-                                                            style: TextStyle(
-                                                              color: AppColor
-                                                                  .secondryColor(
+                                                                    2 /
+                                                                    100,
+                                                              ),
+                                                              Text(
+                                                                lineUpList[index]
+                                                                ["name"] ??
+                                                                    "No Name",
+                                                                style: TextStyle(
+                                                                  color: AppColor
+                                                                      .secondryColor(
                                                                       context),
-                                                              fontWeight:
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .w600,
-                                                              fontSize: 12,
-                                                            ),
-                                                          ),
-                                                          SizedBox(
-                                                              // height: MediaQuery.of(context).size.height * 0.2/100,
+                                                                  fontSize: 12,
+                                                                ),
                                                               ),
-                                                          Text(
-                                                            lineUpList[index]
-                                                                    ["title"] ??
-                                                                "No Name",
-                                                            style: TextStyle(
-                                                              color: AppColor
-                                                                  .secondryColor(
+                                                              SizedBox(
+                                                                // height: MediaQuery.of(context).size.height * 0.2/100,
+                                                              ),
+                                                              Text(
+                                                                lineUpList[index]
+                                                                ["title"] ??
+                                                                    "No Name",
+                                                                style: TextStyle(
+                                                                  color: AppColor
+                                                                      .secondryColor(
                                                                       context),
-                                                              fontWeight:
+                                                                  fontWeight:
                                                                   FontWeight
                                                                       .w300,
-                                                              fontSize: 12,
-                                                            ),
+                                                                  fontSize: 12,
+                                                                ),
+                                                              ),
+                                                            ],
                                                           ),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }),
+                                                        );
+                                                      }),
                                                 ),
                                               ),
                                             ),
@@ -1465,7 +1454,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                       builder: (BuildContext context,
                                           controller, _) {
                                         dynamic ticketDetails = controller
-                                                .getEventDetails['tickets'] ??
+                                            .getEventDetails['tickets'] ??
                                             {};
                                         if (ticketDetails.isEmpty) {
                                           return SizedBox();
@@ -1473,7 +1462,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                         String endDate =
                                             ticketDetails['end_date'] ?? '';
                                         final String endTime = controller
-                                                .getEventDetails['end_time'] ??
+                                            .getEventDetails['end_time'] ??
                                             '';
 
                                         // START TIMER WHEN TICKET DETAILS ARE AVAILABLE
@@ -1491,8 +1480,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               width: size.width * 88 / 100,
                                               child: Row(
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .spaceBetween,
+                                                MainAxisAlignment
+                                                    .spaceBetween,
                                                 children: [
                                                   Container(
                                                     child: Text(
@@ -1503,10 +1492,10 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
-                                                              FontWeight.w600,
+                                                          FontWeight.w600,
                                                           color: AppColor
                                                               .secondryColor(
-                                                                  context)),
+                                                              context)),
                                                     ),
                                                   ),
                                                   Container(
@@ -1517,7 +1506,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                           fontFamily: AppFont
                                                               .fontFamily,
                                                           fontWeight:
-                                                              FontWeight.w700,
+                                                          FontWeight.w700,
                                                           color: AppColor
                                                               .textcolor),
                                                     ),
@@ -1536,54 +1525,54 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                               decoration: BoxDecoration(
                                                 color: AppColor.backgroundColor,
                                                 borderRadius:
-                                                    BorderRadius.circular(20),
+                                                BorderRadius.circular(20),
                                               ),
                                               child: Column(
                                                 children: [
                                                   Padding(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                    EdgeInsets.symmetric(
                                                       horizontal:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              4 /
-                                                              100,
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          4 /
+                                                          100,
                                                       vertical:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              2 /
-                                                              100,
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .height *
+                                                          2 /
+                                                          100,
                                                     ),
                                                     child: Row(
                                                       mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
                                                       children: [
                                                         Column(
                                                           crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
+                                                          CrossAxisAlignment
+                                                              .start,
                                                           children: [
                                                             SizedBox(
                                                               width:
-                                                                  size.width *
-                                                                      15 /
-                                                                      100,
+                                                              size.width *
+                                                                  15 /
+                                                                  100,
                                                               child: Text(
                                                                 AppLanguage
-                                                                        .fromText[
-                                                                    language],
+                                                                    .fromText[
+                                                                language],
                                                                 style: TextStyle(
                                                                     fontSize:
-                                                                        14,
+                                                                    14,
                                                                     fontFamily:
-                                                                        AppFont
-                                                                            .fontFamily,
+                                                                    AppFont
+                                                                        .fontFamily,
                                                                     fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
+                                                                    FontWeight
+                                                                        .w400,
                                                                     color: Colors
                                                                         .white),
                                                               ),
@@ -1593,11 +1582,11 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                               style: TextStyle(
                                                                   fontSize: 24,
                                                                   fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
+                                                                  AppFont
+                                                                      .fontFamily,
                                                                   fontWeight:
-                                                                      FontWeight
-                                                                          .w700,
+                                                                  FontWeight
+                                                                      .w700,
                                                                   color: Colors
                                                                       .white),
                                                             ),
@@ -1608,7 +1597,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                             if (isEnded) {
                                                               SnackBarToastMessage
                                                                   .info(context,
-                                                                      "This event has ended");
+                                                                  "This event has ended");
                                                               return;
                                                             }
                                                             Navigator.push(
@@ -1617,14 +1606,14 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 type: PageTransitionType
                                                                     .rightToLeftWithFade,
                                                                 child:
-                                                                    BookEvent(
+                                                                BookEvent(
                                                                   eventId: widget
                                                                       .eventId,
                                                                 ),
                                                                 duration:
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            500),
+                                                                const Duration(
+                                                                    milliseconds:
+                                                                    500),
                                                               ),
                                                             );
                                                           },
@@ -1636,44 +1625,44 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 color: Colors
                                                                     .white,
                                                                 borderRadius:
-                                                                    BorderRadius
-                                                                        .circular(
-                                                                            40)),
+                                                                BorderRadius
+                                                                    .circular(
+                                                                    40)),
                                                             child: Center(
                                                               child: Padding(
                                                                 padding: EdgeInsets
                                                                     .symmetric(
                                                                   horizontal: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .width *
+                                                                      context)
+                                                                      .size
+                                                                      .width *
                                                                       3 /
                                                                       100,
                                                                   vertical: MediaQuery.of(
-                                                                              context)
-                                                                          .size
-                                                                          .height *
+                                                                      context)
+                                                                      .size
+                                                                      .height *
                                                                       1.8 /
                                                                       100,
                                                                 ),
                                                                 child: Text(
                                                                   AppLanguage
-                                                                          .BookNowText[
-                                                                      language],
+                                                                      .BookNowText[
+                                                                  language],
                                                                   style: TextStyle(
                                                                       fontSize:
-                                                                          20,
+                                                                      20,
                                                                       fontFamily:
-                                                                          AppFont
-                                                                              .fontFamily,
+                                                                      AppFont
+                                                                          .fontFamily,
                                                                       fontWeight:
-                                                                          FontWeight
-                                                                              .w600,
+                                                                      FontWeight
+                                                                          .w600,
                                                                       color: isEnded
                                                                           ? AppColor
-                                                                              .textcolor
+                                                                          .textcolor
                                                                           : AppColor
-                                                                              .pinkColor),
+                                                                          .pinkColor),
                                                                 ),
                                                               ),
                                                             ),
@@ -1684,32 +1673,32 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                   ),
                                                   Padding(
                                                     padding:
-                                                        EdgeInsets.symmetric(
+                                                    EdgeInsets.symmetric(
                                                       horizontal:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .width *
-                                                              6 /
-                                                              100,
+                                                      MediaQuery.of(context)
+                                                          .size
+                                                          .width *
+                                                          6 /
+                                                          100,
                                                       vertical: 4,
                                                     ),
                                                     child: Align(
                                                       alignment:
-                                                          Alignment.center,
+                                                      Alignment.center,
                                                       child: Text(
                                                         textAlign:
-                                                            TextAlign.center,
+                                                        TextAlign.center,
                                                         AppLanguage
-                                                                .secureYourspotText[
-                                                            language],
+                                                            .secureYourspotText[
+                                                        language],
                                                         style: TextStyle(
                                                             fontSize: 14,
                                                             fontFamily: AppFont
                                                                 .fontFamily,
                                                             fontWeight:
-                                                                FontWeight.w400,
+                                                            FontWeight.w400,
                                                             color:
-                                                                Colors.white),
+                                                            Colors.white),
                                                       ),
                                                     ),
                                                   ),
@@ -1718,8 +1707,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                             ),
                                             SizedBox(
                                               height: MediaQuery.of(context)
-                                                      .size
-                                                      .height *
+                                                  .size
+                                                  .height *
                                                   4 /
                                                   100,
                                             ),
@@ -1755,9 +1744,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   void eventstypebottomsheet(
-    BuildContext context, {
-    Map<String, dynamic>? sharedEventData,
-  }) =>
+      BuildContext context, {
+        Map<String, dynamic>? sharedEventData,
+      }) =>
       showEventTypesBottomSheet(
         context,
         type: 'event',
@@ -1796,7 +1785,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                   /// -------- TITLE & CLOSE BUTTON --------
                   Padding(
                     padding:
-                        EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+                    EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.end,
                       children: [
@@ -1842,13 +1831,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 borderRadius: BorderRadius.circular(20),
                                 child: CachedNetworkImage(
                                   imageUrl:
-                                      "${AppConfigProvider.imageUrl}${galleryImages[index]}",
+                                  "${AppConfigProvider.imageUrl}${galleryImages[index]}",
                                   fit: BoxFit.cover,
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
-                                    AppImage.dummyImageIcon,
-                                    fit: BoxFit.cover,
-                                  ),
+                                        AppImage.dummyImageIcon,
+                                        fit: BoxFit.cover,
+                                      ),
                                   placeholder: (context, url) => Center(
                                     child: LoadingAnimationWidget.dotsTriangle(
                                       color: AppColor.themeColor,
@@ -1927,7 +1916,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                           horizontal: size.width * 5 / 100),
                       child: GridView.builder(
                         gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
+                        const SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 3,
                           crossAxisSpacing: 10,
                           mainAxisSpacing: 10,
@@ -1961,13 +1950,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 borderRadius: BorderRadius.circular(13),
                                 child: CachedNetworkImage(
                                   imageUrl:
-                                      "${AppConfigProvider.imageUrl}${galleryImages[index]}",
+                                  "${AppConfigProvider.imageUrl}${galleryImages[index]}",
                                   fit: BoxFit.cover,
                                   errorWidget: (context, url, error) =>
                                       Image.asset(
-                                    AppImage.dummyImageIcon,
-                                    fit: BoxFit.cover,
-                                  ),
+                                        AppImage.dummyImageIcon,
+                                        fit: BoxFit.cover,
+                                      ),
                                   placeholder: (context, url) => Center(
                                     child: LoadingAnimationWidget.dotsTriangle(
                                       color: AppColor.themeColor,
@@ -1994,9 +1983,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
   }
 
   void _openLineupImagePreview(
-    BuildContext context,
-    String imagePath,
-  ) {
+      BuildContext context,
+      String imagePath,
+      ) {
     if (imagePath.trim().isEmpty) return;
 
     Navigator.push(

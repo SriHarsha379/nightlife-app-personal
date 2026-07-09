@@ -35,8 +35,6 @@ class VenuePages extends StatefulWidget {
 }
 
 class _VenuePagesState extends State<VenuePages> {
-  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
-  static const double _fullActionBarWidthFactor = 0.85;
   late TextEditingController searchController;
   Map<String, String>? _swipeResult;
 
@@ -111,9 +109,9 @@ class _VenuePagesState extends State<VenuePages> {
   }
 
   void _openLineupImagePreview(
-    BuildContext context,
-    String imagePath,
-  ) {
+      BuildContext context,
+      String imagePath,
+      ) {
     if (imagePath.trim().isEmpty) return;
 
     Navigator.push(
@@ -143,7 +141,7 @@ class _VenuePagesState extends State<VenuePages> {
           child: CircularProgressIndicator(
             value: loadingProgress.expectedTotalBytes != null
                 ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
+                loadingProgress.expectedTotalBytes!
                 : null,
             color: AppColor.buttonColor,
           ),
@@ -166,7 +164,7 @@ class _VenuePagesState extends State<VenuePages> {
   // Get recent events list
   List<dynamic> get _recentEvents {
     final controller =
-        Provider.of<VenuesDetailsController>(context, listen: false);
+    Provider.of<VenuesDetailsController>(context, listen: false);
     final venueData = controller.getVenuesDetail;
     if (venueData != null && venueData['upcoming_events'] is List) {
       return venueData['upcoming_events'];
@@ -181,7 +179,7 @@ class _VenuePagesState extends State<VenuePages> {
     // Fetch venue details
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final controller =
-          Provider.of<VenuesDetailsController>(context, listen: false);
+      Provider.of<VenuesDetailsController>(context, listen: false);
       controller.fetchVenuesDetail(context, venueId: widget.venueId.toString());
     });
   }
@@ -199,9 +197,9 @@ class _VenuePagesState extends State<VenuePages> {
   }
 
   Future<void> _submitVenueSwipeAction(
-    String action, {
-    required String targetVenueId,
-  }) async {
+      String action, {
+        required String targetVenueId,
+      }) async {
     if (targetVenueId.isEmpty) return;
     _swipeResult = {
       'action': action, // like | dislike
@@ -257,38 +255,23 @@ class _VenuePagesState extends State<VenuePages> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
+            shape: BoxShape.circle,
             border: Border.all(color: backgroundColor, width: 1.4),
             boxShadow: filled
                 ? [
-                    BoxShadow(
-                      color: backgroundColor.withOpacity(0.28),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
+              BoxShadow(
+                color: backgroundColor.withOpacity(0.28),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ]
                 : const [],
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: foregroundColor, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: AppFont.fontFamily,
-                  color: foregroundColor,
-                ),
-              ),
-            ],
-          ),
+          child: Icon(icon, color: foregroundColor, size: 22),
         ),
       ),
     );
@@ -354,9 +337,9 @@ class _VenuePagesState extends State<VenuePages> {
             value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarIconBrightness:
-                  isDark ? Brightness.light : Brightness.dark,
+              isDark ? Brightness.light : Brightness.dark,
               statusBarBrightness:
-                  isDark ? Brightness.dark : Brightness.light, // iOS
+              isDark ? Brightness.dark : Brightness.light, // iOS
             ),
             child: WillPopScope(
               onWillPop: () async {
@@ -370,80 +353,92 @@ class _VenuePagesState extends State<VenuePages> {
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
                 child: Scaffold(
                   floatingActionButtonLocation:
-                      FloatingActionButtonLocation.centerFloat,
-                  floatingActionButton: Container(
-                    decoration: BoxDecoration(
-                      color: AppColor.sendinvitecontainercolor(context)
-                          .withOpacity(0.9),
-                      borderRadius: BorderRadius.circular(25),
+                  FloatingActionButtonLocation.centerFloat,
+                  floatingActionButton: Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16 + MediaQuery.of(context).padding.bottom,
                     ),
-                    width: showDislikeOnly
-                        ? size.width * _dislikeOnlyActionBarWidthFactor
-                        : size.width * _fullActionBarWidthFactor,
-                    height: size.height * 7 / 100,
-                    child: Row(
-                      children: [
-                        SizedBox(width: size.width * 3 / 100),
-                        _buildDecisionButton(
-                          label: 'Reject',
-                          icon: Icons.close_rounded,
-                          backgroundColor: AppColor.redColor,
-                          foregroundColor: Colors.white,
-                          onTap: () async {
-                            await _submitVenueSwipeAction(
-                              'dislike',
-                              targetVenueId: targetVenueId,
-                            );
-                          },
-                        ),
-                        SizedBox(width: size.width * 3 / 100),
-                        GestureDetector(
-                          onTap: () {
-                            documenttypebottomsheet(
-                              context,
-                              sharedVenueData:
-                                  Map<String, dynamic>.from(venueData),
-                            );
-                          },
-                          child: Container(
-                            width: size.width * 30 / 100,
-                            height: size.height * 4.6 / 100,
-                            decoration: BoxDecoration(
-                              color: AppColor.secondryColor(context),
-                              borderRadius: BorderRadius.circular(50),
-                              border: Border.all(
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                AppLanguage.sendInviteText[language],
-                                style: TextStyle(
-                                  fontSize: 14,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: AppFont.fontFamily,
-                                  color: AppColor.pinkColor,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        if (!showDislikeOnly) ...[
-                          SizedBox(width: size.width * 3 / 100),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColor.sendinvitecontainercolor(context)
+                            .withOpacity(0.9),
+                        borderRadius: BorderRadius.circular(32),
+                      ),
+                      width: size.width * 0.9,
+                      height: 64,
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: Row(
+                        children: [
                           _buildDecisionButton(
-                            label: 'Accept',
-                            icon: Icons.favorite_rounded,
-                            backgroundColor: AppColor.buttonColor,
+                            label: 'Reject',
+                            icon: Icons.close_rounded,
+                            backgroundColor: AppColor.redColor,
                             foregroundColor: Colors.white,
                             onTap: () async {
                               await _submitVenueSwipeAction(
-                                'like',
+                                'dislike',
                                 targetVenueId: targetVenueId,
                               );
                             },
                           ),
+                          const SizedBox(width: 10),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                documenttypebottomsheet(
+                                  context,
+                                  sharedVenueData:
+                                  Map<String, dynamic>.from(venueData),
+                                );
+                              },
+                              child: Container(
+                                height: 48,
+                                decoration: BoxDecoration(
+                                  color: AppColor.secondryColor(context),
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.send_rounded,
+                                          color: AppColor.pinkColor, size: 16),
+                                      const SizedBox(width: 8),
+                                      Text(
+                                        AppLanguage.sendInviteText[language],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w500,
+                                          fontFamily: AppFont.fontFamily,
+                                          color: AppColor.pinkColor,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          if (!showDislikeOnly) ...[
+                            const SizedBox(width: 10),
+                            _buildDecisionButton(
+                              label: 'Accept',
+                              icon: Icons.favorite_rounded,
+                              backgroundColor: AppColor.buttonColor,
+                              foregroundColor: Colors.white,
+                              onTap: () async {
+                                await _submitVenueSwipeAction(
+                                  'like',
+                                  targetVenueId: targetVenueId,
+                                );
+                              },
+                            ),
+                          ],
                         ],
-                      ],
+                      ),
                     ),
                   ),
                   backgroundColor: AppColor.primaryColor(context),
@@ -470,15 +465,15 @@ class _VenuePagesState extends State<VenuePages> {
                                   child: ClipRRect(
                                     child: venueImage.isNotEmpty
                                         ? _buildAdaptiveImage(
-                                            venueImage,
-                                            fit: BoxFit.fill,
-                                            fallbackAsset:
-                                                AppImage.dummyImageIcon,
-                                          )
+                                      venueImage,
+                                      fit: BoxFit.fill,
+                                      fallbackAsset:
+                                      AppImage.dummyImageIcon,
+                                    )
                                         : Image.asset(
-                                            AppImage.dummyImageIcon,
-                                            fit: BoxFit.fill,
-                                          ),
+                                      AppImage.dummyImageIcon,
+                                      fit: BoxFit.fill,
+                                    ),
                                   ),
                                 ),
                               ),
@@ -512,11 +507,11 @@ class _VenuePagesState extends State<VenuePages> {
                                 Container(
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
                                         crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                        CrossAxisAlignment.start,
                                         children: [
                                           Container(
                                             width: size.width * 75 / 100,
@@ -537,44 +532,44 @@ class _VenuePagesState extends State<VenuePages> {
                                             children: categories
                                                 .take(3)
                                                 .map((category) => Container(
-                                                      margin: EdgeInsets.only(
-                                                          right: size.width *
-                                                              2 /
-                                                              100),
-                                                      decoration: BoxDecoration(
-                                                        border: Border.all(
-                                                          width: 1,
-                                                          color: AppColor
-                                                              .pinkColor,
-                                                        ),
-                                                        borderRadius:
-                                                            BorderRadius
-                                                                .circular(20),
-                                                      ),
-                                                      child: Padding(
-                                                        padding: EdgeInsets
-                                                            .symmetric(
-                                                          horizontal:
-                                                              size.width *
-                                                                  3 /
-                                                                  100,
-                                                          vertical: 1,
-                                                        ),
-                                                        child: Text(
-                                                          category,
-                                                          style: TextStyle(
-                                                            fontSize: 14,
-                                                            fontFamily: AppFont
-                                                                .fontFamily,
-                                                            fontWeight:
-                                                                FontWeight.w500,
-                                                            color: AppColor
-                                                                .secondryColor(
-                                                                    context),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ))
+                                              margin: EdgeInsets.only(
+                                                  right: size.width *
+                                                      2 /
+                                                      100),
+                                              decoration: BoxDecoration(
+                                                border: Border.all(
+                                                  width: 1,
+                                                  color: AppColor
+                                                      .pinkColor,
+                                                ),
+                                                borderRadius:
+                                                BorderRadius
+                                                    .circular(20),
+                                              ),
+                                              child: Padding(
+                                                padding: EdgeInsets
+                                                    .symmetric(
+                                                  horizontal:
+                                                  size.width *
+                                                      3 /
+                                                      100,
+                                                  vertical: 1,
+                                                ),
+                                                child: Text(
+                                                  category,
+                                                  style: TextStyle(
+                                                    fontSize: 14,
+                                                    fontFamily: AppFont
+                                                        .fontFamily,
+                                                    fontWeight:
+                                                    FontWeight.w500,
+                                                    color: AppColor
+                                                        .secondryColor(
+                                                        context),
+                                                  ),
+                                                ),
+                                              ),
+                                            ))
                                                 .toList(),
                                           )
                                         ],
@@ -598,7 +593,7 @@ class _VenuePagesState extends State<VenuePages> {
                                               fontFamily: AppFont.fontFamily,
                                               fontWeight: FontWeight.w600,
                                               color:
-                                                  AppColor.spancolor(context),
+                                              AppColor.spancolor(context),
                                             ),
                                           ),
                                         ],
@@ -688,7 +683,7 @@ class _VenuePagesState extends State<VenuePages> {
                                   Expanded(
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           address,
@@ -697,7 +692,7 @@ class _VenuePagesState extends State<VenuePages> {
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w500,
                                             color:
-                                                AppColor.secondryColor(context),
+                                            AppColor.secondryColor(context),
                                           ),
                                         ),
                                         if (distanceKm != null)
@@ -724,7 +719,7 @@ class _VenuePagesState extends State<VenuePages> {
                               width: size.width * 90 / 100,
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   Text(
                                     AppLanguage.GalleryText[language],
@@ -739,9 +734,9 @@ class _VenuePagesState extends State<VenuePages> {
                                     onTap: () {
                                       // Open gallery bottom sheet with API images
                                       final List<String> galleryImagesList =
-                                          gallery
-                                              .map((img) => _str(img))
-                                              .toList();
+                                      gallery
+                                          .map((img) => _str(img))
+                                          .toList();
 
                                       GalleryBottomSheet.show(
                                         context,
@@ -771,14 +766,14 @@ class _VenuePagesState extends State<VenuePages> {
                                 children: gallery.asMap().entries.map((entry) {
                                   final index = entry.key;
                                   final imageUrl =
-                                      _asUploadUrl(_str(entry.value));
+                                  _asUploadUrl(_str(entry.value));
                                   return GestureDetector(
                                     onTap: () {
                                       // Open gallery bottom sheet at clicked image index
                                       final List<String> galleryImagesList =
-                                          gallery
-                                              .map((img) => _str(img))
-                                              .toList();
+                                      gallery
+                                          .map((img) => _str(img))
+                                          .toList();
 
                                       GalleryBottomSheet.show(
                                         context,
@@ -797,15 +792,15 @@ class _VenuePagesState extends State<VenuePages> {
                                         borderRadius: BorderRadius.circular(20),
                                         child: imageUrl.isNotEmpty
                                             ? _buildAdaptiveImage(
-                                                imageUrl,
-                                                fit: BoxFit.cover,
-                                                fallbackAsset:
-                                                    AppImage.dummyImageIcon,
-                                              )
+                                          imageUrl,
+                                          fit: BoxFit.cover,
+                                          fallbackAsset:
+                                          AppImage.dummyImageIcon,
+                                        )
                                             : Image.asset(
-                                                AppImage.dummyImageIcon,
-                                                fit: BoxFit.cover,
-                                              ),
+                                          AppImage.dummyImageIcon,
+                                          fit: BoxFit.cover,
+                                        ),
                                       ),
                                     ),
                                   );
@@ -944,7 +939,7 @@ class _VenuePagesState extends State<VenuePages> {
                                   ),
                                   child: Row(
                                     mainAxisAlignment:
-                                        MainAxisAlignment.spaceBetween,
+                                    MainAxisAlignment.spaceBetween,
                                     children: [
                                       Column(
                                         children: [
@@ -999,15 +994,15 @@ class _VenuePagesState extends State<VenuePages> {
                                           decoration: BoxDecoration(
                                             color: Colors.white,
                                             borderRadius:
-                                                BorderRadius.circular(40),
+                                            BorderRadius.circular(40),
                                           ),
                                           child: Center(
                                             child: Padding(
                                               padding: EdgeInsets.symmetric(
                                                 horizontal:
-                                                    size.width * 3 / 100,
+                                                size.width * 3 / 100,
                                                 vertical:
-                                                    size.height * 1.5 / 100,
+                                                size.height * 1.5 / 100,
                                               ),
                                               child: Text(
                                                 AppLanguage
@@ -1015,7 +1010,7 @@ class _VenuePagesState extends State<VenuePages> {
                                                 style: const TextStyle(
                                                   fontSize: 20,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w600,
                                                   color: AppColor.pinkColor,
                                                 ),
@@ -1091,14 +1086,14 @@ class _VenuePagesState extends State<VenuePages> {
             Positioned.fill(
               child: isNetwork
                   ? _buildAdaptiveImage(
-                      image,
-                      fit: BoxFit.cover,
-                      fallbackAsset: AppImage.dummyImageIcon,
-                    )
+                image,
+                fit: BoxFit.cover,
+                fallbackAsset: AppImage.dummyImageIcon,
+              )
                   : Image.asset(
-                      AppImage.dummyImageIcon,
-                      fit: BoxFit.cover,
-                    ),
+                AppImage.dummyImageIcon,
+                fit: BoxFit.cover,
+              ),
             ),
 
             // Gradient Overlay
@@ -1201,9 +1196,9 @@ class _VenuePagesState extends State<VenuePages> {
   }
 
   void documenttypebottomsheet(
-    BuildContext context, {
-    Map<String, dynamic>? sharedVenueData,
-  }) =>
+      BuildContext context, {
+        Map<String, dynamic>? sharedVenueData,
+      }) =>
       showEventTypesBottomSheet(
         context,
         type: 'venue',

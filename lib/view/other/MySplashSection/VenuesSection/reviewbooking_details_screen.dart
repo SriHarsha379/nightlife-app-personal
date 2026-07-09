@@ -16,6 +16,7 @@ import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../utilities/app_color.dart';
 import '../../../../utilities/app_config_provider.dart';
+import '../../../../utilities/url_utils.dart';
 import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_image.dart';
 import 'event_complete_section.dart';
@@ -151,7 +152,9 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 20),
+          padding: EdgeInsets.only(
+            bottom: 20 + MediaQuery.of(context).padding.bottom,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -423,8 +426,9 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
                                                 ),
                                               ),
                                             ),
-                                            imageUrl:
-                                                "${AppConfigProvider.imageUrl}$eventImage",
+                                            imageUrl: resolveImageUrl(
+                                                eventImage,
+                                                AppConfigProvider.imageUrl),
                                             fit: BoxFit.cover,
                                             errorWidget:
                                                 (context, url, error) =>

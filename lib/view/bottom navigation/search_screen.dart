@@ -459,8 +459,7 @@ class _SearchScreenState extends State<SearchScreen> {
       children: [
         Container(
           width: MediaQuery.of(context).size.width * 90 / 100,
-          // padding: const EdgeInsets.symmetric(vertical: 8),
-          alignment: Alignment.center,
+          alignment: Alignment.centerLeft,
           child: Text(
             text,
             style: TextStyle(
@@ -775,7 +774,8 @@ class _SearchScreenState extends State<SearchScreen> {
                     ),
 
                     //!====================Tap bar three option===================\\
-                    SizedBox(
+                    Center(
+                      child: SizedBox(
                       width: MediaQuery.of(context).size.width * 75 / 100,
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -918,6 +918,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                         ],
                       ),
+                      ),
                     ),
 
                     SizedBox(
@@ -925,14 +926,15 @@ class _SearchScreenState extends State<SearchScreen> {
                         MediaQuery.of(context).size.height * 1 / 100),
 
                     // Animated tab indicator – slides smoothly between tabs
-                    SizedBox(
+                    Center(
+                      child: SizedBox(
                       width: MediaQuery.of(context).size.width * 75 / 100,
                       child: AnimatedAlign(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
                         alignment: tapBarStatus == 1
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
+                            ? const Alignment(-1.0, 0)
+                            : const Alignment(1.0, 0),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
                           curve: Curves.easeInOut,
@@ -947,6 +949,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             color: AppColor.pinkColor,
                           ),
                         ),
+                      ),
                       ),
                     ),
 
@@ -978,6 +981,9 @@ class _SearchScreenState extends State<SearchScreen> {
                             child: SingleChildScrollView(
                               controller: _searchScrollController,
                               physics: const AlwaysScrollableScrollPhysics(),
+                              padding: EdgeInsets.only(
+                                bottom: 120 + MediaQuery.of(context).padding.bottom,
+                              ),
                               child: Column(
                                 children: [
                                   Container(
@@ -1189,8 +1195,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                     if (categoryList.isNotEmpty)
                                                                       Positioned(
                                                                         left: 10,
+                                                                        right: 10,
                                                                         top: 10,
-                                                                        child: Row(
+                                                                        child: SingleChildScrollView(
+                                                                          scrollDirection: Axis.horizontal,
+                                                                          child: Row(
                                                                           children: categoryList.map((tag) {
                                                                             return Container(
                                                                               margin: const EdgeInsets.only(right: 6),
@@ -1210,6 +1219,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                               ),
                                                                             );
                                                                           }).toList(),
+                                                                          ),
                                                                         ),
                                                                       ),
                                                                   ],
@@ -1817,8 +1827,11 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       if (categoryList.isNotEmpty)
                                                                         Positioned(
                                                                           left: 10,
+                                                                          right: 10,
                                                                           top: 10,
-                                                                          child: Row(
+                                                                          child: SingleChildScrollView(
+                                                                            scrollDirection: Axis.horizontal,
+                                                                            child: Row(
                                                                             children: categoryList.map((tag) {
                                                                               return Container(
                                                                                 margin: const EdgeInsets.only(right: 6),
@@ -1838,6 +1851,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                                 ),
                                                                               );
                                                                             }).toList(),
+                                                                            ),
                                                                           ),
                                                                         ),
                                                                     ],

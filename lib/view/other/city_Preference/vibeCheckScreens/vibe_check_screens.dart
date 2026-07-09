@@ -213,7 +213,9 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
               floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
-                padding: const EdgeInsets.only(bottom: 30),
+                padding: EdgeInsets.only(
+                  bottom: 30 + MediaQuery.of(context).padding.bottom,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -364,25 +366,6 @@ class VibeCheckPageContent extends StatefulWidget {
 class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
   // Store controllers for each question
   final Map<String, TextEditingController> _controllers = {};
-  // Track dropdown state for each question
-  final Map<int, bool> _dropdownStates = {};
-
-  bool _doesTextOverflow({
-    required String text,
-    required TextStyle style,
-    required double maxWidth,
-  }) {
-    if (text.trim().isEmpty || maxWidth <= 0) return false;
-
-    final textPainter = TextPainter(
-      text: TextSpan(text: text, style: style),
-      maxLines: 1,
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-    )..layout(maxWidth: maxWidth);
-
-    return textPainter.didExceedMaxLines;
-  }
 
   @override
   void initState() {
@@ -400,7 +383,6 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
       final savedAnswer = vibeCheckProvider.getAnswer(questionId);
 
       _controllers[questionId] = TextEditingController(text: savedAnswer);
-      _dropdownStates[i] = false;
     }
   }
 
@@ -411,10 +393,22 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
     super.dispose();
   }
 
-  void _toggleDropdown(int index) {
-    setState(() {
-      _dropdownStates[index] = !(_dropdownStates[index] ?? false);
-    });
+  // Generic fallback examples, keyed loosely by question so at least a
+  // couple of common ones get something relevant. Anything without a
+  // per-question 'example_answer' from the backend, and not matched here,
+  // falls back to a single generic sample.
+  String _exampleFor(dynamic question) {
+    final fromBackend = (question['example_answer'] ?? '').toString().trim();
+    if (fromBackend.isNotEmpty) return fromBackend;
+
+    final questionText = (question['question'] ?? '').toString().toLowerCase();
+    if (questionText.contains('best friend')) {
+      return "Loyal, a little chaotic, and always down for karaoke at 2am";
+    }
+    if (questionText.contains('interesting')) {
+      return "I once backpacked across three countries with just a carry-on";
+    }
+    return "Adventurous, spontaneous, and always up for a good time";
   }
 
   @override
@@ -458,38 +452,21 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                   final question = widget.questionList[index];
                   final questionId = question['_id'] ?? '';
                   final controller = _controllers[questionId];
-                  final isDropdownOpen = _dropdownStates[index] ?? false;
 
                   return Column(
                     children: [
-                      // Question Dropdown
+                      // Question card
                       LayoutBuilder(
                         builder: (context, constraints) {
                           final bool isAnswered =
                           vibeCheckProvider.isQuestionAnswered(questionId);
-                          final double trailingWidth = isAnswered ? 60 : 28;
-                          final double availableTextWidth =
-                              constraints.maxWidth - 36 - trailingWidth;
                           final String questionText =
                           (question['question'] ?? 'Question').toString();
                           final String descriptionText =
                           (question['description'] ?? 'Description')
                               .toString();
 
-                          final bool showArrow = _doesTextOverflow(
-                            text: questionText,
-                            style: questionStyle,
-                            maxWidth: availableTextWidth,
-                          ) ||
-                              _doesTextOverflow(
-                                text: descriptionText,
-                                style: descriptionStyle,
-                                maxWidth: availableTextWidth,
-                              );
-
                           return GestureDetector(
-                            onTap:
-                            showArrow ? () => _toggleDropdown(index) : null,
                             child: Container(
                               width: size.width * 0.9,
                               padding: const EdgeInsets.symmetric(
@@ -508,26 +485,18 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                                       crossAxisAlignment:
                                       CrossAxisAlignment.start,
                                       children: [
+                                        // Question is always shown in full -
+                                        // no truncation/tap-to-expand, so
+                                        // the person can always read the
+                                        // whole thing without an extra tap.
                                         Text(
                                           questionText,
                                           style: questionStyle,
-                                          maxLines: showArrow
-                                              ? (isDropdownOpen ? null : 1)
-                                              : null,
-                                          overflow: showArrow && !isDropdownOpen
-                                              ? TextOverflow.ellipsis
-                                              : TextOverflow.visible,
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
                                           descriptionText,
                                           style: descriptionStyle,
-                                          maxLines: showArrow
-                                              ? (isDropdownOpen ? null : 1)
-                                              : null,
-                                          overflow: showArrow && !isDropdownOpen
-                                              ? TextOverflow.ellipsis
-                                              : TextOverflow.visible,
                                         ),
                                       ],
                                     ),
@@ -540,21 +509,6 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                                         Icons.check_circle,
                                         color: Colors.green,
                                         size: 20,
-                                      ),
-                                    ),
-                                  ],
-                                  if (showArrow) ...[
-                                    const SizedBox(width: 6),
-                                    Padding(
-                                      padding: const EdgeInsets.only(top: 2),
-                                      child: AnimatedRotation(
-                                        turns: isDropdownOpen ? 0.5 : 0,
-                                        duration:
-                                        const Duration(milliseconds: 200),
-                                        child: const Icon(
-                                          Icons.keyboard_arrow_down_rounded,
-                                          color: Colors.white,
-                                        ),
                                       ),
                                     ),
                                   ],
@@ -616,6 +570,26 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                             contentPadding: EdgeInsets.only(
                               right: size.width * 4 / 100,
                             ),
+                          ),
+                        ),
+                      ),
+
+                      // Example answer, to give a sense of what a good
+                      // response looks like. Uses a per-question example
+                      // from the backend if one is set, otherwise falls
+                      // back to a generic sample.
+                      Padding(
+                        padding: EdgeInsets.only(
+                          top: size.height * 0.008,
+                          left: size.width * 0.02,
+                        ),
+                        child: Text(
+                          "e.g. \"${_exampleFor(question)}\"",
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontStyle: FontStyle.italic,
+                            fontFamily: AppFont.plusJakartaSansFamily,
+                            color: const Color(0xffB7AFC9).withOpacity(0.8),
                           ),
                         ),
                       ),

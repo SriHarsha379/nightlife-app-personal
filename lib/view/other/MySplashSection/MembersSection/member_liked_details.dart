@@ -22,10 +22,10 @@ class _NoGlowScrollBehavior extends MaterialScrollBehavior {
 
   @override
   Widget buildOverscrollIndicator(
-    BuildContext context,
-    Widget child,
-    ScrollableDetails details,
-  ) {
+      BuildContext context,
+      Widget child,
+      ScrollableDetails details,
+      ) {
     return child;
   }
 }
@@ -47,8 +47,6 @@ class LikedMemberDetail extends StatefulWidget {
 }
 
 class _LikedMemberDetailState extends State<LikedMemberDetail> {
-  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
-  static const double _fullActionBarWidthFactor = 0.85;
   Map<String, dynamic>? _memberData;
   bool _isLoading = false;
   Map<String, String>? _swipeResult;
@@ -87,7 +85,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   Map<String, String> _galleryItemFrom(dynamic item) {
     if (item is! Map) return <String, String>{};
     final type =
-        _str(item['type']).toLowerCase() == 'video' ? 'video' : 'image';
+    _str(item['type']).toLowerCase() == 'video' ? 'video' : 'image';
     final sourceUrl = _asUploadUrl(item['url']);
     final thumbnailUrl = _asUploadUrl(item['thumbnail']);
     final displayUrl = type == 'video'
@@ -157,7 +155,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
 
       _vibeNames = List<String>.generate(
         vibes.length,
-        (index) {
+            (index) {
           final item = vibes[index];
           if (item is Map) {
             final value = _str(item['name'] ?? item['vibe'] ?? item['title']);
@@ -189,7 +187,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       if (_eventPreferenceNames.isNotEmpty) {
         Interest = List.generate(
           _eventPreferenceNames.length,
-          (index) => {'id': index + 1, 'title': _eventPreferenceNames[index]},
+              (index) => {'id': index + 1, 'title': _eventPreferenceNames[index]},
         );
       }
       _memberData = data;
@@ -200,10 +198,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   }
 
   Widget _buildAdaptiveImage(
-    String imagePath, {
-    BoxFit fit = BoxFit.cover,
-    String fallbackAsset = AppImage.placeHolder2Icon,
-  }) {
+      String imagePath, {
+        BoxFit fit = BoxFit.cover,
+        String fallbackAsset = AppImage.placeHolder2Icon,
+      }) {
     if (isNetworkUrl(imagePath)) {
       return Image.network(
         imagePath,
@@ -385,38 +383,23 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          width: 52,
+          height: 52,
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
+            shape: BoxShape.circle,
             border: Border.all(color: backgroundColor, width: 1.4),
             boxShadow: filled
                 ? [
-                    BoxShadow(
-                      color: backgroundColor.withOpacity(0.28),
-                      blurRadius: 14,
-                      offset: const Offset(0, 6),
-                    ),
-                  ]
+              BoxShadow(
+                color: backgroundColor.withOpacity(0.28),
+                blurRadius: 14,
+                offset: const Offset(0, 6),
+              ),
+            ]
                 : const [],
           ),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(icon, color: foregroundColor, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w700,
-                  fontFamily: AppFont.fontFamily,
-                  color: foregroundColor,
-                ),
-              ),
-            ],
-          ),
+          child: Icon(icon, color: foregroundColor, size: 22),
         ),
       ),
     );
@@ -446,1346 +429,1354 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
           child: Scaffold(
             floatingActionButtonLocation:
-                FloatingActionButtonLocation.centerFloat,
-            floatingActionButton: Container(
-              decoration: BoxDecoration(
-                color:
-                    AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
-                borderRadius: BorderRadius.circular(25),
+            FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Padding(
+              padding: EdgeInsets.only(
+                bottom: 16 + MediaQuery.of(context).padding.bottom,
               ),
-              width: _showDislikeOnly
-                  ? size.width * _dislikeOnlyActionBarWidthFactor
-                  : size.width * _fullActionBarWidthFactor,
-              height: size.height * 7 / 100,
-              child: Padding(
-                padding: EdgeInsets.symmetric(horizontal: 9),
-                child: Row(
-                  children: [
-                    _buildDecisionButton(
-                      label: '',
-                      icon: Icons.close,
-                      backgroundColor: AppColor.redColor,
-                      foregroundColor: Colors.white,
-                      onTap: () async {
-                        await _submitSwipeAction('left');
-                      },
-                    ),
-                    SizedBox(
-                      width: size.width * 3 / 100,
-                    ),
-                    GestureDetector(
-                      onTap: () {
-                        showInviteMemberstypebottomsheet(
-                          context,
-                          receiverId: _str(
-                            _memberData?['_id'] ?? _memberData?['user_id'],
-                          ),
-                          receiverName: _str(
-                            _memberData?['full_name'] ?? _memberData?['name'],
-                          ),
-                          receiverImage: _asUploadUrl(
-                            _memberData?['profile_image'],
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: size.width * 29 / 100,
-                        height: size.height * 4.6 / 100,
-                        decoration: BoxDecoration(
-                          color: AppColor.secondryColor(context),
-                          borderRadius: BorderRadius.circular(50),
-                          border: Border.all(
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            AppLanguage.sendInviteText[language],
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.pinkColor,
+              child: Container(
+                decoration: BoxDecoration(
+                  color:
+                  AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
+                  borderRadius: BorderRadius.circular(32),
+                ),
+                width: size.width * 0.9,
+                height: 64,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10),
+                  child: Row(
+                    children: [
+                      _buildDecisionButton(
+                        label: 'Reject',
+                        icon: Icons.close,
+                        backgroundColor: AppColor.redColor,
+                        foregroundColor: Colors.white,
+                        onTap: () async {
+                          await _submitSwipeAction('left');
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            showInviteMemberstypebottomsheet(
+                              context,
+                              receiverId: _str(
+                                _memberData?['_id'] ?? _memberData?['user_id'],
+                              ),
+                              receiverName: _str(
+                                _memberData?['full_name'] ?? _memberData?['name'],
+                              ),
+                              receiverImage: _asUploadUrl(
+                                _memberData?['profile_image'],
+                              ),
+                            );
+                          },
+                          child: Container(
+                            height: 48,
+                            decoration: BoxDecoration(
+                              color: AppColor.secondryColor(context),
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: AppColor.secondryColor(context),
+                              ),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Icon(Icons.send_rounded,
+                                      color: AppColor.pinkColor, size: 16),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    AppLanguage.sendInviteText[language],
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                      color: AppColor.pinkColor,
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                         ),
                       ),
-                    ),
-                    if (!_showDislikeOnly)
-                      ...[
-                        SizedBox(
-                          width: size.width * 3 / 100,
-                        ),
-                        _buildDecisionButton(
-                          label: '',
-                          icon: Icons.check_rounded,
-                          backgroundColor: AppColor.buttonColor,
-                          foregroundColor: Colors.white,
-                          onTap: () async {
-                            await _submitSwipeAction('right');
-                          },
-                        ),
-                      ],
-                  ],
+                      if (!_showDislikeOnly)
+                        ...[
+                          const SizedBox(width: 10),
+                          _buildDecisionButton(
+                            label: 'Accept',
+                            icon: Icons.check_rounded,
+                            backgroundColor: AppColor.buttonColor,
+                            foregroundColor: Colors.white,
+                            onTap: () async {
+                              await _submitSwipeAction('right');
+                            },
+                          ),
+                        ],
+                    ],
+                  ),
                 ),
               ),
             ),
             body: _isLoading
                 ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(
-                          color: AppColor.buttonColor,
-                        ),
-                        const SizedBox(height: 12),
-                        Text(
-                          "Loading...",
-                          style: TextStyle(
-                            color: AppColor.secondryColor(context),
-                            fontSize: 14,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ],
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    color: AppColor.buttonColor,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "Loading...",
+                    style: TextStyle(
+                      color: AppColor.secondryColor(context),
+                      fontSize: 14,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w500,
                     ),
-                  )
+                  ),
+                ],
+              ),
+            )
                 : Container(
-                    width: size.width * 100 / 100,
-                    height: size.height * 100 / 100,
-                    color: AppColor.primaryColor(context),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        SizedBox(height: size.height * 4 / 100),
-                        Expanded(
-                          child: SingleChildScrollView(
-                            child: Center(
-                              child: Container(
-                                width: size.width * 100 / 100,
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: size.height * 2 / 100,
-                                    ),
-                                    Stack(children: [
-                                      Container(
-                                        width: double.infinity,
-                                        height: 450,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(25),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color:
-                                                  Colors.white.withOpacity(.5),
-                                              blurRadius: 5,
-                                              spreadRadius: .5,
-                                              offset: Offset(2, 0),
-                                            ),
-                                          ],
-                                        ),
-                                        clipBehavior: Clip.hardEdge,
-                                        child: Stack(
-                                          children: [
-                                            // Background image carousel
-                                            SizedBox(
-                                              height: size.height,
+              width: size.width * 100 / 100,
+              height: size.height * 100 / 100,
+              color: AppColor.primaryColor(context),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: size.height * 4 / 100),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Center(
+                        child: Container(
+                          width: size.width * 100 / 100,
+                          child: Column(
+                            children: [
+                              SizedBox(
+                                height: size.height * 2 / 100,
+                              ),
+                              Stack(children: [
+                                Container(
+                                  width: double.infinity,
+                                  height: 450,
+                                  decoration: BoxDecoration(
+                                    borderRadius:
+                                    BorderRadius.circular(25),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color:
+                                        Colors.white.withOpacity(.5),
+                                        blurRadius: 5,
+                                        spreadRadius: .5,
+                                        offset: Offset(2, 0),
+                                      ),
+                                    ],
+                                  ),
+                                  clipBehavior: Clip.hardEdge,
+                                  child: Stack(
+                                    children: [
+                                      // Background image carousel
+                                      SizedBox(
+                                        height: size.height,
+                                        width: size.width,
+                                        child: ListView.builder(
+                                          scrollDirection:
+                                          Axis.horizontal,
+                                          itemCount: 1,
+                                          itemBuilder: (context, index) {
+                                            return Container(
                                               width: size.width,
-                                              child: ListView.builder(
-                                                scrollDirection:
-                                                    Axis.horizontal,
-                                                itemCount: 1,
-                                                itemBuilder: (context, index) {
-                                                  return Container(
-                                                    width: size.width,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              25),
-                                                    ),
-                                                    child: _buildAdaptiveImage(
-                                                      _topProfileImage(),
-                                                      fit: BoxFit.cover,
-                                                      fallbackAsset: AppImage
-                                                          .placeHolder2Icon,
-                                                    ),
-                                                  );
-                                                },
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    25),
+                                              ),
+                                              child: _buildAdaptiveImage(
+                                                _topProfileImage(),
+                                                fit: BoxFit.cover,
+                                                fallbackAsset: AppImage
+                                                    .placeHolder2Icon,
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                      ),
+
+                                      // Black blur gradient overlay at bottom
+                                      Positioned(
+                                        left: 0,
+                                        right: 0,
+                                        bottom: 0,
+                                        child: Container(
+                                          height: 200,
+                                          decoration: BoxDecoration(
+                                            gradient: LinearGradient(
+                                              begin: Alignment.topCenter,
+                                              end: Alignment.bottomCenter,
+                                              colors: [
+                                                Colors.transparent,
+                                                Colors.black
+                                                    .withOpacity(0.4),
+                                                Colors.black
+                                                    .withOpacity(0.8),
+                                                Colors.black
+                                                    .withOpacity(0.9),
+                                              ],
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Back arrow button at top left
+                                      Positioned(
+                                        top: 26,
+                                        left: 16,
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (_swipeResult != null) {
+                                              Navigator.pop(
+                                                  context, _swipeResult);
+                                              return;
+                                            }
+                                            Navigator.pop(context);
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.all(8),
+                                            // decoration: BoxDecoration(
+                                            //   color:
+                                            //       Colors.black.withOpacity(0.3),
+                                            //   shape: BoxShape.circle,
+                                            // ),
+                                            child: Icon(
+                                              Icons.arrow_back_ios_new,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context),
+                                              size: 24,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+
+                                      // Text content at bottom
+                                      Positioned(
+                                        left: 16,
+                                        bottom: 20,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            // Name
+                                            Text(
+                                              _memberName(),
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 20,
+                                                fontWeight:
+                                                FontWeight.bold,
                                               ),
                                             ),
+                                            SizedBox(height: 4),
 
-                                            // Black blur gradient overlay at bottom
-                                            Positioned(
-                                              left: 0,
-                                              right: 0,
-                                              bottom: 0,
-                                              child: Container(
-                                                height: 200,
-                                                decoration: BoxDecoration(
-                                                  gradient: LinearGradient(
-                                                    begin: Alignment.topCenter,
-                                                    end: Alignment.bottomCenter,
-                                                    colors: [
-                                                      Colors.transparent,
-                                                      Colors.black
-                                                          .withOpacity(0.4),
-                                                      Colors.black
-                                                          .withOpacity(0.8),
-                                                      Colors.black
-                                                          .withOpacity(0.9),
-                                                    ],
-                                                  ),
-                                                ),
+                                            // Hobbies
+                                            Text(
+                                              _memberVibesText(),
+                                              style: TextStyle(
+                                                color: AppColor
+                                                    .buttonColor, // Pink color
+                                                fontSize: 13,
+                                                fontWeight:
+                                                FontWeight.w500,
                                               ),
                                             ),
+                                            // SizedBox(height: 6),
 
-                                            // Back arrow button at top left
-                                            Positioned(
-                                              top: 26,
-                                              left: 16,
-                                              child: GestureDetector(
-                                                onTap: () {
-                                                  if (_swipeResult != null) {
-                                                    Navigator.pop(
-                                                        context, _swipeResult);
-                                                    return;
-                                                  }
-                                                  Navigator.pop(context);
-                                                },
-                                                child: Container(
-                                                  padding: EdgeInsets.all(8),
-                                                  // decoration: BoxDecoration(
-                                                  //   color:
-                                                  //       Colors.black.withOpacity(0.3),
-                                                  //   shape: BoxShape.circle,
-                                                  // ),
-                                                  child: Icon(
-                                                    Icons.arrow_back_ios_new,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                    size: 24,
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-
-                                            // Text content at bottom
-                                            Positioned(
-                                              left: 16,
-                                              bottom: 20,
-                                              child: Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                mainAxisSize: MainAxisSize.min,
-                                                children: [
-                                                  // Name
-                                                  Text(
-                                                    _memberName(),
-                                                    style: TextStyle(
-                                                      color: Colors.white,
-                                                      fontSize: 20,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                  SizedBox(height: 4),
-
-                                                  // Hobbies
-                                                  Text(
-                                                    _memberVibesText(),
-                                                    style: TextStyle(
-                                                      color: AppColor
-                                                          .buttonColor, // Pink color
-                                                      fontSize: 13,
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                    ),
-                                                  ),
-                                                  // SizedBox(height: 6),
-
-                                                  // // Question
-                                                  // Text(
-                                                  //   "Searching for a new coffee spot, wanna join?",
-                                                  //   style: TextStyle(
-                                                  //     color: Colors.white,
-                                                  //     fontSize: 13,
-                                                  //   ),
-                                                  // ),
-                                                ],
-                                              ),
-                                            ),
+                                            // // Question
+                                            // Text(
+                                            //   "Searching for a new coffee spot, wanna join?",
+                                            //   style: TextStyle(
+                                            //     color: Colors.white,
+                                            //     fontSize: 13,
+                                            //   ),
+                                            // ),
                                           ],
                                         ),
-                                      )
+                                      ),
+                                    ],
+                                  ),
+                                )
 
-                                      // Positioned(
-                                      //   top: 26,
-                                      //   left: 16,
-                                      //   child: GestureDetector(
-                                      //     onTap: () {
-                                      //       Navigator.pop(context);
-                                      //     },
-                                      //     child: Image.asset(
-                                      //       AppImage.backarrow,
-                                      //       color: AppColor.primaryColor(context),
-                                      //       fit: BoxFit.cover,
-                                      //       height: size.width * 5 / 100,
-                                      //     ),
-                                      //   ),
-                                      // ),
-                                    ]),
-                                    // SizedBox(
-                                    //   height: size.height * 1 / 100,
-                                    // ),
+                                // Positioned(
+                                //   top: 26,
+                                //   left: 16,
+                                //   child: GestureDetector(
+                                //     onTap: () {
+                                //       Navigator.pop(context);
+                                //     },
+                                //     child: Image.asset(
+                                //       AppImage.backarrow,
+                                //       color: AppColor.primaryColor(context),
+                                //       fit: BoxFit.cover,
+                                //       height: size.width * 5 / 100,
+                                //     ),
+                                //   ),
+                                // ),
+                              ]),
+                              // SizedBox(
+                              //   height: size.height * 1 / 100,
+                              // ),
+                              Container(
+                                width: size.width * 90 / 100,
+                                child: Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
                                     Container(
-                                      width: size.width * 90 / 100,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                      child: Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
                                         children: [
-                                          Container(
-                                            child: Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Column(
-                                                  crossAxisAlignment:
-                                                      CrossAxisAlignment.start,
-                                                  children: [],
-                                                ),
-                                                Column(
-                                                  children: [
-                                                    SizedBox(
-                                                      height:
-                                                          MediaQuery.of(context)
-                                                                  .size
-                                                                  .height *
-                                                              0.5 /
-                                                              100,
-                                                    ),
-                                                  ],
-                                                ),
-                                              ],
-                                            ),
+                                          Column(
+                                            crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                            children: [],
                                           ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          Container(
-                                            child: Text(
-                                              AppLanguage
-                                                  .basicdetailstext[language],
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColor.secondryColor(
-                                                      context)),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 1 / 100,
-                                          ),
-                                          Row(
+                                          Column(
                                             children: [
-                                              /// AGE (show only if exists)
-                                              if (_str(_memberData?['age'])
-                                                  .isNotEmpty) ...[
-                                                Text(
-                                                  AppLanguage.ageText[language],
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor.buttonColor,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            1 /
-                                                            100),
-                                                Text(
-                                                  "${_str(_memberData?['age'])} y.o |",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            1 /
-                                                            100),
-                                              ],
-
-                                              /// HEIGHT
-                                              if (_str(_memberData?['height'])
-                                                  .isNotEmpty) ...[
-                                                Text(
-                                                  AppLanguage
-                                                      .Heighttext[language],
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor.buttonColor,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            1 /
-                                                            100),
-                                                Text(
-                                                  "${_str(_memberData?['height'])} |",
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            1 /
-                                                            100),
-                                              ],
-
-                                              /// PRONOUNS
-                                              if (_str(_memberData?['pronouns'])
-                                                  .isNotEmpty) ...[
-                                                Text(
-                                                  AppLanguage
-                                                      .pronouncsText[language],
-                                                  style: const TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color: AppColor.buttonColor,
-                                                  ),
-                                                ),
-                                                SizedBox(
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            1 /
-                                                            100),
-                                                Text(
-                                                  _str(
-                                                      _memberData?['pronouns']),
-                                                  style: TextStyle(
-                                                    fontSize: 14,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context),
-                                                  ),
-                                                ),
-                                              ],
-                                            ],
-                                          ),
-                                          Builder(
-                                            builder: (context) {
-                                              final hobbies = _toList(
-                                                _memberData?['hobbies'],
-                                              )
-                                                  .map((e) => _str(e))
-                                                  .where((e) => e.isNotEmpty)
-                                                  .toList();
-                                              final hobbiesText =
-                                                  hobbies.join(', ');
-                                              return Column(
-                                                crossAxisAlignment:
-                                                    CrossAxisAlignment.start,
-                                                children: [
-                                                  hobbies.isEmpty
-                                                      ? SizedBox()
-                                                      : SizedBox(
-                                                          height: size.height *
-                                                              1 /
-                                                              100,
-                                                        ),
-                                                  hobbies.isEmpty
-                                                      ? SizedBox()
-                                                      : Container(
-                                                          child: Row(
-                                                            crossAxisAlignment:
-                                                                CrossAxisAlignment
-                                                                    .start,
-                                                            children: [
-                                                              Container(
-                                                                child: Text(
-                                                                  AppLanguage
-                                                                          .Hobbiestext[
-                                                                      language],
-                                                                  style: const TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontFamily:
-                                                                          AppFont
-                                                                              .fontFamily,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color: AppColor
-                                                                          .buttonColor),
-                                                                ),
-                                                              ),
-                                                              SizedBox(
-                                                                width: MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    2 /
-                                                                    100,
-                                                              ),
-                                                              Container(
-                                                                width:
-                                                                    size.width *
-                                                                        72 /
-                                                                        100,
-                                                                child: Text(
-                                                                  hobbiesText
-                                                                          .isEmpty
-                                                                      ? ""
-                                                                      : hobbiesText,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          14,
-                                                                      fontFamily:
-                                                                          AppFont
-                                                                              .fontFamily,
-                                                                      fontWeight:
-                                                                          FontWeight
-                                                                              .w400,
-                                                                      color: AppColor
-                                                                          .greyLightColor(
-                                                                              context)),
-                                                                ),
-                                                              ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                ],
-                                              );
-                                            },
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 1 / 100,
-                                          ),
-                                          Row(
-                                            children: [
-                                              Container(
-                                                width: size.width * 4.5 / 100,
-                                                height: size.width * 4.5 / 100,
-                                                child: ClipRRect(
-                                                  child: Image.asset(
-                                                    AppImage.locationIcon,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
                                               SizedBox(
-                                                width: MediaQuery.of(context)
-                                                        .size
-                                                        .width *
-                                                    1 /
-                                                    100,
-                                              ),
-                                              Row(
-                                                children: [
-                                                  Text(
-                                                    _str(_memberData?[
-                                                                'city_name'])
-                                                            .isEmpty
-                                                        ? ""
-                                                        : _str(_memberData?[
-                                                            'city_name']),
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontWeight:
-                                                            FontWeight.w400,
-                                                        color: AppColor
-                                                            .greyLightColor(
-                                                                context)),
-                                                  ),
-                                                ],
-                                              ),
-                                            ],
-                                          ),
-                                          if (_str(_memberData?['bio'])
-                                              .isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 3 / 100,
-                                            ),
-                                          if (_str(_memberData?['bio'])
-                                              .isNotEmpty)
-                                            Container(
-                                              child: Text(
-                                                AppLanguage.bioText[language],
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w600,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context)),
-                                              ),
-                                            ),
-                                          if (_str(_memberData?['bio'])
-                                              .isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 1 / 100,
-                                            ),
-                                          if (_str(_memberData?['bio'])
-                                              .isNotEmpty)
-                                            Container(
-                                              child: Text(
-                                                _str(_memberData?['bio'])
-                                                        .isEmpty
-                                                    ? ""
-                                                    : _str(_memberData?['bio']),
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w400,
-                                                    color:
-                                                        AppColor.greyLightColor(
-                                                            context)),
-                                              ),
-                                            ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                child: Text(
-                                                  AppLanguage
-                                                      .GalleryText[language],
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context)),
-                                                ),
-                                              ),
-                                              InkWell(
-                                                onTap: () {
-                                                  Navigator.push(
-                                                    context,
-                                                    PageTransition(
-                                                      type: PageTransitionType
-                                                          .fade,
-                                                      child: ImagePreviewScreen(
-                                                        images: _previewImages,
-                                                        media: _galleryMedia,
-                                                        initialIndex: 0,
-                                                      ),
-                                                    ),
-                                                  );
-                                                },
-                                                child: Text(
-                                                  AppLanguage
-                                                      .viewAlltext[language],
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w500,
-                                                    color: AppColor.pinkColor,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          _withoutOverscrollIndicator(
-                                            SingleChildScrollView(
-                                              scrollDirection: Axis.horizontal,
-                                              child: Row(
-                                                children: List.generate(
-                                                  pics.length,
-                                                  (index) {
-                                                    final mediaItem = pics[
-                                                                index]
-                                                            is Map<String,
-                                                                String>
-                                                        ? pics[index] as Map<
-                                                            String, String>
-                                                        : <String, String>{
-                                                            'type': 'image',
-                                                            'url': pics[index]
-                                                                .toString(),
-                                                            'source':
-                                                                pics[index]
-                                                                    .toString(),
-                                                            'thumbnail': '',
-                                                          };
-                                                    final isVideo =
-                                                        _isVideoGalleryItem(
-                                                            mediaItem);
-                                                    return InkWell(
-                                                      onTap: () {
-                                                        Navigator.push(
-                                                          context,
-                                                          PageTransition(
-                                                            type:
-                                                                PageTransitionType
-                                                                    .fade,
-                                                            child:
-                                                                ImagePreviewScreen(
-                                                              images:
-                                                                  _previewImages,
-                                                              media:
-                                                                  _galleryMedia,
-                                                              initialIndex:
-                                                                  index,
-                                                            ),
-                                                          ),
-                                                        );
-                                                      },
-                                                      child: Container(
-                                                        width: size.width *
-                                                            30 /
-                                                            100,
-                                                        height: size.height *
-                                                            20 /
-                                                            100,
-                                                        margin: const EdgeInsets
-                                                            .only(right: 10),
-                                                        child: ClipRRect(
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(20),
-                                                          child: Stack(
-                                                            fit:
-                                                                StackFit.expand,
-                                                            children: [
-                                                              _buildAdaptiveImage(
-                                                                _galleryDisplayUrl(
-                                                                    mediaItem),
-                                                                fit: BoxFit
-                                                                    .cover,
-                                                              ),
-                                                              if (isVideo)
-                                                                Container(
-                                                                  color: Colors
-                                                                      .black
-                                                                      .withOpacity(
-                                                                          0.18),
-                                                                ),
-                                                              if (isVideo)
-                                                                Center(
-                                                                  child:
-                                                                      Container(
-                                                                    width: 34,
-                                                                    height: 34,
-                                                                    decoration:
-                                                                        BoxDecoration(
-                                                                      color: Colors
-                                                                          .black
-                                                                          .withOpacity(
-                                                                              0.45),
-                                                                      shape: BoxShape
-                                                                          .circle,
-                                                                    ),
-                                                                    child:
-                                                                        const Icon(
-                                                                      Icons
-                                                                          .play_arrow,
-                                                                      color: Colors
-                                                                          .white,
-                                                                      size: 22,
-                                                                    ),
-                                                                  ),
-                                                                ),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          Container(
-                                            child: Text(
-                                              AppLanguage
-                                                  .interestText[language],
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: AppColor.secondryColor(
-                                                      context)),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: MediaQuery.of(context)
+                                                height:
+                                                MediaQuery.of(context)
                                                     .size
                                                     .height *
-                                                1 /
-                                                100,
-                                          ),
-                                          Wrap(
-                                            spacing:
-                                                7, // horizontal space between items
-                                            runSpacing:
-                                                10, // vertical space between rows
-                                            children: List.generate(
-                                              Interest.length,
-                                              (index) {
-                                                bool isAll =
-                                                    Interest[index]['id'] == 1;
-
-                                                return GestureDetector(
-                                                  onTap: isAll
-                                                      ? null
-                                                      : () {
-                                                          setState(() {
-                                                            selectedId =
-                                                                Interest[index]
-                                                                    ['id'];
-                                                          });
-                                                        },
-                                                  child: Container(
-                                                    padding: const EdgeInsets
-                                                        .symmetric(
-                                                        horizontal: 8,
-                                                        vertical: 2),
-                                                    decoration: BoxDecoration(
-                                                      color: selectedId ==
-                                                              Interest[index]
-                                                                  ['id']
-                                                          ? AppColor
-                                                              .primaryColor(
-                                                                  context)
-                                                          : AppColor
-                                                              .primaryColor(
-                                                                  context),
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              50),
-                                                      border: Border.all(
-                                                        color: selectedId ==
-                                                                Interest[index]
-                                                                    ['id']
-                                                            ? AppColor
-                                                                .buttonColor
-                                                            : AppColor
-                                                                .buttonColor,
-                                                      ),
-                                                    ),
-                                                    child: Text(
-                                                      Interest[index]['title'],
-                                                      textAlign:
-                                                          TextAlign.center,
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontSize: 13,
-                                                        fontWeight:
-                                                            FontWeight.w500,
-                                                        color: selectedId ==
-                                                                Interest[index]
-                                                                    ['id']
-                                                            ? AppColor
-                                                                .buttonColor
-                                                            : AppColor
-                                                                .buttonColor,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                );
-                                              },
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Container(
-                                                child: Text(
-                                                  AppLanguage
-                                                      .vibesText[language],
-                                                  style: TextStyle(
-                                                      fontSize: 16,
-                                                      fontFamily:
-                                                          AppFont.fontFamily,
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context)),
-                                                ),
+                                                    0.5 /
+                                                    100,
                                               ),
                                             ],
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          _buildVibesSection(context),
-                                          _str(_memberData?['instagram_url'])
-                                                  .isEmpty
-                                              ? SizedBox()
-                                              : GestureDetector(
-                                                  onTap: _openInstagramProfile,
-                                                  behavior:
-                                                      HitTestBehavior.opaque,
-                                                  child: Container(
-                                                    height:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            12 /
-                                                            100,
-                                                    width:
-                                                        MediaQuery.of(context)
-                                                                .size
-                                                                .width *
-                                                            90 /
-                                                            100,
-                                                    decoration: BoxDecoration(
-                                                      color:
-                                                          AppColor.capsuleColor(
-                                                              context),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: AppColor
-                                                              .grayColor
-                                                              .withOpacity(0.4),
-                                                          blurRadius: 2,
-                                                          offset: Offset(1, 1),
-                                                        ),
-                                                      ],
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              200),
-                                                    ),
-                                                    child: Row(
-                                                      children: [
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                4 /
-                                                                100),
-
-                                                        // Icon
-                                                        Image.asset(
-                                                          AppImage
-                                                              .instagramIcon,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context),
-                                                          width: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .width *
-                                                              5 /
-                                                              100,
-                                                          height: MediaQuery.of(
-                                                                      context)
-                                                                  .size
-                                                                  .height *
-                                                              6 /
-                                                              100,
-                                                        ),
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                2 /
-                                                                100),
-
-                                                        // Text + spacing (with Flexible for proper width handling)
-                                                        Flexible(
-                                                          child: Container(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                54 /
-                                                                100,
-                                                            child: Column(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .center,
-                                                              crossAxisAlignment:
-                                                                  CrossAxisAlignment
-                                                                      .start,
-                                                              children: [
-                                                                Text(
-                                                                  AppLanguage
-                                                                          .instagramText[
-                                                                      language],
-                                                                  style:
-                                                                      TextStyle(
-                                                                    fontSize:
-                                                                        13,
-                                                                    fontFamily:
-                                                                        AppFont
-                                                                            .fontFamily,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: AppColor
-                                                                        .secondryColor(
-                                                                            context),
-                                                                  ),
-                                                                ),
-                                                                Text(
-                                                                  _str(_memberData?[
-                                                                              'instagram_url'])
-                                                                          .isEmpty
-                                                                      ? ""
-                                                                      : _str(_memberData?[
-                                                                          'instagram_url']),
-                                                                  style:
-                                                                      const TextStyle(
-                                                                    fontSize:
-                                                                        12,
-                                                                    fontFamily:
-                                                                        AppFont
-                                                                            .fontFamily,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w500,
-                                                                    color: AppColor
-                                                                        .buttonColor,
-                                                                  ),
-                                                                  maxLines: 1,
-                                                                  overflow:
-                                                                      TextOverflow
-                                                                          .ellipsis,
-                                                                ),
-                                                              ],
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                2 /
-                                                                100),
-
-                                                        Container(
-                                                          padding: EdgeInsets
-                                                              .symmetric(
-                                                            vertical: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                1 /
-                                                                100,
-                                                            horizontal:
-                                                                MediaQuery.of(
-                                                                            context)
-                                                                        .size
-                                                                        .width *
-                                                                    5 /
-                                                                    100,
-                                                          ),
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            color: AppColor
-                                                                .buttonColor,
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        50),
-                                                            border: Border.all(
-                                                                color: AppColor
-                                                                    .transparentColor),
-                                                          ),
-                                                          child: Text(
-                                                            AppLanguage
-                                                                    .followText[
-                                                                language],
-                                                            style: TextStyle(
-                                                              fontSize: 10,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .w600,
-                                                              fontFamily: AppFont
-                                                                  .fontFamily,
-                                                              color:
-                                                                  Colors.white,
-                                                            ),
-                                                          ),
-                                                        ),
-
-                                                        SizedBox(
-                                                            width: MediaQuery.of(
-                                                                        context)
-                                                                    .size
-                                                                    .width *
-                                                                6 /
-                                                                100),
-                                                      ],
-                                                    ),
-                                                  )),
-                                          // if (_recentEvents.isNotEmpty)
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          if (_recentEvents.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 2 / 100,
-                                            ),
-                                          if (_recentEvents.isNotEmpty)
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Container(
-                                                  child: Text(
-                                                    AppLanguage
-                                                            .recentlyLikedeventsText[
-                                                        language],
-                                                    style: TextStyle(
-                                                        fontSize: 16,
-                                                        fontFamily:
-                                                            AppFont.fontFamily,
-                                                        fontWeight:
-                                                            FontWeight.w600,
-                                                        color: AppColor
-                                                            .secondryColor(
-                                                                context)),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                          if (_recentEvents.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 2 / 100,
-                                            ),
-                                          if (_recentEvents.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 30 / 100,
-                                              child:
-                                                  _withoutOverscrollIndicator(
-                                                ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount: _recentEvents
-                                                          .isEmpty
-                                                      ? 1
-                                                      : _recentEvents.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    if (_recentEvents.isEmpty) {
-                                                      return _recentEventCard(
-                                                        image: AppImage
-                                                            .eventCardImage,
-                                                        name: "",
-                                                        time: "",
-                                                        tags: [],
-                                                        id: "",
-                                                        isNetwork: false,
-                                                      );
-                                                    }
-                                                    final item =
-                                                        _recentEvents[index];
-                                                    return _recentEventCard(
-                                                      image: _asUploadUrl(
-                                                          item['event_image']),
-                                                      name: _str(
-                                                          item['event_name']),
-                                                      time: _str(item['date']),
-                                                      tags:
-                                                          _extractEventCategoryNames(
-                                                        item['categories'],
-                                                      ),
-                                                      id: _str(item['_id']),
-                                                      isNetwork: true,
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          if (_recentVenues.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 3 / 100,
-                                            ),
-                                          if (_recentVenues.isNotEmpty)
-                                            SizedBox(
-                                              width: size.width * 80 / 100,
-                                              child: Text(
-                                                AppLanguage
-                                                    .likedVenuestext[language],
-                                                style: TextStyle(
-                                                    fontSize: 16,
-                                                    fontFamily:
-                                                        AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w500,
-                                                    color:
-                                                        AppColor.secondryColor(
-                                                            context)),
-                                              ),
-                                            ),
-                                          if (_recentVenues.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 2 / 100,
-                                            ),
-                                          if (_recentVenues.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 18 / 100,
-                                              child:
-                                                  _withoutOverscrollIndicator(
-                                                ListView.builder(
-                                                  scrollDirection:
-                                                      Axis.horizontal,
-                                                  itemCount: _recentVenues
-                                                          .isEmpty
-                                                      ? 3
-                                                      : _recentVenues.length,
-                                                  itemBuilder:
-                                                      (context, index) {
-                                                    if (_recentVenues.isEmpty) {
-                                                      final fallback = [
-                                                        AppImage.night,
-                                                        AppImage.omnia,
-                                                        AppImage.queens,
-                                                      ];
-                                                      return Padding(
-                                                        padding:
-                                                            const EdgeInsets
-                                                                .only(
-                                                                right: 10),
-                                                        child: _venueCard(
-                                                          fallback[index],
-                                                          venueName: "",
-                                                          id: "",
-                                                        ),
-                                                      );
-                                                    }
-                                                    final item =
-                                                        _recentVenues[index];
-                                                    return Padding(
-                                                      padding:
-                                                          const EdgeInsets.only(
-                                                              right: 10),
-                                                      child: _venueCard(
-                                                        _asUploadUrl(item[
-                                                            'venue_image']),
-                                                        venueName: _str(
-                                                            item['venue_name']),
-                                                        id: item['_id'],
-                                                        isNetwork: true,
-                                                      ),
-                                                    );
-                                                  },
-                                                ),
-                                              ),
-                                            ),
-                                          if (_recentVenues.isNotEmpty)
-                                            SizedBox(
-                                              height: size.height * 3 / 100,
-                                            ),
-                                          Container(
-                                            child: Text(
-                                              AppLanguage
-                                                      .mytopArtistonspotifyText[
-                                                  language],
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontFamily:
-                                                      AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: AppColor.secondryColor(
-                                                      context)),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            height: size.height * 2 / 100,
-                                          ),
-                                          _buildTopArtistSection(context),
-                                          SizedBox(
-                                            height: size.height * 4 / 100,
-                                          ),
-                                          Divider(
-                                            height: 0.2,
-                                            thickness: 0.5,
-                                            color: AppColor.greyLightColor(
-                                                context),
-                                            indent: 70,
-                                            endIndent: 70,
                                           ),
                                         ],
                                       ),
                                     ),
                                     SizedBox(
-                                      height: size.height * 15 / 100,
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        AppLanguage
+                                            .basicdetailstext[language],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily:
+                                            AppFont.fontFamily,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.secondryColor(
+                                                context)),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 1 / 100,
+                                    ),
+                                    Row(
+                                      children: [
+                                        /// AGE (show only if exists)
+                                        if (_str(_memberData?['age'])
+                                            .isNotEmpty) ...[
+                                          Text(
+                                            AppLanguage.ageText[language],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.buttonColor,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                          Text(
+                                            "${_str(_memberData?['age'])} y.o |",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                        ],
+
+                                        /// HEIGHT
+                                        if (_str(_memberData?['height'])
+                                            .isNotEmpty) ...[
+                                          Text(
+                                            AppLanguage
+                                                .Heighttext[language],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.buttonColor,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                          Text(
+                                            "${_str(_memberData?['height'])} |",
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                        ],
+
+                                        /// PRONOUNS
+                                        if (_str(_memberData?['pronouns'])
+                                            .isNotEmpty) ...[
+                                          Text(
+                                            AppLanguage
+                                                .pronouncsText[language],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.buttonColor,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                          Text(
+                                            _str(
+                                                _memberData?['pronouns']),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context),
+                                            ),
+                                          ),
+                                        ],
+                                      ],
+                                    ),
+                                    Builder(
+                                      builder: (context) {
+                                        final hobbies = _toList(
+                                          _memberData?['hobbies'],
+                                        )
+                                            .map((e) => _str(e))
+                                            .where((e) => e.isNotEmpty)
+                                            .toList();
+                                        final hobbiesText =
+                                        hobbies.join(', ');
+                                        return Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            hobbies.isEmpty
+                                                ? SizedBox()
+                                                : SizedBox(
+                                              height: size.height *
+                                                  1 /
+                                                  100,
+                                            ),
+                                            hobbies.isEmpty
+                                                ? SizedBox()
+                                                : Container(
+                                              child: Row(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Container(
+                                                    child: Text(
+                                                      AppLanguage
+                                                          .Hobbiestext[
+                                                      language],
+                                                      style: const TextStyle(
+                                                          fontSize:
+                                                          14,
+                                                          fontFamily:
+                                                          AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w400,
+                                                          color: AppColor
+                                                              .buttonColor),
+                                                    ),
+                                                  ),
+                                                  SizedBox(
+                                                    width: MediaQuery.of(
+                                                        context)
+                                                        .size
+                                                        .width *
+                                                        2 /
+                                                        100,
+                                                  ),
+                                                  Container(
+                                                    width:
+                                                    size.width *
+                                                        72 /
+                                                        100,
+                                                    child: Text(
+                                                      hobbiesText
+                                                          .isEmpty
+                                                          ? ""
+                                                          : hobbiesText,
+                                                      style: TextStyle(
+                                                          fontSize:
+                                                          14,
+                                                          fontFamily:
+                                                          AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w400,
+                                                          color: AppColor
+                                                              .greyLightColor(
+                                                              context)),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 1 / 100,
+                                    ),
+                                    Row(
+                                      children: [
+                                        Container(
+                                          width: size.width * 4.5 / 100,
+                                          height: size.width * 4.5 / 100,
+                                          child: ClipRRect(
+                                            child: Image.asset(
+                                              AppImage.locationIcon,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              1 /
+                                              100,
+                                        ),
+                                        Row(
+                                          children: [
+                                            Text(
+                                              _str(_memberData?[
+                                              'city_name'])
+                                                  .isEmpty
+                                                  ? ""
+                                                  : _str(_memberData?[
+                                              'city_name']),
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontFamily:
+                                                  AppFont.fontFamily,
+                                                  fontWeight:
+                                                  FontWeight.w400,
+                                                  color: AppColor
+                                                      .greyLightColor(
+                                                      context)),
+                                            ),
+                                          ],
+                                        ),
+                                      ],
+                                    ),
+                                    if (_str(_memberData?['bio'])
+                                        .isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 3 / 100,
+                                      ),
+                                    if (_str(_memberData?['bio'])
+                                        .isNotEmpty)
+                                      Container(
+                                        child: Text(
+                                          AppLanguage.bioText[language],
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w600,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context)),
+                                        ),
+                                      ),
+                                    if (_str(_memberData?['bio'])
+                                        .isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 1 / 100,
+                                      ),
+                                    if (_str(_memberData?['bio'])
+                                        .isNotEmpty)
+                                      Container(
+                                        child: Text(
+                                          _str(_memberData?['bio'])
+                                              .isEmpty
+                                              ? ""
+                                              : _str(_memberData?['bio']),
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                              AppColor.greyLightColor(
+                                                  context)),
+                                        ),
+                                      ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            AppLanguage
+                                                .GalleryText[language],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily:
+                                                AppFont.fontFamily,
+                                                fontWeight:
+                                                FontWeight.w600,
+                                                color: AppColor
+                                                    .secondryColor(
+                                                    context)),
+                                          ),
+                                        ),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .fade,
+                                                child: ImagePreviewScreen(
+                                                  images: _previewImages,
+                                                  media: _galleryMedia,
+                                                  initialIndex: 0,
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                          child: Text(
+                                            AppLanguage
+                                                .viewAlltext[language],
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              color: AppColor.pinkColor,
+                                            ),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    _withoutOverscrollIndicator(
+                                      SingleChildScrollView(
+                                        scrollDirection: Axis.horizontal,
+                                        child: Row(
+                                          children: List.generate(
+                                            pics.length,
+                                                (index) {
+                                              final mediaItem = pics[
+                                              index]
+                                              is Map<String,
+                                                  String>
+                                                  ? pics[index] as Map<
+                                                  String, String>
+                                                  : <String, String>{
+                                                'type': 'image',
+                                                'url': pics[index]
+                                                    .toString(),
+                                                'source':
+                                                pics[index]
+                                                    .toString(),
+                                                'thumbnail': '',
+                                              };
+                                              final isVideo =
+                                              _isVideoGalleryItem(
+                                                  mediaItem);
+                                              return InkWell(
+                                                onTap: () {
+                                                  Navigator.push(
+                                                    context,
+                                                    PageTransition(
+                                                      type:
+                                                      PageTransitionType
+                                                          .fade,
+                                                      child:
+                                                      ImagePreviewScreen(
+                                                        images:
+                                                        _previewImages,
+                                                        media:
+                                                        _galleryMedia,
+                                                        initialIndex:
+                                                        index,
+                                                      ),
+                                                    ),
+                                                  );
+                                                },
+                                                child: Container(
+                                                  width: size.width *
+                                                      30 /
+                                                      100,
+                                                  height: size.height *
+                                                      20 /
+                                                      100,
+                                                  margin: const EdgeInsets
+                                                      .only(right: 10),
+                                                  child: ClipRRect(
+                                                    borderRadius:
+                                                    BorderRadius
+                                                        .circular(20),
+                                                    child: Stack(
+                                                      fit:
+                                                      StackFit.expand,
+                                                      children: [
+                                                        _buildAdaptiveImage(
+                                                          _galleryDisplayUrl(
+                                                              mediaItem),
+                                                          fit: BoxFit
+                                                              .cover,
+                                                        ),
+                                                        if (isVideo)
+                                                          Container(
+                                                            color: Colors
+                                                                .black
+                                                                .withOpacity(
+                                                                0.18),
+                                                          ),
+                                                        if (isVideo)
+                                                          Center(
+                                                            child:
+                                                            Container(
+                                                              width: 34,
+                                                              height: 34,
+                                                              decoration:
+                                                              BoxDecoration(
+                                                                color: Colors
+                                                                    .black
+                                                                    .withOpacity(
+                                                                    0.45),
+                                                                shape: BoxShape
+                                                                    .circle,
+                                                              ),
+                                                              child:
+                                                              const Icon(
+                                                                Icons
+                                                                    .play_arrow,
+                                                                color: Colors
+                                                                    .white,
+                                                                size: 22,
+                                                              ),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    Container(
+                                      child: Text(
+                                        AppLanguage
+                                            .interestText[language],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily:
+                                            AppFont.fontFamily,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.secondryColor(
+                                                context)),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: MediaQuery.of(context)
+                                          .size
+                                          .height *
+                                          1 /
+                                          100,
+                                    ),
+                                    Wrap(
+                                      spacing:
+                                      7, // horizontal space between items
+                                      runSpacing:
+                                      10, // vertical space between rows
+                                      children: List.generate(
+                                        Interest.length,
+                                            (index) {
+                                          bool isAll =
+                                              Interest[index]['id'] == 1;
+
+                                          return GestureDetector(
+                                            onTap: isAll
+                                                ? null
+                                                : () {
+                                              setState(() {
+                                                selectedId =
+                                                Interest[index]
+                                                ['id'];
+                                              });
+                                            },
+                                            child: Container(
+                                              padding: const EdgeInsets
+                                                  .symmetric(
+                                                  horizontal: 8,
+                                                  vertical: 2),
+                                              decoration: BoxDecoration(
+                                                color: selectedId ==
+                                                    Interest[index]
+                                                    ['id']
+                                                    ? AppColor
+                                                    .primaryColor(
+                                                    context)
+                                                    : AppColor
+                                                    .primaryColor(
+                                                    context),
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    50),
+                                                border: Border.all(
+                                                  color: selectedId ==
+                                                      Interest[index]
+                                                      ['id']
+                                                      ? AppColor
+                                                      .buttonColor
+                                                      : AppColor
+                                                      .buttonColor,
+                                                ),
+                                              ),
+                                              child: Text(
+                                                Interest[index]['title'],
+                                                textAlign:
+                                                TextAlign.center,
+                                                style: TextStyle(
+                                                  fontFamily:
+                                                  AppFont.fontFamily,
+                                                  fontSize: 13,
+                                                  fontWeight:
+                                                  FontWeight.w500,
+                                                  color: selectedId ==
+                                                      Interest[index]
+                                                      ['id']
+                                                      ? AppColor
+                                                      .buttonColor
+                                                      : AppColor
+                                                      .buttonColor,
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            AppLanguage
+                                                .vibesText[language],
+                                            style: TextStyle(
+                                                fontSize: 16,
+                                                fontFamily:
+                                                AppFont.fontFamily,
+                                                fontWeight:
+                                                FontWeight.w600,
+                                                color: AppColor
+                                                    .secondryColor(
+                                                    context)),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    _buildVibesSection(context),
+                                    _str(_memberData?['instagram_url'])
+                                        .isEmpty
+                                        ? SizedBox()
+                                        : GestureDetector(
+                                        onTap: _openInstagramProfile,
+                                        behavior:
+                                        HitTestBehavior.opaque,
+                                        child: Container(
+                                          height:
+                                          MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              12 /
+                                              100,
+                                          width:
+                                          MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              90 /
+                                              100,
+                                          decoration: BoxDecoration(
+                                            color:
+                                            AppColor.capsuleColor(
+                                                context),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: AppColor
+                                                    .grayColor
+                                                    .withOpacity(0.4),
+                                                blurRadius: 2,
+                                                offset: Offset(1, 1),
+                                              ),
+                                            ],
+                                            borderRadius:
+                                            BorderRadius.circular(
+                                                200),
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              SizedBox(
+                                                  width: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      4 /
+                                                      100),
+
+                                              // Icon
+                                              Image.asset(
+                                                AppImage
+                                                    .instagramIcon,
+                                                color: AppColor
+                                                    .secondryColor(
+                                                    context),
+                                                width: MediaQuery.of(
+                                                    context)
+                                                    .size
+                                                    .width *
+                                                    5 /
+                                                    100,
+                                                height: MediaQuery.of(
+                                                    context)
+                                                    .size
+                                                    .height *
+                                                    6 /
+                                                    100,
+                                              ),
+                                              SizedBox(
+                                                  width: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      2 /
+                                                      100),
+
+                                              // Text + spacing (with Flexible for proper width handling)
+                                              Flexible(
+                                                child: Container(
+                                                  width: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      54 /
+                                                      100,
+                                                  child: Column(
+                                                    mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .center,
+                                                    crossAxisAlignment:
+                                                    CrossAxisAlignment
+                                                        .start,
+                                                    children: [
+                                                      Text(
+                                                        AppLanguage
+                                                            .instagramText[
+                                                        language],
+                                                        style:
+                                                        TextStyle(
+                                                          fontSize:
+                                                          13,
+                                                          fontFamily:
+                                                          AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500,
+                                                          color: AppColor
+                                                              .secondryColor(
+                                                              context),
+                                                        ),
+                                                      ),
+                                                      Text(
+                                                        _str(_memberData?[
+                                                        'instagram_url'])
+                                                            .isEmpty
+                                                            ? ""
+                                                            : _str(_memberData?[
+                                                        'instagram_url']),
+                                                        style:
+                                                        const TextStyle(
+                                                          fontSize:
+                                                          12,
+                                                          fontFamily:
+                                                          AppFont
+                                                              .fontFamily,
+                                                          fontWeight:
+                                                          FontWeight
+                                                              .w500,
+                                                          color: AppColor
+                                                              .buttonColor,
+                                                        ),
+                                                        maxLines: 1,
+                                                        overflow:
+                                                        TextOverflow
+                                                            .ellipsis,
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                              ),
+
+                                              SizedBox(
+                                                  width: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      2 /
+                                                      100),
+
+                                              Container(
+                                                padding: EdgeInsets
+                                                    .symmetric(
+                                                  vertical: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      1 /
+                                                      100,
+                                                  horizontal:
+                                                  MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      5 /
+                                                      100,
+                                                ),
+                                                decoration:
+                                                BoxDecoration(
+                                                  color: AppColor
+                                                      .buttonColor,
+                                                  borderRadius:
+                                                  BorderRadius
+                                                      .circular(
+                                                      50),
+                                                  border: Border.all(
+                                                      color: AppColor
+                                                          .transparentColor),
+                                                ),
+                                                child: Text(
+                                                  AppLanguage
+                                                      .followText[
+                                                  language],
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontWeight:
+                                                    FontWeight
+                                                        .w600,
+                                                    fontFamily: AppFont
+                                                        .fontFamily,
+                                                    color:
+                                                    Colors.white,
+                                                  ),
+                                                ),
+                                              ),
+
+                                              SizedBox(
+                                                  width: MediaQuery.of(
+                                                      context)
+                                                      .size
+                                                      .width *
+                                                      6 /
+                                                      100),
+                                            ],
+                                          ),
+                                        )),
+                                    // if (_recentEvents.isNotEmpty)
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    if (_recentEvents.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                    if (_recentEvents.isNotEmpty)
+                                      Row(
+                                        mainAxisAlignment:
+                                        MainAxisAlignment
+                                            .spaceBetween,
+                                        children: [
+                                          Container(
+                                            child: Text(
+                                              AppLanguage
+                                                  .recentlyLikedeventsText[
+                                              language],
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontFamily:
+                                                  AppFont.fontFamily,
+                                                  fontWeight:
+                                                  FontWeight.w600,
+                                                  color: AppColor
+                                                      .secondryColor(
+                                                      context)),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    if (_recentEvents.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                    if (_recentEvents.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 30 / 100,
+                                        child:
+                                        _withoutOverscrollIndicator(
+                                          ListView.builder(
+                                            scrollDirection:
+                                            Axis.horizontal,
+                                            itemCount: _recentEvents
+                                                .isEmpty
+                                                ? 1
+                                                : _recentEvents.length,
+                                            itemBuilder:
+                                                (context, index) {
+                                              if (_recentEvents.isEmpty) {
+                                                return _recentEventCard(
+                                                  image: AppImage
+                                                      .eventCardImage,
+                                                  name: "",
+                                                  time: "",
+                                                  tags: [],
+                                                  id: "",
+                                                  isNetwork: false,
+                                                );
+                                              }
+                                              final item =
+                                              _recentEvents[index];
+                                              return _recentEventCard(
+                                                image: _asUploadUrl(
+                                                    item['event_image']),
+                                                name: _str(
+                                                    item['event_name']),
+                                                time: _str(item['date']),
+                                                tags:
+                                                _extractEventCategoryNames(
+                                                  item['categories'],
+                                                ),
+                                                id: _str(item['_id']),
+                                                isNetwork: true,
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    if (_recentVenues.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 3 / 100,
+                                      ),
+                                    if (_recentVenues.isNotEmpty)
+                                      SizedBox(
+                                        width: size.width * 80 / 100,
+                                        child: Text(
+                                          AppLanguage
+                                              .likedVenuestext[language],
+                                          style: TextStyle(
+                                              fontSize: 16,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context)),
+                                        ),
+                                      ),
+                                    if (_recentVenues.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                    if (_recentVenues.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 18 / 100,
+                                        child:
+                                        _withoutOverscrollIndicator(
+                                          ListView.builder(
+                                            scrollDirection:
+                                            Axis.horizontal,
+                                            itemCount: _recentVenues
+                                                .isEmpty
+                                                ? 3
+                                                : _recentVenues.length,
+                                            itemBuilder:
+                                                (context, index) {
+                                              if (_recentVenues.isEmpty) {
+                                                final fallback = [
+                                                  AppImage.night,
+                                                  AppImage.omnia,
+                                                  AppImage.queens,
+                                                ];
+                                                return Padding(
+                                                  padding:
+                                                  const EdgeInsets
+                                                      .only(
+                                                      right: 10),
+                                                  child: _venueCard(
+                                                    fallback[index],
+                                                    venueName: "",
+                                                    id: "",
+                                                  ),
+                                                );
+                                              }
+                                              final item =
+                                              _recentVenues[index];
+                                              return Padding(
+                                                padding:
+                                                const EdgeInsets.only(
+                                                    right: 10),
+                                                child: _venueCard(
+                                                  _asUploadUrl(item[
+                                                  'venue_image']),
+                                                  venueName: _str(
+                                                      item['venue_name']),
+                                                  id: item['_id'],
+                                                  isNetwork: true,
+                                                ),
+                                              );
+                                            },
+                                          ),
+                                        ),
+                                      ),
+                                    if (_recentVenues.isNotEmpty)
+                                      SizedBox(
+                                        height: size.height * 3 / 100,
+                                      ),
+                                    Container(
+                                      child: Text(
+                                        AppLanguage
+                                            .mytopArtistonspotifyText[
+                                        language],
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            fontFamily:
+                                            AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            color: AppColor.secondryColor(
+                                                context)),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      height: size.height * 2 / 100,
+                                    ),
+                                    _buildTopArtistSection(context),
+                                    SizedBox(
+                                      height: size.height * 4 / 100,
+                                    ),
+                                    Divider(
+                                      height: 0.2,
+                                      thickness: 0.5,
+                                      color: AppColor.greyLightColor(
+                                          context),
+                                      indent: 70,
+                                      endIndent: 70,
                                     ),
                                   ],
                                 ),
                               ),
-                            ),
+                              SizedBox(
+                                height: size.height * 15 / 100,
+                              ),
+                            ],
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
@@ -1793,12 +1784,12 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   }
 
   void showInviteMemberstypebottomsheet(
-    BuildContext context, {
-    required String receiverId,
-    required String receiverName,
-    required String receiverImage,
-    String? conversationId,
-  }) =>
+      BuildContext context, {
+        required String receiverId,
+        required String receiverName,
+        required String receiverImage,
+        String? conversationId,
+      }) =>
       showInviteMembersTypeBottomSheet(
         context,
         receiverId: receiverId,
@@ -1850,19 +1841,19 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                     padding: const EdgeInsets.all(12),
                     child: imageUrl.isNotEmpty
                         ? ClipRRect(
-                            borderRadius: BorderRadius.circular(22),
-                            child: _buildAdaptiveImage(
-                              imageUrl,
-                              fit: BoxFit.cover,
-                              fallbackAsset: AppImage.dummyImageIcon,
-                            ),
-                          )
+                      borderRadius: BorderRadius.circular(22),
+                      child: _buildAdaptiveImage(
+                        imageUrl,
+                        fit: BoxFit.cover,
+                        fallbackAsset: AppImage.dummyImageIcon,
+                      ),
+                    )
                         : Icon(
-                            Icons.music_note,
-                            size: 15,
-                            color: AppColor.secondryColor(context)
-                                .withOpacity(0.3),
-                          ),
+                      Icons.music_note,
+                      size: 15,
+                      color: AppColor.secondryColor(context)
+                          .withOpacity(0.3),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -1948,14 +1939,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
               Positioned.fill(
                 child: isNetwork
                     ? _buildAdaptiveImage(
-                        image,
-                        fit: BoxFit.cover,
-                        fallbackAsset: AppImage.dummyImageIcon,
-                      )
+                  image,
+                  fit: BoxFit.cover,
+                  fallbackAsset: AppImage.dummyImageIcon,
+                )
                     : Image.asset(
-                        AppImage.dummyImageIcon,
-                        fit: BoxFit.cover,
-                      ),
+                  AppImage.dummyImageIcon,
+                  fit: BoxFit.cover,
+                ),
               ),
 
               // Gradient Overlay (more black at bottom)
@@ -2057,11 +2048,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   }
 
   Widget _venueCard(
-    String imagePath, {
-    String venueName = "",
-    String id = '',
-    bool isNetwork = false,
-  }) {
+      String imagePath, {
+        String venueName = "",
+        String id = '',
+        bool isNetwork = false,
+      }) {
     final size = MediaQuery.of(context).size;
     final double cardWidth = 125 * size.width / 375;
     final double cardHeight = 150 * size.width / 375;
@@ -2103,14 +2094,14 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
               Expanded(
                 child: isNetwork
                     ? _buildAdaptiveImage(
-                        imagePath,
-                        fit: BoxFit.cover,
-                        fallbackAsset: AppImage.dummyImageIcon,
-                      )
+                  imagePath,
+                  fit: BoxFit.cover,
+                  fallbackAsset: AppImage.dummyImageIcon,
+                )
                     : Image.asset(
-                        AppImage.dummyImageIcon,
-                        fit: BoxFit.cover,
-                      ),
+                  AppImage.dummyImageIcon,
+                  fit: BoxFit.cover,
+                ),
               ),
               // if (venueName.isNotEmpty)
               //   Padding(
@@ -2146,10 +2137,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
   }
 
   Widget _buildArtistChip(
-    BuildContext context,
-    String artistName, {
-    String artistImage = '',
-  }) {
+      BuildContext context,
+      String artistName, {
+        String artistImage = '',
+      }) {
     final size = MediaQuery.of(context).size;
 
     return Container(

@@ -294,6 +294,12 @@ class PostApiProvider with ChangeNotifier {
         bool showSuccessToast = true,
         Duration footerDuration = const Duration(milliseconds: 500),
       }) async {
+    // A fresh, successful login means whatever session/user this device was
+    // previously acting as is no longer relevant - force-clear any stuck
+    // error banner (e.g. a lingering "User not found" from a since-deleted
+    // account) so it can't survive into the new session.
+    TopNotification.dispose();
+
     await _syncAuthSession(context, authPayload);
     if (!context.mounted) return false;
 

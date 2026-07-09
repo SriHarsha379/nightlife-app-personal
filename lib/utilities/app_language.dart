@@ -477,6 +477,7 @@ class AppLanguage {
   static const foodieExplorecreativeText = ["Foodie · Explorer · Creative"];
   static const username = [" Username"];
   static const bioText = ["Bio"];
+  static const imLookingForText = ["I'm looking for"];
   static const addAboutyourselfText = ["Add about yourself........"];
   static const privateinformationText = ["Private Information"];
   static const maleText = ["Male"];
@@ -678,7 +679,7 @@ class AppLanguage {
   static const usernameemailIdPhonenumberText = [
     "Username or Email Id or Phone Number"
   ];
-    static const usernameemailIdPhonenumberText1 = [
+  static const usernameemailIdPhonenumberText1 = [
     "Phone Number or Email Id"
   ];
   static const passwordtext = ['Password'];

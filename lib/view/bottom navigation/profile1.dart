@@ -82,7 +82,7 @@ class _Profile1State extends State<Profile1> {
       cancelText: AppLanguage.cancelText[language],
       onImageFromCamera: (imageData) {
         final profileController =
-            Provider.of<ProfileController>(context, listen: false);
+        Provider.of<ProfileController>(context, listen: false);
         setState(() {
           _selectedMediaList.add(imageData);
         });
@@ -102,7 +102,7 @@ class _Profile1State extends State<Profile1> {
       },
       onVideoFromCamera: (videoData) {
         final profileController =
-            Provider.of<ProfileController>(context, listen: false);
+        Provider.of<ProfileController>(context, listen: false);
         setState(() {
           _selectedMediaList.add(videoData);
         });
@@ -122,7 +122,7 @@ class _Profile1State extends State<Profile1> {
       },
       onMediaFromGallery: (mediaList) {
         final profileController =
-            Provider.of<ProfileController>(context, listen: false);
+        Provider.of<ProfileController>(context, listen: false);
         int remainingSlots =
             MediaPickerHelper.maxMediaItems - _selectedMediaList.length;
         int itemsToAdd = mediaList.length > remainingSlots
@@ -183,7 +183,7 @@ class _Profile1State extends State<Profile1> {
 
     if (!mounted) return;
     final profileController =
-        Provider.of<ProfileController>(context, listen: false);
+    Provider.of<ProfileController>(context, listen: false);
     profileController.fetchProfileData(context);
   }
 
@@ -205,7 +205,7 @@ class _Profile1State extends State<Profile1> {
 
     if (!mounted) return;
     final profileController =
-        Provider.of<ProfileController>(context, listen: false);
+    Provider.of<ProfileController>(context, listen: false);
     await profileController.fetchProfileData(context);
   }
 
@@ -214,7 +214,7 @@ class _Profile1State extends State<Profile1> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final profileController =
-          Provider.of<ProfileController>(context, listen: false);
+      Provider.of<ProfileController>(context, listen: false);
       profileController.fetchProfileData(context);
     });
   }
@@ -249,591 +249,635 @@ class _Profile1State extends State<Profile1> {
             decoration: BoxDecoration(color: AppColor.primaryColor(context)),
             child: profileController.getIsLoading
                 ? Center(
-                    child: CircularProgressIndicator(
-                      color: AppColor.buttonColor,
-                    ),
-                  )
+              child: CircularProgressIndicator(
+                color: AppColor.buttonColor,
+              ),
+            )
                 : RefreshIndicator(
-                    onRefresh: () =>
-                        profileController.refreshProfileData(context),
-                    child: SingleChildScrollView(
-                      physics: const AlwaysScrollableScrollPhysics(),
-                      child: Padding(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 0.05,
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            SizedBox(height: size.height * 0.04),
+              onRefresh: () =>
+                  profileController.refreshProfileData(context),
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: size.width * 0.05,
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(height: size.height * 0.04),
 
-                            //! Header
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //! Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLanguage.yourProfileText[language],
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.secondryColor(context),
+                            ),
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType
+                                      .rightToLeftWithFade,
+                                  child: const Profile(),
+                                  duration:
+                                  const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                            child: Image.asset(
+                              AppImage.settingIcon,
+                              color: AppColor.secondryColor(context),
+                              width: size.width * 0.05,
+                              height: size.height * 0.06,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: size.height * 0.01),
+
+                      //! Profile Section
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Profile Image
+                          Container(
+                            width: size.width * 0.35,
+                            height: size.height * 0.20,
+                            decoration: const BoxDecoration(
+                              borderRadius: BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                            ),
+                            child: ClipRRect(
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(30),
+                              ),
+                              child: profileController
+                                  .getProfileImageUrl() !=
+                                  null
+                                  ? Image.network(
+                                profileController
+                                    .getProfileImageUrl()!,
+                                fit: BoxFit.cover,
+                                loadingBuilder: (context, child,
+                                    loadingProgress) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
+                                  final expectedBytes =
+                                      loadingProgress
+                                          .expectedTotalBytes;
+                                  final loadedBytes =
+                                      loadingProgress
+                                          .cumulativeBytesLoaded;
+                                  final progress = expectedBytes !=
+                                      null
+                                      ? loadedBytes / expectedBytes
+                                      : null;
+                                  return Container(
+                                    color: AppColor.statusbar,
+                                    child: Center(
+                                      child: SizedBox(
+                                        width: 34,
+                                        height: 34,
+                                        child:
+                                        CircularProgressIndicator(
+                                          strokeWidth: 3,
+                                          value: progress,
+                                          color:
+                                          AppColor.buttonColor,
+                                          backgroundColor: AppColor
+                                              .secondryColor(
+                                              context)
+                                              .withOpacity(0.2),
+                                        ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                                errorBuilder:
+                                    (context, error, stackTrace) {
+                                  return Image.asset(
+                                    AppImage.placeHolder2Icon,
+                                    fit: BoxFit.cover,
+                                  );
+                                },
+                              )
+                                  : Image.asset(
+                                AppImage.placeHolder2Icon,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
+                          ),
+                          SizedBox(width: size.width * 0.03),
+
+                          // Profile Text
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment:
+                              CrossAxisAlignment.start,
                               children: [
+                                SizedBox(height: size.height * 0.03),
                                 Text(
-                                  AppLanguage.yourProfileText[language],
+                                  profileController.name,
                                   style: TextStyle(
                                     fontSize: 20,
                                     fontWeight: FontWeight.w700,
                                     fontFamily: AppFont.fontFamily,
-                                    color: AppColor.secondryColor(context),
+                                    color:
+                                    AppColor.secondryColor(context),
                                   ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    Navigator.push(
-                                      context,
-                                      PageTransition(
-                                        type: PageTransitionType
-                                            .rightToLeftWithFade,
-                                        child: const Profile(),
-                                        duration:
-                                            const Duration(milliseconds: 500),
-                                      ),
-                                    );
-                                  },
-                                  child: Image.asset(
-                                    AppImage.settingIcon,
-                                    color: AppColor.secondryColor(context),
-                                    width: size.width * 0.05,
-                                    height: size.height * 0.06,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            SizedBox(height: size.height * 0.01),
-
-                            //! Profile Section
-                            Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                // Profile Image
-                                Container(
-                                  width: size.width * 0.35,
-                                  height: size.height * 0.20,
-                                  decoration: const BoxDecoration(
-                                    borderRadius: BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.all(
-                                      Radius.circular(30),
-                                    ),
-                                    child: profileController
-                                                .getProfileImageUrl() !=
-                                            null
-                                        ? Image.network(
-                                            profileController
-                                                .getProfileImageUrl()!,
-                                            fit: BoxFit.cover,
-                                            loadingBuilder: (context, child,
-                                                loadingProgress) {
-                                              if (loadingProgress == null) {
-                                                return child;
-                                              }
-                                              final expectedBytes =
-                                                  loadingProgress
-                                                      .expectedTotalBytes;
-                                              final loadedBytes =
-                                                  loadingProgress
-                                                      .cumulativeBytesLoaded;
-                                              final progress = expectedBytes !=
-                                                      null
-                                                  ? loadedBytes / expectedBytes
-                                                  : null;
-                                              return Container(
-                                                color: AppColor.statusbar,
-                                                child: Center(
-                                                  child: SizedBox(
-                                                    width: 34,
-                                                    height: 34,
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                      strokeWidth: 3,
-                                                      value: progress,
-                                                      color:
-                                                          AppColor.buttonColor,
-                                                      backgroundColor: AppColor
-                                                              .secondryColor(
-                                                                  context)
-                                                          .withOpacity(0.2),
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            },
-                                            errorBuilder:
-                                                (context, error, stackTrace) {
-                                              return Image.asset(
-                                                AppImage.placeHolder2Icon,
-                                                fit: BoxFit.cover,
-                                              );
-                                            },
-                                          )
-                                        : Image.asset(
-                                            AppImage.placeHolder2Icon,
-                                            fit: BoxFit.cover,
-                                          ),
-                                  ),
-                                ),
-                                SizedBox(width: size.width * 0.03),
-
-                                // Profile Text
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      SizedBox(height: size.height * 0.03),
-                                      Text(
-                                        profileController.name,
-                                        style: TextStyle(
-                                          fontSize: 20,
-                                          fontWeight: FontWeight.w700,
-                                          fontFamily: AppFont.fontFamily,
-                                          color:
-                                              AppColor.secondryColor(context),
-                                        ),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
-                                      SizedBox(height: size.height * 0.002),
-                                      profileController.hobbies.isNotEmpty
-                                          ? Text(
-                                              profileController
-                                                  .getHobbiesDisplayText(),
-                                              style: const TextStyle(
-                                                fontSize: 13.5,
-                                                fontWeight: FontWeight.w500,
-                                                fontFamily: AppFont.fontFamily,
-                                                color: AppColor.buttonColor,
-                                              ),
-                                              maxLines: 2,
-                                              overflow: TextOverflow.ellipsis,
-                                            )
-                                          : SizedBox(),
-                                      SizedBox(height: size.height * 0.01),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            '${profileController.totalFriends}',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                          SizedBox(width: size.width * 0.005),
-                                          Text(
-                                            AppLanguage.friends[language],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w400,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      SizedBox(height: size.height * 0.005),
-                                      Row(
-                                        children: [
-                                          Text(
-                                            '${profileController.totalLikes}',
-                                            style: TextStyle(
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w700,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                          Text(
-                                            AppLanguage.likes[language],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            //! Edit Buttons
-                            SizedBox(height: size.height * 0.02),
-                            Row(
-                              children: [
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: const EditProfile(),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      height: size.height * 0.05,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.statusbar,
-                                        borderRadius: BorderRadius.circular(50),
-                                      ),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        children: [
-                                          Image.asset(
-                                            AppImage.editIcon,
-                                            height: 20,
-                                            width: 20,
-                                            color: Colors.white,
-                                          ),
-                                          SizedBox(width: size.width * 0.01),
-                                          Text(
-                                            AppLanguage
-                                                .editDetailsText[language],
-                                            style: const TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: Colors.white,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(width: size.width * 0.03),
-                                Expanded(
-                                  child: GestureDetector(
-                                    onTap: () {
-                                      final galleryItems = profileController
-                                          .getGalleryItems()
-                                          .map((item) => {
-                                                'type':
-                                                    item['type']?.toString() ??
-                                                        'image',
-                                                'url':
-                                                    item['url']?.toString() ??
-                                                        '',
-                                                'thumbnail': item['thumbnail']
-                                                        ?.toString() ??
-                                                    '',
-                                              })
-                                          .toList();
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: EditSwipeProfile(
-                                            galleryItems: galleryItems,
-                                          ),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    },
-                                    child: Container(
-                                      height: size.height * 0.05,
-                                      decoration: BoxDecoration(
-                                        color: AppColor.buttonColor,
-                                        borderRadius: BorderRadius.circular(50),
-                                        border: Border.all(
-                                          color: AppColor.transparentColor,
-                                        ),
-                                      ),
-                                      child: Center(
-                                        child: Text(
-                                          AppLanguage
-                                              .editSwipeprofileText[language],
-                                          style: const TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
-                                            fontFamily: AppFont.fontFamily,
-                                            color: Colors.white,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.02)
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? Text(
-                                    AppLanguage.basicdetailstext[language],
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.secondryColor(context)),
-                                  )
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.01)
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      bottom: Radius.circular(30),
-                                      top: Radius.circular(30),
-                                    ),
-                                    child: Image.asset(
-                                      AppImage.lineIcon,
-                                      fit: BoxFit.cover,
-                                      color: AppColor.secondryColor(context),
-                                    ),
-                                  )
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.01)
-                                : SizedBox(),
-
-                            //! Bio Section
-                            profileController.bio.isNotEmpty
-                                ? Text(
-                                    AppLanguage.bioText[language],
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.secondryColor(context)),
-                                  )
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.01)
-                                : SizedBox(),
-                            Text(
-                              profileController.bio.isNotEmpty
-                                  ? profileController.bio
-                                  : "",
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  color: AppColor
-                                                        .greyLightColor(context)),
-                            ),
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.01)
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? ClipRRect(
-                                    borderRadius: const BorderRadius.vertical(
-                                      bottom: Radius.circular(30),
-                                      top: Radius.circular(30),
-                                    ),
-                                    child: Image.asset(
-                                      AppImage.lineIcon,
-                                      color: AppColor.secondryColor(context),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  )
-                                : SizedBox(),
-                            profileController.bio.isNotEmpty
-                                ? SizedBox(height: size.height * 0.02)
-                                : SizedBox(),
-
-                            //! Event Preferences Section
-                            Text(
-                              AppLanguage.eventPreferencetext[language],
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.secondryColor(context)),
-                            ),
-                            SizedBox(height: size.height * 0.01),
-                            _buildEventPreferences(context, profileController),
-                            SizedBox(height: size.height * 0.02),
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                bottom: Radius.circular(30),
-                                top: Radius.circular(30),
-                              ),
-                              child: Image.asset(
-                                AppImage.lineIcon,
-                                fit: BoxFit.cover,
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                            SizedBox(height: size.height * 0.02),
-
-                            //! Vibes Section
-                            Text(
-                              AppLanguage.vibe[language],
-                              style: TextStyle(
-                                  fontSize: 16,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w600,
-                                  color: AppColor.secondryColor(context)),
-                            ),
-                            SizedBox(height: size.height * 0.01),
-                            _buildVibesSection(context, profileController),
-                            SizedBox(height: size.height * 0.01),
-                            ClipRRect(
-                              borderRadius: const BorderRadius.vertical(
-                                bottom: Radius.circular(30),
-                                top: Radius.circular(30),
-                              ),
-                              child: Image.asset(
-                                AppImage.lineIcon,
-                                fit: BoxFit.cover,
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                            SizedBox(height: size.height * 0.02),
-
-                            //! Gallery Section
-                            Text(
-                              AppLanguage.GalleryText[language],
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w500,
-                                  color: AppColor.secondryColor(context)),
-                            ),
-                            SizedBox(height: size.height * 0.02),
-                            _buildGallerySection(context, profileController),
-                            SizedBox(height: size.height * 0.035),
-
-                            //! Social Media Section (Instagram)
-                            if (profileController.hasInstagram)
-                              _buildInstagramSection(
-                                  context, profileController),
-
-                            SizedBox(height: size.height * 0.025),
-
-                            //! Liked Events Section
-                            if (profileController.hasLikedEvents) ...[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppLanguage.likedEvents[language],
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: const ViewAllEventsScreen(),
-                                          duration:
-                                              const Duration(milliseconds: 400),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      AppLanguage.viewAlltext[language],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.pinkColor),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: size.height * 0.02),
-                              _buildLikedEventsSection(
-                                  context, profileController),
-                              SizedBox(height: size.height * 0.03),
-                            ],
-
-                            //! Followed Venues Section
-                            if (profileController.hasFollowedVenues) ...[
-                              Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Text(
-                                    AppLanguage.likedVenues1text[language],
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.push(
-                                        context,
-                                        PageTransition(
-                                          type: PageTransitionType
-                                              .rightToLeftWithFade,
-                                          child: const ViewAllVenuesScreen(),
-                                          duration:
-                                              const Duration(milliseconds: 500),
-                                        ),
-                                      );
-                                    },
-                                    child: Text(
-                                      AppLanguage.viewAlltext[language],
-                                      style: const TextStyle(
-                                          fontSize: 16,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          color: AppColor.pinkColor),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: size.height * 0.015),
-                              _buildFollowedVenuesSection(
-                                  context, profileController),
-                            ],
-                            SizedBox(height: size.height * 0.02),
-                            //! Top Artist Section
-                            if (profileController.hasTopArtist) ...[
-                              Text(
-                                AppLanguage.mytopArtistonspotifyText[language],
-                                style: TextStyle(
-                                    fontSize: 18,
-                                    fontFamily: AppFont.fontFamily,
+                                SizedBox(height: size.height * 0.002),
+                                profileController.hobbies.isNotEmpty
+                                    ? Text(
+                                  profileController
+                                      .getHobbiesDisplayText(),
+                                  style: const TextStyle(
+                                    fontSize: 13.5,
                                     fontWeight: FontWeight.w500,
-                                    color: AppColor.secondryColor(context)),
+                                    fontFamily: AppFont.fontFamily,
+                                    color: AppColor.buttonColor,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                )
+                                    : SizedBox(),
+                                SizedBox(height: size.height * 0.01),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${profileController.totalFriends}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.secondryColor(
+                                            context),
+                                      ),
+                                    ),
+                                    SizedBox(width: size.width * 0.005),
+                                    Text(
+                                      AppLanguage.friends[language],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w400,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.secondryColor(
+                                            context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: size.height * 0.005),
+                                Row(
+                                  children: [
+                                    Text(
+                                      '${profileController.totalLikes}',
+                                      style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.secondryColor(
+                                            context),
+                                      ),
+                                    ),
+                                    Text(
+                                      AppLanguage.likes[language],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.secondryColor(
+                                            context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      //! Edit Buttons
+                      SizedBox(height: size.height * 0.02),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType
+                                        .rightToLeftWithFade,
+                                    child: const EditProfile(),
+                                    duration:
+                                    const Duration(milliseconds: 500),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: size.height * 0.05,
+                                decoration: BoxDecoration(
+                                  color: AppColor.statusbar,
+                                  borderRadius: BorderRadius.circular(50),
+                                ),
+                                child: Row(
+                                  mainAxisAlignment:
+                                  MainAxisAlignment.center,
+                                  children: [
+                                    Image.asset(
+                                      AppImage.editIcon,
+                                      height: 20,
+                                      width: 20,
+                                      color: Colors.white,
+                                    ),
+                                    SizedBox(width: size.width * 0.01),
+                                    Text(
+                                      AppLanguage
+                                          .editDetailsText[language],
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                              SizedBox(height: size.height * 0.02),
-                              _buildTopArtistSection(
-                                  context, profileController),
-                            ],
-                            SizedBox(height: size.height * 0.15),
-                          ],
+                            ),
+                          ),
+                          SizedBox(width: size.width * 0.03),
+                          Expanded(
+                            child: GestureDetector(
+                              onTap: () {
+                                final galleryItems = profileController
+                                    .getGalleryItems()
+                                    .map((item) => {
+                                  'type':
+                                  item['type']?.toString() ??
+                                      'image',
+                                  'url':
+                                  item['url']?.toString() ??
+                                      '',
+                                  'thumbnail': item['thumbnail']
+                                      ?.toString() ??
+                                      '',
+                                })
+                                    .toList();
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType
+                                        .rightToLeftWithFade,
+                                    child: EditSwipeProfile(
+                                      galleryItems: galleryItems,
+                                    ),
+                                    duration:
+                                    const Duration(milliseconds: 500),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                height: size.height * 0.05,
+                                decoration: BoxDecoration(
+                                  color: AppColor.buttonColor,
+                                  borderRadius: BorderRadius.circular(50),
+                                  border: Border.all(
+                                    color: AppColor.transparentColor,
+                                  ),
+                                ),
+                                child: Center(
+                                  child: Text(
+                                    AppLanguage
+                                        .editSwipeprofileText[language],
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w500,
+                                      fontFamily: AppFont.fontFamily,
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.02)
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? Text(
+                        AppLanguage.basicdetailstext[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      )
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          fit: BoxFit.cover,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      )
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+
+                      //! Bio Section
+                      profileController.bio.isNotEmpty
+                          ? Text(
+                        AppLanguage.bioText[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      )
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+                      Text(
+                        profileController.bio.isNotEmpty
+                            ? profileController.bio
+                            : "",
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor
+                                .greyLightColor(context)),
+                      ),
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          color: AppColor.secondryColor(context),
+                          fit: BoxFit.cover,
+                        ),
+                      )
+                          : SizedBox(),
+                      profileController.bio.isNotEmpty
+                          ? SizedBox(height: size.height * 0.02)
+                          : SizedBox(),
+
+                      //! I'm looking for Section
+                      profileController.hasInterestedIn
+                          ? Text(
+                        AppLanguage.imLookingForText[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      )
+                          : SizedBox(),
+                      profileController.hasInterestedIn
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+                      profileController.hasInterestedIn
+                          ? Text(
+                        profileController.interestedIn,
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w400,
+                            color: AppColor.greyLightColor(context)),
+                      )
+                          : SizedBox(),
+                      profileController.hasInterestedIn
+                          ? SizedBox(height: size.height * 0.01)
+                          : SizedBox(),
+                      profileController.hasInterestedIn
+                          ? ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          fit: BoxFit.cover,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      )
+                          : SizedBox(),
+                      profileController.hasInterestedIn
+                          ? SizedBox(height: size.height * 0.02)
+                          : SizedBox(),
+
+                      //! Event Preferences Section
+                      Text(
+                        AppLanguage.eventPreferencetext[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      ),
+                      SizedBox(height: size.height * 0.01),
+                      _buildEventPreferences(context, profileController),
+                      SizedBox(height: size.height * 0.02),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          fit: BoxFit.cover,
+                          color: AppColor.secondryColor(context),
                         ),
                       ),
-                    ),
+                      SizedBox(height: size.height * 0.02),
+
+                      //! Vibes Section
+                      Text(
+                        AppLanguage.vibe[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      ),
+                      SizedBox(height: size.height * 0.01),
+                      _buildVibesSection(context, profileController),
+                      SizedBox(height: size.height * 0.01),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          fit: BoxFit.cover,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.02),
+
+                      //! Gallery Section
+                      Text(
+                        AppLanguage.GalleryText[language],
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w500,
+                            color: AppColor.secondryColor(context)),
+                      ),
+                      SizedBox(height: size.height * 0.02),
+                      _buildGallerySection(context, profileController),
+                      SizedBox(height: size.height * 0.035),
+
+                      //! Social Media Section (Instagram)
+                      if (profileController.hasInstagram)
+                        _buildInstagramSection(
+                            context, profileController),
+
+                      SizedBox(height: size.height * 0.025),
+
+                      //! Liked Events Section
+                      if (profileController.hasLikedEvents) ...[
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppLanguage.likedEvents[language],
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.secondryColor(context)),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType
+                                        .rightToLeftWithFade,
+                                    child: const ViewAllEventsScreen(),
+                                    duration:
+                                    const Duration(milliseconds: 400),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                AppLanguage.viewAlltext[language],
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.pinkColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: size.height * 0.02),
+                        _buildLikedEventsSection(
+                            context, profileController),
+                        SizedBox(height: size.height * 0.03),
+                      ],
+
+                      //! Followed Venues Section
+                      if (profileController.hasFollowedVenues) ...[
+                        Row(
+                          mainAxisAlignment:
+                          MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              AppLanguage.likedVenues1text[language],
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColor.secondryColor(context)),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  PageTransition(
+                                    type: PageTransitionType
+                                        .rightToLeftWithFade,
+                                    child: const ViewAllVenuesScreen(),
+                                    duration:
+                                    const Duration(milliseconds: 500),
+                                  ),
+                                );
+                              },
+                              child: Text(
+                                AppLanguage.viewAlltext[language],
+                                style: const TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.pinkColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: size.height * 0.015),
+                        _buildFollowedVenuesSection(
+                            context, profileController),
+                      ],
+                      SizedBox(height: size.height * 0.02),
+                      //! Top Artist Section
+                      if (profileController.hasTopArtist) ...[
+                        Text(
+                          AppLanguage.mytopArtistonspotifyText[language],
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w500,
+                              color: AppColor.secondryColor(context)),
+                        ),
+                        SizedBox(height: size.height * 0.02),
+                        _buildTopArtistSection(
+                            context, profileController),
+                      ],
+                      SizedBox(height: size.height * 0.15),
+                    ],
                   ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -846,12 +890,12 @@ class _Profile1State extends State<Profile1> {
     final displayList = ['Add new', ...eventPreferences];
     final preSelectedEventIds = controller.eventPreferences
         .map((pref) {
-          if (pref is Map) {
-            final dynamic rawId = pref['event_id'] ?? pref['_id'] ?? pref['id'];
-            return rawId?.toString() ?? '';
-          }
-          return '';
-        })
+      if (pref is Map) {
+        final dynamic rawId = pref['event_id'] ?? pref['_id'] ?? pref['id'];
+        return rawId?.toString() ?? '';
+      }
+      return '';
+    })
         .where((id) => id.isNotEmpty)
         .toSet();
     final String initialCustomEvent = controller.customEventPreferences
@@ -864,7 +908,7 @@ class _Profile1State extends State<Profile1> {
       runSpacing: 8,
       children: List.generate(
         displayList.length,
-        (index) {
+            (index) {
           bool isAddNew = index == 0;
           String title = displayList[index];
           bool isSelected = selectedId == index;
@@ -872,23 +916,23 @@ class _Profile1State extends State<Profile1> {
           return GestureDetector(
             onTap: isAddNew
                 ? () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: EditEventPreference(
-                          initialSelectedEventIds: preSelectedEventIds,
-                          initialCustomEvent: initialCustomEvent,
-                        ),
-                        duration: const Duration(milliseconds: 400),
-                      ),
-                    );
-                  }
+              Navigator.push(
+                context,
+                PageTransition(
+                  type: PageTransitionType.rightToLeftWithFade,
+                  child: EditEventPreference(
+                    initialSelectedEventIds: preSelectedEventIds,
+                    initialCustomEvent: initialCustomEvent,
+                  ),
+                  duration: const Duration(milliseconds: 400),
+                ),
+              );
+            }
                 : () {
-                    setState(() {
-                      selectedId = index;
-                    });
-                  },
+              setState(() {
+                selectedId = index;
+              });
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
               decoration: BoxDecoration(
@@ -897,10 +941,10 @@ class _Profile1State extends State<Profile1> {
                 border: Border.all(
                   color: isAddNew
                       ? AppColor
-                                                        .greyLightColor(context)
+                      .greyLightColor(context)
                       : (isSelected
-                          ? AppColor.buttonColor
-                          : AppColor.buttonColor),
+                      ? AppColor.buttonColor
+                      : AppColor.buttonColor),
                 ),
               ),
               child: Text(
@@ -913,8 +957,8 @@ class _Profile1State extends State<Profile1> {
                   color: isAddNew
                       ? Colors.grey
                       : (isSelected
-                          ? AppColor.buttonColor
-                          : AppColor.buttonColor),
+                      ? AppColor.buttonColor
+                      : AppColor.buttonColor),
                 ),
               ),
             ),
@@ -930,24 +974,24 @@ class _Profile1State extends State<Profile1> {
     final customVibes = controller.getCustomVibeNames();
     final preSelectedVibeIds = controller.vibes
         .map((vibe) {
-          if (vibe is Map) {
-            final dynamic rawId = vibe['vibe_id'] ?? vibe['_id'] ?? vibe['id'];
-            return rawId?.toString() ?? '';
-          }
-          return '';
-        })
+      if (vibe is Map) {
+        final dynamic rawId = vibe['vibe_id'] ?? vibe['_id'] ?? vibe['id'];
+        return rawId?.toString() ?? '';
+      }
+      return '';
+    })
         .where((id) => id.isNotEmpty)
         .toSet();
 
     final allItems = [
       ...vibeItems.map((vibe) => {
-            'name': vibe['name']?.toString() ?? '',
-            'image': vibe['image']?.toString() ?? '',
-          }),
+        'name': vibe['name']?.toString() ?? '',
+        'image': vibe['image']?.toString() ?? '',
+      }),
       ...customVibes.map((name) => {
-            'name': name,
-            'image': '',
-          }),
+        'name': name,
+        'image': '',
+      }),
     ];
 
     return SizedBox(
@@ -1029,26 +1073,26 @@ class _Profile1State extends State<Profile1> {
                   padding: const EdgeInsets.all(12),
                   child: imageUrl.isNotEmpty
                       ? ClipRRect(
-                          borderRadius: BorderRadius.circular(22),
-                          child: Image.network(
-                            imageUrl,
-                            fit: BoxFit.cover,
-                            errorBuilder: (context, error, stackTrace) {
-                              return Icon(
-                                Icons.music_note,
-                                size: 15,
-                                color: AppColor.secondryColor(context)
-                                    .withOpacity(0.3),
-                              );
-                            },
-                          ),
-                        )
-                      : Icon(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
                           Icons.music_note,
                           size: 15,
-                          color:
-                              AppColor.secondryColor(context).withOpacity(0.3),
-                        ),
+                          color: AppColor.secondryColor(context)
+                              .withOpacity(0.3),
+                        );
+                      },
+                    ),
+                  )
+                      : Icon(
+                    Icons.music_note,
+                    size: 15,
+                    color:
+                    AppColor.secondryColor(context).withOpacity(0.3),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
@@ -1080,7 +1124,7 @@ class _Profile1State extends State<Profile1> {
     final galleryItems = controller
         .getGalleryItems()
         .where((item) =>
-            !_hiddenRemoteGalleryUrls.contains((item['url'] ?? '').toString()))
+    !_hiddenRemoteGalleryUrls.contains((item['url'] ?? '').toString()))
         .toList();
     final localItems = _selectedMediaList;
     final totalGalleryCount = localItems.length + galleryItems.length;
@@ -1111,7 +1155,7 @@ class _Profile1State extends State<Profile1> {
           'source': file,
         };
       }).where(
-          (m) => (m['url'] ?? '').isNotEmpty || (m['source'] ?? '').isNotEmpty),
+              (m) => (m['url'] ?? '').isNotEmpty || (m['source'] ?? '').isNotEmpty),
       ...galleryItems.map((item) {
         final type = item['type']?.toString() ?? 'image';
         final url = item['url']?.toString() ?? '';
@@ -1123,7 +1167,7 @@ class _Profile1State extends State<Profile1> {
           'source': url,
         };
       }).where(
-          (m) => (m['url'] ?? '').isNotEmpty || (m['source'] ?? '').isNotEmpty),
+              (m) => (m['url'] ?? '').isNotEmpty || (m['source'] ?? '').isNotEmpty),
     ];
 
     return SizedBox(
@@ -1153,7 +1197,7 @@ class _Profile1State extends State<Profile1> {
             final isVideo = item['type'] == 'video';
             final thumb = item['thumbnail'] ?? '';
             final displayPath =
-                isVideo && thumb.isNotEmpty ? thumb : (item['file'] ?? '');
+            isVideo && thumb.isNotEmpty ? thumb : (item['file'] ?? '');
             final hasFile =
                 displayPath.isNotEmpty && File(displayPath).existsSync();
 
@@ -1181,15 +1225,15 @@ class _Profile1State extends State<Profile1> {
                       borderRadius: BorderRadius.circular(20),
                       child: hasFile
                           ? Image.file(
-                              File(displayPath),
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                            )
+                        File(displayPath),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                      )
                           : Image.asset(
-                              AppImage.dogImage,
-                              fit: BoxFit.cover,
-                            ),
+                        AppImage.dogImage,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     if (isVideo)
                       const Positioned.fill(
@@ -1269,21 +1313,21 @@ class _Profile1State extends State<Profile1> {
                       borderRadius: BorderRadius.circular(20),
                       child: displayUrl != null && displayUrl.isNotEmpty
                           ? Image.network(
-                              displayUrl,
-                              fit: BoxFit.cover,
-                              width: double.infinity,
-                              height: double.infinity,
-                              errorBuilder: (context, error, stackTrace) {
-                                return Image.asset(
-                                  AppImage.dogImage,
-                                  fit: BoxFit.cover,
-                                );
-                              },
-                            )
+                        displayUrl,
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: double.infinity,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Image.asset(
+                            AppImage.dogImage,
+                            fit: BoxFit.cover,
+                          );
+                        },
+                      )
                           : Image.asset(
-                              AppImage.dogImage,
-                              fit: BoxFit.cover,
-                            ),
+                        AppImage.dogImage,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                     if (isVideo)
                       const Positioned.fill(
@@ -1302,8 +1346,8 @@ class _Profile1State extends State<Profile1> {
                           final shouldDelete = await _confirmDeleteMedia();
                           if (!shouldDelete || !mounted) return;
                           final res = await Provider.of<PostApiProvider>(
-                                  context,
-                                  listen: false)
+                              context,
+                              listen: false)
                               .deleteGalleryItemApi(context, apiUrl);
                           if (!mounted) return;
                           if (res != null && res['success'] == true) {
@@ -1397,7 +1441,7 @@ class _Profile1State extends State<Profile1> {
                 ),
                 Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+                  const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
                   decoration: BoxDecoration(
                     color: AppColor.buttonColor,
                     borderRadius: BorderRadius.circular(50),
@@ -1442,7 +1486,7 @@ class _Profile1State extends State<Profile1> {
 
   Future<void> _openInstagramProfile() async {
     final profileController =
-        Provider.of<ProfileController>(context, listen: false);
+    Provider.of<ProfileController>(context, listen: false);
     final uri = _instagramUriFromValue(profileController.instagram);
     if (uri == null) return;
 
@@ -1473,10 +1517,10 @@ class _Profile1State extends State<Profile1> {
   }
 
   Widget _buildAdaptiveImage(
-    String imagePath, {
-    BoxFit fit = BoxFit.cover,
-    String fallbackAsset = AppImage.placeHolder2Icon,
-  }) {
+      String imagePath, {
+        BoxFit fit = BoxFit.cover,
+        String fallbackAsset = AppImage.placeHolder2Icon,
+      }) {
     if (isNetworkUrl(imagePath)) {
       return Image.network(
         imagePath,
@@ -1507,7 +1551,7 @@ class _Profile1State extends State<Profile1> {
       child: ListView.builder(
         scrollDirection: Axis.horizontal,
         itemCount:
-            controller.likedEvents.isEmpty ? 1 : controller.likedEvents.length,
+        controller.likedEvents.isEmpty ? 1 : controller.likedEvents.length,
         itemBuilder: (context, index) {
           if (controller.likedEvents.isEmpty) {
             return _recentEventCard(
@@ -1570,14 +1614,14 @@ class _Profile1State extends State<Profile1> {
               Positioned.fill(
                 child: isNetwork
                     ? _buildAdaptiveImage(
-                        image,
-                        fit: BoxFit.cover,
-                        fallbackAsset: AppImage.dummyImageIcon,
-                      )
+                  image,
+                  fit: BoxFit.cover,
+                  fallbackAsset: AppImage.dummyImageIcon,
+                )
                     : Image.asset(
-                        AppImage.dummyImageIcon,
-                        fit: BoxFit.cover,
-                      ),
+                  AppImage.dummyImageIcon,
+                  fit: BoxFit.cover,
+                ),
               ),
 
               // Gradient Overlay (more black at bottom)
@@ -1723,10 +1767,10 @@ class _Profile1State extends State<Profile1> {
   }
 
   Widget _venueCard(
-    String imagePath, {
-    String venueName = "",
-    bool isNetwork = false,
-  }) {
+      String imagePath, {
+        String venueName = "",
+        bool isNetwork = false,
+      }) {
     final size = MediaQuery.of(context).size;
     final double cardWidth = 125 * size.width / 375;
     final double cardHeight = 150 * size.width / 375;
@@ -1752,14 +1796,14 @@ class _Profile1State extends State<Profile1> {
             Expanded(
               child: isNetwork
                   ? _buildAdaptiveImage(
-                      imagePath,
-                      fit: BoxFit.cover,
-                      fallbackAsset: AppImage.dummyImageIcon,
-                    )
+                imagePath,
+                fit: BoxFit.cover,
+                fallbackAsset: AppImage.dummyImageIcon,
+              )
                   : Image.asset(
-                      AppImage.dummyImageIcon,
-                      fit: BoxFit.cover,
-                    ),
+                AppImage.dummyImageIcon,
+                fit: BoxFit.cover,
+              ),
             ),
           ],
         ),
@@ -1798,9 +1842,9 @@ class _Profile1State extends State<Profile1> {
   }
 
   Widget _buildArtistChip(
-    BuildContext context,
-    String artistName,
-  ) {
+      BuildContext context,
+      String artistName,
+      ) {
     final size = MediaQuery.of(context).size;
 
     return Container(

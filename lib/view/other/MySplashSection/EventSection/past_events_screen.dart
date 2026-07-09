@@ -47,7 +47,9 @@ class _PastEventScreenState extends State<PastEventScreen> {
               floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
               floatingActionButton: Padding(
-                padding: const EdgeInsets.only(bottom: 40),
+                padding: EdgeInsets.only(
+                  bottom: 40 + MediaQuery.of(context).padding.bottom,
+                ),
                 child: AppButton(
                     text: '${AppLanguage.submitButtonText[language]}',
                     onPress: () {}),

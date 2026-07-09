@@ -165,7 +165,9 @@ class _CityPreferenceState extends State<CityPreference> {
                 floatingActionButtonLocation:
                     FloatingActionButtonLocation.centerFloat,
                 floatingActionButton: Padding(
-                  padding: const EdgeInsets.only(bottom: 40),
+                  padding: EdgeInsets.only(
+                    bottom: 40 + MediaQuery.of(context).padding.bottom,
+                  ),
                   child: AppButton(
                     text: controller.allCitiesConfigured
                         ? AppLanguage.continueText[language]

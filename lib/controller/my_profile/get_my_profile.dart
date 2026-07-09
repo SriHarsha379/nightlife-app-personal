@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:mime/mime.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
+import 'package:night_life/utilities/url_utils.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
 
@@ -23,6 +24,8 @@ class ProfileController with ChangeNotifier {
   String get name => _profileData?['name'] ?? 'User';
   String? get profileImage => _profileData?['profile_image'];
   String get bio => _profileData?['bio'] ?? '';
+  String get interestedIn => _profileData?['interested_in'] ?? '';
+  bool get hasInterestedIn => interestedIn.trim().isNotEmpty;
   List<dynamic> get hobbies => _profileData?['hobbies'] ?? [];
   List<dynamic> get interests => _profileData?['interests'] ?? [];
   List<dynamic> get eventPreferences =>
@@ -104,7 +107,7 @@ class ProfileController with ChangeNotifier {
   // Get profile image URL
   String? getProfileImageUrl() {
     if (profileImage != null && profileImage!.isNotEmpty) {
-      return '${AppConfigProvider.imageUrl}$profileImage';
+      return resolveImageUrl(profileImage, AppConfigProvider.imageUrl);
     }
     return null;
   }
@@ -112,7 +115,7 @@ class ProfileController with ChangeNotifier {
   // Get vibe image URL
   String getVibeImageUrl(String image) {
     if (image.isNotEmpty) {
-      return '${AppConfigProvider.imageUrl}$image';
+      return resolveImageUrl(image, AppConfigProvider.imageUrl);
     }
     return '';
   }
@@ -120,7 +123,7 @@ class ProfileController with ChangeNotifier {
   // Get gallery item URL
   String getGalleryItemUrl(String url) {
     if (url.isNotEmpty) {
-      return '${AppConfigProvider.imageUrl}$url';
+      return resolveImageUrl(url, AppConfigProvider.imageUrl);
     }
     return '';
   }
@@ -130,7 +133,7 @@ class ProfileController with ChangeNotifier {
     if (topArtist != null && topArtist!['image'] != null) {
       String image = topArtist!['image'];
       if (image != 'default-artist.jpg') {
-        return '${AppConfigProvider.imageUrl}$image';
+        return resolveImageUrl(image, AppConfigProvider.imageUrl);
       }
     }
     return null;

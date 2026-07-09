@@ -219,7 +219,9 @@ class _CompletePaymentState extends State<CompletePayment>
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Padding(
-            padding: const EdgeInsets.only(bottom: 40),
+            padding: EdgeInsets.only(
+              bottom: 40 + MediaQuery.of(context).padding.bottom,
+            ),
             child: Consumer<BookingEventDetails>(
               builder: (context, controller, _) {
                 return AppButton(

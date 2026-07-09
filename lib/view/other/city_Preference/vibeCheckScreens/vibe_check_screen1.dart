@@ -97,7 +97,9 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: const EdgeInsets.only(bottom: 30),
+          padding: EdgeInsets.only(
+            bottom: 30 + MediaQuery.of(context).padding.bottom,
+          ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

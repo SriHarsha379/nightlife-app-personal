@@ -28,7 +28,7 @@ class AdditionalInfoScreen extends StatefulWidget {
 class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   TextEditingController BioTextEditingController = TextEditingController();
   TextEditingController instagramTextEditingController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController spotifyTextEditingController = TextEditingController();
   TextEditingController snapchattexteditingController = TextEditingController();
   TextEditingController genderTextEditingController = TextEditingController();
@@ -105,13 +105,17 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   }
 
   void _addHobby(String hobby) {
+    // Kept for the individual-row edit flow only (_editHobby handles edits);
+    // this direct-add path is no longer used now that hobbies are chosen via
+    // the chip picker in _showAddHobbyBottomSheet, but left here in case any
+    // other screen calls it directly.
     if (hobby.trim().isEmpty) {
       SnackBarToastMessage.showSnackBar(context, "Please enter a hobby");
       return;
     }
 
     if (hobbies.any(
-        (element) => element.toLowerCase() == hobby.trim().toLowerCase())) {
+            (element) => element.toLowerCase() == hobby.trim().toLowerCase())) {
       SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
@@ -134,8 +138,8 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
         .asMap()
         .entries
         .any((entry) =>
-            entry.key != index &&
-            entry.value.toLowerCase() == newHobby.trim().toLowerCase())) {
+    entry.key != index &&
+        entry.value.toLowerCase() == newHobby.trim().toLowerCase())) {
       SnackBarToastMessage.showSnackBar(context, "This hobby already exists");
       return;
     }
@@ -216,25 +220,27 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
         onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
         child: Scaffold(
           floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
+          FloatingActionButtonLocation.centerFloat,
           floatingActionButton: Consumer<PostApiProvider>(
             builder: (context, apiprovider, child) {
               return Padding(
-                padding: const EdgeInsets.only(bottom: 24),
+                padding: EdgeInsets.only(
+                  bottom: 24 + MediaQuery.of(context).padding.bottom,
+                ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     apiprovider.loading
                         ? const CircularProgressIndicator(
-                            color: AppColor.pinkColor,
-                          )
+                      color: AppColor.pinkColor,
+                    )
                         : AppButton(
-                            text: AppLanguage.continueText[language],
-                            onPress: () {
-                              FocusScope.of(context).unfocus();
-                              AdditionalInfoValidation();
-                            },
-                          ),
+                      text: AppLanguage.continueText[language],
+                      onPress: () {
+                        FocusScope.of(context).unfocus();
+                        AdditionalInfoValidation();
+                      },
+                    ),
                     const SizedBox(height: 16),
                     GestureDetector(
                       onTap: () {
@@ -303,14 +309,14 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                         },
                                         child: SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               4 /
                                               100,
                                           child: SizedBox(
                                             height: MediaQuery.of(context)
-                                                    .size
-                                                    .height *
+                                                .size
+                                                .height *
                                                 5 /
                                                 100,
                                             child: Image.asset(
@@ -323,9 +329,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       ),
                                       SizedBox(
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                80 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            80 /
+                                            100,
                                         child: Center(
                                           child: Text(
                                             textAlign: TextAlign.center,
@@ -345,9 +351,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   ),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              1.5 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          1.5 /
+                                          100),
                                 ],
                               ),
                               SizedBox(
@@ -367,7 +373,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       100,
                                   child: CustomTextField(
                                     hintText:
-                                        AppLanguage.bioOptionalText[language],
+                                    AppLanguage.bioOptionalText[language],
                                     maxLength: AppConstant.fullNameText,
                                     // keyboardType: TextInputType.name,
                                     controller: BioTextEditingController,
@@ -396,29 +402,29 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       children: [
                                         SizedBox(
                                             width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 6 /
                                                 100),
                                         Image.asset(
                                           AppImage.instagramIcon,
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               6 /
                                               100,
                                           height: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               6 /
                                               100,
                                           color: AppColor
-                                                        .greyLightColor(context),
+                                              .greyLightColor(context),
                                         ),
                                         SizedBox(
                                             width: MediaQuery.of(context)
-                                                    .size
-                                                    .width *
+                                                .size
+                                                .width *
                                                 3 /
                                                 100),
                                       ],
@@ -456,7 +462,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                         color: isDark
                                             ? AppColor.buttonColor
                                             : AppColor
-                                                        .greyLightColor(context),
+                                            .greyLightColor(context),
                                         width: 1,
                                       ),
                                     ),
@@ -475,7 +481,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     hintText: AppLanguage
                                         .yourInstagramProfileText[language],
                                     hintStyle:
-                                        AppConstant.textFilledStyle(context),
+                                    AppConstant.textFilledStyle(context),
                                     contentPadding: const EdgeInsets.symmetric(
                                       horizontal: 30,
                                       vertical: 15,
@@ -504,27 +510,27 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     children: [
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               6 /
                                               100),
                                       Image.asset(
                                         AppImage.spotifyIcon,
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         height:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         color: AppColor
-                                                        .greyLightColor(context),
+                                            .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               3 /
                                               100),
                                     ],
@@ -562,7 +568,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       color: isDark
                                           ? AppColor.buttonColor
                                           : AppColor
-                                                        .greyLightColor(context),
+                                          .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -581,7 +587,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   hintText: AppLanguage
                                       .yourSpotifyaccountText[language],
                                   hintStyle:
-                                      AppConstant.textFilledStyle(context),
+                                  AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -609,27 +615,27 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     children: [
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               6 /
                                               100),
                                       Image.asset(
                                         AppImage.snapchatIcon,
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         height:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         color: AppColor
-                                                        .greyLightColor(context),
+                                            .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               3 /
                                               100),
                                     ],
@@ -648,7 +654,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       color: isDark
                                           ? AppColor.buttonColor
                                           : AppColor
-                                                        .greyLightColor(context),
+                                          .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -667,7 +673,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   hintText: AppLanguage
                                       .yourSnapchataccountText[language],
                                   hintStyle:
-                                      AppConstant.textFilledStyle(context),
+                                  AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -694,27 +700,27 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     children: [
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               6 /
                                               100),
                                       Image.asset(
                                         AppImage.hobbiesImage,
                                         width:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         height:
-                                            MediaQuery.of(context).size.width *
-                                                6 /
-                                                100,
+                                        MediaQuery.of(context).size.width *
+                                            6 /
+                                            100,
                                         color: AppColor
-                                                        .greyLightColor(context),
+                                            .greyLightColor(context),
                                       ),
                                       SizedBox(
                                           width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
+                                              .size
+                                              .width *
                                               3 /
                                               100),
                                     ],
@@ -733,7 +739,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                       color: isDark
                                           ? AppColor.buttonColor
                                           : AppColor
-                                                        .greyLightColor(context),
+                                          .greyLightColor(context),
                                       width: 1,
                                     ),
                                   ),
@@ -750,9 +756,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   filled: true,
                                   counterText: '',
                                   hintText:
-                                      AppLanguage.yourHobbiesText[language],
+                                  AppLanguage.yourHobbiesText[language],
                                   hintStyle:
-                                      AppConstant.textFilledStyle(context),
+                                  AppConstant.textFilledStyle(context),
                                   contentPadding: const EdgeInsets.symmetric(
                                     horizontal: 30,
                                     vertical: 15,
@@ -783,7 +789,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                         boxShadow: [
                                           BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.05),
+                                            Colors.black.withOpacity(0.05),
                                             blurRadius: 4,
                                             offset: const Offset(0, 2),
                                           ),
@@ -834,7 +840,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
 
                               SizedBox(
                                 height:
-                                    MediaQuery.of(context).size.height * 0.22,
+                                MediaQuery.of(context).size.height * 0.22,
                               ),
                             ],
                           ),
@@ -858,103 +864,265 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     });
   }
 
-  // Add Hobby Bottom Sheet
+  // Preset hobby options shown as selectable chips. Feel free to tweak
+  // this list - it's a plain data list, not tied to any backend schema.
+  static const List<Map<String, String>> _hobbyOptions = [
+    {'emoji': '🎮', 'label': 'Gaming'},
+    {'emoji': '💃', 'label': 'Dancing'},
+    {'emoji': '🎵', 'label': 'Music'},
+    {'emoji': '🎬', 'label': 'Movies'},
+    {'emoji': '📸', 'label': 'Photography'},
+    {'emoji': '✈️', 'label': 'Travel'},
+    {'emoji': '👗', 'label': 'Fashion'},
+    {'emoji': '📚', 'label': 'Reading'},
+    {'emoji': '✍️', 'label': 'Writing'},
+    {'emoji': '🌿', 'label': 'Nature'},
+    {'emoji': '🎨', 'label': 'Painting'},
+    {'emoji': '⚽', 'label': 'Football'},
+    {'emoji': '🏋️', 'label': 'Fitness'},
+    {'emoji': '🍳', 'label': 'Cooking'},
+    {'emoji': '🧘', 'label': 'Yoga'},
+    {'emoji': '🐾', 'label': 'Pets'},
+    {'emoji': '🚗', 'label': 'Cars'},
+    {'emoji': '🍸', 'label': 'Mixology'},
+    {'emoji': '🎧', 'label': 'DJing'},
+    {'emoji': '🏖️', 'label': 'Beach'},
+  ];
+
+  static const int _maxHobbies = 5;
+
+  // Add Hobby Bottom Sheet - chip-based multi-select with a custom-entry
+  // fallback for hobbies not in the preset list.
   void _showAddHobbyBottomSheet() {
     hobbyInputController.clear();
+
+    // Working copy so Cancel doesn't affect the real list until "Done".
+    final Set<String> tempSelected = hobbies.toSet();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            decoration: const BoxDecoration(
-              color: AppColor.themeColor,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            void toggle(String label) {
+              final alreadySelected = tempSelected
+                  .any((h) => h.toLowerCase() == label.toLowerCase());
+              if (alreadySelected) {
+                setSheetState(() {
+                  tempSelected.removeWhere(
+                          (h) => h.toLowerCase() == label.toLowerCase());
+                });
+                return;
+              }
+              if (tempSelected.length >= _maxHobbies) {
+                SnackBarToastMessage.showSnackBar(
+                    context, "You can select up to $_maxHobbies hobbies");
+                return;
+              }
+              setSheetState(() => tempSelected.add(label));
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Add a hobby",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: AppFont.fontFamily,
-                    color: Colors.white,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                decoration: const BoxDecoration(
+                  color: AppColor.themeColor,
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildTextField(
-                  context: context,
-                  hint: "Type here...",
-                  controller: hobbyInputController,
-                  // inputFormatters: AppConstant.alphabetFormatter,
-                ),
-                const SizedBox(height: 20),
-                Row(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: AppColor.primaryColor(context),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
+                    Text(
+                      "Select your hobbies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFont.fontFamily,
+                        color: Colors.white,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Pick up to $_maxHobbies, or add your own",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: AppFont.fontFamily,
+                        color: Colors.white.withOpacity(0.6),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: _hobbyOptions.map((option) {
+                            final label = option['label']!;
+                            final isSelected = tempSelected
+                                .any((h) => h.toLowerCase() == label.toLowerCase());
+                            return GestureDetector(
+                              onTap: () => toggle(label),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColor.pinkColor.withOpacity(0.18)
+                                      : AppColor.primaryColor(context),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColor.pinkColor
+                                        : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(option['emoji']!,
+                                        style: const TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      label,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    if (isSelected) ...[
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.check,
+                                          size: 14, color: AppColor.pinkColor),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          _addHobby(hobbyInputController.text);
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: AppColor.pinkColor,
-                            borderRadius: BorderRadius.circular(8),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            context: context,
+                            hint: "Not listed? Type your own...",
+                            controller: hobbyInputController,
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Add",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
+                        ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            final custom = hobbyInputController.text.trim();
+                            if (custom.isEmpty) return;
+                            final alreadySelected = tempSelected.any(
+                                    (h) => h.toLowerCase() == custom.toLowerCase());
+                            if (alreadySelected) {
+                              SnackBarToastMessage.showSnackBar(
+                                  context, "This hobby already exists");
+                              return;
+                            }
+                            if (tempSelected.length >= _maxHobbies) {
+                              SnackBarToastMessage.showSnackBar(context,
+                                  "You can select up to $_maxHobbies hobbies");
+                              return;
+                            }
+                            setSheetState(() => tempSelected.add(custom));
+                            hobbyInputController.clear();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: const BoxDecoration(
+                              color: AppColor.pinkColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.add,
+                                color: Colors.white, size: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppColor.primaryColor(context),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                hobbies = tempSelected.toList();
+                                _updateHobbiesDisplay();
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppColor.pinkColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Done",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -1148,13 +1316,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       children: [
                         SizedBox(
                             height:
-                                MediaQuery.of(context).size.height * 5 / 100),
+                            MediaQuery.of(context).size.height * 5 / 100),
                         Expanded(
                           flex: 1,
                           child: SingleChildScrollView(
                             child: SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 90 / 100,
+                              MediaQuery.of(context).size.width * 90 / 100,
                               child: Column(
                                 children: [
                                   SizedBox(
@@ -1172,29 +1340,29 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   ),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              1 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          1 /
+                                          100),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              5 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          5 /
+                                          100),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              3 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          3 /
+                                          100),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              3 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          3 /
+                                          100),
                                   SizedBox(
                                       height:
-                                          MediaQuery.of(context).size.height *
-                                              1 /
-                                              100),
+                                      MediaQuery.of(context).size.height *
+                                          1 /
+                                          100),
                                 ],
                               ),
                             ),

@@ -101,7 +101,9 @@ class _EventPreferenceState extends State<EventPreference> {
         floatingActionButton: Consumer<EventPreferenceController>(
           builder: (context, controller, child) {
             return Padding(
-              padding: const EdgeInsets.only(bottom: 20),
+              padding: EdgeInsets.only(
+                bottom: 20 + MediaQuery.of(context).padding.bottom,
+              ),
               child: AppButton(
                 text: '${AppLanguage.continueText[language]}',
                 onPress: () {
