@@ -70,6 +70,14 @@ class _HomeState extends State<Home> {
   bool showHeart = false;
   bool showCross = false;
   String? lastSwipeType; // 'heart' or 'cross'
+  // The stamp ('NOPE'/'LIKE') must be tied to the specific member/event/venue
+  // that was actually swiped, not a numeric index - _visibleItems() filters
+  // out swiped items immediately, which shifts every subsequent item's index
+  // down by one. Tracking by index meant the card that slid into the
+  // now-vacant index (a completely different profile) would incorrectly
+  // inherit the stamp. IDs stay stable regardless of list reshuffling.
+  String? _lastSwipedCardId;
+  String? _lastSwipedTabType; // 'member' | 'event' | 'venue'
   bool isSend = true;
   final CardSwiperController membersSwiperController = CardSwiperController();
   final CardSwiperController eventsSwiperController = CardSwiperController();
@@ -752,6 +760,8 @@ class _HomeState extends State<Home> {
         showCross = true;
         showHeart = false;
         lastSwipeType = 'accept';
+        _lastSwipedCardId = (previousIndex < membersList.length) ? (membersList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'member';
       });
 
       if (previousIndex < membersList.length) {
@@ -786,6 +796,8 @@ class _HomeState extends State<Home> {
         showHeart = true;
         showCross = false;
         lastSwipeType = 'reject';
+        _lastSwipedCardId = (previousIndex < membersList.length) ? (membersList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'member';
       });
 
       if (previousIndex < membersList.length) {
@@ -846,6 +858,8 @@ class _HomeState extends State<Home> {
         showHeart = true;
         showCross = false;
         lastSwipeType = 'accept';
+        _lastSwipedCardId = (previousIndex < eventsList.length) ? (eventsList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'event';
       });
 
       if (previousIndex < eventsList.length) {
@@ -872,6 +886,8 @@ class _HomeState extends State<Home> {
         showCross = true;
         showHeart = false;
         lastSwipeType = 'reject';
+        _lastSwipedCardId = (previousIndex < eventsList.length) ? (eventsList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'event';
       });
 
       if (previousIndex < eventsList.length) {
@@ -932,6 +948,8 @@ class _HomeState extends State<Home> {
         showHeart = true;
         showCross = false;
         lastSwipeType = 'accept';
+        _lastSwipedCardId = (previousIndex < venuesList.length) ? (venuesList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'venue';
       });
 
       if (previousIndex < venuesList.length) {
@@ -958,6 +976,8 @@ class _HomeState extends State<Home> {
         showCross = true;
         showHeart = false;
         lastSwipeType = 'reject';
+        _lastSwipedCardId = (previousIndex < venuesList.length) ? (venuesList[previousIndex]['_id'] ?? '').toString() : null;
+        _lastSwipedTabType = 'venue';
       });
 
       if (previousIndex < venuesList.length) {
@@ -1521,7 +1541,7 @@ class _HomeState extends State<Home> {
                               up: false,
                             ),
                             numberOfCardsDisplayed: 1,
-                            cardBuilder: (context, index, _, __) {
+                            cardBuilder: (context, index, percentThresholdX, __) {
                               if (index < 0 ||
                                   index >= visibleMembers.length) {
                                 return _buildSwipeCardFallback('member');
@@ -1562,7 +1582,9 @@ class _HomeState extends State<Home> {
                                           null &&
                                           member['profile_image']
                                               .isNotEmpty
-                                          ? '${AppConfigProvider.imageUrl}${member['profile_image']}'
+                                          ? resolveImageUrl(
+                                          member['profile_image'],
+                                          AppConfigProvider.imageUrl)
                                           : AppImage.userImage1,
                                       member['name'] ?? 'Unknown',
                                           () async {
@@ -1592,9 +1614,10 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "member_image_${membersTabVersion}_$index"),
-                                      showHeart: showHeart,
-                                      showCross: showCross,
-                                      lastSwipeType: lastSwipeType,
+                                      dragPercentX: percentThresholdX.toDouble(),
+                                      showHeart: showHeart && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
+                                      showCross: showCross && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
+                                      lastSwipeType: (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member') ? lastSwipeType : null,
                                       onRejectTap: () {
                                         membersSwiperController.swipe(
                                           CardSwiperDirection.left,
@@ -1617,7 +1640,9 @@ class _HomeState extends State<Home> {
                                               member['profile_image']
                                                   .toString()
                                                   .isNotEmpty
-                                              ? '${AppConfigProvider.imageUrl}${member['profile_image']}'
+                                              ? resolveImageUrl(
+                                              member['profile_image'],
+                                              AppConfigProvider.imageUrl)
                                               : AppImage
                                               .dummyImageIcon,
                                         );
@@ -1758,7 +1783,9 @@ class _HomeState extends State<Home> {
                                           null &&
                                           event['event_image']
                                               .isNotEmpty
-                                          ? '${AppConfigProvider.imageUrl}${event['event_image']}'
+                                          ? resolveImageUrl(
+                                          event['event_image'],
+                                          AppConfigProvider.imageUrl)
                                           : AppImage.dummyImageIcon,
                                       event['event_name'] ??
                                           'Event',
@@ -1786,9 +1813,9 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "events_tab_${eventTabVersion}_$index"),
-                                      showHeart: showHeart,
-                                      showCross: showCross,
-                                      lastSwipeType: lastSwipeType,
+                                      showHeart: showHeart && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
+                                      showCross: showCross && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
+                                      lastSwipeType: (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event') ? lastSwipeType : null,
                                       onRejectTap: () {
                                         eventsSwiperController.swipe(
                                           CardSwiperDirection.left,
@@ -1980,7 +2007,9 @@ class _HomeState extends State<Home> {
                                           null &&
                                           venue['venue_image']
                                               .isNotEmpty
-                                          ? '${AppConfigProvider.imageUrl}${venue['venue_image']}'
+                                          ? resolveImageUrl(
+                                          venue['venue_image'],
+                                          AppConfigProvider.imageUrl)
                                           : AppImage.dummyImageIcon,
                                       venue['venue_name'] ??
                                           'Venue',
@@ -2007,9 +2036,9 @@ class _HomeState extends State<Home> {
                                       },
                                       key: ValueKey(
                                           "venues_tab_${venusTabVersion}_$index"),
-                                      showHeart: showHeart,
-                                      showCross: showCross,
-                                      lastSwipeType: lastSwipeType,
+                                      showHeart: showHeart && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
+                                      showCross: showCross && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
+                                      lastSwipeType: (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue') ? lastSwipeType : null,
                                       onRejectTap: () {
                                         venuesSwiperController.swipe(
                                           CardSwiperDirection.left,

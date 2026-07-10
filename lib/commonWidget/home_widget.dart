@@ -438,6 +438,7 @@ class HomeWidget {
       String name,
       VoidCallback onTap, {
         Key? key,
+        double dragPercentX = 0,
         required bool showHeart,
         required bool showCross,
         required String? lastSwipeType,
@@ -455,10 +456,24 @@ class HomeWidget {
     (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
     final bool hasBio = safeBio.isNotEmpty;
     final bool hasVibes = safeVibes.isNotEmpty;
+    // Live drag feedback: show progressively as the card is actively being
+    // dragged, in addition to the brief post-swipe confirmation stamp.
+    // dragPercentX is the ratio of horizontal drag to the swipe threshold,
+    // as a percentage - positive while dragging right, negative while
+    // dragging left.
+    final bool isDraggingRight = dragPercentX > 5;
+    final bool isDraggingLeft = dragPercentX < -5;
+    final double dragOpacity = (dragPercentX.abs() / 100).clamp(0.0, 1.0);
+
     final bool showAcceptFeedback =
-        (showHeart || showCross) && lastSwipeType == 'accept';
+        ((showHeart || showCross) && lastSwipeType == 'accept') ||
+            isDraggingRight;
     final bool showRejectFeedback =
-        (showHeart || showCross) && lastSwipeType == 'reject';
+        ((showHeart || showCross) && lastSwipeType == 'reject') ||
+            isDraggingLeft;
+    // Post-swipe confirmation is always fully visible; live drag fades in
+    // proportionally to how far the card has moved.
+    final double stampOpacity = lastSwipeType != null ? 1.0 : dragOpacity;
     final double badgeTop = MediaQuery.of(context).size.height * 0.06;
 
     return AnimatedSwitcher(
@@ -699,21 +714,25 @@ class HomeWidget {
                 Positioned(
                   left: 16,
                   top: badgeTop,
-                  child: Transform.rotate(
-                    angle: -0.3,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColor.redColor, width: 3),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'NOPE',
-                        style: TextStyle(
-                          color: AppColor.redColor,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
+                  child: Opacity(
+                    opacity: stampOpacity,
+                    child: Transform.rotate(
+                      angle: -0.3,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColor.redColor.withOpacity(0.75),
+                          border: Border.all(color: AppColor.redColor, width: 3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'NOPE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          ),
                         ),
                       ),
                     ),
@@ -724,21 +743,25 @@ class HomeWidget {
                 Positioned(
                   right: 16,
                   top: badgeTop,
-                  child: Transform.rotate(
-                    angle: 0.3,
-                    child: Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColor.greenColor, width: 3),
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                      child: Text(
-                        'LIKE',
-                        style: TextStyle(
-                          color: AppColor.greenColor,
-                          fontSize: 24,
-                          fontWeight: FontWeight.w900,
-                          letterSpacing: 2,
+                  child: Opacity(
+                    opacity: stampOpacity,
+                    child: Transform.rotate(
+                      angle: 0.3,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: AppColor.greenColor.withOpacity(0.75),
+                          border: Border.all(color: AppColor.greenColor, width: 3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'LIKE',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 24,
+                            fontWeight: FontWeight.w900,
+                            letterSpacing: 2,
+                          ),
                         ),
                       ),
                     ),
@@ -800,6 +823,7 @@ class HomeWidget {
       String name,
       VoidCallback onTap, {
         Key? key,
+        double dragPercentX = 0,
         required bool showHeart,
         required bool showCross,
         required String? lastSwipeType,
@@ -1175,6 +1199,7 @@ class HomeWidget {
       String venueId,
       VoidCallback onTap, {
         Key? key,
+        double dragPercentX = 0,
         required bool showHeart,
         required bool showCross,
         required String? lastSwipeType,
@@ -1190,10 +1215,24 @@ class HomeWidget {
         int? recentCount,
         int? totalLikes,
       }) {
+    // Live drag feedback: show progressively as the card is actively being
+    // dragged, in addition to the brief post-swipe confirmation stamp.
+    // dragPercentX is the ratio of horizontal drag to the swipe threshold,
+    // as a percentage - positive while dragging right, negative while
+    // dragging left.
+    final bool isDraggingRight = dragPercentX > 5;
+    final bool isDraggingLeft = dragPercentX < -5;
+    final double dragOpacity = (dragPercentX.abs() / 100).clamp(0.0, 1.0);
+
     final bool showAcceptFeedback =
-        (showHeart || showCross) && lastSwipeType == 'accept';
+        ((showHeart || showCross) && lastSwipeType == 'accept') ||
+            isDraggingRight;
     final bool showRejectFeedback =
-        (showHeart || showCross) && lastSwipeType == 'reject';
+        ((showHeart || showCross) && lastSwipeType == 'reject') ||
+            isDraggingLeft;
+    // Post-swipe confirmation is always fully visible; live drag fades in
+    // proportionally to how far the card has moved.
+    final double stampOpacity = lastSwipeType != null ? 1.0 : dragOpacity;
     final double badgeTop = MediaQuery.of(context).size.height * 0.06;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),

@@ -73,6 +73,54 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
 
   List<dynamic> _toList(dynamic value) => value is List ? value : <dynamic>[];
 
+  // Renders each vibe-check Q&A ("How would your best friend describe you?"
+  // -> answer, etc.) the same way the Bio section is styled. Returns an
+  // empty list (renders nothing) if the member has no answers, or if their
+  // account predates this feature - same "just don't show the section"
+  // pattern used for Bio being empty.
+  List<Widget> _buildVibeCheckSection(Size size) {
+    final vibeChecks = _toList(_memberData?['vibe_checks']);
+    if (vibeChecks.isEmpty) return [];
+
+    final widgets = <Widget>[];
+    for (final entry in vibeChecks) {
+      final question = _str((entry is Map ? entry['question'] : null));
+      final answer = _str((entry is Map ? entry['answer'] : null));
+      if (question.isEmpty || answer.isEmpty) continue;
+
+      widgets.add(
+        Padding(
+          padding: EdgeInsets.only(bottom: size.height * 2 / 100),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                question,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: AppFont.fontFamily,
+                  fontWeight: FontWeight.w600,
+                  color: AppColor.pinkColor,
+                ),
+              ),
+              SizedBox(height: size.height * 0.6 / 100),
+              Text(
+                answer,
+                style: TextStyle(
+                  fontSize: 16,
+                  fontFamily: AppFont.fontFamily,
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.greyLightColor(context),
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    return widgets;
+  }
+
   String _asUploadUrl(dynamic path) {
     final value = _str(path);
     if (value.isEmpty) return '';
@@ -1081,6 +1129,42 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     SizedBox(
                                       height: size.height * 2 / 100,
                                     ),
+
+                                    //! I'm looking for Section
+                                    if (_str(_memberData?['interested_in'])
+                                        .isNotEmpty) ...[
+                                      Text(
+                                        AppLanguage.imLookingForText[
+                                        language],
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w600,
+                                            color: AppColor.secondryColor(
+                                                context)),
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 1 / 100,
+                                      ),
+                                      Text(
+                                        _str(_memberData?[
+                                        'interested_in']),
+                                        style: TextStyle(
+                                            fontSize: 16,
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w400,
+                                            color:
+                                            AppColor.greyLightColor(
+                                                context)),
+                                      ),
+                                      SizedBox(
+                                        height: size.height * 2 / 100,
+                                      ),
+                                    ],
+
+                                    //! Vibe Check (personality Q&A) Section
+                                    ..._buildVibeCheckSection(size),
+
                                     SizedBox(
                                       height: size.height * 2 / 100,
                                     ),
