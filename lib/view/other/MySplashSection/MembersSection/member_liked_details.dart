@@ -86,34 +86,22 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     for (final entry in vibeChecks) {
       final question = _str((entry is Map ? entry['question'] : null));
       final answer = _str((entry is Map ? entry['answer'] : null));
+      // Still require a matching question to exist - just don't render its
+      // text - so a malformed/orphaned entry (answer with no question)
+      // doesn't show up as a stray line with no context.
       if (question.isEmpty || answer.isEmpty) continue;
 
       widgets.add(
         Padding(
           padding: EdgeInsets.only(bottom: size.height * 2 / 100),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                question,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontFamily: AppFont.fontFamily,
-                  fontWeight: FontWeight.w600,
-                  color: AppColor.pinkColor,
-                ),
-              ),
-              SizedBox(height: size.height * 0.6 / 100),
-              Text(
-                answer,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontFamily: AppFont.fontFamily,
-                  fontWeight: FontWeight.w400,
-                  color: AppColor.greyLightColor(context),
-                ),
-              ),
-            ],
+          child: Text(
+            answer,
+            style: TextStyle(
+              fontSize: 16,
+              fontFamily: AppFont.fontFamily,
+              fontWeight: FontWeight.w400,
+              color: AppColor.greyLightColor(context),
+            ),
           ),
         ),
       );
@@ -404,6 +392,53 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     return Uri.parse('https://www.instagram.com/$cleaned/');
   }
 
+  Uri? _spotifyUriFromValue(dynamic rawValue) {
+    final raw = _str(rawValue);
+    if (raw.isEmpty) return null;
+
+    final cleaned = raw.trim();
+    final parsed = Uri.tryParse(cleaned);
+    if (parsed != null && parsed.hasScheme) {
+      return parsed;
+    }
+
+    if (cleaned.contains('/') || cleaned.contains('.')) {
+      return Uri.tryParse('https://$cleaned');
+    }
+
+    return Uri.tryParse('https://open.spotify.com/user/$cleaned');
+  }
+
+  Uri? _snapchatUriFromValue(dynamic rawValue) {
+    final raw = _str(rawValue);
+    if (raw.isEmpty) return null;
+
+    final cleaned = raw.replaceFirst('@', '').trim();
+    if (cleaned.isEmpty) return null;
+
+    final parsed = Uri.tryParse(cleaned);
+    if (parsed != null && parsed.hasScheme) {
+      return parsed;
+    }
+
+    if (cleaned.contains('/') || cleaned.contains('.')) {
+      return Uri.tryParse('https://$cleaned');
+    }
+
+    return Uri.tryParse('https://www.snapchat.com/add/$cleaned');
+  }
+
+  Future<void> _openSocialLink(Uri? uri, String platformName) async {
+    if (uri == null) return;
+
+    final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
+    if (!launched && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Unable to open $platformName profile.')),
+      );
+    }
+  }
+
   Future<void> _openInstagramProfile() async {
     final uri = _instagramUriFromValue(_memberData?['instagram_url']);
     if (uri == null) return;
@@ -414,6 +449,110 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
         const SnackBar(content: Text('Unable to open Instagram profile.')),
       );
     }
+  }
+
+  // Tappable rounded "social link" pill - icon, platform label, handle/url,
+  // and a Follow button. Originally hardcoded for Instagram only; extracted
+  // here so Spotify and Snapchat (also collected during signup, in
+  // additional_info.dart) can reuse the exact same look.
+  Widget _buildSocialPill({
+    required BuildContext context,
+    required String iconAsset,
+    required String label,
+    required String value,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        height: MediaQuery.of(context).size.width * 12 / 100,
+        width: MediaQuery.of(context).size.width * 90 / 100,
+        decoration: BoxDecoration(
+          color: AppColor.capsuleColor(context),
+          boxShadow: [
+            BoxShadow(
+              color: AppColor.grayColor.withOpacity(0.4),
+              blurRadius: 2,
+              offset: Offset(1, 1),
+            ),
+          ],
+          borderRadius: BorderRadius.circular(200),
+        ),
+        child: Row(
+          children: [
+            SizedBox(width: MediaQuery.of(context).size.width * 4 / 100),
+
+            // Icon
+            Image.asset(
+              iconAsset,
+              color: AppColor.secondryColor(context),
+              width: MediaQuery.of(context).size.width * 5 / 100,
+              height: MediaQuery.of(context).size.height * 6 / 100,
+            ),
+            SizedBox(width: MediaQuery.of(context).size.width * 2 / 100),
+
+            // Text + spacing (with Flexible for proper width handling)
+            Flexible(
+              child: Container(
+                width: MediaQuery.of(context).size.width * 54 / 100,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      label,
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.secondryColor(context),
+                      ),
+                    ),
+                    Text(
+                      value,
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w500,
+                        color: AppColor.buttonColor,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            SizedBox(width: MediaQuery.of(context).size.width * 2 / 100),
+
+            Container(
+              padding: EdgeInsets.symmetric(
+                vertical: MediaQuery.of(context).size.width * 1 / 100,
+                horizontal: MediaQuery.of(context).size.width * 5 / 100,
+              ),
+              decoration: BoxDecoration(
+                color: AppColor.buttonColor,
+                borderRadius: BorderRadius.circular(50),
+                border: Border.all(color: AppColor.transparentColor),
+              ),
+              child: Text(
+                AppLanguage.followText[language],
+                style: TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: AppFont.fontFamily,
+                  color: Colors.white,
+                ),
+              ),
+            ),
+
+            SizedBox(width: MediaQuery.of(context).size.width * 6 / 100),
+          ],
+        ),
+      ),
+    );
   }
 
   Widget _buildDecisionButton({
@@ -830,7 +969,9 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     SizedBox(
                                       height: size.height * 1 / 100,
                                     ),
-                                    Row(
+                                    Wrap(
+                                      crossAxisAlignment:
+                                      WrapCrossAlignment.center,
                                       children: [
                                         /// AGE (show only if exists)
                                         if (_str(_memberData?['age'])
@@ -938,7 +1079,58 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                   100),
                                           Text(
                                             _str(
-                                                _memberData?['pronouns']),
+                                                _memberData?['pronouns']) +
+                                                (_str(_memberData?[
+                                                'sexuality'])
+                                                    .isNotEmpty
+                                                    ? " |"
+                                                    : ""),
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color:
+                                              AppColor.secondryColor(
+                                                  context),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                        ],
+
+                                        /// SEXUALITY (collected during
+                                        /// signup's "About You" step -
+                                        /// wasn't being shown before)
+                                        if (_str(_memberData?['sexuality'])
+                                            .isNotEmpty) ...[
+                                          Text(
+                                            AppLanguage
+                                                .sexualityLabelText[
+                                            language],
+                                            style: const TextStyle(
+                                              fontSize: 14,
+                                              fontFamily:
+                                              AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              color: AppColor.buttonColor,
+                                            ),
+                                          ),
+                                          SizedBox(
+                                              width:
+                                              MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  1 /
+                                                  100),
+                                          Text(
+                                            _str(
+                                                _memberData?['sexuality']),
                                             style: TextStyle(
                                               fontSize: 14,
                                               fontFamily:
@@ -952,91 +1144,32 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                         ],
                                       ],
                                     ),
-                                    Builder(
-                                      builder: (context) {
-                                        final hobbies = _toList(
-                                          _memberData?['hobbies'],
-                                        )
-                                            .map((e) => _str(e))
-                                            .where((e) => e.isNotEmpty)
-                                            .toList();
-                                        final hobbiesText =
-                                        hobbies.join(', ');
-                                        return Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            hobbies.isEmpty
-                                                ? SizedBox()
-                                                : SizedBox(
-                                              height: size.height *
-                                                  1 /
-                                                  100,
-                                            ),
-                                            hobbies.isEmpty
-                                                ? SizedBox()
-                                                : Container(
-                                              child: Row(
-                                                crossAxisAlignment:
-                                                CrossAxisAlignment
-                                                    .start,
-                                                children: [
-                                                  Container(
-                                                    child: Text(
-                                                      AppLanguage
-                                                          .Hobbiestext[
-                                                      language],
-                                                      style: const TextStyle(
-                                                          fontSize:
-                                                          14,
-                                                          fontFamily:
-                                                          AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w400,
-                                                          color: AppColor
-                                                              .buttonColor),
-                                                    ),
-                                                  ),
-                                                  SizedBox(
-                                                    width: MediaQuery.of(
-                                                        context)
-                                                        .size
-                                                        .width *
-                                                        2 /
-                                                        100,
-                                                  ),
-                                                  Container(
-                                                    width:
-                                                    size.width *
-                                                        72 /
-                                                        100,
-                                                    child: Text(
-                                                      hobbiesText
-                                                          .isEmpty
-                                                          ? ""
-                                                          : hobbiesText,
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                          14,
-                                                          fontFamily:
-                                                          AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w400,
-                                                          color: AppColor
-                                                              .greyLightColor(
-                                                              context)),
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                            ),
-                                          ],
-                                        );
-                                      },
+                                    _buildLabeledListRow(
+                                      context,
+                                      size,
+                                      AppLanguage.Hobbiestext[language],
+                                      _toList(_memberData?['hobbies']),
+                                      const [],
+                                    ),
+                                    _buildLabeledListRow(
+                                      context,
+                                      size,
+                                      AppLanguage
+                                          .musicGenresLabelText[language],
+                                      _toList(_memberData?['music_genre']),
+                                      _toList(_memberData?[
+                                      'custom_music_genres']),
+                                    ),
+                                    _buildLabeledListRow(
+                                      context,
+                                      size,
+                                      AppLanguage
+                                          .eventPreferencesLabelText[
+                                      language],
+                                      _toList(
+                                          _memberData?['event_preferences']),
+                                      _toList(_memberData?[
+                                      'custom_event_preferences']),
                                     ),
                                     SizedBox(
                                       height: size.height * 1 / 100,
@@ -1453,211 +1586,72 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                       height: size.height * 2 / 100,
                                     ),
                                     _buildVibesSection(context),
-                                    _str(_memberData?['instagram_url'])
-                                        .isEmpty
-                                        ? SizedBox()
-                                        : GestureDetector(
-                                        onTap: _openInstagramProfile,
-                                        behavior:
-                                        HitTestBehavior.opaque,
-                                        child: Container(
-                                          height:
-                                          MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              12 /
-                                              100,
-                                          width:
-                                          MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              90 /
-                                              100,
-                                          decoration: BoxDecoration(
-                                            color:
-                                            AppColor.capsuleColor(
-                                                context),
-                                            boxShadow: [
-                                              BoxShadow(
-                                                color: AppColor
-                                                    .grayColor
-                                                    .withOpacity(0.4),
-                                                blurRadius: 2,
-                                                offset: Offset(1, 1),
+                                    Builder(
+                                      builder: (context) {
+                                        final instagram = _str(
+                                            _memberData?['instagram_url']);
+                                        final spotify = _str(
+                                            _memberData?['spotify_url'] ??
+                                                _memberData?[
+                                                'spotify_account']);
+                                        final snapchat = _str(
+                                            _memberData?['snapchat_url'] ??
+                                                _memberData?[
+                                                'snapchat_account']);
+                                        final gap = SizedBox(
+                                            height: size.height * 1.5 / 100);
+                                        return Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            if (instagram.isNotEmpty)
+                                              _buildSocialPill(
+                                                context: context,
+                                                iconAsset:
+                                                AppImage.instagramIcon,
+                                                label: AppLanguage
+                                                    .instagramText[
+                                                language],
+                                                value: instagram,
+                                                onTap: _openInstagramProfile,
                                               ),
-                                            ],
-                                            borderRadius:
-                                            BorderRadius.circular(
-                                                200),
-                                          ),
-                                          child: Row(
-                                            children: [
-                                              SizedBox(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      4 /
-                                                      100),
-
-                                              // Icon
-                                              Image.asset(
-                                                AppImage
-                                                    .instagramIcon,
-                                                color: AppColor
-                                                    .secondryColor(
-                                                    context),
-                                                width: MediaQuery.of(
-                                                    context)
-                                                    .size
-                                                    .width *
-                                                    5 /
-                                                    100,
-                                                height: MediaQuery.of(
-                                                    context)
-                                                    .size
-                                                    .height *
-                                                    6 /
-                                                    100,
+                                            if (instagram.isNotEmpty &&
+                                                (spotify.isNotEmpty ||
+                                                    snapchat.isNotEmpty))
+                                              gap,
+                                            if (spotify.isNotEmpty)
+                                              _buildSocialPill(
+                                                context: context,
+                                                iconAsset:
+                                                AppImage.spotifyIcon,
+                                                label: AppLanguage
+                                                    .spotifyText[language],
+                                                value: spotify,
+                                                onTap: () => _openSocialLink(
+                                                    _spotifyUriFromValue(
+                                                        spotify),
+                                                    'Spotify'),
                                               ),
-                                              SizedBox(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      2 /
-                                                      100),
-
-                                              // Text + spacing (with Flexible for proper width handling)
-                                              Flexible(
-                                                child: Container(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      54 /
-                                                      100,
-                                                  child: Column(
-                                                    mainAxisAlignment:
-                                                    MainAxisAlignment
-                                                        .center,
-                                                    crossAxisAlignment:
-                                                    CrossAxisAlignment
-                                                        .start,
-                                                    children: [
-                                                      Text(
-                                                        AppLanguage
-                                                            .instagramText[
-                                                        language],
-                                                        style:
-                                                        TextStyle(
-                                                          fontSize:
-                                                          13,
-                                                          fontFamily:
-                                                          AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w500,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                              context),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        _str(_memberData?[
-                                                        'instagram_url'])
-                                                            .isEmpty
-                                                            ? ""
-                                                            : _str(_memberData?[
-                                                        'instagram_url']),
-                                                        style:
-                                                        const TextStyle(
-                                                          fontSize:
-                                                          12,
-                                                          fontFamily:
-                                                          AppFont
-                                                              .fontFamily,
-                                                          fontWeight:
-                                                          FontWeight
-                                                              .w500,
-                                                          color: AppColor
-                                                              .buttonColor,
-                                                        ),
-                                                        maxLines: 1,
-                                                        overflow:
-                                                        TextOverflow
-                                                            .ellipsis,
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
+                                            if (spotify.isNotEmpty &&
+                                                snapchat.isNotEmpty)
+                                              gap,
+                                            if (snapchat.isNotEmpty)
+                                              _buildSocialPill(
+                                                context: context,
+                                                iconAsset:
+                                                AppImage.snapchatIcon,
+                                                label: AppLanguage
+                                                    .snapchatText[language],
+                                                value: snapchat,
+                                                onTap: () => _openSocialLink(
+                                                    _snapchatUriFromValue(
+                                                        snapchat),
+                                                    'Snapchat'),
                                               ),
-
-                                              SizedBox(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      2 /
-                                                      100),
-
-                                              Container(
-                                                padding: EdgeInsets
-                                                    .symmetric(
-                                                  vertical: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      1 /
-                                                      100,
-                                                  horizontal:
-                                                  MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      5 /
-                                                      100,
-                                                ),
-                                                decoration:
-                                                BoxDecoration(
-                                                  color: AppColor
-                                                      .buttonColor,
-                                                  borderRadius:
-                                                  BorderRadius
-                                                      .circular(
-                                                      50),
-                                                  border: Border.all(
-                                                      color: AppColor
-                                                          .transparentColor),
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .followText[
-                                                  language],
-                                                  style: TextStyle(
-                                                    fontSize: 10,
-                                                    fontWeight:
-                                                    FontWeight
-                                                        .w600,
-                                                    fontFamily: AppFont
-                                                        .fontFamily,
-                                                    color:
-                                                    Colors.white,
-                                                  ),
-                                                ),
-                                              ),
-
-                                              SizedBox(
-                                                  width: MediaQuery.of(
-                                                      context)
-                                                      .size
-                                                      .width *
-                                                      6 /
-                                                      100),
-                                            ],
-                                          ),
-                                        )),
+                                          ],
+                                        );
+                                      },
+                                    ),
                                     // if (_recentEvents.isNotEmpty)
                                     SizedBox(
                                       height: size.height * 2 / 100,
@@ -1881,6 +1875,79 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
         receiverImage: receiverImage,
         conversationId: conversationId,
       );
+
+  // Renders a "Label: comma, separated, values" row - used for Hobbies,
+  // Music Genres and Event Preferences. `primary` and `custom` are merged
+  // (custom entries are the free-text "Other" values collected alongside
+  // the preset options during signup), de-duplicated, and hidden entirely
+  // if empty so the layout doesn't leave a stray gap.
+  //
+  // Some of these lists (music genres, event preferences) come back from
+  // the API as objects like {_id, category_name} / {_id, genre_name}
+  // rather than plain strings - _itemLabel() pulls the human-readable name
+  // out instead of falling back to a raw Map.toString().
+  String _itemLabel(dynamic item) {
+    if (item is Map) {
+      return _str(item['category_name'] ??
+          item['genre_name'] ??
+          item['name'] ??
+          item['event_name'] ??
+          item['vibe'] ??
+          '');
+    }
+    return _str(item);
+  }
+
+  Widget _buildLabeledListRow(
+      BuildContext context,
+      Size size,
+      String label,
+      List<dynamic> primary,
+      List<dynamic> custom,
+      ) {
+    final values = <String>[
+      ...primary.map(_itemLabel),
+      ...custom.map(_itemLabel),
+    ].where((e) => e.isNotEmpty).toSet().toList();
+    final text = values.join(', ');
+
+    if (values.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SizedBox(height: size.height * 1 / 100),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              label,
+              style: const TextStyle(
+                fontSize: 14,
+                fontFamily: AppFont.fontFamily,
+                fontWeight: FontWeight.w400,
+                color: AppColor.buttonColor,
+              ),
+            ),
+            SizedBox(width: size.width * 2 / 100),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontFamily: AppFont.fontFamily,
+                  fontWeight: FontWeight.w400,
+                  color: AppColor.greyLightColor(context),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget _buildVibesSection(BuildContext context) {
     final vibes = _toList(_memberData?['vibes']);

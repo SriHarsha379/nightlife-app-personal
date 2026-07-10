@@ -456,25 +456,14 @@ class HomeWidget {
     (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
     final bool hasBio = safeBio.isNotEmpty;
     final bool hasVibes = safeVibes.isNotEmpty;
-    // Live drag feedback: show progressively as the card is actively being
-    // dragged, in addition to the brief post-swipe confirmation stamp.
+    // Live drag feedback: the color wash and beside-card glow fade in
+    // progressively as the card is actively being dragged.
     // dragPercentX is the ratio of horizontal drag to the swipe threshold,
     // as a percentage - positive while dragging right, negative while
     // dragging left.
     final bool isDraggingRight = dragPercentX > 5;
     final bool isDraggingLeft = dragPercentX < -5;
     final double dragOpacity = (dragPercentX.abs() / 100).clamp(0.0, 1.0);
-
-    final bool showAcceptFeedback =
-        ((showHeart || showCross) && lastSwipeType == 'accept') ||
-            isDraggingRight;
-    final bool showRejectFeedback =
-        ((showHeart || showCross) && lastSwipeType == 'reject') ||
-            isDraggingLeft;
-    // Post-swipe confirmation is always fully visible; live drag fades in
-    // proportionally to how far the card has moved.
-    final double stampOpacity = lastSwipeType != null ? 1.0 : dragOpacity;
-    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
 
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
@@ -502,314 +491,295 @@ class HomeWidget {
         },
         key: key,
         onTap: onTap,
-        child: SizedBox(
-          width: MediaQuery.of(context).size.width * 85 / 100,
-          height: swipeCardHeight(context),
-          child: Stack(
-            clipBehavior: Clip.hardEdge,
-            children: [
-              //! Main Card
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(32),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.white.withOpacity(0.2),
-                      blurRadius: 1,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 1),
-                    ),
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.2),
-                      blurRadius: 20,
-                      offset: const Offset(0, 10),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(32),
-                  child: Column(
-                    children: [
-                      //! Image Section
-                      Expanded(
-                        flex: 7,
-                        child: Stack(
-                          children: [
-                            // Image Container with proper constraints
-                            Container(
-                              width: double.infinity,
-                              height: double.infinity,
-                              decoration: BoxDecoration(
-                                gradient: LinearGradient(
-                                  begin: Alignment.topCenter,
-                                  end: Alignment.bottomCenter,
-                                  colors: [
-                                    Colors.grey[300]!,
-                                    Colors.grey[200]!,
-                                  ],
-                                ),
-                              ),
-                              child: isNetworkUrl(image)
-                                  ? Image.network(
-                                image,
-                                fit: BoxFit.cover,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(32),
+            boxShadow: (isDraggingLeft || isDraggingRight)
+                ? [
+              BoxShadow(
+                color: (isDraggingLeft
+                    ? AppColor.redColor
+                    : AppColor.greenColor)
+                    .withOpacity(dragOpacity * 0.6),
+                blurRadius: 45,
+                spreadRadius: 10,
+              ),
+            ]
+                : [],
+          ),
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width * 85 / 100,
+            height: swipeCardHeight(context),
+            child: Stack(
+              clipBehavior: Clip.hardEdge,
+              children: [
+                //! Main Card
+                Container(
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(32),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.white.withOpacity(0.2),
+                        blurRadius: 1,
+                        spreadRadius: 2,
+                        offset: const Offset(0, 1),
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.2),
+                        blurRadius: 20,
+                        offset: const Offset(0, 10),
+                      ),
+                    ],
+                  ),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(32),
+                    child: Column(
+                      children: [
+                        //! Image Section
+                        Expanded(
+                          flex: 7,
+                          child: Stack(
+                            children: [
+                              // Image Container with proper constraints
+                              Container(
                                 width: double.infinity,
                                 height: double.infinity,
-                                loadingBuilder:
-                                    (context, child, loadingProgress) {
-                                  if (loadingProgress == null)
-                                    return child;
-                                  return _cardImageLoadingPlaceholder();
-                                },
-                                errorBuilder:
-                                    (context, error, stackTrace) {
-                                  return Image.asset(
-                                    AppImage.placeHolder2Icon,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  );
-                                },
-                              )
-                                  : Image.asset(
-                                image, // Changed from AppImage.placeHolder2Icon to use actual image parameter
-                                fit: BoxFit.cover,
-                                width: double.infinity,
-                                height: double.infinity,
-                                errorBuilder:
-                                    (context, error, stackTrace) {
-                                  return Image.asset(
-                                    AppImage.placeHolder2Icon,
-                                    fit: BoxFit.cover,
-                                    width: double.infinity,
-                                    height: double.infinity,
-                                  );
-                                },
-                              ),
-                            ),
-                            // Shadow overlay that blends into the info section
-                            Positioned(
-                              bottom: 0,
-                              left: 0,
-                              right: 0,
-                              height: 150,
-                              child: Container(
                                 decoration: BoxDecoration(
                                   gradient: LinearGradient(
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      Colors.transparent,
-                                      Colors.black.withOpacity(0.1),
-                                      Colors.black.withOpacity(0.1),
-                                      Colors.black.withOpacity(0.1),
-                                      Colors.black,
+                                      Colors.grey[300]!,
+                                      Colors.grey[200]!,
                                     ],
-                                    stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
                                   ),
                                 ),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-
-                      //! Info Section
-                      Expanded(
-                        flex: 3,
-                        child: Container(
-                          width: double.infinity,
-                          decoration: const BoxDecoration(
-                            color: Colors.black,
-                          ),
-                          padding: const EdgeInsets.symmetric(horizontal: 18),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              Text(
-                                name,
-                                style: const TextStyle(
-                                  color: Colors.white,
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
+                                child: isNetworkUrl(image)
+                                    ? Image.network(
+                                  image,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  loadingBuilder:
+                                      (context, child, loadingProgress) {
+                                    if (loadingProgress == null)
+                                      return child;
+                                    return _cardImageLoadingPlaceholder();
+                                  },
+                                  errorBuilder:
+                                      (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppImage.placeHolder2Icon,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
+                                  },
+                                )
+                                    : Image.asset(
+                                  image, // Changed from AppImage.placeHolder2Icon to use actual image parameter
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  height: double.infinity,
+                                  errorBuilder:
+                                      (context, error, stackTrace) {
+                                    return Image.asset(
+                                      AppImage.placeHolder2Icon,
+                                      fit: BoxFit.cover,
+                                      width: double.infinity,
+                                      height: double.infinity,
+                                    );
+                                  },
                                 ),
                               ),
-                              SizedBox(
-                                height: hasBio
-                                    ? MediaQuery.of(context).size.height *
-                                    .5 /
-                                    100
-                                    : 0,
-                              ),
-                              Text(
-                                hasBio ? safeBio : '',
-                                style: TextStyle(
-                                  color: Colors.white.withOpacity(0.9),
-                                  fontSize: 13,
-                                  height: 1.4,
-                                ),
-                                maxLines: 2,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(
-                                height: (hasBio && hasVibes)
-                                    ? MediaQuery.of(context).size.height *
-                                    .5 /
-                                    100
-                                    : 0,
-                              ),
-                              Text(
-                                hasVibes ? safeVibes.join(' • ') : "",
-                                style: const TextStyle(
-                                  color: AppColor.pinkColor,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                ),
-                                maxLines: 1,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    .5 /
-                                    100,
-                              ),
-                              Row(
-                                children: [
-                                  const Icon(
-                                    Icons.location_on,
-                                    color: AppColor.pinkColor,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Expanded(
-                                    child: Text(
-                                      distance ?? '',
-                                      style: TextStyle(
-                                        color: Colors.grey[500],
-                                        fontSize: 14,
-                                      ),
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
+                              // Shadow overlay that blends into the info section
+                              Positioned(
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                height: 150,
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment.topCenter,
+                                      end: Alignment.bottomCenter,
+                                      colors: [
+                                        Colors.transparent,
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withOpacity(0.1),
+                                        Colors.black,
+                                      ],
+                                      stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
                                     ),
                                   ),
-                                ],
-                              ),
-                              SizedBox(
-                                height: MediaQuery.of(context).size.height *
-                                    1 /
-                                    100,
+                                ),
                               ),
                             ],
                           ),
                         ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
 
-              // Swipe LEFT indicator (❌ red) - shows when dragging left
-              if (showRejectFeedback)
-                Positioned(
-                  left: 16,
-                  top: badgeTop,
-                  child: Opacity(
-                    opacity: stampOpacity,
-                    child: Transform.rotate(
-                      angle: -0.3,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColor.redColor.withOpacity(0.75),
-                          border: Border.all(color: AppColor.redColor, width: 3),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'NOPE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
+                        //! Info Section
+                        Expanded(
+                          flex: 3,
+                          child: Container(
+                            width: double.infinity,
+                            decoration: const BoxDecoration(
+                              color: Colors.black,
+                            ),
+                            padding: const EdgeInsets.symmetric(horizontal: 18),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                Text(
+                                  name,
+                                  style: const TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 22,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: hasBio
+                                      ? MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100
+                                      : 0,
+                                ),
+                                Text(
+                                  hasBio ? safeBio : '',
+                                  style: TextStyle(
+                                    color: Colors.white.withOpacity(0.9),
+                                    fontSize: 13,
+                                    height: 1.4,
+                                  ),
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(
+                                  height: (hasBio && hasVibes)
+                                      ? MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100
+                                      : 0,
+                                ),
+                                Text(
+                                  hasVibes ? safeVibes.join(' • ') : "",
+                                  style: const TextStyle(
+                                    color: AppColor.pinkColor,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                  maxLines: 1,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      .5 /
+                                      100,
+                                ),
+                                Row(
+                                  children: [
+                                    const Icon(
+                                      Icons.location_on,
+                                      color: AppColor.pinkColor,
+                                      size: 18,
+                                    ),
+                                    const SizedBox(width: 4),
+                                    Expanded(
+                                      child: Text(
+                                        distance ?? '',
+                                        style: TextStyle(
+                                          color: Colors.grey[500],
+                                          fontSize: 14,
+                                        ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(
+                                  height: MediaQuery.of(context).size.height *
+                                      1 /
+                                      100,
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              // Swipe RIGHT indicator (✓ green) - shows when dragging right
-              if (showAcceptFeedback)
-                Positioned(
-                  right: 16,
-                  top: badgeTop,
-                  child: Opacity(
-                    opacity: stampOpacity,
-                    child: Transform.rotate(
-                      angle: 0.3,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: AppColor.greenColor.withOpacity(0.75),
-                          border: Border.all(color: AppColor.greenColor, width: 3),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        child: Text(
-                          'LIKE',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 24,
-                            fontWeight: FontWeight.w900,
-                            letterSpacing: 2,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-
-              //! Heart Button on Right Side
-              Positioned(
-                right: 0,
-                top: 0,
-                bottom: 100,
-                child: Center(
-                  child: Container(
-                    width: 40,
-                    height: 130,
-                    decoration: BoxDecoration(
-                      color: const Color(0xff341941).withOpacity(.6),
-                      borderRadius: const BorderRadius.only(
-                        topLeft: Radius.circular(20),
-                        bottomLeft: Radius.circular(20),
-                      ),
-                    ),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                            onTap: onHeartTap,
-                            child: Image.asset(AppImage.heart),
-                          ),
-                        ),
-                        SizedBox(
-                          height: MediaQuery.of(context).size.height * 2 / 100,
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(6.0),
-                          child: GestureDetector(
-                            onTap: onMessageTap,
-                            child: Image.asset(AppImage.messageIcon),
-                          ),
-                        ),
+                        )
                       ],
                     ),
                   ),
                 ),
-              ),
-            ],
+
+                // Swipe direction color wash - tints the whole card while
+                // dragging, red toward reject (left) and green toward
+                // accept (right). Fades in with drag distance and clips to
+                // the same rounded corners as the card itself. The matching
+                // glow beside the card is painted by the AnimatedContainer
+                // wrapping this SizedBox.
+                if (isDraggingLeft || isDraggingRight)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(32),
+                        child: Container(
+                          color: (isDraggingLeft
+                              ? AppColor.redColor
+                              : AppColor.greenColor)
+                              .withOpacity(dragOpacity * 0.45),
+                        ),
+                      ),
+                    ),
+                  ),
+
+                //! Heart Button on Right Side
+                Positioned(
+                  right: 0,
+                  top: 0,
+                  bottom: 100,
+                  child: Center(
+                    child: Container(
+                      width: 40,
+                      height: 130,
+                      decoration: BoxDecoration(
+                        color: const Color(0xff341941).withOpacity(.6),
+                        borderRadius: const BorderRadius.only(
+                          topLeft: Radius.circular(20),
+                          bottomLeft: Radius.circular(20),
+                        ),
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: GestureDetector(
+                              onTap: onHeartTap,
+                              child: Image.asset(AppImage.heart),
+                            ),
+                          ),
+                          SizedBox(
+                            height: MediaQuery.of(context).size.height * 2 / 100,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.all(6.0),
+                            child: GestureDetector(
+                              onTap: onMessageTap,
+                              child: Image.asset(AppImage.messageIcon),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -1224,15 +1194,10 @@ class HomeWidget {
     final bool isDraggingLeft = dragPercentX < -5;
     final double dragOpacity = (dragPercentX.abs() / 100).clamp(0.0, 1.0);
 
-    final bool showAcceptFeedback =
-        ((showHeart || showCross) && lastSwipeType == 'accept') ||
-            isDraggingRight;
-    final bool showRejectFeedback =
-        ((showHeart || showCross) && lastSwipeType == 'reject') ||
-            isDraggingLeft;
-    // Post-swipe confirmation is always fully visible; live drag fades in
-    // proportionally to how far the card has moved.
-    final double stampOpacity = lastSwipeType != null ? 1.0 : dragOpacity;
+    final bool showAcceptFeedback = isDraggingRight;
+    final bool showRejectFeedback = isDraggingLeft;
+    // Live drag opacity only.
+    final double stampOpacity = dragOpacity;
     final double badgeTop = MediaQuery.of(context).size.height * 0.06;
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),

@@ -504,6 +504,9 @@ class AppLanguage {
   static const Heighttext = ["Height:"];
   static const heightSize = ["5'9 | "];
   static const pronouncsText = ["Pronouns"];
+  static const sexualityLabelText = ["Sexuality:"];
+  static const musicGenresLabelText = ["Music Genres"];
+  static const eventPreferencesLabelText = ["Event Preferences"];
   static const hehimText = ["He/Him"];
   static const Hobbiestext = ["Hobbies:"];
   static const hobbiestext = ["Hobbies"];

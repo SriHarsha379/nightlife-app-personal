@@ -241,6 +241,36 @@ class _HomeState extends State<Home> {
     );
   }
 
+  // Fills the brief cross-fade gap between one profile swiping away and the
+  // next appearing (caused by the AnimatedSwitcher remounting the swiper on
+  // every swipe) with a red/green wash matching the swipe direction, instead
+  // of leaving that gap blank. Sits behind the CardSwiper in a Stack, so it
+  // shows through only during that transition. Not tied to any specific
+  // card's id - see _onSwipeMembers/_onSwipeEvents/_onSwipeVenues, which set
+  // lastSwipeType + _lastSwipedTabType and clear them ~450ms later.
+  Widget _buildSwipeGapBackground(String tabType) {
+    final bool isVisible =
+        lastSwipeType != null && _lastSwipedTabType == tabType;
+    final bool isAccept = lastSwipeType == 'accept';
+    return Positioned.fill(
+      child: IgnorePointer(
+        child: AnimatedOpacity(
+          opacity: isVisible ? 1.0 : 0.0,
+          duration: const Duration(milliseconds: 200),
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(32),
+              color: (isAccept ? AppColor.greenColor : AppColor.redColor)
+                  .withOpacity(0.4),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+
+
   dynamic _currentItemForType(String type, List<dynamic> visibleItems) {
     if (visibleItems.isEmpty) return null;
     return visibleItems.first;
@@ -283,6 +313,32 @@ class _HomeState extends State<Home> {
     }
   }
 
+  // Ads shown in this popup used to always come from the hardcoded
+  // `sampleAds` list, which pointed at local asset files that were never
+  // actually bundled - hence the broken-image icon. Real ad items are
+  // already being injected into the members/events/venues feed lists by
+  // the backend (see injectAds() in feedController.js) - this pulls their
+  // real image URLs instead, so the popup shows the same working ad
+  // creative as the swipe-feed ad cards.
+  List<AdvertisementData> _collectRealAdImages() {
+    final homeController = Provider.of<HomeController>(context, listen: false);
+    final allItems = [
+      ...homeController.getMembersList,
+      ...homeController.getEventsList,
+      ...homeController.getVenuesList,
+    ];
+
+    final seenImages = <String>{};
+    final realAds = <AdvertisementData>[];
+    for (final item in allItems) {
+      if (!_isAdItem(item)) continue;
+      final image = _adImage(item);
+      if (image.isEmpty || !seenImages.add(image)) continue;
+      realAds.add(AdvertisementData(imageUrl: image));
+    }
+    return realAds;
+  }
+
   Future<void> _maybeShowAdPopup() async {
     if (_isShowingPopup || !mounted) return;
     final allowed = await PopupManager.shouldShowAdPopup();
@@ -291,7 +347,11 @@ class _HomeState extends State<Home> {
     _isShowingPopup = true;
     await PopupManager.recordAdShown();
 
-    final ads = sampleAds;
+    // Prefer real ad creative already loaded from the backend; only fall
+    // back to the local sample list (now pointing at working network
+    // images, not missing local assets) if none have loaded yet.
+    final realAds = _collectRealAdImages();
+    final ads = realAds.isNotEmpty ? realAds : sampleAds;
     if (ads.isEmpty || !mounted) {
       _isShowingPopup = false;
       return;
@@ -1518,173 +1578,178 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       )
-                          : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(
-                                opacity: animation, child: child),
-                        child: KeyedSubtree(
-                          key: ValueKey(
-                              "members_tab_${membersTabVersion}_$selectedId"),
-                          child: CardSwiper(
-                            controller: membersSwiperController,
-                            padding: EdgeInsets.zero,
-                            onSwipe: _onSwipeMembers,
-                            cardsCount: visibleMembers.length,
-                            threshold: 80,
-                            maxAngle: 20,
-                            allowedSwipeDirection:
-                            const AllowedSwipeDirection.only(
-                              left: true,
-                              right: true,
-                              down: false,
-                              up: false,
-                            ),
-                            numberOfCardsDisplayed: 1,
-                            cardBuilder: (context, index, percentThresholdX, __) {
-                              if (index < 0 ||
-                                  index >= visibleMembers.length) {
-                                return _buildSwipeCardFallback('member');
-                              }
-                              final member = visibleMembers[index];
-                              final isAdCard = _isAdItem(member);
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          1 /
-                                          100,
-                                    ),
-                                    isAdCard
-                                        ? GestureDetector(
-                                      onTapDown: (_) =>
-                                          _pauseAdPlayback(),
-                                      onTapUp: (_) =>
-                                          _resumeAdPlayback(),
-                                      onTapCancel: () =>
-                                          _resumeAdPlayback(),
-                                      child: HomeWidget.adCard(
-                                        context,
-                                        _adImage(member),
-                                        key: ValueKey(
-                                            "member_ad_${membersTabVersion}_$index"),
-                                        progress: _adProgress,
-                                        secondsRemaining:
-                                        _adSecondsRemaining,
-                                      ),
-                                    )
-                                        : HomeWidget.membersCard(
-                                      context,
-                                      member['profile_image'] !=
-                                          null &&
-                                          member['profile_image']
-                                              .isNotEmpty
-                                          ? resolveImageUrl(
-                                          member['profile_image'],
-                                          AppConfigProvider.imageUrl)
-                                          : AppImage.userImage1,
-                                      member['name'] ?? 'Unknown',
-                                          () async {
-                                        final String memberId =
-                                        (member['_id'] ?? '')
-                                            .toString();
-                                        final result =
-                                        await Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child:
-                                            LikedMemberDetail(
-                                              memberId: memberId,
-                                              deferSwipeActionToParent:
-                                              true,
-                                            ),
-                                            duration:
-                                            const Duration(
-                                                milliseconds:
-                                                500),
+                          : Stack(
+                        children: [
+                          _buildSwipeGapBackground('member'),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                                    opacity: animation, child: child),
+                            child: KeyedSubtree(
+                              key: ValueKey(
+                                  "members_tab_${membersTabVersion}_$selectedId"),
+                              child: CardSwiper(
+                                controller: membersSwiperController,
+                                padding: EdgeInsets.zero,
+                                onSwipe: _onSwipeMembers,
+                                cardsCount: visibleMembers.length,
+                                threshold: 80,
+                                maxAngle: 20,
+                                allowedSwipeDirection:
+                                const AllowedSwipeDirection.only(
+                                  left: true,
+                                  right: true,
+                                  down: false,
+                                  up: false,
+                                ),
+                                numberOfCardsDisplayed: 1,
+                                cardBuilder: (context, index, percentThresholdX, __) {
+                                  if (index < 0 ||
+                                      index >= visibleMembers.length) {
+                                    return _buildSwipeCardFallback('member');
+                                  }
+                                  final member = visibleMembers[index];
+                                  final isAdCard = _isAdItem(member);
+                                  return Center(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height *
+                                              1 /
+                                              100,
+                                        ),
+                                        isAdCard
+                                            ? GestureDetector(
+                                          onTapDown: (_) =>
+                                              _pauseAdPlayback(),
+                                          onTapUp: (_) =>
+                                              _resumeAdPlayback(),
+                                          onTapCancel: () =>
+                                              _resumeAdPlayback(),
+                                          child: HomeWidget.adCard(
+                                            context,
+                                            _adImage(member),
+                                            key: ValueKey(
+                                                "member_ad_${membersTabVersion}_$index"),
+                                            progress: _adProgress,
+                                            secondsRemaining:
+                                            _adSecondsRemaining,
                                           ),
-                                        );
-                                        _handleMemberDetailResult(
-                                            result);
-                                      },
-                                      key: ValueKey(
-                                          "member_image_${membersTabVersion}_$index"),
-                                      dragPercentX: percentThresholdX.toDouble(),
-                                      showHeart: showHeart && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
-                                      showCross: showCross && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
-                                      lastSwipeType: (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member') ? lastSwipeType : null,
-                                      onRejectTap: () {
-                                        membersSwiperController.swipe(
-                                          CardSwiperDirection.left,
-                                        );
-                                      },
-                                      onMessageTap: () {
-                                        showInviteMemberstypebottomsheet(
+                                        )
+                                            : HomeWidget.membersCard(
                                           context,
-                                          receiverId:
-                                          (member['_id'] ?? '')
-                                              .toString(),
-                                          receiverName: (member[
-                                          'full_name'] ??
-                                              member['name'] ??
-                                              '')
-                                              .toString(),
-                                          receiverImage: member[
-                                          'profile_image'] !=
+                                          member['profile_image'] !=
                                               null &&
                                               member['profile_image']
-                                                  .toString()
                                                   .isNotEmpty
                                               ? resolveImageUrl(
                                               member['profile_image'],
                                               AppConfigProvider.imageUrl)
-                                              : AppImage
-                                              .dummyImageIcon,
-                                        );
-                                      },
-                                      onHeartTap: () {
-                                        membersSwiperController
-                                            .swipe(
-                                            CardSwiperDirection
-                                                .right);
-                                      },
-                                      bio: member['bio'] ?? '',
-                                      vibes: List<String>.from(
-                                          member['vibes'] ?? []),
-                                      distance: member[
-                                      'distance_km'] !=
-                                          null
-                                          ? '${member['distance_km']}'
-                                          : '',
-                                      memberId:
-                                      (member['_id'] ?? '')
-                                          .toString(),
-                                      onDetailResult:
-                                      _handleMemberDetailResult,
+                                              : AppImage.userImage1,
+                                          member['name'] ?? 'Unknown',
+                                              () async {
+                                            final String memberId =
+                                            (member['_id'] ?? '')
+                                                .toString();
+                                            final result =
+                                            await Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child:
+                                                LikedMemberDetail(
+                                                  memberId: memberId,
+                                                  deferSwipeActionToParent:
+                                                  true,
+                                                ),
+                                                duration:
+                                                const Duration(
+                                                    milliseconds:
+                                                    500),
+                                              ),
+                                            );
+                                            _handleMemberDetailResult(
+                                                result);
+                                          },
+                                          key: ValueKey(
+                                              "member_image_${membersTabVersion}_$index"),
+                                          dragPercentX: percentThresholdX.toDouble(),
+                                          showHeart: showHeart && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
+                                          showCross: showCross && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
+                                          lastSwipeType: (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member') ? lastSwipeType : null,
+                                          onRejectTap: () {
+                                            membersSwiperController.swipe(
+                                              CardSwiperDirection.left,
+                                            );
+                                          },
+                                          onMessageTap: () {
+                                            showInviteMemberstypebottomsheet(
+                                              context,
+                                              receiverId:
+                                              (member['_id'] ?? '')
+                                                  .toString(),
+                                              receiverName: (member[
+                                              'full_name'] ??
+                                                  member['name'] ??
+                                                  '')
+                                                  .toString(),
+                                              receiverImage: member[
+                                              'profile_image'] !=
+                                                  null &&
+                                                  member['profile_image']
+                                                      .toString()
+                                                      .isNotEmpty
+                                                  ? resolveImageUrl(
+                                                  member['profile_image'],
+                                                  AppConfigProvider.imageUrl)
+                                                  : AppImage
+                                                  .dummyImageIcon,
+                                            );
+                                          },
+                                          onHeartTap: () {
+                                            membersSwiperController
+                                                .swipe(
+                                                CardSwiperDirection
+                                                    .right);
+                                          },
+                                          bio: member['bio'] ?? '',
+                                          vibes: List<String>.from(
+                                              member['vibes'] ?? []),
+                                          distance: member[
+                                          'distance_km'] !=
+                                              null
+                                              ? '${member['distance_km']}'
+                                              : '',
+                                          memberId:
+                                          (member['_id'] ?? '')
+                                              .toString(),
+                                          onDetailResult:
+                                          _handleMemberDetailResult,
+                                        ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height *
+                                                0.015),
+                                        if (isAdCard)
+                                          _skipActionChip(() =>
+                                              _skipCurrentAdForType(
+                                                  'member')),
+                                        if (!isAdCard && _showMemberUndo)
+                                          _undoActionChip(
+                                              _undoPendingMemberSwipe),
+                                      ],
                                     ),
-                                    SizedBox(
-                                        height: MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            0.015),
-                                    if (isAdCard)
-                                      _skipActionChip(() =>
-                                          _skipCurrentAdForType(
-                                              'member')),
-                                    if (!isAdCard && _showMemberUndo)
-                                      _undoActionChip(
-                                          _undoPendingMemberSwipe),
-                                  ],
-                                ),
-                              );
-                            },
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
 
@@ -1721,194 +1786,199 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       )
-                          : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(
-                                opacity: animation, child: child),
-                        child: KeyedSubtree(
-                          key: ValueKey(
-                              "events_tab_${eventTabVersion}_$selectedId"),
-                          child: CardSwiper(
-                            controller: eventsSwiperController,
-                            padding: EdgeInsets.zero,
-                            onSwipe: _onSwipeEvents,
-                            cardsCount: visibleEvents.length,
-                            allowedSwipeDirection:
-                            const AllowedSwipeDirection.only(
-                              left: true,
-                              right: true,
-                              down: false,
-                              up: false,
-                            ),
-                            numberOfCardsDisplayed: 1,
-                            cardBuilder: (context, index, _, __) {
-                              if (index < 0 ||
-                                  index >= visibleEvents.length) {
-                                return _buildSwipeCardFallback('event');
-                              }
-                              final event = visibleEvents[index];
-                              final isAdCard = _isAdItem(event);
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          1 /
-                                          100,
-                                    ),
-                                    isAdCard
-                                        ? GestureDetector(
-                                      onTapDown: (_) =>
-                                          _pauseAdPlayback(),
-                                      onTapUp: (_) =>
-                                          _resumeAdPlayback(),
-                                      onTapCancel: () =>
-                                          _resumeAdPlayback(),
-                                      child: HomeWidget.adCard(
-                                        context,
-                                        _adImage(event),
-                                        key: ValueKey(
-                                            "event_ad_${eventTabVersion}_$index"),
-                                        progress: _adProgress,
-                                        secondsRemaining:
-                                        _adSecondsRemaining,
-                                      ),
-                                    )
-                                        : HomeWidget.eventsCard(
-                                      context,
-                                      event['event_image'] !=
-                                          null &&
-                                          event['event_image']
-                                              .isNotEmpty
-                                          ? resolveImageUrl(
-                                          event['event_image'],
-                                          AppConfigProvider.imageUrl)
-                                          : AppImage.dummyImageIcon,
-                                      event['event_name'] ??
-                                          'Event',
-                                          () async {
-                                        final String eventId =
-                                        (event['_id'] ?? '')
-                                            .toString();
-                                        final result =
-                                        await Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: LikedEventDetail(
-                                              eventId: eventId,
-                                            ),
-                                            duration:
-                                            const Duration(
-                                                milliseconds:
-                                                500),
-                                          ),
-                                        );
-                                        _handleEventDetailResult(
-                                            result);
-                                      },
-                                      key: ValueKey(
-                                          "events_tab_${eventTabVersion}_$index"),
-                                      showHeart: showHeart && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
-                                      showCross: showCross && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
-                                      lastSwipeType: (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event') ? lastSwipeType : null,
-                                      onRejectTap: () {
-                                        eventsSwiperController.swipe(
-                                          CardSwiperDirection.left,
-                                        );
-                                      },
-                                      onShareTap: () {
-                                        showEventTypesBottomSheet(
-                                          context,
-                                          type: 'event',
-                                          id: (event['_id'] ?? '')
-                                              .toString(),
-                                          sharedEventData: Map<
-                                              String,
-                                              dynamic>.from(event),
-                                        );
-                                      },
-                                      onHeartTap: () {
-                                        eventsSwiperController
-                                            .swipe(
-                                            CardSwiperDirection
-                                                .right);
-                                      },
-                                      about: event['about'] ?? '',
-                                      categories: List<String>.from(
-                                          event['categories'] ??
-                                              []),
-                                      date: event['date'] ?? '',
-                                      venueName:
-                                      event['venue_name'] ?? '',
-                                      address:
-                                      event['address'] ?? '',
-                                      distance: event[
-                                      'distance_km'] !=
-                                          null
-                                          ? '${event['distance_km']} km'
-                                          : '',
-                                      totalLikes: (event['likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? event['likes']
-                                      ['total_likes']
-                                          : 0) ??
-                                          0,
-                                      recentCount: (event['likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? event['likes']
-                                      ['recent_count']
-                                          : 0) ??
-                                          0,
-                                      recentUserImages: ((event[
-                                      'likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? event['likes'][
-                                      'recent_users']
-                                          : []) as List? ??
-                                          const [])
-                                          .take(2)
-                                          .map((user) {
-                                        final profileImage = (user
-                                        is Map<String,
-                                            dynamic>
-                                            ? user[
-                                        'profile_image']
-                                            : '')
-                                            .toString();
-                                        if (profileImage.isEmpty) {
-                                          return '';
-                                        }
-                                        return isNetworkUrl(
-                                            profileImage)
-                                            ? profileImage
-                                            : '${AppConfigProvider.imageUrl}$profileImage';
-                                      }).toList(),
-                                    ),
-                                    SizedBox(
-                                        height: MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            0.015),
-                                    if (isAdCard)
-                                      _skipActionChip(() =>
-                                          _skipCurrentAdForType('event')),
-                                    if (!isAdCard && _showEventUndo)
-                                      _undoActionChip(
-                                          _undoPendingEventSwipe),
-                                  ],
+                          : Stack(
+                        children: [
+                          _buildSwipeGapBackground('event'),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                                    opacity: animation, child: child),
+                            child: KeyedSubtree(
+                              key: ValueKey(
+                                  "events_tab_${eventTabVersion}_$selectedId"),
+                              child: CardSwiper(
+                                controller: eventsSwiperController,
+                                padding: EdgeInsets.zero,
+                                onSwipe: _onSwipeEvents,
+                                cardsCount: visibleEvents.length,
+                                allowedSwipeDirection:
+                                const AllowedSwipeDirection.only(
+                                  left: true,
+                                  right: true,
+                                  down: false,
+                                  up: false,
                                 ),
-                              );
-                            },
+                                numberOfCardsDisplayed: 1,
+                                cardBuilder: (context, index, _, __) {
+                                  if (index < 0 ||
+                                      index >= visibleEvents.length) {
+                                    return _buildSwipeCardFallback('event');
+                                  }
+                                  final event = visibleEvents[index];
+                                  final isAdCard = _isAdItem(event);
+                                  return Center(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height *
+                                              1 /
+                                              100,
+                                        ),
+                                        isAdCard
+                                            ? GestureDetector(
+                                          onTapDown: (_) =>
+                                              _pauseAdPlayback(),
+                                          onTapUp: (_) =>
+                                              _resumeAdPlayback(),
+                                          onTapCancel: () =>
+                                              _resumeAdPlayback(),
+                                          child: HomeWidget.adCard(
+                                            context,
+                                            _adImage(event),
+                                            key: ValueKey(
+                                                "event_ad_${eventTabVersion}_$index"),
+                                            progress: _adProgress,
+                                            secondsRemaining:
+                                            _adSecondsRemaining,
+                                          ),
+                                        )
+                                            : HomeWidget.eventsCard(
+                                          context,
+                                          event['event_image'] !=
+                                              null &&
+                                              event['event_image']
+                                                  .isNotEmpty
+                                              ? resolveImageUrl(
+                                              event['event_image'],
+                                              AppConfigProvider.imageUrl)
+                                              : AppImage.dummyImageIcon,
+                                          event['event_name'] ??
+                                              'Event',
+                                              () async {
+                                            final String eventId =
+                                            (event['_id'] ?? '')
+                                                .toString();
+                                            final result =
+                                            await Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: LikedEventDetail(
+                                                  eventId: eventId,
+                                                ),
+                                                duration:
+                                                const Duration(
+                                                    milliseconds:
+                                                    500),
+                                              ),
+                                            );
+                                            _handleEventDetailResult(
+                                                result);
+                                          },
+                                          key: ValueKey(
+                                              "events_tab_${eventTabVersion}_$index"),
+                                          showHeart: showHeart && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
+                                          showCross: showCross && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
+                                          lastSwipeType: (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event') ? lastSwipeType : null,
+                                          onRejectTap: () {
+                                            eventsSwiperController.swipe(
+                                              CardSwiperDirection.left,
+                                            );
+                                          },
+                                          onShareTap: () {
+                                            showEventTypesBottomSheet(
+                                              context,
+                                              type: 'event',
+                                              id: (event['_id'] ?? '')
+                                                  .toString(),
+                                              sharedEventData: Map<
+                                                  String,
+                                                  dynamic>.from(event),
+                                            );
+                                          },
+                                          onHeartTap: () {
+                                            eventsSwiperController
+                                                .swipe(
+                                                CardSwiperDirection
+                                                    .right);
+                                          },
+                                          about: event['about'] ?? '',
+                                          categories: List<String>.from(
+                                              event['categories'] ??
+                                                  []),
+                                          date: event['date'] ?? '',
+                                          venueName:
+                                          event['venue_name'] ?? '',
+                                          address:
+                                          event['address'] ?? '',
+                                          distance: event[
+                                          'distance_km'] !=
+                                              null
+                                              ? '${event['distance_km']} km'
+                                              : '',
+                                          totalLikes: (event['likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? event['likes']
+                                          ['total_likes']
+                                              : 0) ??
+                                              0,
+                                          recentCount: (event['likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? event['likes']
+                                          ['recent_count']
+                                              : 0) ??
+                                              0,
+                                          recentUserImages: ((event[
+                                          'likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? event['likes'][
+                                          'recent_users']
+                                              : []) as List? ??
+                                              const [])
+                                              .take(2)
+                                              .map((user) {
+                                            final profileImage = (user
+                                            is Map<String,
+                                                dynamic>
+                                                ? user[
+                                            'profile_image']
+                                                : '')
+                                                .toString();
+                                            if (profileImage.isEmpty) {
+                                              return '';
+                                            }
+                                            return isNetworkUrl(
+                                                profileImage)
+                                                ? profileImage
+                                                : '${AppConfigProvider.imageUrl}$profileImage';
+                                          }).toList(),
+                                        ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height *
+                                                0.015),
+                                        if (isAdCard)
+                                          _skipActionChip(() =>
+                                              _skipCurrentAdForType('event')),
+                                        if (!isAdCard && _showEventUndo)
+                                          _undoActionChip(
+                                              _undoPendingEventSwipe),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
 
@@ -1945,191 +2015,196 @@ class _HomeState extends State<Home> {
                           ],
                         ),
                       )
-                          : AnimatedSwitcher(
-                        duration: const Duration(milliseconds: 500),
-                        transitionBuilder: (child, animation) =>
-                            FadeTransition(
-                                opacity: animation, child: child),
-                        child: KeyedSubtree(
-                          key: ValueKey(
-                              "venues_tab_${venusTabVersion}_$selectedId"),
-                          child: CardSwiper(
-                            controller: venuesSwiperController,
-                            padding: EdgeInsets.zero,
-                            onSwipe: _onSwipeVenues,
-                            cardsCount: visibleVenues.length,
-                            allowedSwipeDirection:
-                            const AllowedSwipeDirection.only(
-                              left: true,
-                              right: true,
-                              down: false,
-                              up: false,
-                            ),
-                            numberOfCardsDisplayed: 1,
-                            cardBuilder: (context, index, _, __) {
-                              if (index < 0 ||
-                                  index >= visibleVenues.length) {
-                                return _buildSwipeCardFallback('venue');
-                              }
-                              final venue = visibleVenues[index];
-                              final isAdCard = _isAdItem(venue);
-                              return Center(
-                                child: Column(
-                                  children: [
-                                    SizedBox(
-                                      height: MediaQuery.of(context)
-                                          .size
-                                          .height *
-                                          1 /
-                                          100,
-                                    ),
-                                    isAdCard
-                                        ? GestureDetector(
-                                      onTapDown: (_) =>
-                                          _pauseAdPlayback(),
-                                      onTapUp: (_) =>
-                                          _resumeAdPlayback(),
-                                      onTapCancel: () =>
-                                          _resumeAdPlayback(),
-                                      child: HomeWidget.adCard(
-                                        context,
-                                        _adImage(venue),
-                                        key: ValueKey(
-                                            "venue_ad_${venusTabVersion}_$index"),
-                                        progress: _adProgress,
-                                        secondsRemaining:
-                                        _adSecondsRemaining,
-                                      ),
-                                    )
-                                        : HomeWidget.venuesCard(
-                                      context,
-                                      venue['venue_image'] !=
-                                          null &&
-                                          venue['venue_image']
-                                              .isNotEmpty
-                                          ? resolveImageUrl(
-                                          venue['venue_image'],
-                                          AppConfigProvider.imageUrl)
-                                          : AppImage.dummyImageIcon,
-                                      venue['venue_name'] ??
-                                          'Venue',
-                                      venue['_id'] ?? '',
-                                          () async {
-                                        final result =
-                                        await Navigator.push(
-                                          context,
-                                          PageTransition(
-                                            type: PageTransitionType
-                                                .rightToLeftWithFade,
-                                            child: VenuePages(
-                                              venueId: venue['_id']
-                                                  .toString(),
-                                            ),
-                                            duration:
-                                            const Duration(
-                                                milliseconds:
-                                                500),
-                                          ),
-                                        );
-                                        _handleVenueDetailResult(
-                                            result);
-                                      },
-                                      key: ValueKey(
-                                          "venues_tab_${venusTabVersion}_$index"),
-                                      showHeart: showHeart && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
-                                      showCross: showCross && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
-                                      lastSwipeType: (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue') ? lastSwipeType : null,
-                                      onRejectTap: () {
-                                        venuesSwiperController.swipe(
-                                          CardSwiperDirection.left,
-                                        );
-                                      },
-                                      onShareTap: () {
-                                        showEventTypesBottomSheet(
-                                          context,
-                                          type: 'venue',
-                                          id: (venue['_id'] ?? '')
-                                              .toString(),
-                                          sharedEventData: Map<
-                                              String,
-                                              dynamic>.from(venue),
-                                        );
-                                      },
-                                      onHeartTap: () {
-                                        venuesSwiperController
-                                            .swipe(
-                                            CardSwiperDirection
-                                                .right);
-                                      },
-                                      about: venue['about'] ?? '',
-                                      categories: List<String>.from(
-                                          venue['categories'] ??
-                                              []),
-                                      timing: venue['timing'] ?? '',
-                                      address:
-                                      venue['address'] ?? '',
-                                      distance: venue[
-                                      'distance_km'] !=
-                                          null
-                                          ? '${venue['distance_km']} km'
-                                          : '',
-                                      totalLikes: (venue['likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? venue['likes']
-                                      ['total_likes']
-                                          : 0) ??
-                                          0,
-                                      recentCount: (venue['likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? venue['likes']
-                                      ['recent_count']
-                                          : 0) ??
-                                          0,
-                                      recentUserImages: ((venue[
-                                      'likes']
-                                      is Map<String,
-                                          dynamic>
-                                          ? venue['likes'][
-                                      'recent_users']
-                                          : []) as List? ??
-                                          const [])
-                                          .take(2)
-                                          .map((user) {
-                                        final profileImage = (user
-                                        is Map<String,
-                                            dynamic>
-                                            ? user[
-                                        'profile_image']
-                                            : '')
-                                            .toString();
-                                        if (profileImage.isEmpty) {
-                                          return '';
-                                        }
-                                        return isNetworkUrl(
-                                            profileImage)
-                                            ? profileImage
-                                            : '${AppConfigProvider.imageUrl}$profileImage';
-                                      }).toList(),
-                                    ),
-                                    SizedBox(
-                                        height: MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            0.015),
-                                    if (isAdCard)
-                                      _skipActionChip(() =>
-                                          _skipCurrentAdForType('venue')),
-                                    if (!isAdCard && _showVenueUndo)
-                                      _undoActionChip(
-                                          _undoPendingVenueSwipe),
-                                  ],
+                          : Stack(
+                        children: [
+                          _buildSwipeGapBackground('venue'),
+                          AnimatedSwitcher(
+                            duration: const Duration(milliseconds: 500),
+                            transitionBuilder: (child, animation) =>
+                                FadeTransition(
+                                    opacity: animation, child: child),
+                            child: KeyedSubtree(
+                              key: ValueKey(
+                                  "venues_tab_${venusTabVersion}_$selectedId"),
+                              child: CardSwiper(
+                                controller: venuesSwiperController,
+                                padding: EdgeInsets.zero,
+                                onSwipe: _onSwipeVenues,
+                                cardsCount: visibleVenues.length,
+                                allowedSwipeDirection:
+                                const AllowedSwipeDirection.only(
+                                  left: true,
+                                  right: true,
+                                  down: false,
+                                  up: false,
                                 ),
-                              );
-                            },
+                                numberOfCardsDisplayed: 1,
+                                cardBuilder: (context, index, _, __) {
+                                  if (index < 0 ||
+                                      index >= visibleVenues.length) {
+                                    return _buildSwipeCardFallback('venue');
+                                  }
+                                  final venue = visibleVenues[index];
+                                  final isAdCard = _isAdItem(venue);
+                                  return Center(
+                                    child: Column(
+                                      children: [
+                                        SizedBox(
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .height *
+                                              1 /
+                                              100,
+                                        ),
+                                        isAdCard
+                                            ? GestureDetector(
+                                          onTapDown: (_) =>
+                                              _pauseAdPlayback(),
+                                          onTapUp: (_) =>
+                                              _resumeAdPlayback(),
+                                          onTapCancel: () =>
+                                              _resumeAdPlayback(),
+                                          child: HomeWidget.adCard(
+                                            context,
+                                            _adImage(venue),
+                                            key: ValueKey(
+                                                "venue_ad_${venusTabVersion}_$index"),
+                                            progress: _adProgress,
+                                            secondsRemaining:
+                                            _adSecondsRemaining,
+                                          ),
+                                        )
+                                            : HomeWidget.venuesCard(
+                                          context,
+                                          venue['venue_image'] !=
+                                              null &&
+                                              venue['venue_image']
+                                                  .isNotEmpty
+                                              ? resolveImageUrl(
+                                              venue['venue_image'],
+                                              AppConfigProvider.imageUrl)
+                                              : AppImage.dummyImageIcon,
+                                          venue['venue_name'] ??
+                                              'Venue',
+                                          venue['_id'] ?? '',
+                                              () async {
+                                            final result =
+                                            await Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: VenuePages(
+                                                  venueId: venue['_id']
+                                                      .toString(),
+                                                ),
+                                                duration:
+                                                const Duration(
+                                                    milliseconds:
+                                                    500),
+                                              ),
+                                            );
+                                            _handleVenueDetailResult(
+                                                result);
+                                          },
+                                          key: ValueKey(
+                                              "venues_tab_${venusTabVersion}_$index"),
+                                          showHeart: showHeart && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
+                                          showCross: showCross && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
+                                          lastSwipeType: (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue') ? lastSwipeType : null,
+                                          onRejectTap: () {
+                                            venuesSwiperController.swipe(
+                                              CardSwiperDirection.left,
+                                            );
+                                          },
+                                          onShareTap: () {
+                                            showEventTypesBottomSheet(
+                                              context,
+                                              type: 'venue',
+                                              id: (venue['_id'] ?? '')
+                                                  .toString(),
+                                              sharedEventData: Map<
+                                                  String,
+                                                  dynamic>.from(venue),
+                                            );
+                                          },
+                                          onHeartTap: () {
+                                            venuesSwiperController
+                                                .swipe(
+                                                CardSwiperDirection
+                                                    .right);
+                                          },
+                                          about: venue['about'] ?? '',
+                                          categories: List<String>.from(
+                                              venue['categories'] ??
+                                                  []),
+                                          timing: venue['timing'] ?? '',
+                                          address:
+                                          venue['address'] ?? '',
+                                          distance: venue[
+                                          'distance_km'] !=
+                                              null
+                                              ? '${venue['distance_km']} km'
+                                              : '',
+                                          totalLikes: (venue['likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? venue['likes']
+                                          ['total_likes']
+                                              : 0) ??
+                                              0,
+                                          recentCount: (venue['likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? venue['likes']
+                                          ['recent_count']
+                                              : 0) ??
+                                              0,
+                                          recentUserImages: ((venue[
+                                          'likes']
+                                          is Map<String,
+                                              dynamic>
+                                              ? venue['likes'][
+                                          'recent_users']
+                                              : []) as List? ??
+                                              const [])
+                                              .take(2)
+                                              .map((user) {
+                                            final profileImage = (user
+                                            is Map<String,
+                                                dynamic>
+                                                ? user[
+                                            'profile_image']
+                                                : '')
+                                                .toString();
+                                            if (profileImage.isEmpty) {
+                                              return '';
+                                            }
+                                            return isNetworkUrl(
+                                                profileImage)
+                                                ? profileImage
+                                                : '${AppConfigProvider.imageUrl}$profileImage';
+                                          }).toList(),
+                                        ),
+                                        SizedBox(
+                                            height: MediaQuery.of(context)
+                                                .size
+                                                .height *
+                                                0.015),
+                                        if (isAdCard)
+                                          _skipActionChip(() =>
+                                              _skipCurrentAdForType('venue')),
+                                        if (!isAdCard && _showVenueUndo)
+                                          _undoActionChip(
+                                              _undoPendingVenueSwipe),
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   if (showBottomPaginationLoader)

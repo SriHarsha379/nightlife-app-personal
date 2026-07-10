@@ -24,21 +24,25 @@ class AdvertisementData {
   });
 }
 
-/// A set of sample advertisements used when no backend data is available.
-///
-/// Replace or augment this list with real API-sourced data as needed.
+/// A set of sample advertisements used only as a fallback, for the rare
+/// case the popup triggers before any real ad items have loaded from the
+/// backend (see _collectRealAdImages() in home_Screen.dart, which is now
+/// the primary source). These point at real network images rather than
+/// local assets, since the local asset files these used to reference
+/// ('assets/icons/eventimg.png' / 'eventstory1.jpg') were never actually
+/// bundled with the app and always rendered as a broken-image icon.
 const List<AdvertisementData> sampleAds = [
   AdvertisementData(
-    imageUrl: 'assets/icons/eventimg.png',
+    imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&h=1200&fit=crop',
     title: 'Hot Events Near You 🔥',
     description:
-        'Discover the hottest parties and nightlife events happening around you tonight.',
+    'Discover the hottest parties and nightlife events happening around you tonight.',
   ),
   AdvertisementData(
-    imageUrl: 'assets/icons/eventstory1.jpg',
+    imageUrl: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=800&h=1200&fit=crop',
     title: 'VIP Access — Limited Seats',
     description:
-        'Book your VIP table before they run out. Exclusive deals for Hii members.',
+    'Book your VIP table before they run out. Exclusive deals for Hii members.',
   ),
 ];
 
@@ -189,7 +193,7 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
                                   fontSize: 17,
                                   fontWeight: FontWeight.w700,
                                   color:
-                                      isDark ? Colors.white : Colors.black87,
+                                  isDark ? Colors.white : Colors.black87,
                                 ),
                               ),
                               const SizedBox(height: 6),
@@ -267,7 +271,7 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
             children: [
               Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
                   color: AppColor.themeColor.withOpacity(0.92),
                   borderRadius: BorderRadius.circular(12),
@@ -299,15 +303,15 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
                   child: Center(
                     child: _canClose
                         ? const Icon(Icons.close,
-                            color: Colors.white, size: 18)
+                        color: Colors.white, size: 18)
                         : Text(
-                            '$_secondsLeft',
-                            style: const TextStyle(
-                              color: Colors.white,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                      '$_secondsLeft',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ),
               ),
