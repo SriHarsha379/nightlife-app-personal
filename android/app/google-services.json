@@ -1,51 +1,26 @@
 {
   "project_info": {
-    "project_number": "954804179384",
-    "project_id": "hii-app-aa0f1",
-    "storage_bucket": "hii-app-aa0f1.firebasestorage.app"
+    "project_number": "337909267770",
+    "project_id": "nightlife-app-9a7f1",
+    "storage_bucket": "nightlife-app-9a7f1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:954804179384:android:8534cfa4a7b4abe0f2bf4d",
+        "mobilesdk_app_id": "1:337909267770:android:46c44ad191e48c31e4a403",
         "android_client_info": {
           "package_name": "com.app.night_life"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "954804179384-6nvkbk9jtb3ktq3747hmjr7p90vpo1cl.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.app.night_life",
-            "certificate_hash": "030d8c0ed57f2af73faaeba06e72ac70f72fd797"
-          }
-        },
-        {
-          "client_id": "954804179384-63hjno5sk0g95b8r0jkechcprpccnuik.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyBbNwIo_Z9Xo0kLe3BE7ieAAKTFWInCwsI"
+          "current_key": "AIzaSyAxTaTD2SqVAGseh_qvtITOf6bIpJS_3Iw"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "954804179384-63hjno5sk0g95b8r0jkechcprpccnuik.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "954804179384-5v14lfspc6hqhtmld5fkj78i6d3eqf5d.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.app.nightlife"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -103,7 +103,8 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
       );
       return;
     }
-    if (!Validation.isOtpLength(context, otp, minLength: 4)) return;
+    if (!Validation.isOtpLength(context, otp,
+        minLength: widget.isEmail ? 4 : 6)) return;
 
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     final res = await apiProvider.forgotOtpVerificationApiCalling(
@@ -217,7 +218,9 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                           alignment: Alignment.center,
                           width: MediaQuery.of(context).size.width * 80 / 100,
                           child: Text(
-                            "We have sent a 4-digit verification code to",
+                            widget.isEmail
+                                ? "We have sent a 4-digit verification code to"
+                                : "We have sent a 6-digit verification code to",
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                               color: Colors.grey,
@@ -256,13 +259,13 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                           height: MediaQuery.of(context).size.height * 7 / 100,
                         ),
                         Pinput(
-                          length: 4,
+                          length: widget.isEmail ? 4 : 6,
                           controller: pinputInputController,
                           defaultPinTheme: PinTheme(
                             width:
-                                MediaQuery.of(context).size.width * 12 / 100,
+                            MediaQuery.of(context).size.width * 12 / 100,
                             height:
-                                MediaQuery.of(context).size.width * 12 / 100,
+                            MediaQuery.of(context).size.width * 12 / 100,
                             textStyle: TextStyle(
                               fontFamily: AppFont.fontFamily,
                               fontSize: 26,
@@ -296,7 +299,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                         SizedBox(
                           width: MediaQuery.of(context).size.width * 80 / 100,
                           height:
-                              MediaQuery.of(context).size.height * 4.5 / 100,
+                          MediaQuery.of(context).size.height * 4.5 / 100,
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -310,7 +313,7 @@ class _ForgotOtpverifyState extends State<ForgotOtpverify> {
                               ),
                               SizedBox(
                                 width:
-                                    MediaQuery.of(context).size.width * 1 / 100,
+                                MediaQuery.of(context).size.width * 1 / 100,
                               ),
                               if (!_canResend) ...[
                                 Text(

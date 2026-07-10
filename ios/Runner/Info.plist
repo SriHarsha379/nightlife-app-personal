@@ -2,11 +2,6 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-<string>We use your location to show nearby venues and events.</string>
-
-<key>NSSpeechRecognitionUsageDescription</key>
-<string>We use speech recognition for voice search and voice commands.</string>
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>CFBundleDevelopmentRegion</key>
@@ -27,12 +22,33 @@
 	<string>$(FLUTTER_BUILD_NAME)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.davisantony.nightlife</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>app-1-337909267770-ios-9bf10e618cd62c9ae4a403</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>We use your camera for profile photos and uploads.</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>We use your location to show nearby venues and events.</string>
 	<key>NSLocationAlwaysUsageDescription</key>
 	<string>We use your location to show nearby events, venues and members.</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
@@ -43,8 +59,14 @@
 	<string>We use photo library access to save media when needed.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>We use your photos so you can select and upload media.</string>
+	<key>NSSpeechRecognitionUsageDescription</key>
+	<string>We use speech recognition for voice search and voice commands.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

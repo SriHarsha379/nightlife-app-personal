@@ -1,4 +1,6 @@
+import 'dart:io' show Platform;
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class FirebaseOtpService {
@@ -16,9 +18,33 @@ class FirebaseOtpService {
     required Function(String error) onError,
     required Function() onCodeSent,
   }) async {
+    final String formattedNumber =
+    phoneNumber.startsWith('+') ? phoneNumber : '+91$phoneNumber';
+
+    // ---- DEBUG: platform + input sanity check ----
+    debugPrint('=== sendOtp START ===');
+    debugPrint('Platform: ${Platform.operatingSystem}');
+    debugPrint('Raw phoneNumber param: "$phoneNumber"');
+    debugPrint('Formatted phoneNumber sent to Firebase: "$formattedNumber"');
+
+    // ---- DEBUG: iOS-only APNs token check ----
+    // On iOS, Firebase Phone Auth needs a working APNs token to silently
+    // verify the app (or to fall back to reCAPTCHA if it's missing).
+    // Simulators do NOT receive real APNs tokens — this will print null
+    // there, which alone explains "OTP not coming on iOS".
+    if (Platform.isIOS) {
+      try {
+        final apnsToken = await FirebaseMessaging.instance.getAPNSToken();
+        debugPrint('iOS APNs token: ${apnsToken ?? "NULL <-- likely cause, see notes below"}');
+      } catch (e) {
+        debugPrint('iOS APNs token fetch threw: $e');
+      }
+    }
+
     try {
+      debugPrint('Calling FirebaseAuth.verifyPhoneNumber...');
       await _auth.verifyPhoneNumber(
-        phoneNumber: phoneNumber.startsWith('+') ? phoneNumber : '+91$phoneNumber',
+        phoneNumber: formattedNumber,
         timeout: const Duration(seconds: 120),
         verificationCompleted: (PhoneAuthCredential credential) async {
           // This fires in two cases:
@@ -28,34 +54,43 @@ class FirebaseOtpService {
           // Either way, we MUST actually sign in here, or _verificationId
           // never gets set and manual OTP entry will fail with
           // "session expired" or "invalid code".
-          debugPrint('Auto verification completed');
+          debugPrint('[callback] verificationCompleted fired (auto sign-in)');
           try {
             await _auth.signInWithCredential(credential);
+            debugPrint('[callback] auto sign-in succeeded');
             onCodeSent(); // let UI know it can proceed (user is now signed in)
           } on FirebaseAuthException catch (e) {
-            debugPrint('Auto sign-in failed: ${e.code} - ${e.message}');
+            debugPrint('[callback] Auto sign-in failed: ${e.code} - ${e.message}');
             onError(e.message ?? 'Auto verification failed.');
           }
         },
         verificationFailed: (FirebaseAuthException e) {
-          debugPrint('Verification failed: ${e.code} - ${e.message}');
+          debugPrint('[callback] verificationFailed fired');
+          debugPrint('  code: ${e.code}');
+          debugPrint('  message: ${e.message}');
+          debugPrint('  plugin: ${e.plugin}');
+          debugPrint('  stackTrace: ${e.stackTrace}');
           onError(e.message ?? 'OTP sending failed. Please try again.');
         },
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
           _resendToken = resendToken;
-          debugPrint('OTP sent successfully, verificationId set');
+          debugPrint('[callback] codeSent fired, verificationId set: $verificationId');
           onCodeSent();
         },
         codeAutoRetrievalTimeout: (String verificationId) {
           _verificationId = verificationId;
-          debugPrint('Auto-retrieval timed out, verificationId set for manual entry');
+          debugPrint('[callback] codeAutoRetrievalTimeout fired, verificationId set: $verificationId');
         },
         forceResendingToken: _resendToken,
       );
+      debugPrint('verifyPhoneNumber call returned without throwing (this just means the '
+          'request was submitted — check which callback above actually fired)');
+      debugPrint('=== sendOtp END ===');
       return true;
-    } catch (e) {
+    } catch (e, st) {
       debugPrint('sendOtp exception: $e');
+      debugPrint('sendOtp stack trace: $st');
       onError('Failed to send OTP: $e');
       return false;
     }

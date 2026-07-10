@@ -60,11 +60,11 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions ios = FirebaseOptions(
     apiKey: 'AIzaSyCEI31JBYsYDZ_ilwQhiD8QMIrDrAd9Fds',
-    appId: '1:337909267770:ios:6e3ac9e4d704510ee4a403',
+    appId: '1:337909267770:ios:9bf10e618cd62c9ae4a403',
     messagingSenderId: '337909267770',
     projectId: 'nightlife-app-9a7f1',
     storageBucket: 'nightlife-app-9a7f1.firebasestorage.app',
-    iosBundleId: 'com.example.nightLife',
+    iosBundleId: 'com.davisantony.nightlife',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
@@ -85,4 +85,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'nightlife-app-9a7f1.firebasestorage.app',
     measurementId: 'G-ECVEZ0X840',
   );
+
 }
