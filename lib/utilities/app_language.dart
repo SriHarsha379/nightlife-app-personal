@@ -562,6 +562,7 @@ class AppLanguage {
   static const postsText = ["Posts"];
   static const reelsText = ["Reels"];
   static const spotifyText = ["Spotify"];
+  static const snapchatText = ["Snapchat"];
   static const eventRemaindersText = ["Event Reminders"];
   static const visibilityText = ["Visibility"];
   static const showMeonText = ["Show me on Hii Around Me"];
