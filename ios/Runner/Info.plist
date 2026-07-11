@@ -22,25 +22,25 @@
         <string>$(FLUTTER_BUILD_NAME)</string>
         <key>CFBundleSignature</key>
         <string>????</string>
-        <key>CFBundleURLTypes</key>
+<key>CFBundleURLTypes</key>
+<array>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
         <array>
-            <dict>
-                <key>CFBundleTypeRole</key>
-                <string>Editor</string>
-                <key>CFBundleURLSchemes</key>
-                <array>
-                    <string>com.davisantony.nightlife</string>
-                </array>
-            </dict>
-            <dict>
-                <key>CFBundleTypeRole</key>
-                <string>Editor</string>
-                <key>CFBundleURLSchemes</key>
-                <array>
-                    <string>app-1-337909267770-ios-9bf10e618cd62c9ae4a403</string>
-                </array>
-            </dict>
+            <string>com.davisantony.nightlife</string>
         </array>
+    </dict>
+    <dict>
+        <key>CFBundleTypeRole</key>
+        <string>Editor</string>
+        <key>CFBundleURLSchemes</key>
+        <array>
+            <string>app-1-954804179384-ios-b6d1e2d0734e8951f2bf4d</string>
+        </array>
+    </dict>
+</array>
         <key>CFBundleVersion</key>
         <string>$(FLUTTER_BUILD_NUMBER)</string>
         <key>LSRequiresIPhoneOS</key>
