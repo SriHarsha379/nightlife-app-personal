@@ -133,7 +133,7 @@ class _ChatSupportState extends State<ChatSupport> {
           'authorization': 'Bearer ${AppConstant.token}',
           'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
           'Accept': 'application/json',
-          'X-Requested-With': 'com.example.nightLife',
+          'X-Requested-With': 'com.davisantony.nightlife',
         },
       );
       if (response.statusCode != 200) return;

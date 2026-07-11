@@ -92,7 +92,7 @@ Future<Map<String, String>> _prepareRequestHeaders(
   requestHeaders.putIfAbsent('Accept', () => 'application/json');
   requestHeaders.putIfAbsent(
     'X-Requested-With',
-        () => 'com.example.nightLife',
+        () => 'com.davisantony.nightlife',
   );
   // ──────────────────────────────────────────────────────────
 

@@ -73,7 +73,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '337909267770',
     projectId: 'nightlife-app-9a7f1',
     storageBucket: 'nightlife-app-9a7f1.firebasestorage.app',
-    iosBundleId: 'com.example.nightLife',
+    iosBundleId: 'com.davisantony.nightlife',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(

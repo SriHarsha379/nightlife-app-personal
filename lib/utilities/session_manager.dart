@@ -190,7 +190,7 @@ class SessionManager {
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
-            'X-Requested-With': 'com.example.nightLife',
+            'X-Requested-With': 'com.davisantony.nightlife',
           },
           body: jsonEncode({'refresh_token': refreshToken}),
         );

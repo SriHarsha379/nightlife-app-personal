@@ -17,7 +17,7 @@ Future<void> fetchAllContent(Function(List) onDataReady) async {
       headers: {
         'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
         'Accept': 'application/json',
-        'X-Requested-With': 'com.example.nightLife',
+        'X-Requested-With': 'com.davisantony.nightlife',
       },
     );
 
