@@ -7,6 +7,7 @@ import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
 import '../../../provider/post_api_provider.dart';
+import '../../../provider/user_controller.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
@@ -55,6 +56,11 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
   TextEditingController mobileNumberTextEditingController =
       TextEditingController();
 
+  // NEW: tracks whether we're auto-skipping this screen because the user
+  // already has a primary email on file (collected earlier in
+  // profile_details.dart). Prevents asking for email twice during signup.
+  bool _isAutoSkipping = false;
+
   @override
   void initState() {
     super.initState();
@@ -70,6 +76,23 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
     print("Pronouns: ${widget.pronouns}");
     print("Media List: ${widget.selectedMediaList}");
     print("Vibe Checks: ${widget.formattedAnswers}");
+
+    // NEW: check if the user already provided a primary email earlier in
+    // signup (profile_details.dart). If so, skip this screen's email
+    // prompt automatically instead of asking again.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final userController =
+          Provider.of<UserController>(context, listen: false);
+      final existingEmail = userController.getUserEmail.trim();
+
+      if (existingEmail.isNotEmpty) {
+        setState(() {
+          _isAutoSkipping = true;
+        });
+        _skipAndSubmit();
+      }
+    });
   }
 
   void nextField(String value, FocusNode focusNode) {
@@ -111,9 +134,9 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
         const limitMb = 10;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(
-                'File size ($sizeMb MB) exceeds $limitMb MB limit. Please pick a smaller file.'),
-            backgroundColor: Colors.red,
+              content: Text(
+                  'File size ($sizeMb MB) exceeds $limitMb MB limit. Please pick a smaller file.'),
+              backgroundColor: Colors.red,
           ),
         );
         return false;
@@ -268,6 +291,18 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // NEW: while auto-skip is in progress (user already has a primary
+    // email — we're silently submitting step 3 without asking again),
+    // show a lightweight loading state instead of the email form.
+    if (_isAutoSkipping) {
+      return Scaffold(
+        backgroundColor: AppColor.secondryColor(context),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
       child: Scaffold(
@@ -385,7 +420,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                                 minHeight: 40,
                               ),
 
-                              /// ✅ Border always visible
+                              /// Border always visible
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(40),
                                 borderSide: BorderSide(
@@ -394,7 +429,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                                 ),
                               ),
 
-                              /// ✅ Focus border
+                              /// Focus border
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(40),
                                 borderSide: BorderSide(
@@ -441,10 +476,8 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                         fontSize: 14,
                         fontWeight: FontWeight.w700,
                         color: provider.loading
-                            ? AppColor
-                                                        .greyLightColor(context).withOpacity(0.5)
-                            : AppColor
-                                                        .greyLightColor(context),
+                            ? AppColor.greyLightColor(context).withOpacity(0.5)
+                            : AppColor.greyLightColor(context),
                       ),
                     ),
                   );

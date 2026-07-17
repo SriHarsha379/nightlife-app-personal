@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -1045,6 +1046,33 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
     }
   }
 
+  Future<XFile?> _cropPickedImage(XFile pickedFile) async {
+    final croppedFile = await ImageCropper().cropImage(
+      sourcePath: pickedFile.path,
+      cropStyle: CropStyle.circle,
+      aspectRatioPresets: [CropAspectRatioPreset.square],
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Adjust Photo',
+          toolbarColor: AppColor.themeColor,
+          toolbarWidgetColor: Colors.white,
+          lockAspectRatio: true,
+          initAspectRatio: CropAspectRatioPreset.square,
+          hideBottomControls: false,
+        ),
+        IOSUiSettings(
+          title: 'Adjust Photo',
+          aspectRatioLockEnabled: true,
+          resetAspectRatioEnabled: false,
+          aspectRatioPickerButtonHidden: true,
+        ),
+      ],
+    );
+
+    if (croppedFile == null) return null;
+    return XFile(croppedFile.path);
+  }
+
   void _showImagePickerSheet() {
     showModalBottomSheet(
       context: context,
@@ -1076,8 +1104,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       imageQuality: 90,
                     );
                     if (pickedFile == null || !mounted) return;
+                    final cropped = await _cropPickedImage(pickedFile);
+                    if (cropped == null || !mounted) return;
                     setState(() {
-                      profilePhoto = pickedFile;
+                      profilePhoto = cropped;
                     });
                   },
                 ),
@@ -1097,8 +1127,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                       imageQuality: 90,
                     );
                     if (pickedFile == null || !mounted) return;
+                    final cropped = await _cropPickedImage(pickedFile);
+                    if (cropped == null || !mounted) return;
                     setState(() {
-                      profilePhoto = pickedFile;
+                      profilePhoto = cropped;
                     });
                   },
                 ),

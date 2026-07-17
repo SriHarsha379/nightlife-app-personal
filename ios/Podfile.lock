@@ -15,6 +15,9 @@ PODS:
   - GoogleMaps/Base (8.4.0)
   - GoogleMaps/Maps (8.4.0):
     - GoogleMaps/Base
+  - image_cropper (0.0.4):
+    - Flutter
+    - TOCropViewController (~> 2.6.1)
   - libwebp (1.5.0):
     - libwebp/demux (= 1.5.0)
     - libwebp/mux (= 1.5.0)
@@ -31,6 +34,7 @@ PODS:
     - Flutter
   - sign_in_with_apple (0.0.1):
     - Flutter
+  - TOCropViewController (2.6.1)
   - video_compress (0.3.0):
     - Flutter
   - video_thumbnail (0.0.1):
@@ -42,6 +46,7 @@ DEPENDENCIES:
   - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - geocoding_ios (from `.symlinks/plugins/geocoding_ios/ios`)
   - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
+  - image_cropper (from `.symlinks/plugins/image_cropper/ios`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
   - video_compress (from `.symlinks/plugins/video_compress/ios`)
@@ -52,6 +57,7 @@ SPEC REPOS:
     - Google-Maps-iOS-Utils
     - GoogleMaps
     - libwebp
+    - TOCropViewController
 
 EXTERNAL SOURCES:
   Flutter:
@@ -62,6 +68,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/geocoding_ios/ios"
   google_maps_flutter_ios:
     :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
+  image_cropper:
+    :path: ".symlinks/plugins/image_cropper/ios"
   permission_handler_apple:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   sign_in_with_apple:
@@ -78,9 +86,11 @@ SPEC CHECKSUMS:
   Google-Maps-iOS-Utils: 66d6de12be1ce6d3742a54661e7a79cb317a9321
   google_maps_flutter_ios: 17552876e72723da1d41accc22f03b5f7afbde69
   GoogleMaps: 8939898920281c649150e0af74aa291c60f2e77d
+  image_cropper: 655b3ba703c9e15e3111e79151624d6154288774
   libwebp: 02b23773aedb6ff1fd38cec7a77b81414c6842a8
   permission_handler_apple: 4ed2196e43d0651e8ff7ca3483a069d469701f2d
   sign_in_with_apple: c5dcc141574c8c54d5ac99dd2163c0c72ad22418
+  TOCropViewController: edfd4f25713d56905ad1e0b9f5be3fbe0f59c863
   video_compress: f2133a07762889d67f0711ac831faa26f956980e
   video_thumbnail: b637e0ad5f588ca9945f6e2c927f73a69a661140
 

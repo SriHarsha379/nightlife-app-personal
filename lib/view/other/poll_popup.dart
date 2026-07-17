@@ -209,6 +209,10 @@ class _PollPopupState extends State<PollPopup>
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E0E2A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColor.buttonColor.withOpacity(0.85),
+                width: 2,
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.30),
