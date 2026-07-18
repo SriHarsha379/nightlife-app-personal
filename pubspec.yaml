@@ -46,10 +46,10 @@ dependencies:
   # data_connection_checker: ^0.3.4
 
   # Call Http Request 
-  http: ^0.13.4
+  http: ^1.6.0
 
   # For Image pick from library, crop image after pick image.
-  image_cropper: ^4.0.1
+  image_cropper: ^8.0.0
   image_picker: ^0.8.5+1
   cached_network_image: ^3.0.0
   crypto: ^3.0.3

@@ -1049,8 +1049,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   Future<XFile?> _cropPickedImage(XFile pickedFile) async {
     final croppedFile = await ImageCropper().cropImage(
       sourcePath: pickedFile.path,
-      cropStyle: CropStyle.circle,
-      aspectRatioPresets: [CropAspectRatioPreset.square],
       uiSettings: [
         AndroidUiSettings(
           toolbarTitle: 'Adjust Photo',
@@ -1059,12 +1057,16 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
           lockAspectRatio: true,
           initAspectRatio: CropAspectRatioPreset.square,
           hideBottomControls: false,
+          cropStyle: CropStyle.circle,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
         ),
         IOSUiSettings(
           title: 'Adjust Photo',
           aspectRatioLockEnabled: true,
           resetAspectRatioEnabled: false,
           aspectRatioPickerButtonHidden: true,
+          cropStyle: CropStyle.circle,
+          aspectRatioPresets: [CropAspectRatioPreset.square],
         ),
       ],
     );
