@@ -33,7 +33,10 @@ class AppButton extends StatelessWidget {
       },
       child: Container(
         width: MediaQuery.of(context).size.width * 80 / 100,
-        height: MediaQuery.of(context).size.height * 7 / 100,
+        // Fixed height (not a % of screen height) so the button looks the
+        // same size on a small phone (iPhone SE) and a large one (Pro Max) —
+        // button size should track finger/text size, not screen height.
+        height: 54,
         decoration: BoxDecoration(
           color: backgroundColor ?? AppColor.buttonColor,
           borderRadius: const BorderRadius.all(Radius.circular(40)),
