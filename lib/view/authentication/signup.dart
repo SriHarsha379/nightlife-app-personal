@@ -103,7 +103,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-        canPop: false,
+        canPop: true,
         onPopInvoked: (didPop) {},
         child: Scaffold(
           resizeToAvoidBottomInset: false,
@@ -159,7 +159,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       context: context,
       builder: (BuildContext context) {
         return PopScope(
-          canPop: false,
+          canPop: true,
           onPopInvoked: (didPop) {},
           child: GestureDetector(
             onTap: () {},

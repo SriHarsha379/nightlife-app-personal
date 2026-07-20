@@ -146,7 +146,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
         statusBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-        canPop: false,
+        canPop: true,
         onPopInvoked: (_) {},
         child: Scaffold(
           body: Container(

@@ -327,6 +327,8 @@ class _VenuePagesState extends State<VenuePages> {
         final about = _str(venueData['about']);
         final tickets = venueData['tickets'] as Map<String, dynamic>? ?? {};
         final reservationFee = tickets['reservation_fee'] ?? 0;
+        // Ticket is only assigned by admin when this map is populated.
+        final hasAssignedTicket = tickets.isNotEmpty;
         final isLiked = _toBool(venueData['is_liked']);
         final showDislikeOnly = widget.forceDislikeOnly || isLiked;
         final targetVenueId = _targetVenueId(venueData['_id']);
@@ -358,7 +360,44 @@ class _VenuePagesState extends State<VenuePages> {
                     padding: EdgeInsets.only(
                       bottom: 16 + MediaQuery.of(context).padding.bottom,
                     ),
-                    child: Container(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (hasAssignedTicket) ...[
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: BookTable(venueId: widget.venueId),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                            child: Container(
+                              width: size.width * 0.9,
+                              height: 52,
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  AppLanguage.BookNowText[language],
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.pinkColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                        ],
+                        Container(
                       decoration: BoxDecoration(
                         color: AppColor.sendinvitecontainercolor(context)
                             .withOpacity(0.9),
@@ -440,6 +479,8 @@ class _VenuePagesState extends State<VenuePages> {
                         ],
                       ),
                     ),
+                        ],
+                      ),
                   ),
                   backgroundColor: AppColor.primaryColor(context),
                   body: Container(
@@ -901,6 +942,7 @@ class _VenuePagesState extends State<VenuePages> {
                               },
                             ),
                           ),
+                          if (hasAssignedTicket) ...[
                           SizedBox(height: size.height * 3 / 100),
                           SizedBox(
                             width: size.width * 88 / 100,
@@ -1043,6 +1085,7 @@ class _VenuePagesState extends State<VenuePages> {
                               ],
                             ),
                           ),
+                          ],
                           SizedBox(height: size.height * 5 / 100),
                           Center(
                             child: Container(

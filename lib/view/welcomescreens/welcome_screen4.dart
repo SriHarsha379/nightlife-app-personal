@@ -74,7 +74,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
         systemNavigationBarIconBrightness: Brightness.light,
       ),
       child: PopScope(
-        canPop: false,
+        canPop: true,
         onPopInvoked: (didPop) {},
         child: Scaffold(
           backgroundColor: AppColor.primaryColor(context),

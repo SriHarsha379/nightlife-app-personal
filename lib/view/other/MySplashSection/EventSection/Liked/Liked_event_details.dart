@@ -425,6 +425,9 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     final isLiked = _toBool(eventDetails['is_liked']);
     final showDislikeOnly = widget.forceDislikeOnly || isLiked;
     final targetEventId = _targetEventId(eventDetails['_id']);
+    // Ticket is only assigned by admin when this map is populated.
+    final ticketsMap = eventDetails['tickets'] as Map<String, dynamic>? ?? {};
+    final hasAssignedTicket = ticketsMap.isNotEmpty;
 
     final themeProvider = Provider.of<ThemeProvider>(context);
     bool isDark = themeProvider.isDarkMode;
@@ -445,7 +448,49 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
               padding: EdgeInsets.only(
                 bottom: 16 + MediaQuery.of(context).padding.bottom,
               ),
-              child: Container(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (hasAssignedTicket) ...[
+                    GestureDetector(
+                      onTap: () {
+                        if (isEnded) {
+                          SnackBarToastMessage.info(
+                              context, "This event has ended");
+                          return;
+                        }
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: BookEvent(eventId: widget.eventId),
+                            duration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        width: size.width * 0.9,
+                        height: 52,
+                        decoration: BoxDecoration(
+                          color: isEnded ? AppColor.textcolor : Colors.white,
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        child: Center(
+                          child: Text(
+                            AppLanguage.BookNowText[language],
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: AppFont.fontFamily,
+                              fontWeight: FontWeight.w600,
+                              color: AppColor.pinkColor,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                  ],
+                  Container(
                 decoration: BoxDecoration(
                   color:
                   AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
@@ -526,6 +571,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     ],
                   ],
                 ),
+                  ),
+                ],
               ),
             ),
             body: Container(

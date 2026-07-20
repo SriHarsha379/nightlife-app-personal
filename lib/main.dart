@@ -429,6 +429,19 @@ class _MyAppState extends State<MyApp> {
             themeMode: themeProvider.themeMode,
             darkTheme: AppThemeConfig.darkTheme,
             theme: AppThemeConfig.lightTheme,
+            // Firebase Phone Auth's reCAPTCHA/App Verification flow on iOS
+            // redirects back into the app via a universal link like
+            // "/link?deep_link_id=https://<project>.firebaseapp.com/__/auth/callback?...".
+            // FirebaseAuth's native SDK should consume this before Flutter's
+            // router ever sees it, but if it still arrives here, this
+            // prevents a crash instead of letting "Could not find a
+            // generator for route" interrupt the verification handshake.
+            onUnknownRoute: (settings) {
+              return MaterialPageRoute(
+                builder: (_) => const SizedBox.shrink(),
+                settings: settings,
+              );
+            },
             home: AuthStateGate(
               authSessionService: _authSessionService,
               loadingChild: const Splash(),

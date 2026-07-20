@@ -182,7 +182,7 @@ class _LoginScreenState extends State<LoginScreen>
           systemNavigationBarIconBrightness: Brightness.light,
         ),
         child: PopScope(
-          canPop: false,
+          canPop: true,
           onPopInvoked: (didPop) {},
           child: Stack(
             children: [
