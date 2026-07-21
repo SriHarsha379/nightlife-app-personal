@@ -27,6 +27,35 @@ class HomeController with ChangeNotifier {
   // Current data type
   String _currentType = _memberType; // member, event, venue
 
+  // Browsing city override — lets the user browse a different city's
+  // content than their saved profile city (e.g. planning a weekend trip),
+  // without changing their permanent profile city. Null means "use my
+  // profile city" (the backend falls back to that automatically).
+  String? _selectedCityId;
+  String? _selectedCityName;
+  String? get getSelectedCityId => _selectedCityId;
+  String? get getSelectedCityName => _selectedCityName;
+
+  void setSelectedCity(BuildContext context, String cityId, String cityName) {
+    _selectedCityId = cityId;
+    _selectedCityName = cityName;
+
+    // Clear cached lists/pagination so the switch to the new city shows
+    // fresh data immediately instead of stale results from the old city.
+    _membersList = [];
+    _eventsList = [];
+    _venuesList = [];
+    _currentPages[_memberType] = 0;
+    _currentPages[_eventType] = 0;
+    _currentPages[_venueType] = 0;
+    _hasMorePages[_memberType] = true;
+    _hasMorePages[_eventType] = true;
+    _hasMorePages[_venueType] = true;
+    notifyListeners();
+
+    fetchHomeData(context, type: _currentType);
+  }
+
   // Getters
   List<dynamic> get getMembersList => _membersList;
   List<dynamic> get getEventsList => _eventsList;
@@ -104,7 +133,7 @@ class HomeController with ChangeNotifier {
 
     try {
       final response = await getFormData(
-        'feed/home_data?type=$type&page=$page&limit=$limit${_preferredVibes.isNotEmpty ? '&preferred_vibes=${Uri.encodeComponent(_preferredVibes.join(','))}' : ''}',
+        'feed/home_data?type=$type&page=$page&limit=$limit${_preferredVibes.isNotEmpty ? '&preferred_vibes=${Uri.encodeComponent(_preferredVibes.join(','))}' : ''}${_selectedCityId != null ? '&city_id=${Uri.encodeComponent(_selectedCityId!)}' : ''}',
         context,
         headers: headers,
       );

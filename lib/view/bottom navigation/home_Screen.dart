@@ -13,6 +13,8 @@ import '../../commonWidget/home_widget.dart';
 import '../../commonWidget/event_types_bottomsheet.dart';
 import '../../commonWidget/invite_members_type_bottomsheet.dart';
 import '../../controller/home/home_controller.dart';
+import '../../controller/city/city_preference.dart';
+import '../../commonWidget/city_bottomsheet.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
@@ -1200,6 +1202,46 @@ class _HomeState extends State<Home> {
     final localName = userController.getUserName.trim();
     if (localName.isNotEmpty) return localName;
     return "Guest";
+  }
+
+  /// Shows the browsing-city override if one is set for this session,
+  /// otherwise falls back to the user's saved profile city.
+  String _getCityLabel(
+      HomeController homeController, UserController userController) {
+    final overrideName = homeController.getSelectedCityName?.trim();
+    if (overrideName != null && overrideName.isNotEmpty) return overrideName;
+
+    final profileCityName =
+        (userController.getCityData['city_name'] ?? '').toString().trim();
+    if (profileCityName.isNotEmpty) return profileCityName;
+
+    return 'Select city';
+  }
+
+  void _showCitySelector(BuildContext context) async {
+    final cityController =
+        Provider.of<CityPreferenceController>(context, listen: false);
+    final homeController = Provider.of<HomeController>(context, listen: false);
+
+    if (cityController.getCityList.isEmpty) {
+      await cityController.fetchCityList(context);
+    }
+
+    if (!context.mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) => CitySelectionBottomSheet(
+        cities: cityController.getCityList,
+        selectedCityId: homeController.getSelectedCityId,
+        onCitySelected: (cityId, cityName) {
+          Navigator.pop(sheetContext);
+          homeController.setSelectedCity(context, cityId, cityName);
+        },
+      ),
+    );
   }
 
   /// Returns the fully-qualified image URL for the header avatar,

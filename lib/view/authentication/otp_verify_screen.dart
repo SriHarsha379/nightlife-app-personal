@@ -18,8 +18,9 @@ import '../../utilities/session_manager.dart';
 
 class OtpVerify extends StatefulWidget {
   final String? mobile;
+  final bool autoSendOtp;
   static String routeName = './OtpVerify';
-  const OtpVerify({super.key, this.mobile});
+  const OtpVerify({super.key, this.mobile, this.autoSendOtp = true});
 
   @override
   State<OtpVerify> createState() => _OtpVerifyState();
@@ -44,7 +45,9 @@ class _OtpVerifyState extends State<OtpVerify> {
   void initState() {
     super.initState();
     _startTimer();
-    _sendInitialFirebaseOtp();
+    if (widget.autoSendOtp) {
+      _sendInitialFirebaseOtp();
+    }
   }
 
   Future<void> _sendInitialFirebaseOtp() async {
@@ -284,7 +287,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                             ),
                             SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 1 / 100,
+                              MediaQuery.of(context).size.width * 1 / 100,
                             ),
                           ],
                         ),
@@ -323,7 +326,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                           ),
                           margin: EdgeInsets.symmetric(
                               horizontal:
-                                  MediaQuery.of(context).size.width * 0.6 / 100),
+                              MediaQuery.of(context).size.width * 0.6 / 100),
                         ),
                       ),
 
@@ -350,7 +353,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                             ),
                             SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 1 / 100,
+                              MediaQuery.of(context).size.width * 1 / 100,
                             ),
 
                             // Show Timer or Resend based on _canResend
@@ -450,14 +453,14 @@ class _OtpVerifyState extends State<OtpVerify> {
                         builder: (context, apiprovider, child) {
                           return apiprovider.loading
                               ? const CircularProgressIndicator(
-                                  color: AppColor.pinkColor)
+                              color: AppColor.pinkColor)
                               : AppButton(
-                                  text: AppLanguage.verifyButtonText[language],
-                                  onPress: () {
-                                    FocusScope.of(context).unfocus();
-                                    _verifyOTP();
-                                  },
-                                );
+                            text: AppLanguage.verifyButtonText[language],
+                            onPress: () {
+                              FocusScope.of(context).unfocus();
+                              _verifyOTP();
+                            },
+                          );
                         },
                       ),
                     ],

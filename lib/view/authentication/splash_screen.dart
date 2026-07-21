@@ -134,6 +134,7 @@ class _SplashState extends State<Splash> {
     if (signupStep == 1 && !isVerified) {
       _safeNavigate(OtpVerify(
         mobile: userData['phone_number']?.toString() ?? '',
+        autoSendOtp: false,
       ));
       return;
     }
