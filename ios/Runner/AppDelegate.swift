@@ -13,7 +13,7 @@ import FirebaseAuth
     GeneratedPluginRegistrant.register(with: self)
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
-
+    
   override func application(
     _ app: UIApplication,
     open url: URL,
