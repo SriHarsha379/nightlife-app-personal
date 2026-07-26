@@ -430,7 +430,7 @@ class AppLanguage {
   static const continueText = ["Continue"];
   static const saveContinue = ['Save & Continue'];
   static const connectYouremailId = ["Connect Your Email Id"];
-  static const skip = ["Skip"];
+  static const skip = ["I'll do it later"];
   static const notUsingyourEmail = ["Not Using your email?"];
   static const enteremailidText = ["Enter Email Id"];
   static const xyzgmailText = ["xyz@gmail.com"];

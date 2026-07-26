@@ -5,7 +5,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class LocalNotificationService {
   static final FlutterLocalNotificationsPlugin _notifications =
-      FlutterLocalNotificationsPlugin();
+  FlutterLocalNotificationsPlugin();
 
   static const AndroidNotificationChannel _channel = AndroidNotificationChannel(
     'high_importance_channel',
@@ -31,11 +31,11 @@ class LocalNotificationService {
 
     /// ANDROID SETTINGS
     const AndroidInitializationSettings androidSettings =
-        AndroidInitializationSettings('@drawable/ic_stat_notification');
+    AndroidInitializationSettings('@drawable/ic_stat_notification');
 
     /// IOS SETTINGS (IMPORTANT FIX)
     const DarwinInitializationSettings iosSettings =
-        DarwinInitializationSettings(
+    DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
       requestSoundPermission: true,
@@ -57,7 +57,7 @@ class LocalNotificationService {
 
     /// APP LAUNCH FROM NOTIFICATION
     final NotificationAppLaunchDetails? launchDetails =
-        await _notifications.getNotificationAppLaunchDetails();
+    await _notifications.getNotificationAppLaunchDetails();
 
     if (launchDetails?.didNotificationLaunchApp == true) {
       _pendingLaunchPayload = launchDetails?.notificationResponse?.payload;
@@ -66,7 +66,7 @@ class LocalNotificationService {
     /// ANDROID CHANNEL
     await _notifications
         .resolvePlatformSpecificImplementation<
-            AndroidFlutterLocalNotificationsPlugin>()
+        AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_channel);
 
     _initialized = true;
@@ -76,6 +76,31 @@ class LocalNotificationService {
     final payload = _pendingLaunchPayload;
     _pendingLaunchPayload = null;
     return payload;
+  }
+
+  static Future<void> showSimpleNotification({
+    required int id,
+    required String title,
+    required String body,
+    String? payload,
+  }) async {
+    await _notifications.show(
+      id,
+      title,
+      body,
+      NotificationDetails(
+        android: AndroidNotificationDetails(
+          _channel.id,
+          _channel.name,
+          channelDescription: _channel.description,
+          importance: Importance.max,
+          priority: Priority.high,
+          icon: 'ic_stat_notification',
+        ),
+        iOS: const DarwinNotificationDetails(),
+      ),
+      payload: payload,
+    );
   }
 
   static Future<void> showFromRemoteMessage(RemoteMessage message) async {
@@ -138,7 +163,7 @@ class LocalNotificationService {
     final DateTime now = DateTime.now();
 
     _recentNotificationKeys.removeWhere(
-      (_, timestamp) => now.difference(timestamp) > _dedupeWindow,
+          (_, timestamp) => now.difference(timestamp) > _dedupeWindow,
     );
 
     final DateTime? lastSeen = _recentNotificationKeys[key];
@@ -155,13 +180,13 @@ class LocalNotificationService {
     final Map<String, dynamic> data = message.data;
 
     final String id = _pickFirstString([
-          message.messageId,
-          data['notification_id'],
-          data['booking_id'],
-          data['venue_booking_id'],
-          data['event_booking_id'],
-          data['senderId'],
-        ]) ??
+      message.messageId,
+      data['notification_id'],
+      data['booking_id'],
+      data['venue_booking_id'],
+      data['event_booking_id'],
+      data['senderId'],
+    ]) ??
         '';
 
     if (id.isNotEmpty) return id;

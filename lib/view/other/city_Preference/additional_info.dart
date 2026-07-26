@@ -864,32 +864,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     });
   }
 
-  // Preset hobby options shown as selectable chips. Feel free to tweak
-  // this list - it's a plain data list, not tied to any backend schema.
-  static const List<Map<String, String>> _hobbyOptions = [
-    {'emoji': '🎮', 'label': 'Gaming'},
-    {'emoji': '💃', 'label': 'Dancing'},
-    {'emoji': '🎵', 'label': 'Music'},
-    {'emoji': '🎬', 'label': 'Movies'},
-    {'emoji': '📸', 'label': 'Photography'},
-    {'emoji': '✈️', 'label': 'Travel'},
-    {'emoji': '👗', 'label': 'Fashion'},
-    {'emoji': '📚', 'label': 'Reading'},
-    {'emoji': '✍️', 'label': 'Writing'},
-    {'emoji': '🌿', 'label': 'Nature'},
-    {'emoji': '🎨', 'label': 'Painting'},
-    {'emoji': '⚽', 'label': 'Football'},
-    {'emoji': '🏋️', 'label': 'Fitness'},
-    {'emoji': '🍳', 'label': 'Cooking'},
-    {'emoji': '🧘', 'label': 'Yoga'},
-    {'emoji': '🐾', 'label': 'Pets'},
-    {'emoji': '🚗', 'label': 'Cars'},
-    {'emoji': '🍸', 'label': 'Mixology'},
-    {'emoji': '🎧', 'label': 'DJing'},
-    {'emoji': '🏖️', 'label': 'Beach'},
-  ];
+  // Preset hobby options shown as selectable chips now live in
+  // AppConstant.hobbyOptions (lib/utilities/app_constant.dart) so this
+  // list stays in sync with the edit-hobbies screen.
+  static const List<Map<String, String>> _hobbyOptions =
+      AppConstant.hobbyOptions;
 
-  static const int _maxHobbies = 5;
+  static const int _maxHobbies = AppConstant.maxHobbies;
 
   // Add Hobby Bottom Sheet - chip-based multi-select with a custom-entry
   // fallback for hobbies not in the preset list.

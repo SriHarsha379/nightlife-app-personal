@@ -25,6 +25,7 @@ import '../../utilities/location_service.dart';
 import '../../controller/home/home_controller.dart';
 import '../../controller/my_profile/get_my_profile.dart';
 import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
+import '../../utilities/profile_completion_reminder.dart';
 
 class Splash extends StatefulWidget {
   static String routeName = './Splash';
@@ -105,6 +106,12 @@ class _SplashState extends State<Splash> {
         userData['is_another_email_verify'] == true;
     final String anotherEmail = (userData['another_email'] ?? '').toString();
     final int signupStep = _parseSignupStep(userData['signup_step']);
+
+    // Fire-and-forget: checks the real profile-completion percentage
+    // (same endpoint the profile-completion UI uses) and nudges with a
+    // local reminder notification if it's not 100%. Throttled internally
+    // so it doesn't fire on every single app open.
+    ProfileCompletionReminder.maybeCheckAndShow();
 
     if (signupStep >= 3 &&
         anotherEmail.trim().isNotEmpty &&

@@ -14,7 +14,7 @@ int language = 0;
 class AppConstant {
 
   static String token = "";
-    static String playerID = "123456";
+  static String playerID = "123456";
 
   static int selectFooterIndex = 0;
   static const int describeLength = 500;
@@ -22,6 +22,34 @@ class AppConstant {
   static String deviceType = Platform.operatingSystem;
   static const int appStatus = 0;
   // static var deviceType = Platform.isAndroid ? 'android' : 'ios';
+
+  //! Preset hobby options shown as selectable chips on the signup and
+  //! edit-hobbies screens. Kept here (one place) so both screens always
+  //! offer the same choices - it's a plain data list, not tied to any
+  //! backend schema.
+  static const List<Map<String, String>> hobbyOptions = [
+    {'emoji': '🎮', 'label': 'Gaming'},
+    {'emoji': '💃', 'label': 'Dancing'},
+    {'emoji': '🎵', 'label': 'Music'},
+    {'emoji': '🎬', 'label': 'Movies'},
+    {'emoji': '📸', 'label': 'Photography'},
+    {'emoji': '✈️', 'label': 'Travel'},
+    {'emoji': '👗', 'label': 'Fashion'},
+    {'emoji': '📚', 'label': 'Reading'},
+    {'emoji': '✍️', 'label': 'Writing'},
+    {'emoji': '🌿', 'label': 'Nature'},
+    {'emoji': '🎨', 'label': 'Painting'},
+    {'emoji': '⚽', 'label': 'Football'},
+    {'emoji': '🏋️', 'label': 'Fitness'},
+    {'emoji': '🍳', 'label': 'Cooking'},
+    {'emoji': '🧘', 'label': 'Yoga'},
+    {'emoji': '🐾', 'label': 'Pets'},
+    {'emoji': '🚗', 'label': 'Cars'},
+    {'emoji': '🍸', 'label': 'Mixology'},
+    {'emoji': '🎧', 'label': 'DJing'},
+    {'emoji': '🏖️', 'label': 'Beach'},
+  ];
+  static const int maxHobbies = 5;
 
   //! Input Formatter
   static List<TextInputFormatter> onlyDigitFormatter = [
@@ -34,7 +62,7 @@ class AppConstant {
   static List<TextInputFormatter> alphabetAndSpaceFormatter = [
     FilteringTextInputFormatter.allow(
         RegExp(r'[a-zA-Z ]') // alphabet and space allowed
-        )
+    )
   ];
   static final List<TextInputFormatter> alphabetFormatter = [
     FilteringTextInputFormatter.allow(
@@ -51,7 +79,7 @@ class AppConstant {
     fontWeight: FontWeight.w600,
   );
   static final RegExp emailValidatorRegExp =
-      RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
+  RegExp(r"^[a-zA-Z0-9.]+@[a-zA-Z0-9]+\.[a-zA-Z]+");
 
   static TextStyle textFilledStyle(BuildContext context) {
     return TextStyle(
@@ -62,11 +90,11 @@ class AppConstant {
     );
   }
 
- static TextStyle textFilledStyle1(BuildContext context) {
+  static TextStyle textFilledStyle1(BuildContext context) {
     return Theme.of(context).textTheme.bodyMedium!.copyWith(
-          fontFamily: AppFont.fontFamily,
-          fontWeight: FontWeight.w400,
-        );
+      fontFamily: AppFont.fontFamily,
+      fontWeight: FontWeight.w400,
+    );
   }
 
   // Defination of max length

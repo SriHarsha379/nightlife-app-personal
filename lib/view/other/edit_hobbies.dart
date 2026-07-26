@@ -66,13 +66,13 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
 
     final List<String> hobbyNames = userController.getHobbies
         .map((hobby) {
-          if (hobby is Map) {
-            return (hobby['name'] ?? hobby['title'] ?? hobby['hobby'] ?? '')
-                .toString()
-                .trim();
-          }
-          return hobby.toString().trim();
-        })
+      if (hobby is Map) {
+        return (hobby['name'] ?? hobby['title'] ?? hobby['hobby'] ?? '')
+            .toString()
+            .trim();
+      }
+      return hobby.toString().trim();
+    })
         .where((name) => name.isNotEmpty)
         .toList();
 
@@ -81,7 +81,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     setState(() {
       if (hobbyNames.isNotEmpty) {
         hobbies = List<Map<String, dynamic>>.generate(hobbyNames.length,
-            (index) => {"id": index + 1, "hobby": hobbyNames[index]});
+                (index) => {"id": index + 1, "hobby": hobbyNames[index]});
       }
       _updateHobbiesDisplay();
       _nextId = hobbies.isNotEmpty ? hobbies.length + 1 : 1;
@@ -95,7 +95,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     }
 
     if (hobbies.any((h) =>
-        h['hobby'].toString().toLowerCase() == hobby.trim().toLowerCase())) {
+    h['hobby'].toString().toLowerCase() == hobby.trim().toLowerCase())) {
       SnackBarToastMessage.info(context, "This hobby already exists");
       return;
     }
@@ -118,7 +118,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
     }
 
     if (hobbies.any((h) =>
-        h['id'] != id &&
+    h['id'] != id &&
         h['hobby'].toString().toLowerCase() == newHobby.trim().toLowerCase())) {
       SnackBarToastMessage.info(context, "This hobby already exists");
       return;
@@ -192,9 +192,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                 onTap: () => Navigator.pop(context),
                                 child: SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.04,
+                                  MediaQuery.of(context).size.width * 0.04,
                                   height:
-                                      MediaQuery.of(context).size.height * 0.05,
+                                  MediaQuery.of(context).size.height * 0.05,
                                   child: Image.asset(
                                     AppImage.backArrowIcon,
                                     // FIX: light mode mein arrow visible ho
@@ -218,15 +218,15 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                               ),
                               SizedBox(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.04),
+                                  MediaQuery.of(context).size.width * 0.04),
                             ],
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.015),
+                              MediaQuery.of(context).size.height * 0.015),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.04),
+                              MediaQuery.of(context).size.height * 0.04),
 
                           // ── Hobbies display field ────────────────────────
                           TextFormField(
@@ -283,8 +283,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                               fillColor: _isHobbiesFocusNode
                                   ? AppColor.primaryColor(context)
                                   : (isDark
-                                      ? AppColor.themeColor
-                                      : const Color(0xFFF5F5F5)),
+                                  ? AppColor.themeColor
+                                  : const Color(0xFFF5F5F5)),
                               filled: true,
                               counterText: '',
                               hintText: AppLanguage.yourHobbiesText[language],
@@ -303,7 +303,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.02),
+                              MediaQuery.of(context).size.height * 0.02),
 
                           // ── Hobbies list ─────────────────────────────────
                           if (hobbies.isNotEmpty)
@@ -318,7 +318,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
 
                                 return Container(
                                   width:
-                                      MediaQuery.of(context).size.width * 0.9,
+                                  MediaQuery.of(context).size.width * 0.9,
                                   margin: const EdgeInsets.only(bottom: 12),
                                   padding: const EdgeInsets.symmetric(
                                       horizontal: 16, vertical: 12),
@@ -351,7 +351,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                               ? AppColor.themeColor
                                               : const Color(0xFFEEEEEE),
                                           borderRadius:
-                                              BorderRadius.circular(4),
+                                          BorderRadius.circular(4),
                                         ),
                                         child: Text(
                                           '#$id',
@@ -406,7 +406,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
 
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 0.38),
+                              MediaQuery.of(context).size.height * 0.38),
                         ],
                       ),
                     ),
@@ -429,7 +429,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                           .toList();
 
                       final res = await Provider.of<PostApiProvider>(context,
-                              listen: false)
+                          listen: false)
                           .updateHobbiesApi(context, hobbyNames);
 
                       if (res != null) {
@@ -454,107 +454,275 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
   }
 
   // ── Add Hobby Bottom Sheet ────────────────────────────────────────────────
+  // Chip-based multi-select using the same preset options shown at signup
+  // (AppConstant.hobbyOptions), with a custom-entry fallback for hobbies
+  // not in the preset list. Mirrors additional_info.dart's picker so both
+  // screens stay in sync.
   void _showAddHobbyBottomSheet(bool isDark) {
     hobbyInputController.clear();
+
+    // Working copy so Cancel doesn't affect the real list until "Done".
+    final Set<String> tempSelected =
+    hobbies.map((h) => h['hobby'].toString()).toSet();
+
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: Container(
-            decoration: BoxDecoration(
-              // FIX: sheet bg
-              color: _sheetBg(isDark),
-              borderRadius: const BorderRadius.only(
-                topLeft: Radius.circular(20),
-                topRight: Radius.circular(20),
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            void toggle(String label) {
+              final alreadySelected = tempSelected
+                  .any((h) => h.toLowerCase() == label.toLowerCase());
+              if (alreadySelected) {
+                setSheetState(() {
+                  tempSelected.removeWhere(
+                          (h) => h.toLowerCase() == label.toLowerCase());
+                });
+                return;
+              }
+              if (tempSelected.length >= AppConstant.maxHobbies) {
+                SnackBarToastMessage.info(context,
+                    "You can select up to ${AppConstant.maxHobbies} hobbies");
+                return;
+              }
+              setSheetState(() => tempSelected.add(label));
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(
+                bottom: MediaQuery.of(context).viewInsets.bottom,
               ),
-            ),
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Add a hobby",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: AppFont.fontFamily,
-                    // FIX: title color
-                    color: isDark ? Colors.white : Colors.black87,
+              child: Container(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                decoration: BoxDecoration(
+                  // FIX: sheet bg
+                  color: _sheetBg(isDark),
+                  borderRadius: const BorderRadius.only(
+                    topLeft: Radius.circular(20),
+                    topRight: Radius.circular(20),
                   ),
                 ),
-                const SizedBox(height: 20),
-                _buildTextField(
-                  hint: "Type here...",
-                  controller: hobbyInputController,
-                  // inputFormatters: AppConstant.alphabetFormatter,
-                  isDark: isDark,
-                ),
-                const SizedBox(height: 20),
-                Row(
+                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            // FIX: cancel btn bg
-                            color: isDark
-                                ? AppColor.primaryColor(context)
-                                : const Color(0xFFEEEEEE),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Cancel",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFont.fontFamily,
-                              color: isDark ? Colors.white : Colors.black87,
-                            ),
-                          ),
+                    Text(
+                      "Select your hobbies",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: AppFont.fontFamily,
+                        color: isDark ? Colors.white : Colors.black87,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      "Pick up to ${AppConstant.maxHobbies}, or add your own",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontFamily: AppFont.fontFamily,
+                        color: _hintColor(isDark),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    Flexible(
+                      child: SingleChildScrollView(
+                        child: Wrap(
+                          spacing: 10,
+                          runSpacing: 10,
+                          children: AppConstant.hobbyOptions.map((option) {
+                            final label = option['label']!;
+                            final isSelected = tempSelected.any(
+                                    (h) => h.toLowerCase() == label.toLowerCase());
+                            return GestureDetector(
+                              onTap: () => toggle(label),
+                              child: AnimatedContainer(
+                                duration: const Duration(milliseconds: 150),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 14, vertical: 10),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? AppColor.pinkColor.withOpacity(0.18)
+                                      : (isDark
+                                      ? AppColor.primaryColor(context)
+                                      : const Color(0xFFF0F0F0)),
+                                  borderRadius: BorderRadius.circular(30),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? AppColor.pinkColor
+                                        : Colors.transparent,
+                                    width: 1.5,
+                                  ),
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(option['emoji']!,
+                                        style: const TextStyle(fontSize: 15)),
+                                    const SizedBox(width: 6),
+                                    Text(
+                                      label,
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: isSelected
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: isDark
+                                            ? Colors.white
+                                            : Colors.black87,
+                                      ),
+                                    ),
+                                    if (isSelected) ...[
+                                      const SizedBox(width: 6),
+                                      const Icon(Icons.check,
+                                          size: 14, color: AppColor.pinkColor),
+                                    ],
+                                  ],
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
                       ),
                     ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          _addHobby(hobbyInputController.text);
-                          Navigator.pop(context);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: AppColor.pinkColor,
-                            borderRadius: BorderRadius.circular(8),
+                    const SizedBox(height: 16),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: _buildTextField(
+                            hint: "Not listed? Type your own...",
+                            controller: hobbyInputController,
+                            isDark: isDark,
                           ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            "Add",
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w500,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
+                        ),
+                        const SizedBox(width: 10),
+                        GestureDetector(
+                          onTap: () {
+                            final custom = hobbyInputController.text.trim();
+                            if (custom.isEmpty) return;
+                            final alreadySelected = tempSelected.any((h) =>
+                            h.toLowerCase() == custom.toLowerCase());
+                            if (alreadySelected) {
+                              SnackBarToastMessage.info(
+                                  context, "This hobby already exists");
+                              return;
+                            }
+                            if (tempSelected.length >=
+                                AppConstant.maxHobbies) {
+                              SnackBarToastMessage.info(context,
+                                  "You can select up to ${AppConstant.maxHobbies} hobbies");
+                              return;
+                            }
+                            setSheetState(() => tempSelected.add(custom));
+                            hobbyInputController.clear();
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.all(14),
+                            decoration: const BoxDecoration(
+                              color: AppColor.pinkColor,
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(Icons.add,
+                                color: Colors.white, size: 20),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context),
+                            child: Container(
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                // FIX: cancel btn bg
+                                color: isDark
+                                    ? AppColor.primaryColor(context)
+                                    : const Color(0xFFEEEEEE),
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Cancel",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color:
+                                  isDark ? Colors.white : Colors.black87,
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                // Keep existing ids for hobbies that are
+                                // still selected, drop ones that were
+                                // removed, and assign fresh ids to newly
+                                // picked hobbies.
+                                final List<Map<String, dynamic>> updated = [];
+                                for (final h in hobbies) {
+                                  final name = h['hobby'].toString();
+                                  if (tempSelected.any((s) =>
+                                  s.toLowerCase() == name.toLowerCase())) {
+                                    updated.add(h);
+                                  }
+                                }
+                                for (final label in tempSelected) {
+                                  final exists = updated.any((h) =>
+                                  h['hobby'].toString().toLowerCase() ==
+                                      label.toLowerCase());
+                                  if (!exists) {
+                                    updated
+                                        .add({"id": _nextId, "hobby": label});
+                                    _nextId++;
+                                  }
+                                }
+                                hobbies = updated;
+                                _updateHobbiesDisplay();
+                              });
+                              Navigator.pop(context);
+                            },
+                            child: Container(
+                              padding:
+                              const EdgeInsets.symmetric(vertical: 12),
+                              decoration: BoxDecoration(
+                                color: AppColor.pinkColor,
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              alignment: Alignment.center,
+                              child: Text(
+                                "Done",
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -834,9 +1002,9 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
         filled: true,
         // FIX: fill color
         fillColor:
-            isDark ? AppColor.primaryColor(context) : const Color(0xFFF0F0F0),
+        isDark ? AppColor.primaryColor(context) : const Color(0xFFF0F0F0),
         contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: BorderSide.none,

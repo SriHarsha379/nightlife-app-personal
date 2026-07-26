@@ -15,6 +15,8 @@ import 'utilities/app_theme.dart';
 import 'utilities/auth_session_service.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
+import 'utilities/profile_completion_reminder.dart';
+import 'utilities/responsive_app_clamp.dart';
 import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
@@ -23,6 +25,7 @@ import 'view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venue_booking_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'view/other/chats/chat_message_screen.dart';
+import 'view/authentication/edit_profile_screen.dart';
 import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
@@ -76,7 +79,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   final AppLinks _appLinks = AppLinks();
   final AuthSessionService _authSessionService = FirebaseAuthSessionService();
   late final List<SingleChildWidget> _appProviders;
@@ -92,13 +95,25 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _appProviders = buildAppProviders();
     _initDeepLinks();
     _initNotificationRedirections();
   }
 
   @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // Cold start is already handled by Splash right after login/session
+    // validation, so only re-check on resume (app brought back from
+    // background) here - avoids nudging twice on first launch.
+    if (state == AppLifecycleState.resumed) {
+      ProfileCompletionReminder.maybeCheckAndShow();
+    }
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _deepLinkSub?.cancel();
     super.dispose();
   }
@@ -355,6 +370,15 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
+    if (action == 'complete_profile') {
+      navigator.push(
+        MaterialPageRoute(
+          builder: (_) => const EditProfile(),
+        ),
+      );
+      return;
+    }
+
     // welcome / signup / unknown actions -> Notifications screen
     _openNotificationScreen();
   }
@@ -429,6 +453,13 @@ class _MyAppState extends State<MyApp> {
             themeMode: themeProvider.themeMode,
             darkTheme: AppThemeConfig.darkTheme,
             theme: AppThemeConfig.lightTheme,
+            // Makes every screen's existing percentage-of-screen-width
+            // sizing (MediaQuery.of(context).size.width * X / 100, used
+            // throughout the app) behave sanely on tablets/iPads instead
+            // of stretching - see responsive_app_clamp.dart for details.
+            // No-op on phones.
+            builder: (context, child) =>
+                ResponsiveAppClamp(child: child ?? const SizedBox.shrink()),
             // Firebase Phone Auth's reCAPTCHA/App Verification flow on iOS
             // redirects back into the app via a universal link like
             // "/link?deep_link_id=https://<project>.firebaseapp.com/__/auth/callback?...".
