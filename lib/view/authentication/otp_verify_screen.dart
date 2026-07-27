@@ -52,6 +52,9 @@ class _OtpVerifyState extends State<OtpVerify> {
 
   Future<void> _sendInitialFirebaseOtp() async {
     setState(() => _isSendingInitialOtp = true);
+    // Clear any stale verification session (e.g. left over from a
+    // previous OTP screen visit) before starting a fresh one.
+    FirebaseOtpService.reset();
     await FirebaseOtpService.sendOtp(
       phoneNumber: widget.mobile.toString(),
       context: context,
@@ -71,6 +74,7 @@ class _OtpVerifyState extends State<OtpVerify> {
   void dispose() {
     _timer?.cancel();
     pinputInputController.dispose();
+    FirebaseOtpService.reset();
     super.dispose();
   }
 

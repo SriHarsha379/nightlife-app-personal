@@ -31,9 +31,9 @@ class LoginPasswordScreen extends StatefulWidget {
   State<LoginPasswordScreen> createState() => _LoginPasswordScreenState();
 }
 
-TextEditingController passwordController = TextEditingController();
-
 class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
+  final TextEditingController passwordController = TextEditingController();
+
   Future<void> _login() async {
     final apiProvider = Provider.of<PostApiProvider>(context, listen: false);
     if (apiProvider.loading) return;
@@ -52,10 +52,12 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
 
   @override
   void dispose() {
-    // Don't clear passwordController here on every dispose — a failed
-    // login (wrong password) pops back to this same instance via
-    // Navigator, and clearing on dispose would wipe what the user typed
-    // if this screen is ever rebuilt/re-entered mid-flow.
+    // Note: we dispose the controller here (this instance is truly gone),
+    // but we still don't call passwordController.clear() before this — a
+    // failed login (wrong password) pops back to this same instance via
+    // Navigator, and clearing text on dispose would wipe what the user
+    // typed if this screen is ever rebuilt/re-entered mid-flow.
+    passwordController.dispose();
     super.dispose();
   }
 

@@ -34,12 +34,18 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-TextEditingController passwordController = TextEditingController();
+// `emailController` remains a shared top-level controller: it's read from
+// `login_password_screen.dart` (imported via `show emailController`) so the
+// identifier field can be cleared there after a successful login. See that
+// file for details. `passwordController`, unlike `emailController`, is only
+// ever used within this screen, so it's a normal disposed instance field
+// below instead of a global.
 TextEditingController emailController = TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen>
     with TickerProviderStateMixin {
   static final Uri _organizerWebsite = Uri.parse('https://hii.life/');
+  final TextEditingController passwordController = TextEditingController();
   late AnimationController _bottomSheetController;
   late Animation<Offset> _bottomSheetAnimation;
 
@@ -141,6 +147,7 @@ class _LoginScreenState extends State<LoginScreen>
   void dispose() {
     _bottomSheetController.dispose();
     _overlayController.dispose();
+    passwordController.dispose();
     super.dispose();
   }
 
@@ -352,7 +359,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           SizedBox(
                             height:
-                                MediaQuery.of(context).size.height * 4 / 100,
+                            MediaQuery.of(context).size.height * 4 / 100,
                           ),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 80 / 100,
@@ -389,7 +396,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           SizedBox(
                             height:
-                                MediaQuery.of(context).size.height * 1 / 100,
+                            MediaQuery.of(context).size.height * 1 / 100,
                           ),
                           SizedBox(
                             width: MediaQuery.of(context).size.width * 80 / 100,
@@ -419,7 +426,7 @@ class _LoginScreenState extends State<LoginScreen>
                                             .rightToLeftWithFade,
                                         child: const SignUp(),
                                         duration:
-                                            const Duration(milliseconds: 500),
+                                        const Duration(milliseconds: 500),
                                       ),
                                     );
                                   },
@@ -437,7 +444,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           SizedBox(
                             height:
-                                MediaQuery.of(context).size.height * 3 / 100,
+                            MediaQuery.of(context).size.height * 3 / 100,
                           ),
                           GestureDetector(
                             onTap: () {
@@ -470,15 +477,15 @@ class _LoginScreenState extends State<LoginScreen>
                                       mainAxisAlignment: MainAxisAlignment
                                           .center, // Center inside column
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.center,
+                                      CrossAxisAlignment.center,
                                       children: [
                                         Padding(
                                           padding:
-                                              const EdgeInsets.only(left: 1.0),
+                                          const EdgeInsets.only(left: 1.0),
                                           child: Text(
                                             AppLanguage
-                                                    .bySigningupStatementText[
-                                                language],
+                                                .bySigningupStatementText[
+                                            language],
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: AppColor.secondryColor(
@@ -491,8 +498,8 @@ class _LoginScreenState extends State<LoginScreen>
                                         ),
                                         SizedBox(
                                           height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
+                                              .size
+                                              .height *
                                               0.3 /
                                               100,
                                         ),
@@ -503,23 +510,23 @@ class _LoginScreenState extends State<LoginScreen>
                                                   left: 10.0),
                                               child: Text(
                                                 AppLanguage
-                                                        .userAgreementStatementText[
-                                                    language],
+                                                    .userAgreementStatementText[
+                                                language],
                                                 textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                   color: AppColor.secondryColor(
                                                       context),
                                                   fontWeight: FontWeight.w400,
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontSize: 11,
                                                 ),
                                               ),
                                             ),
                                             SizedBox(
                                               width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  .size
+                                                  .width *
                                                   2 /
                                                   100,
                                             ),
@@ -534,7 +541,7 @@ class _LoginScreenState extends State<LoginScreen>
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 1 / 100),
+                              MediaQuery.of(context).size.height * 1 / 100),
                         ],
                       ),
                     ),

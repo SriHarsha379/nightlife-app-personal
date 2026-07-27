@@ -502,9 +502,9 @@ class HomeWidget {
                 color: (isDraggingLeft
                     ? AppColor.redColor
                     : AppColor.greenColor)
-                    .withOpacity(dragOpacity * 0.6),
-                blurRadius: 45,
-                spreadRadius: 10,
+                    .withOpacity(dragOpacity * 0.22),
+                blurRadius: 30,
+                spreadRadius: 2,
               ),
             ]
                 : [],
@@ -731,7 +731,7 @@ class HomeWidget {
                           color: (isDraggingLeft
                               ? AppColor.redColor
                               : AppColor.greenColor)
-                              .withOpacity(dragOpacity * 0.45),
+                              .withOpacity(dragOpacity * 0.16),
                         ),
                       ),
                     ),
