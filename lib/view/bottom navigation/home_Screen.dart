@@ -243,33 +243,14 @@ class _HomeState extends State<Home> {
     );
   }
 
-  // Fills the brief cross-fade gap between one profile swiping away and the
-  // next appearing (caused by the AnimatedSwitcher remounting the swiper on
-  // every swipe) with a red/green wash matching the swipe direction, instead
-  // of leaving that gap blank. Sits behind the CardSwiper in a Stack, so it
-  // shows through only during that transition. Not tied to any specific
-  // card's id - see _onSwipeMembers/_onSwipeEvents/_onSwipeVenues, which set
-  // lastSwipeType + _lastSwipedTabType and clear them ~450ms later.
-  Widget _buildSwipeGapBackground(String tabType) {
-    final bool isVisible =
-        lastSwipeType != null && _lastSwipedTabType == tabType;
-    final bool isAccept = lastSwipeType == 'accept';
-    return Positioned.fill(
-      child: IgnorePointer(
-        child: AnimatedOpacity(
-          opacity: isVisible ? 1.0 : 0.0,
-          duration: const Duration(milliseconds: 200),
-          child: Container(
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(32),
-              color: (isAccept ? AppColor.greenColor : AppColor.redColor)
-                  .withOpacity(0.4),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
+  // Removed: this used to fill the AnimatedSwitcher remount gap with a
+  // red/green wash matching the last swipe direction, but it was deliberately
+  // NOT tied to any specific card's id - meaning it kept showing (behind the
+  // whole card stack) for ~450ms after a swipe, which visually looked like
+  // the wash had landed on the *next* profile rather than the one that was
+  // actually swiped. Removed rather than re-scoped, since the per-card
+  // showHeart/showCross/lastSwipeType props passed into the card widgets
+  // below (correctly scoped via _lastSwipedCardId) already cover this.
 
 
 
@@ -1212,7 +1193,7 @@ class _HomeState extends State<Home> {
     if (overrideName != null && overrideName.isNotEmpty) return overrideName;
 
     final profileCityName =
-        (userController.getCityData['city_name'] ?? '').toString().trim();
+    (userController.getCityData['city_name'] ?? '').toString().trim();
     if (profileCityName.isNotEmpty) return profileCityName;
 
     return 'Select city';
@@ -1220,7 +1201,7 @@ class _HomeState extends State<Home> {
 
   void _showCitySelector(BuildContext context) async {
     final cityController =
-        Provider.of<CityPreferenceController>(context, listen: false);
+    Provider.of<CityPreferenceController>(context, listen: false);
     final homeController = Provider.of<HomeController>(context, listen: false);
 
     if (cityController.getCityList.isEmpty) {
@@ -1622,7 +1603,6 @@ class _HomeState extends State<Home> {
                       )
                           : Stack(
                         children: [
-                          _buildSwipeGapBackground('member'),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             transitionBuilder: (child, animation) =>
@@ -1718,7 +1698,7 @@ class _HomeState extends State<Home> {
                                                 result);
                                           },
                                           key: ValueKey(
-                                              "member_image_${membersTabVersion}_$index"),
+                                              "member_image_${membersTabVersion}_${(member['_id'] ?? index).toString()}"),
                                           dragPercentX: percentThresholdX.toDouble(),
                                           showHeart: showHeart && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
                                           showCross: showCross && (_lastSwipedCardId == (member['_id'] ?? '').toString() && _lastSwipedTabType == 'member'),
@@ -1830,7 +1810,6 @@ class _HomeState extends State<Home> {
                       )
                           : Stack(
                         children: [
-                          _buildSwipeGapBackground('event'),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             transitionBuilder: (child, animation) =>
@@ -1922,7 +1901,7 @@ class _HomeState extends State<Home> {
                                                 result);
                                           },
                                           key: ValueKey(
-                                              "events_tab_${eventTabVersion}_$index"),
+                                              "events_tab_${eventTabVersion}_${(event['_id'] ?? index).toString()}"),
                                           showHeart: showHeart && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
                                           showCross: showCross && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
                                           lastSwipeType: (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event') ? lastSwipeType : null,
@@ -2059,7 +2038,6 @@ class _HomeState extends State<Home> {
                       )
                           : Stack(
                         children: [
-                          _buildSwipeGapBackground('venue'),
                           AnimatedSwitcher(
                             duration: const Duration(milliseconds: 500),
                             transitionBuilder: (child, animation) =>
@@ -2150,7 +2128,7 @@ class _HomeState extends State<Home> {
                                                 result);
                                           },
                                           key: ValueKey(
-                                              "venues_tab_${venusTabVersion}_$index"),
+                                              "venues_tab_${venusTabVersion}_${(venue['_id'] ?? index).toString()}"),
                                           showHeart: showHeart && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
                                           showCross: showCross && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
                                           lastSwipeType: (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue') ? lastSwipeType : null,

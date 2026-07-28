@@ -496,18 +496,6 @@ class HomeWidget {
           curve: Curves.easeOut,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
-            boxShadow: (isDraggingLeft || isDraggingRight)
-                ? [
-              BoxShadow(
-                color: (isDraggingLeft
-                    ? AppColor.redColor
-                    : AppColor.greenColor)
-                    .withOpacity(dragOpacity * 0.22),
-                blurRadius: 30,
-                spreadRadius: 2,
-              ),
-            ]
-                : [],
           ),
           child: SizedBox(
             width: MediaQuery.of(context).size.width * 85 / 100,
@@ -716,28 +704,75 @@ class HomeWidget {
                   ),
                 ),
 
-                // Swipe direction color wash - tints the whole card while
-                // dragging, red toward reject (left) and green toward
-                // accept (right). Fades in with drag distance and clips to
-                // the same rounded corners as the card itself. The matching
-                // glow beside the card is painted by the AnimatedContainer
-                // wrapping this SizedBox.
-                if (isDraggingLeft || isDraggingRight)
-                  Positioned.fill(
+                // Swipe direction stamp - a large rotated X (reject) or
+                // heart (accept) that fades and scales in with drag
+                // distance, matching Tinder's card-stamp treatment. Driven
+                // by the same dragPercentX signal the CardSwiper package
+                // reports for both manual drags and programmatic
+                // .swipe() calls (e.g. triggered by the heart/X buttons
+                // below), so it appears consistently either way. X always
+                // renders top-right, heart always renders top-left -
+                // only one is ever visible at a time since isDraggingLeft
+                // and isDraggingRight are mutually exclusive.
+                if (isDraggingLeft)
+                  Positioned(
+                    top: 24,
+                    right: 24,
                     child: IgnorePointer(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(32),
-                        child: Container(
-                          color: (isDraggingLeft
-                              ? AppColor.redColor
-                              : AppColor.greenColor)
-                              .withOpacity(dragOpacity * 0.16),
+                      child: Opacity(
+                        opacity: dragOpacity,
+                        child: Transform.rotate(
+                          angle: 0,
+                          child: Transform.scale(
+                            scale: 0.7 + (dragOpacity * 0.3),
+                            child: Icon(
+                              Icons.close_rounded,
+                              size: 65,
+                              color: Colors.white,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  blurRadius: 12,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                if (isDraggingRight)
+                  Positioned(
+                    top: 24,
+                    left: 24,
+                    child: IgnorePointer(
+                      child: Opacity(
+                        opacity: dragOpacity,
+                        child: Transform.rotate(
+                          angle: 0,
+                          child: Transform.scale(
+                            scale: 0.7 + (dragOpacity * 0.3),
+                            child: Icon(
+                              Icons.favorite_rounded,
+                              size: 84,
+                              color: AppColor.redColor,
+                              shadows: [
+                                Shadow(
+                                  color: Colors.black.withOpacity(0.5),
+                                  blurRadius: 12,
+                                ),
+                              ],
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ),
 
-                //! Heart Button on Right Side
+                //! Right-side vertical strip - message (send) icon on top,
+                //! like/heart button below it. Restored to the older
+                //! layout this app used before the Tinder-style bottom
+                //! reject/accept row was introduced.
                 Positioned(
                   right: 0,
                   top: 0,
@@ -759,18 +794,19 @@ class HomeWidget {
                           Padding(
                             padding: const EdgeInsets.all(6.0),
                             child: GestureDetector(
-                              onTap: onHeartTap,
-                              child: Image.asset(AppImage.heart),
+                              onTap: onMessageTap,
+                              child: Image.asset(AppImage.messageIcon),
                             ),
                           ),
                           SizedBox(
-                            height: MediaQuery.of(context).size.height * 2 / 100,
+                            height:
+                            MediaQuery.of(context).size.height * 2 / 100,
                           ),
                           Padding(
                             padding: const EdgeInsets.all(6.0),
                             child: GestureDetector(
-                              onTap: onMessageTap,
-                              child: Image.asset(AppImage.messageIcon),
+                              onTap: onHeartTap,
+                              child: Image.asset(AppImage.heart),
                             ),
                           ),
                         ],
