@@ -298,6 +298,8 @@ class AppImage {
   static const newcard2 = "./assets/icons/newcards2.png";
   static const newcard3 = "./assets/icons/newcard3.png";
   static const heart = "./assets/icons/heart.png";
+  static const rejectIcon = "./assets/icons/reject_icon.png";
+  static const acceptIcon = "./assets/icons/accept_icon.png";
   static const newcard4 = "./assets/icons/newcard4.png";
   static const letsStartedbottomsheetImg =
       "./assets/icons/letsStartedbottomsheet.png";

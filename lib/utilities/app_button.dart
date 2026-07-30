@@ -17,12 +17,24 @@ class AppButton extends StatelessWidget {
   /// Icons.close for NO/REJECT) to improve visual clarity.
   final IconData? leadingIcon;
 
+  /// Optional size overrides - default to the values every existing call
+  /// site already relies on, so adding these doesn't change any button
+  /// that doesn't explicitly opt in to a different size.
+  final double height;
+  final double widthPercent;
+  final double fontSize;
+  final FontWeight fontWeight;
+
   const AppButton({
     Key? key,
     required this.text,
     required this.onPress,
     this.backgroundColor,
     this.leadingIcon,
+    this.height = 54,
+    this.widthPercent = 80,
+    this.fontSize = 16,
+    this.fontWeight = FontWeight.w600,
   }) : super(key: key);
 
   @override
@@ -32,11 +44,11 @@ class AppButton extends StatelessWidget {
         onPress();
       },
       child: Container(
-        width: MediaQuery.of(context).size.width * 80 / 100,
+        width: MediaQuery.of(context).size.width * widthPercent / 100,
         // Fixed height (not a % of screen height) so the button looks the
         // same size on a small phone (iPhone SE) and a large one (Pro Max) —
         // button size should track finger/text size, not screen height.
-        height: 54,
+        height: height,
         decoration: BoxDecoration(
           color: backgroundColor ?? AppColor.buttonColor,
           borderRadius: const BorderRadius.all(Radius.circular(40)),
@@ -53,9 +65,9 @@ class AppButton extends StatelessWidget {
               text,
               style: TextStyle(
                 color: Colors.white,
-                fontWeight: FontWeight.w600,
+                fontWeight: fontWeight,
                 fontFamily: AppFont.fontFamily,
-                fontSize: 16,
+                fontSize: fontSize,
               ),
             ),
           ],

@@ -1,139 +1,53 @@
 import 'package:flutter/material.dart';
-import '../../provider/common_api_helper.dart';
-import '../../utilities/app_config_provider.dart';
-import '../../utilities/app_constant.dart';
 
+/// The curated vibe picker (fetch a fixed list like "Chill pill", "High
+/// Energy" from the backend and let the member tap to select up to 5) has
+/// been removed entirely - there is no curated list anymore, no
+/// replacement was introduced. This controller now only tracks the
+/// free-text vibes the member types themselves (custom_vibes on the
+/// backend), which already existed alongside the curated picker before.
 class VibePreferenceController with ChangeNotifier {
-  List<dynamic> _vibesList = [];
-  List<dynamic> get getVibesList => _vibesList;
-
-  bool _isLoading = false;
-  bool get getIsLoading => _isLoading;
-
-  // Store selected vibe IDs as Strings to match API response
-  // Initialize as empty List<String>
-  List<String> _selectedVibeIds = <String>[];
-
-  // Getter returns a COPY to prevent modification issues
-  List<String> get getSelectedVibeIds => List<String>.from(_selectedVibeIds);
+  List<String> _customVibes = <String>[];
+  List<String> get getCustomVibes => List<String>.from(_customVibes);
 
   int maxSelection = 5;
 
-  // Constructor to ensure proper initialization
-  VibePreferenceController() {
-    _selectedVibeIds = <String>[]; // Explicit List initialization
-  }
-
-  // Fetch vibes from API
-  Future<void> fetchVibesData(BuildContext context) async {
-    String token = AppConstant.token;
-    // String token =
-    //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY5NzQ2NDhjNzUzMDc2MDY5MDg0ZmIzNCIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2OTIzNjUzOSwiZXhwIjoxNzcxODI4NTM5fQ.AC6BJrsvAvqoAFhwWWDR8AuKkaVr5k4ShjdNlFWDw2A";
-    if (token.isEmpty) {
-      print("Token is missing!");
-      return;
-    }
-
-    Map<String, String> headers = {
-      'Authorization': 'Bearer $token',
-    };
-
-    // Show loading only if list is empty
-    if (_vibesList.isEmpty) {
-      _isLoading = true;
-      notifyListeners();
-    }
-
-    try {
-      final response = await getFormData(
-        'auth/vibes',
-        context,
-        headers: headers,
-      );
-
-      print("API Response: $response");
-
-      if (response != null && response['success'] == true) {
-        if (response['data'] != null && response['data'] is List) {
-          _vibesList = response['data'];
-          print("Vibes List: $_vibesList");
-        } else {
-          _vibesList = [];
-          print("No vibes data found");
-        }
-        notifyListeners();
-      } else {
-        _vibesList = [];
-        if (response != null) {
-          // CommonHelper.handleInactiveUserRedirect(context, response);
-        }
-      }
-    } catch (e) {
-      print("Exception in fetchVibesData: $e");
-      _vibesList = [];
-    } finally {
-      _isLoading = false;
-      notifyListeners();
-    }
-  }
-
-  // Toggle vibe selection
-  void toggleVibeSelection(String vibeId) {
-    if (_selectedVibeIds.contains(vibeId)) {
-      _selectedVibeIds.remove(vibeId);
-    } else {
-      if (_selectedVibeIds.length < maxSelection) {
-        _selectedVibeIds.add(vibeId);
-      }
-    }
+  /// Add a free-text vibe the member typed in, up to [maxSelection].
+  void addCustomVibe(String vibe) {
+    final trimmed = vibe.trim();
+    if (trimmed.isEmpty) return;
+    if (_customVibes.contains(trimmed)) return;
+    if (_customVibes.length >= maxSelection) return;
+    _customVibes.add(trimmed);
     notifyListeners();
   }
 
-  // Check if vibe is selected
-  bool isVibeSelected(String vibeId) {
-    return _selectedVibeIds.contains(vibeId);
+  void removeCustomVibe(String vibe) {
+    _customVibes.remove(vibe);
+    notifyListeners();
   }
 
-  // Get selected count - FIXED: Ensure we're returning int
-  int get selectedCount => _selectedVibeIds.length;
+  int get selectedCount => _customVibes.length;
 
-  // Get comma-separated string of selected IDs for API
+  /// Comma-separated string for the signup/profile-update API call.
   String getSelectedVibesString() {
-    return _selectedVibeIds.join(',');
+    return _customVibes.join(',');
   }
 
-  // Get vibe image URL
-  String getVibeImageUrl(String? imagePath) {
-    if (imagePath == null || imagePath.isEmpty) return '';
-    if (imagePath.startsWith('http')) {
-      return imagePath;
-    }
-    return '${AppConfigProvider.imageUrl}$imagePath';
+  /// Preselect vibes when coming back from a later screen, or when
+  /// loading an existing profile's saved custom_vibes for editing.
+  void setCustomVibes(List<String> vibes) {
+    _customVibes = List<String>.from(vibes);
+    notifyListeners();
   }
 
-  // Clear selections
   void clearSelections() {
-    _selectedVibeIds.clear();
+    _customVibes.clear();
     notifyListeners();
   }
 
-  // Clear all data (useful for logout)
   void clearData() {
-    _vibesList = [];
-    _selectedVibeIds = <String>[]; // Explicit List initialization
-    _isLoading = false;
-    notifyListeners();
-  }
-
-  // Set preselected vibes (if coming back from next screen)
-  void setSelectedVibes(List<String> vibeIds) {
-    // Ensure we're working with a List, not a Set
-    if (vibeIds is List<String>) {
-      _selectedVibeIds = List<String>.from(vibeIds);
-    } else {
-      // If it's a Set, convert it to List
-      _selectedVibeIds = vibeIds.toList().cast<String>();
-    }
+    _customVibes = <String>[];
     notifyListeners();
   }
 }

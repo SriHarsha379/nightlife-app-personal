@@ -210,135 +210,142 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                 : true;
 
             return Scaffold(
-              floatingActionButtonLocation:
-              FloatingActionButtonLocation.centerFloat,
-              floatingActionButton: Padding(
-                padding: EdgeInsets.only(
-                  bottom: 30 + MediaQuery.of(context).padding.bottom,
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    AppButton(
-                      text: AppLanguage.continueText[language],
-                      onPress: _nextPage,
-                    ),
-                    SizedBox(height: size.height * 1 / 100),
-                    if (showSkip)
-                      GestureDetector(
-                        onTap: _skipToNext,
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          AppLanguage.skip[language],
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.greyLightColor(context),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-              ),
               body: Container(
                 width: size.width,
                 height: size.height,
                 decoration: BoxDecoration(
                   gradient: AppColor.backgroundGradientcolor(context),
                 ),
-                child: Column(
-                  children: [
-                    SizedBox(
-                      height: MediaQuery.of(context).size.height * 4 / 100,
-                    ),
-                    // App Header
-                    SizedBox(
-                      width: size.width * 0.9,
-                      height: size.height * 0.08,
-                      child: Row(
-                        children: [
-                          GestureDetector(
-                            onTap: _previousPage,
-                            child: SizedBox(
-                              width: size.width * 0.04,
-                              height: size.height * 0.05,
-                              child: Image.asset(
-                                AppImage.backArrowIcon,
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: size.width * 0.02),
-                          Expanded(
-                            child: Center(
-                              child: Text(
-                                AppLanguage.vibeCheck[language],
-                                style: TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                // Was previously a floatingActionButton, which renders on
+                // top of the Scaffold's own (black) background rather than
+                // this gradient Container - that mismatch caused the
+                // button to look like it was floating over a black gap.
+                // Now it's just the last child in this Column, sitting
+                // directly on the gradient below the PageView.
+                child: SafeArea(
+                  child: Column(
+                    children: [
+                      SizedBox(
+                        height: MediaQuery.of(context).size.height * 4 / 100,
+                      ),
+                      // App Header
+                      SizedBox(
+                        width: size.width * 0.9,
+                        height: size.height * 0.08,
+                        child: Row(
+                          children: [
+                            GestureDetector(
+                              onTap: _previousPage,
+                              child: SizedBox(
+                                width: size.width * 0.04,
+                                height: size.height * 0.05,
+                                child: Image.asset(
+                                  AppImage.backArrowIcon,
                                   color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: size.width * 0.06),
-                        ],
+                            SizedBox(width: size.width * 0.02),
+                            Expanded(
+                              child: Center(
+                                child: Text(
+                                  AppLanguage.vibeCheck[language],
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: size.width * 0.06),
+                          ],
+                        ),
                       ),
-                    ),
-                    SizedBox(height: size.height * 0.02),
+                      SizedBox(height: size.height * 0.02),
 
-                    // Progress Indicator
-                    SizedBox(
-                      width: size.width * 0.88,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          '${currentPage + 1}/3',
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.secondryColor(context),
+                      // Progress Indicator
+                      SizedBox(
+                        width: size.width * 0.88,
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            '${currentPage + 1}/3',
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 16,
+                              fontWeight: FontWeight.w400,
+                              color: AppColor.secondryColor(context),
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(
-                      width: size.width * 0.9,
-                      child: Image.asset(
-                        progressImages[currentPage],
-                        width: size.width * 0.2,
-                        height: size.width * 0.1,
+                      SizedBox(
+                        width: size.width * 0.9,
+                        child: Image.asset(
+                          progressImages[currentPage],
+                          width: size.width * 0.2,
+                          height: size.width * 0.1,
+                        ),
                       ),
-                    ),
-                    SizedBox(height: size.height * 0.02),
+                      SizedBox(height: size.height * 0.02),
 
-                    // PageView for all three screens
-                    Expanded(
-                      child: PageView.builder(
-                        controller: _pageController,
-                        physics: const NeverScrollableScrollPhysics(),
-                        onPageChanged: (index) {
-                          setState(() {
-                            currentPage = index;
-                          });
-                        },
-                        itemCount: 3,
-                        itemBuilder: (context, pageIndex) {
-                          return VibeCheckPageContent(
-                            key: ValueKey(pageIndex),
-                            questionList:
-                            distributedQuestions.length > pageIndex
-                                ? distributedQuestions[pageIndex]
-                                : [],
-                            pageNumber: pageIndex + 1,
-                          );
-                        },
+                      // PageView for all three screens
+                      Expanded(
+                        child: PageView.builder(
+                          controller: _pageController,
+                          physics: const NeverScrollableScrollPhysics(),
+                          onPageChanged: (index) {
+                            setState(() {
+                              currentPage = index;
+                            });
+                          },
+                          itemCount: 3,
+                          itemBuilder: (context, pageIndex) {
+                            return VibeCheckPageContent(
+                              key: ValueKey(pageIndex),
+                              questionList:
+                              distributedQuestions.length > pageIndex
+                                  ? distributedQuestions[pageIndex]
+                                  : [],
+                              pageNumber: pageIndex + 1,
+                            );
+                          },
+                        ),
                       ),
-                    ),
-                  ],
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 16, top: 8),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            AppButton(
+                              height: 62,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700,
+                              text: AppLanguage.continueText[language],
+                              onPress: _nextPage,
+                            ),
+                            SizedBox(height: size.height * 1 / 100),
+                            if (showSkip)
+                              GestureDetector(
+                                onTap: _skipToNext,
+                                child: Text(
+                                  textAlign: TextAlign.center,
+                                  AppLanguage.skip[language],
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColor.greyLightColor(context),
+                                  ),
+                                ),
+                              ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             );

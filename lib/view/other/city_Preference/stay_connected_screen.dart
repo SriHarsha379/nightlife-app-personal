@@ -54,7 +54,7 @@ class StayConnectedScreen extends StatefulWidget {
 class _StayConnectedScreenState extends State<StayConnectedScreen> {
   TextEditingController pinputInputController = TextEditingController();
   TextEditingController mobileNumberTextEditingController =
-      TextEditingController();
+  TextEditingController();
 
   // NEW: tracks whether we're auto-skipping this screen because the user
   // already has a primary email on file (collected earlier in
@@ -83,7 +83,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final userController =
-          Provider.of<UserController>(context, listen: false);
+      Provider.of<UserController>(context, listen: false);
       final existingEmail = userController.getUserEmail.trim();
 
       if (existingEmail.isNotEmpty) {
@@ -134,9 +134,9 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
         const limitMb = 10;
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-              content: Text(
-                  'File size ($sizeMb MB) exceeds $limitMb MB limit. Please pick a smaller file.'),
-              backgroundColor: Colors.red,
+            content: Text(
+                'File size ($sizeMb MB) exceeds $limitMb MB limit. Please pick a smaller file.'),
+            backgroundColor: Colors.red,
           ),
         );
         return false;
@@ -148,7 +148,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
 
   Future<Map<String, dynamic>?> _submitSignupStepThree({String? email}) async {
     final postApiProvider =
-        Provider.of<PostApiProvider>(context, listen: false);
+    Provider.of<PostApiProvider>(context, listen: false);
 
     if (!await _validateMediaSizes()) {
       return null;
@@ -187,8 +187,14 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
       customMusicGenres: widget.customGenre,
       eventPreferences: widget.selectedEvents ?? '',
       customEventPreferences: widget.customEvent,
+      // Curated vibes removed - widget.selectedVibes now carries the
+      // free-text vibes typed on VibePreference, and that's what the
+      // backend actually validates/stores now (custom_vibes). Previously
+      // widget.customVibes was declared but never populated anywhere in
+      // the navigation chain, so it was always null - sending it here
+      // would have made every signup fail once curated vibes were removed.
       vibes: widget.selectedVibes ?? '',
-      customVibes: widget.customVibes,
+      customVibes: widget.selectedVibes,
       vibeChecks: widget.formattedAnswers ?? [],
       sexuality: widget.sexuality ?? '',
       interestedIn: widget.interestedIn ?? '',
@@ -240,7 +246,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
 
     final dynamic data = result['data'];
     final Map<String, dynamic> userData =
-        (data is Map<String, dynamic>) ? data : <String, dynamic>{};
+    (data is Map<String, dynamic>) ? data : <String, dynamic>{};
     final bool isProfileCompleted = userData['is_profile_completed'] == true;
     final bool isAnotherEmailVerify =
         userData['is_another_email_verify'] == true;
@@ -334,7 +340,7 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                             width: MediaQuery.of(context).size.width * 4 / 100,
                             child: SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 5 / 100,
+                              MediaQuery.of(context).size.height * 5 / 100,
                               child: Image.asset(
                                 AppImage.backArrowIcon,
                                 color: AppColor.secondryColor(context),
@@ -404,13 +410,13 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                             decoration: InputDecoration(
                               filled: true,
                               fillColor:
-                                  AppColor.textfieldcontainercolor(context),
+                              AppColor.textfieldcontainercolor(context),
                               counterText: '',
                               hintText: AppLanguage.entterEmailText[language],
                               hintStyle: AppConstant.textFilledStyle(context),
                               contentPadding: EdgeInsets.symmetric(
                                 horizontal:
-                                    MediaQuery.of(context).size.width * 4 / 100,
+                                MediaQuery.of(context).size.width * 4 / 100,
                                 vertical: MediaQuery.of(context).size.height *
                                     1.8 /
                                     100,

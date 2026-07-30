@@ -1,0 +1,25 @@
+<svg width="320" height="200" viewBox="0 0 320 200" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="glowGold" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur stdDeviation="6" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <linearGradient id="goldGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#F2B33D"/>
+      <stop offset="100%" stop-color="#FFE9A8"/>
+    </linearGradient>
+  </defs>
+
+  <g filter="url(#glowGold)" fill="none" stroke="url(#goldGrad)" stroke-width="8" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Checkmark, positioned on the left -->
+    <path d="M 30 105 L 75 148 L 130 85"/>
+    <!-- Arrow shaft: continues from the checkmark up to the right -->
+    <path d="M 100 112 L 268 45"/>
+    <!-- Arrowhead pointing up-right -->
+    <path d="M 232 33 L 268 45 L 262 82"/>
+  </g>
+</svg>

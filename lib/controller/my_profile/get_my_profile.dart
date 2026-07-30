@@ -112,14 +112,6 @@ class ProfileController with ChangeNotifier {
     return null;
   }
 
-  // Get vibe image URL
-  String getVibeImageUrl(String image) {
-    if (image.isNotEmpty) {
-      return resolveImageUrl(image, AppConfigProvider.imageUrl);
-    }
-    return '';
-  }
-
   // Get gallery item URL
   String getGalleryItemUrl(String url) {
     if (url.isNotEmpty) {
@@ -152,21 +144,13 @@ class ProfileController with ChangeNotifier {
     return [...prefNames, ...customNames];
   }
 
-  // Get vibes with images
-  List<Map<String, dynamic>> getVibesWithImages() {
-    return vibes.map((vibe) {
-      return {
-        'id': vibe['vibe_id'] ?? '',
-        'name': vibe['name'] ?? '',
-        'image': getVibeImageUrl(vibe['image'] ?? ''),
-      };
-    }).toList();
-  }
-
-  // Get custom vibes
+  // Get custom vibes.
+  // Curated Vibe collection removed - these are now already plain
+  // free-text strings coming straight from the backend, not {name,
+  // image} objects, so this just normalizes to String.
   List<String> getCustomVibeNames() {
     return customVibes
-        .map((vibe) => vibe['name']?.toString() ?? '')
+        .map((vibe) => vibe.toString())
         .where((name) => name.isNotEmpty)
         .toList();
   }
@@ -202,18 +186,20 @@ class ProfileController with ChangeNotifier {
   // Check if user has top artist
   bool get hasTopArtist => topArtist != null;
 
-  // Get display name for vibes section
+  // Get display name for vibes section.
+  // Curated Vibe collection removed - `vibes` and `customVibes` are now
+  // both just plain free-text strings (and in fact carry the same
+  // content from the backend), so this dedupes them and reads directly
+  // rather than treating entries as {name, image} objects.
   String getVibesDisplayText() {
-    final allVibes = [...vibes, ...customVibes];
+    final Set<String> allVibes = {
+      ...vibes.map((v) => v.toString()),
+      ...customVibes.map((v) => v.toString()),
+    }..removeWhere((name) => name.isEmpty);
+
     if (allVibes.isEmpty) return 'Add your vibes';
 
-    final vibeNames = allVibes
-        .map((vibe) => vibe['name']?.toString() ?? '')
-        .where((name) => name.isNotEmpty)
-        .take(3)
-        .toList();
-
-    return vibeNames.join(' · ');
+    return allVibes.take(3).join(' · ');
   }
 
   // Get display text for hobbies section

@@ -4,37 +4,35 @@ import 'package:provider/provider.dart';
 
 import '../../controller/genres/music_genres_controller.dart';
 import '../../controller/event_preference/event_preference_controller.dart';
-import '../../controller/vibe_preference/vibe_prefernce_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_font.dart';
 
+// The curated Vibe collection (a fixed picker list like "Chill pill",
+// "High Energy") has been removed entirely, and this filter sheet had no
+// backend support for filtering the feed by vibes in the first place (no
+// consumer ever called this widget either) - so the Vibes tab is gone
+// rather than rebuilt, leaving Music/Events as the two filter categories.
 class PreferenceFilterResult {
   final List<String> selectedMusicGenreIds;
   final List<String> selectedEventPreferenceIds;
-  final List<String> selectedVibeIds;
 
   const PreferenceFilterResult({
     required this.selectedMusicGenreIds,
     required this.selectedEventPreferenceIds,
-    required this.selectedVibeIds,
   });
 
   bool get isEmpty =>
-      selectedMusicGenreIds.isEmpty &&
-      selectedEventPreferenceIds.isEmpty &&
-      selectedVibeIds.isEmpty;
+      selectedMusicGenreIds.isEmpty && selectedEventPreferenceIds.isEmpty;
 }
 
 class PreferenceFilterBottomSheet extends StatefulWidget {
   final List<String> initialMusicGenreIds;
   final List<String> initialEventPreferenceIds;
-  final List<String> initialVibeIds;
 
   const PreferenceFilterBottomSheet({
     super.key,
     this.initialMusicGenreIds = const [],
     this.initialEventPreferenceIds = const [],
-    this.initialVibeIds = const [],
   });
 
   @override
@@ -49,20 +47,17 @@ class _PreferenceFilterBottomSheetState
 
   List<String> _selectedMusicIds = [];
   List<String> _selectedEventIds = [];
-  List<String> _selectedVibeIds = [];
 
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _selectedMusicIds = List.from(widget.initialMusicGenreIds);
     _selectedEventIds = List.from(widget.initialEventPreferenceIds);
-    _selectedVibeIds = List.from(widget.initialVibeIds);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       context.read<MusicGenresController>().fetchGenresData(context);
       context.read<EventPreferenceController>().fetchEventsData(context);
-      context.read<VibePreferenceController>().fetchVibesData(context);
     });
   }
 
@@ -72,10 +67,7 @@ class _PreferenceFilterBottomSheetState
     super.dispose();
   }
 
-  int get _totalSelected =>
-      _selectedMusicIds.length +
-      _selectedEventIds.length +
-      _selectedVibeIds.length;
+  int get _totalSelected => _selectedMusicIds.length + _selectedEventIds.length;
 
   void _toggleItem(List<String> list, String id) {
     setState(() {
@@ -91,12 +83,11 @@ class _PreferenceFilterBottomSheetState
     setState(() {
       _selectedMusicIds.clear();
       _selectedEventIds.clear();
-      _selectedVibeIds.clear();
     });
   }
 
   String _itemName(dynamic item) {
-    return (item['genre_name'] ?? item['category_name'] ?? item['name'] ?? item['vibe_name'] ?? '').toString();
+    return (item['genre_name'] ?? item['category_name'] ?? item['name'] ?? '').toString();
   }
 
   String _itemId(dynamic item) {
@@ -197,7 +188,6 @@ class _PreferenceFilterBottomSheetState
                 tabs: [
                   Tab(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Music'), if (_selectedMusicIds.isNotEmpty) ...[const SizedBox(width: 4), _badge(_selectedMusicIds.length)]])),
                   Tab(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Events'), if (_selectedEventIds.isNotEmpty) ...[const SizedBox(width: 4), _badge(_selectedEventIds.length)]])),
-                  Tab(child: Row(mainAxisAlignment: MainAxisAlignment.center, children: [const Text('Vibes'), if (_selectedVibeIds.isNotEmpty) ...[const SizedBox(width: 4), _badge(_selectedVibeIds.length)]])),
                 ],
               ),
             ),
@@ -209,7 +199,6 @@ class _PreferenceFilterBottomSheetState
               children: [
                 Consumer<MusicGenresController>(builder: (context, controller, _) => SingleChildScrollView(child: _buildChipGrid(controller.getGenresList, _selectedMusicIds, controller.getIsLoading))),
                 Consumer<EventPreferenceController>(builder: (context, controller, _) => SingleChildScrollView(child: _buildChipGrid(controller.getEventsList, _selectedEventIds, controller.getIsLoading))),
-                Consumer<VibePreferenceController>(builder: (context, controller, _) => SingleChildScrollView(child: _buildChipGrid(controller.getVibesList, _selectedVibeIds, controller.getIsLoading))),
               ],
             ),
           ),
@@ -220,7 +209,7 @@ class _PreferenceFilterBottomSheetState
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(backgroundColor: AppColor.buttonColor, padding: const EdgeInsets.symmetric(vertical: 16), shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14))),
                 onPressed: () {
-                  Navigator.pop(context, PreferenceFilterResult(selectedMusicGenreIds: List.from(_selectedMusicIds), selectedEventPreferenceIds: List.from(_selectedEventIds), selectedVibeIds: List.from(_selectedVibeIds)));
+                  Navigator.pop(context, PreferenceFilterResult(selectedMusicGenreIds: List.from(_selectedMusicIds), selectedEventPreferenceIds: List.from(_selectedEventIds)));
                 },
                 child: Text(_totalSelected > 0 ? 'Apply Filters ($_totalSelected selected)' : 'Apply Filters', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 15, fontFamily: AppFont.fontFamily)),
               ),

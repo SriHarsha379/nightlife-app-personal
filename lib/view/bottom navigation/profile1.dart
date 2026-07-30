@@ -970,29 +970,18 @@ class _Profile1State extends State<Profile1> {
 
   Widget _buildVibesSection(
       BuildContext context, ProfileController controller) {
-    final vibeItems = controller.getVibesWithImages();
-    final customVibes = controller.getCustomVibeNames();
-    final preSelectedVibeIds = controller.vibes
-        .map((vibe) {
-      if (vibe is Map) {
-        final dynamic rawId = vibe['vibe_id'] ?? vibe['_id'] ?? vibe['id'];
-        return rawId?.toString() ?? '';
-      }
-      return '';
-    })
-        .where((id) => id.isNotEmpty)
-        .toSet();
+    // Curated Vibe collection removed - `vibes` and `customVibes` are now
+    // both just plain free-text strings from the backend (in fact the
+    // same content), so this just dedupes them into a flat name list
+    // instead of the old {name, image}-object handling.
+    final Set<String> allVibeNames = {
+      ...controller.vibes.map((v) => v.toString()),
+      ...controller.getCustomVibeNames(),
+    }..removeWhere((name) => name.isEmpty);
 
-    final allItems = [
-      ...vibeItems.map((vibe) => {
-        'name': vibe['name']?.toString() ?? '',
-        'image': vibe['image']?.toString() ?? '',
-      }),
-      ...customVibes.map((name) => {
-        'name': name,
-        'image': '',
-      }),
-    ];
+    final allItems = allVibeNames
+        .map((name) => {'name': name, 'image': ''})
+        .toList();
 
     return SizedBox(
       height: 100,
@@ -1013,7 +1002,7 @@ class _Profile1State extends State<Profile1> {
                       PageTransition(
                         type: PageTransitionType.rightToLeftWithFade,
                         child: EditVibePreference(
-                          initialSelectedVibeIds: preSelectedVibeIds,
+                          initialVibes: allVibeNames.toList(),
                         ),
                         duration: const Duration(milliseconds: 400),
                       ),
