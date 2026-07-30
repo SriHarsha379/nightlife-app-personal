@@ -481,14 +481,16 @@ class HomeWidget {
         required Function() onMessageTap,
         required Function() onHeartTap,
         String? bio,
-        List<String>? vibes,
+        List<String>? musicGenres,
         String? distance,
         String? memberId,
         Function(dynamic)? onDetailResult,
       }) {
     final String safeBio = (bio ?? '').trim();
+    // Vibe check has been removed - this now shows the member's
+    // selected music genres instead.
     final List<String> safeVibes =
-    (vibes ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
+    (musicGenres ?? const <String>[]).where((e) => e.trim().isNotEmpty).toList();
     final bool hasBio = safeBio.isNotEmpty;
     final bool hasVibes = safeVibes.isNotEmpty;
     // Live drag feedback: the color wash and beside-card glow fade in
@@ -714,26 +716,11 @@ class HomeWidget {
                                   overflow: TextOverflow.ellipsis,
                                 ),
                                 SizedBox(
-                                  height: (hasBio && hasVibes)
+                                  height: hasBio
                                       ? MediaQuery.of(context).size.height *
                                       .5 /
                                       100
                                       : 0,
-                                ),
-                                Text(
-                                  hasVibes ? safeVibes.join(' • ') : "",
-                                  style: const TextStyle(
-                                    color: AppColor.pinkColor,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                                SizedBox(
-                                  height: MediaQuery.of(context).size.height *
-                                      .5 /
-                                      100,
                                 ),
                                 Row(
                                   children: [
@@ -744,11 +731,30 @@ class HomeWidget {
                                     ),
                                     const SizedBox(width: 6),
                                     Expanded(
-                                      child: Text(
-                                        distance ?? '',
-                                        style: TextStyle(
-                                          color: Colors.grey[500],
-                                          fontSize: 14,
+                                      child: Text.rich(
+                                        TextSpan(
+                                          children: [
+                                            TextSpan(
+                                              text: distance ?? '',
+                                              style: TextStyle(
+                                                color: Colors.grey[500],
+                                                fontSize: 14,
+                                              ),
+                                            ),
+                                            // Selected music genres shown
+                                            // right alongside the location,
+                                            // instead of their own line.
+                                            if (hasVibes)
+                                              TextSpan(
+                                                text:
+                                                '  •  ${safeVibes.join(', ')}',
+                                                style: const TextStyle(
+                                                  color: AppColor.pinkColor,
+                                                  fontSize: 14,
+                                                  fontWeight: FontWeight.w500,
+                                                ),
+                                              ),
+                                          ],
                                         ),
                                         maxLines: 1,
                                         overflow: TextOverflow.ellipsis,
@@ -817,7 +823,27 @@ class HomeWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColor.redColor,
+                                // White ring plus a dark drop shadow so the
+                                // badge stays visible even when the photo
+                                // behind it is a similar red tone.
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                                 boxShadow: [
+                                  // Crisp black outline ring, drawn just outside the
+                                  // white ring, for maximum contrast on any background.
+                                  const BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 0,
+                                    spreadRadius: 2.5,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.45),
+                                    blurRadius: 12,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 3),
+                                  ),
                                   BoxShadow(
                                     color: AppColor.redColor.withOpacity(
                                         isDraggingLeft ? 0.8 : 0.5),
@@ -833,16 +859,10 @@ class HomeWidget {
                               ),
                             ),
                             const SizedBox(width: 4),
-                            Icon(
-                              Icons.arrow_back_rounded,
-                              color: AppColor.redColor,
-                              size: circleDiameter * 0.5,
-                              shadows: [
-                                Shadow(
-                                  color: AppColor.redColor.withOpacity(0.8),
-                                  blurRadius: 8,
-                                ),
-                              ],
+                            _doubleChevron(
+                              size: circleDiameter * 0.85,
+                              pointRight: false,
+                              fillColor: Colors.white,
                             ),
                           ],
                         ),
@@ -869,16 +889,10 @@ class HomeWidget {
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            Icon(
-                              Icons.arrow_forward_rounded,
-                              color: AppColor.greenColor,
-                              size: circleDiameter * 0.5,
-                              shadows: [
-                                Shadow(
-                                  color: AppColor.greenColor.withOpacity(0.8),
-                                  blurRadius: 8,
-                                ),
-                              ],
+                            _doubleChevron(
+                              size: circleDiameter * 0.85,
+                              pointRight: true,
+                              fillColor: Colors.white,
                             ),
                             const SizedBox(width: 4),
                             Container(
@@ -887,7 +901,27 @@ class HomeWidget {
                               decoration: BoxDecoration(
                                 shape: BoxShape.circle,
                                 color: AppColor.greenColor,
+                                // White ring plus a dark drop shadow so the
+                                // badge stays visible even when the photo
+                                // behind it is a similar green tone.
+                                border: Border.all(
+                                  color: Colors.white,
+                                  width: 2,
+                                ),
                                 boxShadow: [
+                                  // Crisp black outline ring, drawn just outside the
+                                  // white ring, for maximum contrast on any background.
+                                  const BoxShadow(
+                                    color: Colors.black,
+                                    blurRadius: 0,
+                                    spreadRadius: 2.5,
+                                  ),
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.45),
+                                    blurRadius: 12,
+                                    spreadRadius: 1,
+                                    offset: const Offset(0, 3),
+                                  ),
                                   BoxShadow(
                                     color: AppColor.greenColor.withOpacity(
                                         isDraggingRight ? 0.8 : 0.5),
@@ -986,11 +1020,23 @@ class HomeWidget {
         int? recentCount,
         int? totalLikes,
       }) {
-    // final bool showAcceptFeedback =
-    //     (showHeart || showCross) && lastSwipeType == 'accept';
-    // final bool showRejectFeedback =
-    //     (showHeart || showCross) && lastSwipeType == 'reject';
-    // final double badgeTop = MediaQuery.of(context).size.height * 0.06;
+    // Live drag feedback, same behavior as the members card: badges sit at
+    // a dim "hint" opacity at rest and ramp to fully lit on the active
+    // swipe side while fading the opposite side out.
+    final bool isDraggingRight = dragPercentX > 1;
+    final bool isDraggingLeft = dragPercentX < -1;
+    final double dragOpacity = (dragPercentX.abs() / 25).clamp(0.0, 1.0);
+    const double restBadgeOpacity = 0.88;
+    final double rejectBadgeOpacity = isDraggingLeft
+        ? 1.0
+        : (isDraggingRight
+        ? (restBadgeOpacity * (1 - dragOpacity)).clamp(0.0, restBadgeOpacity)
+        : restBadgeOpacity);
+    final double acceptBadgeOpacity = isDraggingRight
+        ? 1.0
+        : (isDraggingLeft
+        ? (restBadgeOpacity * (1 - dragOpacity)).clamp(0.0, restBadgeOpacity)
+        : restBadgeOpacity);
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -1295,33 +1341,148 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
-              // Positioned(
-              //   left: 18,
-              //   top: badgeTop,
-              //   child: _buildDecisionBadge(
-              //     context,
-              //     label: showRejectFeedback ? 'NO' : 'Reject',
-              //     icon: Icons.close,
-              //     color: AppColor.redColor,
-              //     isActive: showRejectFeedback,
-              //     onTap: onRejectTap,
-              //     semanticsLabel: 'Reject event',
-              //   ),
-              // ),
-              //
-              // Positioned(
-              //   right: 18,
-              //   top: badgeTop,
-              //   child: _buildDecisionBadge(
-              //     context,
-              //     label: showAcceptFeedback ? 'YES' : 'Accept',
-              //     icon: Icons.check_rounded,
-              //     color: AppColor.greenColor,
-              //     isActive: showAcceptFeedback,
-              //     onTap: onHeartTap,
-              //     semanticsLabel: 'Accept event',
-              //   ),
-              // ),
+              // Reject indicator - same design as the members card: a
+              // solid red circle with a white X, plus an arrow pointing
+              // further in the swipe direction.
+              Builder(builder: (context) {
+                final double circleDiameter =
+                    MediaQuery.of(context).size.width * 0.105;
+                const double edgeInset = 14;
+
+                return Positioned(
+                  top: edgeInset,
+                  left: edgeInset,
+                  child: IgnorePointer(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: rejectBadgeOpacity,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: circleDiameter,
+                            height: circleDiameter,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColor.redColor,
+                              // White ring plus a dark drop shadow so the badge
+                              // stays visible even when the photo behind it is a
+                              // similar tone.
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                // Crisp black outline ring, drawn just outside the
+                                // white ring, for maximum contrast on any background.
+                                const BoxShadow(
+                                  color: Colors.black,
+                                  blurRadius: 0,
+                                  spreadRadius: 2.5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.45),
+                                  blurRadius: 12,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                                BoxShadow(
+                                  color: AppColor.redColor.withOpacity(
+                                      isDraggingLeft ? 0.8 : 0.5),
+                                  blurRadius: isDraggingLeft ? 18 : 10,
+                                  spreadRadius: isDraggingLeft ? 1 : 0,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: Colors.white,
+                              size: circleDiameter * 0.55,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          _doubleChevron(
+                            size: circleDiameter * 0.85,
+                            pointRight: false,
+                            fillColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+
+              // Accept indicator - mirrored: arrow first, then the solid
+              // green circle with a white heart.
+              Builder(builder: (context) {
+                final double circleDiameter =
+                    MediaQuery.of(context).size.width * 0.105;
+                const double edgeInset = 14;
+
+                return Positioned(
+                  bottom: 175,
+                  right: edgeInset,
+                  child: IgnorePointer(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: acceptBadgeOpacity,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _doubleChevron(
+                            size: circleDiameter * 0.85,
+                            pointRight: true,
+                            fillColor: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Container(
+                            width: circleDiameter,
+                            height: circleDiameter,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColor.greenColor,
+                              // White ring plus a dark drop shadow so the badge
+                              // stays visible even when the photo behind it is a
+                              // similar tone.
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                // Crisp black outline ring, drawn just outside the
+                                // white ring, for maximum contrast on any background.
+                                const BoxShadow(
+                                  color: Colors.black,
+                                  blurRadius: 0,
+                                  spreadRadius: 2.5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.45),
+                                  blurRadius: 12,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                                BoxShadow(
+                                  color: AppColor.greenColor.withOpacity(
+                                      isDraggingRight ? 0.8 : 0.5),
+                                  blurRadius: isDraggingRight ? 18 : 10,
+                                  spreadRadius: isDraggingRight ? 1 : 0,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.favorite_rounded,
+                              color: Colors.white,
+                              size: circleDiameter * 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
 
               //! Heart Button on Right Side
               Positioned(
@@ -1396,20 +1557,23 @@ class HomeWidget {
         int? recentCount,
         int? totalLikes,
       }) {
-    // Live drag feedback: show progressively as the card is actively being
-    // dragged, in addition to the brief post-swipe confirmation stamp.
-    // dragPercentX is the ratio of horizontal drag to the swipe threshold,
-    // as a percentage - positive while dragging right, negative while
-    // dragging left.
-    final bool isDraggingRight = dragPercentX > 5;
-    final bool isDraggingLeft = dragPercentX < -5;
-    final double dragOpacity = (dragPercentX.abs() / 100).clamp(0.0, 1.0);
-
-    final bool showAcceptFeedback = isDraggingRight;
-    final bool showRejectFeedback = isDraggingLeft;
-    // Live drag opacity only.
-    final double stampOpacity = dragOpacity;
-    final double badgeTop = MediaQuery.of(context).size.height * 0.06;
+    // Live drag feedback, same behavior as the members card: badges sit at
+    // a dim "hint" opacity at rest and ramp to fully lit on the active
+    // swipe side while fading the opposite side out.
+    final bool isDraggingRight = dragPercentX > 1;
+    final bool isDraggingLeft = dragPercentX < -1;
+    final double dragOpacity = (dragPercentX.abs() / 25).clamp(0.0, 1.0);
+    const double restBadgeOpacity = 0.88;
+    final double rejectBadgeOpacity = isDraggingLeft
+        ? 1.0
+        : (isDraggingRight
+        ? (restBadgeOpacity * (1 - dragOpacity)).clamp(0.0, restBadgeOpacity)
+        : restBadgeOpacity);
+    final double acceptBadgeOpacity = isDraggingRight
+        ? 1.0
+        : (isDraggingLeft
+        ? (restBadgeOpacity * (1 - dragOpacity)).clamp(0.0, restBadgeOpacity)
+        : restBadgeOpacity);
     return AnimatedSwitcher(
       duration: const Duration(milliseconds: 450),
       transitionBuilder: (child, animation) => FadeTransition(
@@ -1678,33 +1842,148 @@ class HomeWidget {
                 totalLikes: totalLikes,
               ),
 
-              // Positioned(
-              //   left: 18,
-              //   top: badgeTop,
-              //   child: _buildDecisionBadge(
-              //     context,
-              //     label: showRejectFeedback ? 'NO' : 'Reject',
-              //     icon: Icons.close,
-              //     color: AppColor.redColor,
-              //     isActive: showRejectFeedback,
-              //     onTap: onRejectTap,
-              //     semanticsLabel: 'Reject venue',
-              //   ),
-              // ),
-              //
-              // Positioned(
-              //   right: 18,
-              //   top: badgeTop,
-              //   child: _buildDecisionBadge(
-              //     context,
-              //     label: showAcceptFeedback ? 'YES' : 'Accept',
-              //     icon: Icons.check_rounded,
-              //     color: AppColor.greenColor,
-              //     isActive: showAcceptFeedback,
-              //     onTap: onHeartTap,
-              //     semanticsLabel: 'Accept venue',
-              //   ),
-              // ),
+              // Reject indicator - same design as the members card: a
+              // solid red circle with a white X, plus an arrow pointing
+              // further in the swipe direction.
+              Builder(builder: (context) {
+                final double circleDiameter =
+                    MediaQuery.of(context).size.width * 0.105;
+                const double edgeInset = 14;
+
+                return Positioned(
+                  top: edgeInset + 46, // pushed down to clear the venue category tag
+                  left: edgeInset,
+                  child: IgnorePointer(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: rejectBadgeOpacity,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Container(
+                            width: circleDiameter,
+                            height: circleDiameter,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColor.redColor,
+                              // White ring plus a dark drop shadow so the badge
+                              // stays visible even when the photo behind it is a
+                              // similar tone.
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                // Crisp black outline ring, drawn just outside the
+                                // white ring, for maximum contrast on any background.
+                                const BoxShadow(
+                                  color: Colors.black,
+                                  blurRadius: 0,
+                                  spreadRadius: 2.5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.45),
+                                  blurRadius: 12,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                                BoxShadow(
+                                  color: AppColor.redColor.withOpacity(
+                                      isDraggingLeft ? 0.8 : 0.5),
+                                  blurRadius: isDraggingLeft ? 18 : 10,
+                                  spreadRadius: isDraggingLeft ? 1 : 0,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.close_rounded,
+                              color: Colors.white,
+                              size: circleDiameter * 0.55,
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          _doubleChevron(
+                            size: circleDiameter * 0.85,
+                            pointRight: false,
+                            fillColor: Colors.white,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
+
+              // Accept indicator - mirrored: arrow first, then the solid
+              // green circle with a white heart.
+              Builder(builder: (context) {
+                final double circleDiameter =
+                    MediaQuery.of(context).size.width * 0.105;
+                const double edgeInset = 14;
+
+                return Positioned(
+                  bottom: 175,
+                  right: edgeInset,
+                  child: IgnorePointer(
+                    child: AnimatedOpacity(
+                      duration: const Duration(milliseconds: 150),
+                      opacity: acceptBadgeOpacity,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          _doubleChevron(
+                            size: circleDiameter * 0.85,
+                            pointRight: true,
+                            fillColor: Colors.white,
+                          ),
+                          const SizedBox(width: 4),
+                          Container(
+                            width: circleDiameter,
+                            height: circleDiameter,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: AppColor.greenColor,
+                              // White ring plus a dark drop shadow so the badge
+                              // stays visible even when the photo behind it is a
+                              // similar tone.
+                              border: Border.all(
+                                color: Colors.white,
+                                width: 2,
+                              ),
+                              boxShadow: [
+                                // Crisp black outline ring, drawn just outside the
+                                // white ring, for maximum contrast on any background.
+                                const BoxShadow(
+                                  color: Colors.black,
+                                  blurRadius: 0,
+                                  spreadRadius: 2.5,
+                                ),
+                                BoxShadow(
+                                  color: Colors.black.withOpacity(0.45),
+                                  blurRadius: 12,
+                                  spreadRadius: 1,
+                                  offset: const Offset(0, 3),
+                                ),
+                                BoxShadow(
+                                  color: AppColor.greenColor.withOpacity(
+                                      isDraggingRight ? 0.8 : 0.5),
+                                  blurRadius: isDraggingRight ? 18 : 10,
+                                  spreadRadius: isDraggingRight ? 1 : 0,
+                                ),
+                              ],
+                            ),
+                            child: Icon(
+                              Icons.favorite_rounded,
+                              color: Colors.white,
+                              size: circleDiameter * 0.5,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              }),
 
               //! Heart Button on Right Side
               Positioned(
@@ -1754,6 +2033,128 @@ class HomeWidget {
       ),
     );
   }
+
+  // Double-chevron shape matching the client's reference asset exactly -
+  // a flat-backed notched chevron plus a plain triangle behind it,
+  // drawn as a custom path (rather than a stock Material icon).
+  // fillColor defaults to white; pass Colors.black for the dark version.
+  static Widget _doubleChevron({
+    required double size,
+    required bool pointRight,
+    Color fillColor = Colors.white,
+  }) {
+    return CustomPaint(
+      size: Size(size, size),
+      painter: _DoubleChevronPainter(
+        pointRight: pointRight,
+        fillColor: fillColor,
+      ),
+    );
+  }
+
+  // Quick variant for use on light/white backgrounds - black arrow.
+  static Widget _doubleChevronOnLight({
+    required double size,
+    required bool pointRight,
+  }) =>
+      _doubleChevron(size: size, pointRight: pointRight, fillColor: Colors.black);
+
+  // Quick variant for use on dark/black backgrounds - white arrow.
+  static Widget _doubleChevronOnDark({
+    required double size,
+    required bool pointRight,
+  }) =>
+      _doubleChevron(size: size, pointRight: pointRight, fillColor: Colors.white);
+}
+
+class _DoubleChevronPainter extends CustomPainter {
+  final bool pointRight;
+  final Color fillColor;
+
+  _DoubleChevronPainter({
+    required this.pointRight,
+    this.fillColor = Colors.black,
+  });
+
+  // The flat-backed chevron (has a concave notch cut into its back edge).
+  Path _chevron(double dx, double cw, double h) {
+    final path = Path();
+    path.moveTo(dx, 0);
+    path.lineTo(dx + cw * 0.55, 0);
+    path.lineTo(dx + cw, h * 0.5);
+    path.lineTo(dx + cw * 0.55, h);
+    path.lineTo(dx, h);
+    path.lineTo(dx + cw * 0.42, h * 0.5);
+    path.close();
+    return path;
+  }
+
+  // The plain triangle behind it - no flat back, no notch, just a point,
+  // matching the second shape in the reference image exactly.
+  Path _triangle(double dx, double cw, double h) {
+    final path = Path();
+    path.moveTo(dx, h * 0.06);
+    path.lineTo(dx + cw, h * 0.5);
+    path.lineTo(dx, h * 0.94);
+    path.close();
+    return path;
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final double w = size.width;
+    final double h = size.height;
+
+    // Notched chevron plus a plain triangle behind it, separated by a
+    // clear gap (not overlapping like the earlier messy version) - this
+    // matches the reference image's two distinct shapes while each one
+    // stays crisp on its own.
+    final double cw1 = w * 0.4;
+    final double cw2 = w * 0.36;
+    final double gap = w * 0.16;
+    final Path shape = Path()
+      ..addPath(_chevron(0, cw1, h), Offset.zero)
+      ..addPath(_triangle(cw1 + gap, cw2, h), Offset.zero);
+
+    final Path path;
+    if (!pointRight) {
+      final matrix = Matrix4.identity()
+        ..translate(w, 0.0)
+        ..scale(-1.0, 1.0);
+      path = shape.transform(matrix.storage);
+    } else {
+      path = shape;
+    }
+
+    // Crisp two-tone outline matching the circle badges: a black ring on
+    // the outside, a white ring just inside it, then the colored fill -
+    // same treatment as the reject/accept circles, not just a soft blur.
+    final blackOutline = Paint()
+      ..color = Colors.black
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.16
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(path, blackOutline);
+
+    final whiteOutline = Paint()
+      ..color = Colors.white
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = w * 0.09
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+    canvas.drawPath(path, whiteOutline);
+
+    final fillPaint = Paint()
+      ..color = fillColor
+      ..style = PaintingStyle.fill;
+    canvas.drawPath(path, fillPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _DoubleChevronPainter oldDelegate) =>
+      oldDelegate.pointRight != pointRight ||
+          oldDelegate.fillColor != fillColor;
 }
 
 

@@ -1739,8 +1739,8 @@ class _HomeState extends State<Home> {
                                                     .right);
                                           },
                                           bio: member['bio'] ?? '',
-                                          vibes: List<String>.from(
-                                              member['vibes'] ?? []),
+                                          musicGenres: List<String>.from(
+                                              member['music_genres'] ?? []),
                                           distance: member[
                                           'distance_km'] !=
                                               null
@@ -1831,7 +1831,7 @@ class _HomeState extends State<Home> {
                                   up: false,
                                 ),
                                 numberOfCardsDisplayed: 1,
-                                cardBuilder: (context, index, _, __) {
+                                cardBuilder: (context, index, percentThresholdX, __) {
                                   if (index < 0 ||
                                       index >= visibleEvents.length) {
                                     return _buildSwipeCardFallback('event');
@@ -1902,6 +1902,7 @@ class _HomeState extends State<Home> {
                                           },
                                           key: ValueKey(
                                               "events_tab_${eventTabVersion}_${(event['_id'] ?? index).toString()}"),
+                                          dragPercentX: percentThresholdX.toDouble(),
                                           showHeart: showHeart && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
                                           showCross: showCross && (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event'),
                                           lastSwipeType: (_lastSwipedCardId == (event['_id'] ?? '').toString() && _lastSwipedTabType == 'event') ? lastSwipeType : null,
@@ -2060,7 +2061,7 @@ class _HomeState extends State<Home> {
                                   up: false,
                                 ),
                                 numberOfCardsDisplayed: 1,
-                                cardBuilder: (context, index, _, __) {
+                                cardBuilder: (context, index, percentThresholdX, __) {
                                   if (index < 0 ||
                                       index >= visibleVenues.length) {
                                     return _buildSwipeCardFallback('venue');
@@ -2130,6 +2131,7 @@ class _HomeState extends State<Home> {
                                           },
                                           key: ValueKey(
                                               "venues_tab_${venusTabVersion}_${(venue['_id'] ?? index).toString()}"),
+                                          dragPercentX: percentThresholdX.toDouble(),
                                           showHeart: showHeart && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
                                           showCross: showCross && (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue'),
                                           lastSwipeType: (_lastSwipedCardId == (venue['_id'] ?? '').toString() && _lastSwipedTabType == 'venue') ? lastSwipeType : null,
