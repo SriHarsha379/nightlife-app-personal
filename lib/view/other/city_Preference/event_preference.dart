@@ -58,9 +58,9 @@ class _EventPreferenceState extends State<EventPreference> {
 
   String _eventNameFrom(dynamic event) {
     return (event['category_name'] ??
-            event['name'] ??
-            event['event_name'] ??
-            '')
+        event['name'] ??
+        event['event_name'] ??
+        '')
         .toString();
   }
 
@@ -126,16 +126,21 @@ class _EventPreferenceState extends State<EventPreference> {
                   log("Selected Event IDs: $selectedEvents");
                   log("Custom Event: $customEvent");
 
-                  // Navigate to next screen with selected data
+                  // TEMPORARILY SKIPPING VibePreference - navigating
+                  // straight to AboutYouScreen instead. The VibePreference
+                  // screen/code itself is untouched (still fully there,
+                  // just not part of the active flow right now) - this can
+                  // be reverted by pointing back at VibePreference here.
                   Navigator.push(
                     context,
                     PageTransition(
                       type: PageTransitionType.rightToLeftWithFade,
-                      child: VibePreference(
+                      child: AboutYouScreen(
                         selectedGenres: widget.selectedGenres,
                         customGenre: widget.customGenre,
                         selectedEvents: selectedEvents,
                         customEvent: customEvent,
+                        selectedVibes: null,
                       ),
                       duration: const Duration(milliseconds: 500),
                     ),
@@ -276,7 +281,7 @@ class _EventPreferenceState extends State<EventPreference> {
                       child: TextField(
                         controller: searchEventController,
                         style:
-                            TextStyle(color: AppColor.secondryColor(context)),
+                        TextStyle(color: AppColor.secondryColor(context)),
                         cursorColor: AppColor.buttonColor,
                         decoration: InputDecoration(
                           hintText: 'Search events...',
@@ -328,10 +333,10 @@ class _EventPreferenceState extends State<EventPreference> {
                           runSpacing: 10,
                           children: List.generate(
                             (searchEventController.text.isEmpty
-                                    ? controller.getEventsList
-                                    : filteredEvents)
+                                ? controller.getEventsList
+                                : filteredEvents)
                                 .length,
-                            (index) {
+                                (index) {
                               var event = (searchEventController.text.isEmpty
                                   ? controller.getEventsList
                                   : filteredEvents)[index];
@@ -341,7 +346,7 @@ class _EventPreferenceState extends State<EventPreference> {
                                 eventName = 'Unknown';
                               }
                               bool isSelected =
-                                  controller.isEventSelected(eventId);
+                              controller.isEventSelected(eventId);
 
                               return GestureDetector(
                                 onTap: () {
@@ -433,7 +438,7 @@ class _EventPreferenceState extends State<EventPreference> {
                         controller: otherEventController,
                         cursorColor: AppColor.secondryColor(context),
                         style:
-                            TextStyle(color: AppColor.secondryColor(context)),
+                        TextStyle(color: AppColor.secondryColor(context)),
                         textAlignVertical: TextAlignVertical.center,
                         decoration: InputDecoration(
                           prefixIcon: Padding(
@@ -462,7 +467,7 @@ class _EventPreferenceState extends State<EventPreference> {
                           ),
                           border: InputBorder.none,
                           hintText:
-                              AppLanguage.typeYoureventpreferenceText[language],
+                          AppLanguage.typeYoureventpreferenceText[language],
                           hintStyle: AppConstant.textFilledStyle1(context),
                           contentPadding: EdgeInsets.only(
                             right: size.width * 4 / 100,

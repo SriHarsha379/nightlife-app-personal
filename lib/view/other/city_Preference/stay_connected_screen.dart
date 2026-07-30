@@ -455,12 +455,16 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                 ),
               ),
 
-              // Continue Button
+              // Skip Button - now a real button, placed above Continue
               Consumer<PostApiProvider>(
                 builder: (context, provider, child) {
                   return AppButton(
-                    text: AppLanguage.continueText[language],
-                    onPress: _continueWithEmail,
+                    backgroundColor: AppColor.borderColor,
+                    text: AppLanguage.skip[language],
+                    onPress: () {
+                      if (provider.loading) return;
+                      _skipAndSubmit();
+                    },
                   );
                 },
               ),
@@ -469,23 +473,12 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                 height: MediaQuery.of(context).size.height * 2 / 100,
               ),
 
-              // Skip Button
+              // Continue Button
               Consumer<PostApiProvider>(
                 builder: (context, provider, child) {
-                  return GestureDetector(
-                    onTap: provider.loading ? null : _skipAndSubmit,
-                    child: Text(
-                      textAlign: TextAlign.center,
-                      AppLanguage.skip[language],
-                      style: TextStyle(
-                        fontFamily: AppFont.fontFamily,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w700,
-                        color: provider.loading
-                            ? AppColor.greyLightColor(context).withOpacity(0.5)
-                            : AppColor.greyLightColor(context),
-                      ),
-                    ),
+                  return AppButton(
+                    text: AppLanguage.continueText[language],
+                    onPress: _continueWithEmail,
                   );
                 },
               ),

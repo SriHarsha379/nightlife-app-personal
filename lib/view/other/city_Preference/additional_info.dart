@@ -235,15 +235,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       color: AppColor.pinkColor,
                     )
                         : AppButton(
-                      text: AppLanguage.continueText[language],
+                      text: AppLanguage.skip[language],
+                      // Secondary color so it's still a real, prominent
+                      // button (not a plain text link like before), but
+                      // visually distinct from Continue so Continue still
+                      // reads as the primary action.
+                      backgroundColor: AppColor.borderColor,
                       onPress: () {
-                        FocusScope.of(context).unfocus();
-                        AdditionalInfoValidation();
-                      },
-                    ),
-                    const SizedBox(height: 16),
-                    GestureDetector(
-                      onTap: () {
                         if (apiprovider.loading) return;
                         final apiProvider = Provider.of<PostApiProvider>(
                           context,
@@ -260,21 +258,16 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           0,
                         );
                       },
-                      child: SizedBox(
-                        width: MediaQuery.of(context).size.width * 80 / 100,
-                        child: Center(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            AppLanguage.skip[language],
-                            style: const TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 12,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.textcolor,
-                            ),
-                          ),
-                        ),
-                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    apiprovider.loading
+                        ? const SizedBox.shrink()
+                        : AppButton(
+                      text: AppLanguage.continueText[language],
+                      onPress: () {
+                        FocusScope.of(context).unfocus();
+                        AdditionalInfoValidation();
+                      },
                     ),
                   ],
                 ),

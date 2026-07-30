@@ -1932,6 +1932,7 @@ class _HomeState extends State<Home> {
                                               event['categories'] ??
                                                   []),
                                           date: event['date'] ?? '',
+                                          eventDate: event['start_date'] ?? '',
                                           venueName:
                                           event['venue_name'] ?? '',
                                           address:

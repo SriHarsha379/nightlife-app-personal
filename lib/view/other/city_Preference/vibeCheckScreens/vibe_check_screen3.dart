@@ -361,6 +361,19 @@ class _VibeCheckScreen3State extends State<VibeCheckScreen3> {
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       AppButton(
+                        backgroundColor: AppColor.borderColor,
+                        text: AppLanguage.skip[language],
+                        onPress: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => MyAppFooter(
+                                    initialIndex: 0,
+                                  )));
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      AppButton(
                         height: 62,
                         fontSize: 18,
                         fontWeight: FontWeight.w700,
@@ -377,27 +390,6 @@ class _VibeCheckScreen3State extends State<VibeCheckScreen3> {
                             ),
                           );
                         },
-                      ),
-                      const SizedBox(height: 8),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => MyAppFooter(
-                                    initialIndex: 0,
-                                  )));
-                        },
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          AppLanguage.skip[language],
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 14,
-                            fontWeight: FontWeight.w700,
-                            color: AppColor.greyLightColor(context),
-                          ),
-                        ),
                       ),
                     ],
                   ),

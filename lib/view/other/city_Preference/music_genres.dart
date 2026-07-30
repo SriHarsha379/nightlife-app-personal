@@ -85,46 +85,12 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: Scaffold(
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Consumer<MusicGenresController>(
-          builder: (context, controller, child) {
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: 40 + MediaQuery.of(context).padding.bottom,
-              ),
-              child: AppButton(
-                text: '${AppLanguage.continueText[language]}',
-                onPress: () {
-                  // Get selected genres as comma-separated string
-                  String selectedGenres = controller.getSelectedGenresString();
-
-                  if (selectedGenres.isEmpty) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text("Please select at least one genre"),
-                        backgroundColor: Colors.red,
-                      ),
-                    );
-                    return;
-                  }
-
-                  // Navigate to next screen with selected genres
-                  Navigator.push(
-                    context,
-                    PageTransition(
-                      type: PageTransitionType.rightToLeftWithFade,
-                      child: EventPreference(
-                        selectedGenres: selectedGenres,
-                        customGenre: searchController.text,
-                      ),
-                      duration: const Duration(milliseconds: 500),
-                    ),
-                  );
-                },
-              ),
-            );
-          },
-        ),
+        // Continue button moved into the body layout below (as a fixed
+        // Column child under Expanded/SingleChildScrollView) instead of
+        // floatingActionButton, which rendered in its own fixed layer on
+        // top of this screen's scrollable genre grid - causing it to
+        // visually overlap mid-grid content as the grid scrolled
+        // underneath it, rather than staying docked at the true bottom.
         body: Container(
           width: size.width,
           height: size.height,
@@ -132,223 +98,267 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
               gradient: AppColor.backgroundGradientcolor(context)),
           child: Consumer<MusicGenresController>(
             builder: (context, controller, child) {
-              return SingleChildScrollView(
-                child: Column(
-                  children: [
-                    SizedBox(height: size.height * 3 / 100),
-
-                    // Header
-                    SizedBox(
-                      width: size.width * 90 / 100,
-                      height: size.height * 8 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.start,
+              return Column(
+                children: [
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
                         children: [
-                          GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: SizedBox(
-                              width: size.width * 4 / 100,
-                              child: SizedBox(
-                                height: size.height * 5 / 100,
-                                child: Image.asset(
-                                  AppImage.backArrowIcon,
-                                  color: AppColor.secondryColor(context),
+                          SizedBox(height: size.height * 3 / 100),
+
+                          // Header
+                          SizedBox(
+                            width: size.width * 90 / 100,
+                            height: size.height * 8 / 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                GestureDetector(
+                                  onTap: () => Navigator.pop(context),
+                                  child: SizedBox(
+                                    width: size.width * 4 / 100,
+                                    child: SizedBox(
+                                      height: size.height * 5 / 100,
+                                      child: Image.asset(
+                                        AppImage.backArrowIcon,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
+                                  ),
                                 ),
-                              ),
+                                SizedBox(
+                                  width: size.width * 80 / 100,
+                                  child: Center(
+                                    child: Text(
+                                      textAlign: TextAlign.center,
+                                      AppLanguage.musicGenres[language],
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
+
+                          // Subtitle
                           SizedBox(
                             width: size.width * 80 / 100,
                             child: Center(
                               child: Text(
                                 textAlign: TextAlign.center,
-                                AppLanguage.musicGenres[language],
+                                AppLanguage.pickUpgenreText[language],
                                 style: TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppFont.plusJakartaSansFamily,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                   color: AppColor.secondryColor(context),
                                 ),
                               ),
                             ),
                           ),
-                        ],
-                      ),
-                    ),
 
-                    // Subtitle
-                    SizedBox(
-                      width: size.width * 80 / 100,
-                      child: Center(
-                        child: Text(
-                          textAlign: TextAlign.center,
-                          AppLanguage.pickUpgenreText[language],
-                          style: TextStyle(
-                            fontFamily: AppFont.plusJakartaSansFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.secondryColor(context),
+                          SizedBox(height: size.height * 2 / 100),
+
+                          // Selection counter
+                          SizedBox(
+                            width: size.width * 90 / 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Row(
+                                  children: [
+                                    SizedBox(width: size.width * 2 / 100),
+                                    Image.asset(
+                                      AppImage.fireIcon,
+                                      height: size.width * 4 / 100,
+                                      width: size.width * 4 / 100,
+                                    ),
+                                    SizedBox(width: size.width * 2 / 100),
+                                    Text(
+                                      AppLanguage.topPicksforText[language],
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500,
+                                        color: AppColor.secondryColor(context),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Text(
+                                  '${controller.selectedCount}/${controller.maxSelection}',
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColor.buttonColor,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
-                        ),
-                      ),
-                    ),
 
-                    SizedBox(height: size.height * 2 / 100),
+                          SizedBox(height: size.height * 2 / 100),
 
-                    // Selection counter
-                    SizedBox(
-                      width: size.width * 90 / 100,
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Row(
-                            children: [
-                              SizedBox(width: size.width * 2 / 100),
-                              Image.asset(
-                                AppImage.fireIcon,
-                                height: size.width * 4 / 100,
-                                width: size.width * 4 / 100,
+                          // Loading or Genres Grid
+                          if (controller.getIsLoading)
+                            SizedBox(
+                              height: size.height * 40 / 100,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColor.buttonColor,
+                                ),
                               ),
-                              SizedBox(width: size.width * 2 / 100),
-                              Text(
-                                AppLanguage.topPicksforText[language],
+                            )
+                          else if (controller.getGenresList.isEmpty)
+                            SizedBox(
+                              height: size.height * 40 / 100,
+                              child: Center(
+                                child: Text(
+                                  'No genres available',
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 16,
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                ),
+                              ),
+                            )
+                          else
+                            _buildGenresGrid(controller),
+
+                          SizedBox(height: size.height * 2 / 100),
+
+                          // Search section
+                          SizedBox(
+                            width: size.width * 90 / 100,
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                AppLanguage.otherGenretexts[language],
                                 style: TextStyle(
                                   fontFamily: AppFont.fontFamily,
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.w500,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w400,
                                   color: AppColor.secondryColor(context),
                                 ),
                               ),
-                            ],
-                          ),
-                          Text(
-                            '${controller.selectedCount}/${controller.maxSelection}',
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.buttonColor,
                             ),
                           ),
+
+                          SizedBox(height: size.height * 2 / 100),
+
+                          // Search field
+                          Container(
+                            width: size.width * 90 / 100,
+                            height: size.height * 6 / 100,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(12),
+                              color: AppColor.filledcolor(context),
+                              boxShadow: [
+                                BoxShadow(
+                                  offset: const Offset(0, 1),
+                                  spreadRadius: 0,
+                                  blurRadius: 0,
+                                  color: AppColor.transparentColor.withOpacity(0.1),
+                                ),
+                              ],
+                            ),
+                            child: TextFormField(
+                              controller: searchController,
+                              cursorColor: AppColor.secondryColor(context),
+                              style:
+                              TextStyle(color: AppColor.secondryColor(context)),
+                              textAlignVertical: TextAlignVertical.center,
+                              decoration: InputDecoration(
+                                prefixIcon: Padding(
+                                  padding: EdgeInsets.only(
+                                    left: size.width * 4 / 100,
+                                    right: size.width * 2 / 100,
+                                  ),
+                                ),
+                                prefixIconConstraints: BoxConstraints(
+                                  minWidth: size.width * 2 / 100,
+                                  minHeight: size.height * 6 / 100,
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: AppColor.borderColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(12),
+                                  borderSide: const BorderSide(
+                                    color: AppColor.borderColor,
+                                    width: 2,
+                                  ),
+                                ),
+                                border: InputBorder.none,
+                                hintText:
+                                AppLanguage.typeYourfavouritegenreText[language],
+                                hintStyle: AppConstant.textFilledStyle1(context),
+                                contentPadding: EdgeInsets.only(
+                                  right: size.width * 4 / 100,
+                                ),
+                              ),
+                            ),
+                          ),
+
+                          // // Filtered results
+                          // if (searchController.text.isNotEmpty)
+                          //   _buildFilteredResults(controller),
+
+                          SizedBox(height: size.height * 2 / 100),
                         ],
                       ),
                     ),
-
-                    SizedBox(height: size.height * 2 / 100),
-
-                    // Loading or Genres Grid
-                    if (controller.getIsLoading)
-                      SizedBox(
-                        height: size.height * 40 / 100,
-                        child: Center(
-                          child: CircularProgressIndicator(
-                            color: AppColor.buttonColor,
-                          ),
-                        ),
-                      )
-                    else if (controller.getGenresList.isEmpty)
-                      SizedBox(
-                        height: size.height * 40 / 100,
-                        child: Center(
-                          child: Text(
-                            'No genres available',
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 16,
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
-                        ),
-                      )
-                    else
-                      _buildGenresGrid(controller),
-
-                    SizedBox(height: size.height * 2 / 100),
-
-                    // Search section
-                    SizedBox(
-                      width: size.width * 90 / 100,
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: Text(
-                          AppLanguage.otherGenretexts[language],
-                          style: TextStyle(
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.secondryColor(context),
-                          ),
-                        ),
-                      ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(
+                      bottom: 16 + MediaQuery.of(context).padding.bottom,
+                      top: 8,
                     ),
+                    child: AppButton(
+                      text: '${AppLanguage.continueText[language]}',
+                      onPress: () {
+                        // Get selected genres as comma-separated string
+                        String selectedGenres =
+                        controller.getSelectedGenresString();
 
-                    SizedBox(height: size.height * 2 / 100),
+                        if (selectedGenres.isEmpty) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content:
+                              Text("Please select at least one genre"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                          return;
+                        }
 
-                    // Search field
-                    Container(
-                      width: size.width * 90 / 100,
-                      height: size.height * 6 / 100,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(12),
-                        color: AppColor.filledcolor(context),
-                        boxShadow: [
-                          BoxShadow(
-                            offset: const Offset(0, 1),
-                            spreadRadius: 0,
-                            blurRadius: 0,
-                            color: AppColor.transparentColor.withOpacity(0.1),
-                          ),
-                        ],
-                      ),
-                      child: TextFormField(
-                        controller: searchController,
-                        cursorColor: AppColor.secondryColor(context),
-                        style:
-                        TextStyle(color: AppColor.secondryColor(context)),
-                        textAlignVertical: TextAlignVertical.center,
-                        decoration: InputDecoration(
-                          prefixIcon: Padding(
-                            padding: EdgeInsets.only(
-                              left: size.width * 4 / 100,
-                              right: size.width * 2 / 100,
+                        // Navigate to next screen with selected genres
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: EventPreference(
+                              selectedGenres: selectedGenres,
+                              customGenre: searchController.text,
                             ),
+                            duration: const Duration(milliseconds: 500),
                           ),
-                          prefixIconConstraints: BoxConstraints(
-                            minWidth: size.width * 2 / 100,
-                            minHeight: size.height * 6 / 100,
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColor.borderColor,
-                              width: 2,
-                            ),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            borderSide: const BorderSide(
-                              color: AppColor.borderColor,
-                              width: 2,
-                            ),
-                          ),
-                          border: InputBorder.none,
-                          hintText:
-                          AppLanguage.typeYourfavouritegenreText[language],
-                          hintStyle: AppConstant.textFilledStyle1(context),
-                          contentPadding: EdgeInsets.only(
-                            right: size.width * 4 / 100,
-                          ),
-                        ),
-                      ),
+                        );
+                      },
                     ),
-
-                    // // Filtered results
-                    // if (searchController.text.isNotEmpty)
-                    //   _buildFilteredResults(controller),
-
-                    SizedBox(height: size.height * 20 / 100),
-                  ],
-                ),
+                  ),
+                ],
               );
             },
           ),

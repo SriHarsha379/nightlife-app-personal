@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:night_life/utilities/url_utils.dart';
 import '../utilities/app_color.dart';
@@ -9,6 +10,40 @@ import '../view/other/MySplashSection/MembersSection/member_liked_details.dart';
 
 class HomeWidget {
   int selectedIndex = 0;
+
+  // Formats a raw ISO date (e.g. "2026-08-22") into "22nd Aug, Saturday" -
+  // matching Liked_event_details.dart's formatDateWithSuffix exactly, so
+  // the event preview card and the event detail screen show the date in
+  // the identical style rather than drifting apart.
+  static String _formatEventDateWithSuffix(String? isoDate) {
+    if (isoDate == null || isoDate.isEmpty) return '';
+    DateTime date;
+    try {
+      date = DateTime.parse(isoDate);
+    } catch (_) {
+      return '';
+    }
+
+    final day = DateFormat('d').format(date);
+    final month = DateFormat('MMM').format(date);
+    final weekday = DateFormat('EEEE').format(date);
+
+    return '${_dayWithSuffix(int.parse(day))} $month, $weekday';
+  }
+
+  static String _dayWithSuffix(int day) {
+    if (day >= 11 && day <= 13) return '${day}th';
+    switch (day % 10) {
+      case 1:
+        return '${day}st';
+      case 2:
+        return '${day}nd';
+      case 3:
+        return '${day}rd';
+      default:
+        return '${day}th';
+    }
+  }
 
   // The swipe card (members/events/venues) used to be sized as a flat 57.5%
   // of total screen height. That works out fine on whatever device this was
@@ -825,7 +860,7 @@ class HomeWidget {
                   const double edgeInset = 14;
 
                   return Positioned(
-                    bottom: 130,
+                    bottom: 175,
                     right: edgeInset,
                     child: IgnorePointer(
                       child: AnimatedOpacity(
@@ -940,6 +975,10 @@ class HomeWidget {
         String? about,
         List<String>? categories,
         String? date,
+        // Raw ISO start_date (e.g. "2026-08-22") - formatted client-side
+        // into "22nd Aug, Saturday" to match the event detail screen's
+        // date style exactly, shown as its own row with a calendar icon.
+        String? eventDate,
         String? venueName,
         String? address,
         String? distance,
@@ -1094,6 +1133,41 @@ class HomeWidget {
                                     1 /
                                     100,
                               ),
+                              // New: formatted date row ("22nd Aug, Saturday")
+                              // matching the event detail screen's calendar
+                              // row exactly, via the same formatting logic.
+                              Builder(builder: (context) {
+                                final formattedDate =
+                                _formatEventDateWithSuffix(eventDate);
+                                if (formattedDate.isEmpty) {
+                                  return const SizedBox.shrink();
+                                }
+                                return Padding(
+                                  padding: const EdgeInsets.only(bottom: 4),
+                                  child: Row(
+                                    children: [
+                                      const Icon(
+                                        Icons.calendar_today_rounded,
+                                        color: AppColor.pinkColor,
+                                        size: 16,
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Expanded(
+                                        child: Text(
+                                          formattedDate,
+                                          style: const TextStyle(
+                                            color: AppColor.pinkColor,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 14,
+                                          ),
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              }),
                               Row(
                                 children: [
                                   const Icon(

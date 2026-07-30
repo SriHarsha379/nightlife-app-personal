@@ -89,20 +89,24 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
   }
 
   void _nextPage() {
-    final vibeCheckProvider =
-    Provider.of<VibeCheckController>(context, listen: false);
-
-    // Rule only applies to the first page.
-    if (currentPage == _restrictedPageIndex &&
-        !_hasAnyAnswerOnPage(vibeCheckProvider, currentPage)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please answer at least one question to continue.'),
-          backgroundColor: Colors.red,
-        ),
-      );
-      return;
-    }
+    // Answering at least one question used to be required on the first
+    // page before Continue/Skip would proceed - removed per request, so
+    // this screen can always be continued past regardless of whether
+    // anything's been answered. The check is commented out (not deleted)
+    // in case it needs to come back later.
+    //
+    // final vibeCheckProvider =
+    // Provider.of<VibeCheckController>(context, listen: false);
+    // if (currentPage == _restrictedPageIndex &&
+    //     !_hasAnyAnswerOnPage(vibeCheckProvider, currentPage)) {
+    //   ScaffoldMessenger.of(context).showSnackBar(
+    //     const SnackBar(
+    //       content: Text('Please answer at least one question to continue.'),
+    //       backgroundColor: Colors.red,
+    //     ),
+    //   );
+    //   return;
+    // }
 
     if (currentPage < 2) {
       setState(() {
@@ -319,6 +323,14 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
+                            if (showSkip) ...[
+                              AppButton(
+                                backgroundColor: AppColor.borderColor,
+                                text: AppLanguage.skip[language],
+                                onPress: _skipToNext,
+                              ),
+                              const SizedBox(height: 12),
+                            ],
                             AppButton(
                               height: 62,
                               fontSize: 18,
@@ -326,21 +338,6 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                               text: AppLanguage.continueText[language],
                               onPress: _nextPage,
                             ),
-                            SizedBox(height: size.height * 1 / 100),
-                            if (showSkip)
-                              GestureDetector(
-                                onTap: _skipToNext,
-                                child: Text(
-                                  textAlign: TextAlign.center,
-                                  AppLanguage.skip[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColor.greyLightColor(context),
-                                  ),
-                                ),
-                              ),
                           ],
                         ),
                       ),
