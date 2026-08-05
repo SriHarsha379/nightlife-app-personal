@@ -9,6 +9,7 @@ import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_e
 import 'package:night_life/view/other/MySplashSection/VenuesSection/book_venue_table.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'package:night_life/view/other/MySplashSection/MembersSection/member_liked_details.dart';
+import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../controller/search/search_filter_controller.dart';
@@ -599,9 +600,9 @@ class _SearchScreenState extends State<SearchScreen> {
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
-          setState(() {
-            AppConstant.selectFooterIndex = 0;
-          });
+          if (didPop) return;
+          AppConstant.selectFooterIndex = 0;
+          context.findAncestorStateOfType<MyAppFooterState>()?.onItemTapped(0);
         },
         child: GestureDetector(
             onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -1437,10 +1438,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                             100,
                                       ),
                                       Container(
-                                        key: _memberNearbyKey,
+                                        key: _venueNearbyKey,
                                         width: size.width * 90 / 100,
                                         child: Text(
-                                          "Members near you",
+                                          "Places near you",
                                           style: TextStyle(
                                               fontFamily:
                                               AppFont.fontFamily,

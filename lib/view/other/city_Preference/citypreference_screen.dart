@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
-import 'package:night_life/view/authentication/signup.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -155,15 +154,15 @@ class _CityPreferenceState extends State<CityPreference> {
             value: SystemUiOverlayStyle(
               statusBarColor: Colors.transparent,
               statusBarIconBrightness:
-                  isDark ? Brightness.light : Brightness.dark,
+              isDark ? Brightness.light : Brightness.dark,
               statusBarBrightness:
-                  isDark ? Brightness.dark : Brightness.light, // iOS
+              isDark ? Brightness.dark : Brightness.light, // iOS
             ),
             child: GestureDetector(
               onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
               child: Scaffold(
                 floatingActionButtonLocation:
-                    FloatingActionButtonLocation.centerFloat,
+                FloatingActionButtonLocation.centerFloat,
                 floatingActionButton: Padding(
                   padding: EdgeInsets.only(
                     bottom: 40 + MediaQuery.of(context).padding.bottom,
@@ -203,7 +202,7 @@ class _CityPreferenceState extends State<CityPreference> {
                       // ✅ Prepare city data in required format
                       final cityRadiusData = controller.getAllCityRadiusData();
                       List<Map<String, dynamic>> preferredCities =
-                          cityRadiusData.map((city) {
+                      cityRadiusData.map((city) {
                         return {
                           "city_id": city['city_id'],
                           "latitude": city['latitude'],
@@ -245,10 +244,7 @@ class _CityPreferenceState extends State<CityPreference> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const SignUp()));
+                                Navigator.pop(context);
                               },
                               child: Image.asset(
                                   color: AppColor.secondryColor(context),
@@ -292,8 +288,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                         children: [
                                           TextSpan(
                                             text: AppLanguage
-                                                    .selectYourPrefferedCityText[
-                                                language],
+                                                .selectYourPrefferedCityText[
+                                            language],
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 17,
@@ -338,12 +334,12 @@ class _CityPreferenceState extends State<CityPreference> {
                                       child: TextFormField(
                                         controller: searchController,
                                         cursorColor:
-                                            AppColor.secondryColor(context),
+                                        AppColor.secondryColor(context),
                                         style: TextStyle(
                                             color: AppColor.secondryColor(
                                                 context)),
                                         textAlignVertical:
-                                            TextAlignVertical.center,
+                                        TextAlignVertical.center,
                                         onChanged: (value) {
                                           setState(() {});
                                         },
@@ -358,7 +354,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                               height: size.width * 4 / 100,
                                               width: size.width * 4 / 100,
                                               color:
-                                                  AppColor.filledText(context),
+                                              AppColor.filledText(context),
                                             ),
                                           ),
                                           prefixIconConstraints: BoxConstraints(
@@ -367,7 +363,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(12),
+                                            BorderRadius.circular(12),
                                             borderSide: const BorderSide(
                                               color: AppColor.borderColor,
                                               width: 0,
@@ -375,7 +371,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(12),
+                                            BorderRadius.circular(12),
                                             borderSide: const BorderSide(
                                               color: AppColor.borderColor,
                                               width: 0,
@@ -385,8 +381,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                           hintText: AppLanguage
                                               .searchForaCityText[language],
                                           hintStyle:
-                                              AppConstant.textFilledStyle(
-                                                  context),
+                                          AppConstant.textFilledStyle(
+                                              context),
                                           contentPadding: EdgeInsets.symmetric(
                                             vertical: size.height * 2 / 100,
                                             horizontal: size.width * 4 / 100,
@@ -417,19 +413,19 @@ class _CityPreferenceState extends State<CityPreference> {
                                             vertical: 18, horizontal: 18),
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Text(
                                                   AppLanguage.popularCitiesText[
-                                                      language],
+                                                  language],
                                                   style: TextStyle(
                                                     fontFamily:
-                                                        AppFont.fontFamily,
+                                                    AppFont.fontFamily,
                                                     fontSize: 16,
                                                     fontWeight: FontWeight.w600,
                                                     color: AppColor
@@ -440,7 +436,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   "${controller.getSelectedCities.length}/4",
                                                   style: TextStyle(
                                                     fontFamily:
-                                                        AppFont.fontFamily,
+                                                    AppFont.fontFamily,
                                                     fontSize: 12,
                                                     fontWeight: FontWeight.w600,
                                                     color: AppColor
@@ -452,236 +448,236 @@ class _CityPreferenceState extends State<CityPreference> {
                                             ),
                                             SizedBox(
                                                 height:
-                                                    size.height * 1.5 / 100),
+                                                size.height * 1.5 / 100),
 
                                             // Loading or City List
                                             controller.getIsLoading
                                                 ? const Center(
-                                                    child: Padding(
-                                                      padding:
-                                                          EdgeInsets.all(20.0),
-                                                      child:
-                                                          CircularProgressIndicator(
-                                                        color:
-                                                            AppColor.pinkColor,
+                                              child: Padding(
+                                                padding:
+                                                EdgeInsets.all(20.0),
+                                                child:
+                                                CircularProgressIndicator(
+                                                  color:
+                                                  AppColor.pinkColor,
+                                                ),
+                                              ),
+                                            )
+                                                : _getFilteredCities(controller
+                                                .getCityList)
+                                                .isEmpty
+                                                ? Center(
+                                              child: Padding(
+                                                padding:
+                                                const EdgeInsets
+                                                    .all(20.0),
+                                                child: Text(
+                                                  searchController
+                                                      .text
+                                                      .isNotEmpty
+                                                      ? "No cities found"
+                                                      : "No cities available",
+                                                  style: TextStyle(
+                                                      fontFamily: AppFont
+                                                          .fontFamily,
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                          context)),
+                                                ),
+                                              ),
+                                            )
+                                                : Wrap(
+                                              spacing:
+                                              size.width *
+                                                  _cityChipSpacingRatio,
+                                              runSpacing:
+                                              size.height *
+                                                  _cityChipRunSpacingRatio,
+                                              children: _getFilteredCities(
+                                                  controller
+                                                      .getCityList)
+                                                  .map((city) {
+                                                String cityId =
+                                                    city['_id'] ?? '';
+                                                String cityName =
+                                                    city['city_name'] ??
+                                                        'Unknown';
+                                                String cityImage =
+                                                    city['city_image'] ??
+                                                        '';
+
+                                                bool isSelected =
+                                                controller
+                                                    .isCitySelected(
+                                                    cityId);
+
+                                                return GestureDetector(
+                                                  onTap: () {
+                                                    if (!isSelected &&
+                                                        controller
+                                                            .getSelectedCities
+                                                            .length >=
+                                                            4) {
+                                                      SnackBarToastMessage
+                                                          .showSnackBar(
+                                                        context,
+                                                        "Maximum 4 cities can be selected",
+                                                      );
+                                                      return;
+                                                    }
+                                                    controller
+                                                        .toggleCitySelection(
+                                                        city);
+
+                                                    if (controller
+                                                        .getSelectedCities
+                                                        .isNotEmpty) {
+                                                      controller
+                                                          .resetCityConfiguration();
+
+                                                      Future.delayed(
+                                                          const Duration(
+                                                              milliseconds:
+                                                              300),
+                                                              () {
+                                                            if (_isMapReady) {
+                                                              final firstCity =
+                                                              controller
+                                                                  .getSelectedCities[0];
+                                                              final lat =
+                                                              controller
+                                                                  .getCityLatitude(firstCity);
+                                                              final lng =
+                                                              controller
+                                                                  .getCityLongitude(firstCity);
+
+                                                              _moveCameraToLocation(
+                                                                LatLng(
+                                                                    lat,
+                                                                    lng),
+                                                                controller
+                                                                    .getCurrentDistance,
+                                                              );
+                                                              _updateMapCircles(
+                                                                  controller);
+                                                            }
+                                                          });
+                                                    }
+                                                  },
+                                                  child: AnimatedContainer(
+                                                    duration:
+                                                    const Duration(
+                                                        milliseconds:
+                                                        180),
+                                                    padding:
+                                                    const EdgeInsets
+                                                        .symmetric(
+                                                        horizontal:
+                                                        14,
+                                                        vertical:
+                                                        9),
+                                                    decoration:
+                                                    BoxDecoration(
+                                                      borderRadius:
+                                                      BorderRadius
+                                                          .circular(
+                                                          _cityChipRadius),
+                                                      color: isSelected
+                                                          ? AppColor
+                                                          .pinkColor
+                                                          .withOpacity(
+                                                          0.18)
+                                                          : AppColor
+                                                          .filledcolor(
+                                                          context),
+                                                      border:
+                                                      Border.all(
+                                                        color: isSelected
+                                                            ? AppColor
+                                                            .pinkColor
+                                                            : AppColor
+                                                            .borderColor
+                                                            .withOpacity(
+                                                            0.55),
+                                                        width: 1.1,
                                                       ),
                                                     ),
-                                                  )
-                                                : _getFilteredCities(controller
-                                                            .getCityList)
-                                                        .isEmpty
-                                                    ? Center(
-                                                        child: Padding(
-                                                          padding:
-                                                              const EdgeInsets
-                                                                  .all(20.0),
-                                                          child: Text(
-                                                            searchController
-                                                                    .text
-                                                                    .isNotEmpty
-                                                                ? "No cities found"
-                                                                : "No cities available",
-                                                            style: TextStyle(
-                                                                fontFamily: AppFont
-                                                                    .fontFamily,
-                                                                fontSize: 14,
-                                                                color: AppColor
-                                                                    .secondryColor(
-                                                                        context)),
+                                                    child: Row(
+                                                      mainAxisSize:
+                                                      MainAxisSize
+                                                          .min,
+                                                      children: [
+                                                        if (cityImage
+                                                            .isNotEmpty)
+                                                          Container(
+                                                            width: 20,
+                                                            height: 20,
+                                                            margin: const EdgeInsets
+                                                                .only(
+                                                                right:
+                                                                8),
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              shape: BoxShape
+                                                                  .circle,
+                                                              image:
+                                                              DecorationImage(
+                                                                image:
+                                                                NetworkImage(
+                                                                  controller.getCityImageUrl(cityImage),
+                                                                ),
+                                                                fit: BoxFit
+                                                                    .cover,
+                                                                onError:
+                                                                    (error, stackTrace) {
+                                                                  print(
+                                                                      "Image load error: $error");
+                                                                },
+                                                              ),
+                                                            ),
+                                                          ),
+                                                        Text(
+                                                          cityName,
+                                                          style:
+                                                          TextStyle(
+                                                            fontFamily:
+                                                            AppFont
+                                                                .fontFamily,
+                                                            fontSize:
+                                                            13,
+                                                            fontWeight:
+                                                            FontWeight
+                                                                .w500,
+                                                            color: isSelected
+                                                                ? AppColor
+                                                                .pinkColor
+                                                                : AppColor
+                                                                .secondryColor(context),
                                                           ),
                                                         ),
-                                                      )
-                                                    : Wrap(
-                                                        spacing:
-                                                           size.width *
-                                                               _cityChipSpacingRatio,
-                                                        runSpacing:
-                                                           size.height *
-                                                               _cityChipRunSpacingRatio,
-                                                        children: _getFilteredCities(
-                                                               controller
-                                                                   .getCityList)
-                                                           .map((city) {
-                                                          String cityId =
-                                                              city['_id'] ?? '';
-                                                          String cityName =
-                                                              city['city_name'] ??
-                                                                  'Unknown';
-                                                          String cityImage =
-                                                              city['city_image'] ??
-                                                                  '';
-
-                                                          bool isSelected =
-                                                              controller
-                                                                  .isCitySelected(
-                                                                      cityId);
-
-                                                          return GestureDetector(
-                                                            onTap: () {
-                                                              if (!isSelected &&
-                                                                  controller
-                                                                          .getSelectedCities
-                                                                          .length >=
-                                                                      4) {
-                                                                SnackBarToastMessage
-                                                                    .showSnackBar(
-                                                                  context,
-                                                                  "Maximum 4 cities can be selected",
-                                                                );
-                                                                return;
-                                                              }
-                                                              controller
-                                                                  .toggleCitySelection(
-                                                                      city);
-
-                                                              if (controller
-                                                                  .getSelectedCities
-                                                                  .isNotEmpty) {
-                                                                controller
-                                                                    .resetCityConfiguration();
-
-                                                                Future.delayed(
-                                                                    const Duration(
-                                                                        milliseconds:
-                                                                            300),
-                                                                    () {
-                                                                  if (_isMapReady) {
-                                                                    final firstCity =
-                                                                        controller
-                                                                            .getSelectedCities[0];
-                                                                    final lat =
-                                                                        controller
-                                                                            .getCityLatitude(firstCity);
-                                                                    final lng =
-                                                                        controller
-                                                                            .getCityLongitude(firstCity);
-
-                                                                    _moveCameraToLocation(
-                                                                      LatLng(
-                                                                          lat,
-                                                                          lng),
-                                                                      controller
-                                                                          .getCurrentDistance,
-                                                                    );
-                                                                    _updateMapCircles(
-                                                                        controller);
-                                                                  }
-                                                                });
-                                                              }
-                                                            },
-                                                            child: AnimatedContainer(
-                                                             duration:
-                                                                 const Duration(
-                                                                     milliseconds:
-                                                                         180),
-                                                             padding:
-                                                                 const EdgeInsets
-                                                                     .symmetric(
-                                                                     horizontal:
-                                                                         14,
-                                                                     vertical:
-                                                                         9),
-                                                             decoration:
-                                                                 BoxDecoration(
-                                                               borderRadius:
-                                                                   BorderRadius
-                                                                       .circular(
-                                                                           _cityChipRadius),
-                                                               color: isSelected
-                                                                   ? AppColor
-                                                                       .pinkColor
-                                                                       .withOpacity(
-                                                                           0.18)
-                                                                   : AppColor
-                                                                       .filledcolor(
-                                                                           context),
-                                                               border:
-                                                                   Border.all(
-                                                                 color: isSelected
-                                                                     ? AppColor
-                                                                         .pinkColor
-                                                                     : AppColor
-                                                                         .borderColor
-                                                                         .withOpacity(
-                                                                             0.55),
-                                                                 width: 1.1,
-                                                               ),
-                                                             ),
-                                                             child: Row(
-                                                               mainAxisSize:
-                                                                   MainAxisSize
-                                                                       .min,
-                                                               children: [
-                                                                 if (cityImage
-                                                                     .isNotEmpty)
-                                                                   Container(
-                                                                     width: 20,
-                                                                     height: 20,
-                                                                     margin: const EdgeInsets
-                                                                         .only(
-                                                                         right:
-                                                                             8),
-                                                                     decoration:
-                                                                         BoxDecoration(
-                                                                       shape: BoxShape
-                                                                           .circle,
-                                                                       image:
-                                                                           DecorationImage(
-                                                                         image:
-                                                                             NetworkImage(
-                                                                           controller.getCityImageUrl(cityImage),
-                                                                         ),
-                                                                         fit: BoxFit
-                                                                             .cover,
-                                                                         onError:
-                                                                             (error, stackTrace) {
-                                                                           print(
-                                                                               "Image load error: $error");
-                                                                         },
-                                                                       ),
-                                                                     ),
-                                                                   ),
-                                                                 Text(
-                                                                   cityName,
-                                                                   style:
-                                                                       TextStyle(
-                                                                     fontFamily:
-                                                                         AppFont
-                                                                             .fontFamily,
-                                                                     fontSize:
-                                                                         13,
-                                                                     fontWeight:
-                                                                         FontWeight
-                                                                             .w500,
-                                                                     color: isSelected
-                                                                         ? AppColor
-                                                                             .pinkColor
-                                                                         : AppColor
-                                                                             .secondryColor(context),
-                                                                   ),
-                                                                 ),
-                                                                 if (isSelected)
-                                                                   const Padding(
-                                                                     padding: EdgeInsets
-                                                                         .only(
-                                                                         left:
-                                                                             6),
-                                                                     child:
-                                                                         Icon(
-                                                                       Icons
-                                                                           .check_circle,
-                                                                       size:
-                                                                           16,
-                                                                       color: AppColor
-                                                                           .pinkColor,
-                                                                     ),
-                                                                   ),
-                                                               ],
-                                                             ),
+                                                        if (isSelected)
+                                                          const Padding(
+                                                            padding: EdgeInsets
+                                                                .only(
+                                                                left:
+                                                                6),
+                                                            child:
+                                                            Icon(
+                                                              Icons
+                                                                  .check_circle,
+                                                              size:
+                                                              16,
+                                                              color: AppColor
+                                                                  .pinkColor,
                                                             ),
-                                                          );
-                                                        }).toList(),
-                                                      ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                );
+                                              }).toList(),
+                                            ),
                                           ],
                                         ),
                                       ),
@@ -713,55 +709,55 @@ class _CityPreferenceState extends State<CityPreference> {
                                 SizedBox(height: size.height * 2.5 / 100),
 
                                 Container(
-                                 height: size.height * _mapHeightRatio,
-                                 width: size.width * _mapWidthRatio,
-                                 decoration: BoxDecoration(
-                                   borderRadius: BorderRadius.circular(
-                                       _mapCardRadius),
-                                   border: Border.all(
-                                       color: AppColor.darkPurpleColor,
-                                       width: 1.5),
-                                 ),
-                                 child: ClipRRect(
-                                   borderRadius: BorderRadius.circular(
-                                       _mapCardRadius),
-                                   child: GoogleMap(
-                                     initialCameraPosition: CameraPosition(
-                                       target: LatLng(
-                                         controller.getCityLatitude(
-                                             controller.getCurrentConfigCity!),
-                                         controller.getCityLongitude(
-                                             controller.getCurrentConfigCity!),
-                                       ),
-                                       zoom: _getZoomLevel(
-                                           controller.getCurrentDistance),
-                                     ),
-                                     circles: circles,
-                                     markers: markers,
-                                     onMapCreated:
-                                         (GoogleMapController gController) {
-                                       print("Map created callback");
-                                       mapController = gController;
+                                  height: size.height * _mapHeightRatio,
+                                  width: size.width * _mapWidthRatio,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(
+                                        _mapCardRadius),
+                                    border: Border.all(
+                                        color: AppColor.darkPurpleColor,
+                                        width: 1.5),
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        _mapCardRadius),
+                                    child: GoogleMap(
+                                      initialCameraPosition: CameraPosition(
+                                        target: LatLng(
+                                          controller.getCityLatitude(
+                                              controller.getCurrentConfigCity!),
+                                          controller.getCityLongitude(
+                                              controller.getCurrentConfigCity!),
+                                        ),
+                                        zoom: _getZoomLevel(
+                                            controller.getCurrentDistance),
+                                      ),
+                                      circles: circles,
+                                      markers: markers,
+                                      onMapCreated:
+                                          (GoogleMapController gController) {
+                                        print("Map created callback");
+                                        mapController = gController;
 
-                                       Future.delayed(
-                                           const Duration(milliseconds: 500),
-                                           () {
-                                         print("Map is now ready");
-                                         setState(() {
-                                           _isMapReady = true;
-                                         });
-                                         _updateMapCircles(controller);
-                                       });
-                                     },
-                                     myLocationButtonEnabled: false,
-                                     zoomControlsEnabled: false,
-                                     mapToolbarEnabled: false,
-                                     scrollGesturesEnabled: true,
-                                     zoomGesturesEnabled: true,
-                                     tiltGesturesEnabled: true,
-                                     rotateGesturesEnabled: true,
-                                   ),
-                                 ),
+                                        Future.delayed(
+                                            const Duration(milliseconds: 500),
+                                                () {
+                                              print("Map is now ready");
+                                              setState(() {
+                                                _isMapReady = true;
+                                              });
+                                              _updateMapCircles(controller);
+                                            });
+                                      },
+                                      myLocationButtonEnabled: false,
+                                      zoomControlsEnabled: false,
+                                      mapToolbarEnabled: false,
+                                      scrollGesturesEnabled: true,
+                                      zoomGesturesEnabled: true,
+                                      tiltGesturesEnabled: true,
+                                      rotateGesturesEnabled: true,
+                                    ),
+                                  ),
                                 ),
 
                                 // Distance Section
@@ -770,7 +766,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                       horizontal: 25.0),
                                   child: Column(
                                     crossAxisAlignment:
-                                        CrossAxisAlignment.start,
+                                    CrossAxisAlignment.start,
                                     children: [
                                       SizedBox(height: size.height * 4 / 100),
                                       Text(
@@ -780,7 +776,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                           fontSize: 18,
                                           fontWeight: FontWeight.w700,
                                           color:
-                                              AppColor.secondryColor(context),
+                                          AppColor.secondryColor(context),
                                         ),
                                       ),
                                       const SizedBox(height: 14),
@@ -788,7 +784,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                         width: double.infinity,
                                         decoration: BoxDecoration(
                                           borderRadius:
-                                              BorderRadius.circular(15),
+                                          BorderRadius.circular(15),
                                           border: Border.all(
                                             color: AppColor.darkPurpleColor,
                                             width: 1,
@@ -796,15 +792,15 @@ class _CityPreferenceState extends State<CityPreference> {
                                           color: Colors.transparent,
                                         ),
                                         padding:
-                                            const EdgeInsets.only(right: 6),
+                                        const EdgeInsets.only(right: 6),
                                         child: Column(
                                           crossAxisAlignment:
-                                              CrossAxisAlignment.start,
+                                          CrossAxisAlignment.start,
                                           children: [
                                             SizedBox(
                                                 height: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
+                                                    .size
+                                                    .height *
                                                     1 /
                                                     100),
                                             Padding(
@@ -814,7 +810,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                 "Up to ${controller.getCurrentDistance.toInt()} kilometres away",
                                                 style: TextStyle(
                                                   fontFamily:
-                                                      AppFont.fontFamily,
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w500,
                                                   fontSize: 16,
                                                   color: AppColor.secondryColor(
@@ -827,11 +823,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   .copyWith(
                                                 trackHeight: 4.0,
                                                 overlayShape:
-                                                    const RoundSliderOverlayShape(
-                                                        overlayRadius: 20),
+                                                const RoundSliderOverlayShape(
+                                                    overlayRadius: 20),
                                                 thumbShape:
-                                                    const RoundSliderThumbShape(
-                                                        enabledThumbRadius: 10),
+                                                const RoundSliderThumbShape(
+                                                    enabledThumbRadius: 10),
                                               ),
                                               child: Slider(
                                                 value: controller
@@ -840,7 +836,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                 max: 60.0,
                                                 activeColor: AppColor.pinkColor,
                                                 inactiveColor:
-                                                    AppColor.lightgreyColor,
+                                                AppColor.lightgreyColor,
                                                 onChanged: (value) {
                                                   controller
                                                       .updateDistance(value);
@@ -851,10 +847,10 @@ class _CityPreferenceState extends State<CityPreference> {
                                                         .getCurrentConfigCity!;
                                                     final lat = controller
                                                         .getCityLatitude(
-                                                            currentCity);
+                                                        currentCity);
                                                     final lng = controller
                                                         .getCityLongitude(
-                                                            currentCity);
+                                                        currentCity);
                                                     _moveCameraToLocation(
                                                       LatLng(lat, lng),
                                                       value,
@@ -865,8 +861,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                             ),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Padding(
                                                   padding: EdgeInsets.only(
@@ -875,13 +871,13 @@ class _CityPreferenceState extends State<CityPreference> {
                                                     "1km",
                                                     style: TextStyle(
                                                       fontFamily:
-                                                          AppFont.fontFamily,
+                                                      AppFont.fontFamily,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                      FontWeight.w500,
                                                       fontSize: 10,
                                                       color: AppColor
                                                           .secondryColor(
-                                                              context),
+                                                          context),
                                                     ),
                                                   ),
                                                 ),
@@ -892,13 +888,13 @@ class _CityPreferenceState extends State<CityPreference> {
                                                     "60km",
                                                     style: TextStyle(
                                                       fontFamily:
-                                                          AppFont.fontFamily,
+                                                      AppFont.fontFamily,
                                                       fontWeight:
-                                                          FontWeight.w500,
+                                                      FontWeight.w500,
                                                       fontSize: 10,
                                                       color: AppColor
                                                           .secondryColor(
-                                                              context),
+                                                          context),
                                                     ),
                                                   ),
                                                 ),
@@ -907,8 +903,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                             const SizedBox(height: 2),
                                             Row(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
+                                              MainAxisAlignment
+                                                  .spaceBetween,
                                               children: [
                                                 Expanded(
                                                   child: Padding(
@@ -918,13 +914,13 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       "Broaden the vibe zone...",
                                                       style: TextStyle(
                                                         fontFamily:
-                                                            AppFont.fontFamily,
+                                                        AppFont.fontFamily,
                                                         fontWeight:
-                                                            FontWeight.w500,
+                                                        FontWeight.w500,
                                                         fontSize: 13,
                                                         color: isDark
                                                             ? AppColor
-                                                                .greygreyLightColor
+                                                            .greygreyLightColor
                                                             : Colors.black,
                                                       ),
                                                     ),
@@ -932,8 +928,8 @@ class _CityPreferenceState extends State<CityPreference> {
                                                 ),
                                                 Padding(
                                                   padding:
-                                                      const EdgeInsets.only(
-                                                          right: 5.0),
+                                                  const EdgeInsets.only(
+                                                      right: 5.0),
                                                   child: Transform.scale(
                                                     scale: 0.72,
                                                     child: Switch(
@@ -942,20 +938,20 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       onChanged: (value) {
                                                         controller
                                                             .toggleBroadened(
-                                                                value);
+                                                            value);
                                                         _updateMapCircles(
                                                             controller);
 
                                                         if (_isMapReady) {
                                                           final currentCity =
-                                                              controller
-                                                                  .getCurrentConfigCity!;
+                                                          controller
+                                                              .getCurrentConfigCity!;
                                                           final lat = controller
                                                               .getCityLatitude(
-                                                                  currentCity);
+                                                              currentCity);
                                                           final lng = controller
                                                               .getCityLongitude(
-                                                                  currentCity);
+                                                              currentCity);
                                                           _moveCameraToLocation(
                                                             LatLng(lat, lng),
                                                             controller
@@ -965,14 +961,14 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       },
                                                       activeColor: Colors.white,
                                                       activeTrackColor:
-                                                          AppColor.pinkColor,
+                                                      AppColor.pinkColor,
                                                       inactiveThumbColor:
-                                                          Colors.white,
+                                                      Colors.white,
                                                       inactiveTrackColor: isDark
                                                           ? const Color(
-                                                              0xFF6E6E6E)
+                                                          0xFF6E6E6E)
                                                           : const Color(
-                                                              0xFFBDBDBD),
+                                                          0xFFBDBDBD),
                                                     ),
                                                   ),
                                                 )

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
 import 'package:loading_animation_widget/loading_animation_widget.dart';
+import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../controller/home/home_controller.dart';
@@ -318,19 +319,19 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (_userId.isNotEmpty) {
       if (senderId == _userId) {
         final n =
-            _raw(conversation['receiver_name'] ?? conversation['receiverName']);
+        _raw(conversation['receiver_name'] ?? conversation['receiverName']);
         if (n.isNotEmpty) return n;
       } else if (receiverId == _userId) {
         final n =
-            _raw(conversation['sender_name'] ?? conversation['senderName']);
+        _raw(conversation['sender_name'] ?? conversation['senderName']);
         if (n.isNotEmpty) return n;
       }
     }
     final receiverName =
-        _raw(conversation['receiver_name'] ?? conversation['receiverName']);
+    _raw(conversation['receiver_name'] ?? conversation['receiverName']);
     if (receiverName.isNotEmpty) return receiverName;
     final senderName =
-        _raw(conversation['sender_name'] ?? conversation['senderName']);
+    _raw(conversation['sender_name'] ?? conversation['senderName']);
     if (senderName.isNotEmpty) return senderName;
     return 'User';
   }
@@ -354,7 +355,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final rawImage = _headerUserImage.trim();
     if (rawImage.isEmpty || rawImage == 'null') {
       return const AssetImage(AppImage.placeHolder2Icon)
-          as ImageProvider<Object>;
+      as ImageProvider<Object>;
     }
     try {
       if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
@@ -362,16 +363,16 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       }
       if (rawImage.startsWith('file://')) {
         return FileImage(File(Uri.parse(rawImage).toFilePath()))
-            as ImageProvider<Object>;
+        as ImageProvider<Object>;
       }
       if (rawImage.startsWith('/') || rawImage.contains(r':\')) {
         return FileImage(File(rawImage)) as ImageProvider<Object>;
       }
       return NetworkImage('${AppConfigProvider.imageUrl}$rawImage')
-          as ImageProvider<Object>;
+      as ImageProvider<Object>;
     } catch (_) {
       return const AssetImage(AppImage.placeHolder2Icon)
-          as ImageProvider<Object>;
+      as ImageProvider<Object>;
     }
   }
 
@@ -397,7 +398,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     }
     if (rawImage.isEmpty || rawImage == 'null') {
       return const AssetImage(AppImage.placeHolder2Icon)
-          as ImageProvider<Object>;
+      as ImageProvider<Object>;
     }
     final normalized = rawImage.replaceFirst(RegExp(r'^\./'), '');
     if (normalized.startsWith('assets/')) {
@@ -407,7 +408,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       return NetworkImage(normalized) as ImageProvider<Object>;
     }
     return NetworkImage('${AppConfigProvider.imageUrl}$normalized')
-        as ImageProvider<Object>;
+    as ImageProvider<Object>;
   }
 
   int _conversationUnreadCount(Map<String, dynamic> conversation) {
@@ -464,7 +465,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final type = _raw(conversation['message_type'] ?? conversation['type'])
         .toLowerCase();
     final message =
-        _raw(conversation['last_message'] ?? conversation['message']);
+    _raw(conversation['last_message'] ?? conversation['message']);
     if (message.isNotEmpty) {
       if (message.startsWith(_locationPrefix)) return 'Shared a location';
       return message;
@@ -482,8 +483,8 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final normalizedQuery = query.trim().toLowerCase();
     if (normalizedQuery.isEmpty) return true;
     return _conversationName(conversation)
-            .toLowerCase()
-            .contains(normalizedQuery) ||
+        .toLowerCase()
+        .contains(normalizedQuery) ||
         _messagePreview(conversation).toLowerCase().contains(normalizedQuery);
   }
 
@@ -514,7 +515,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       final map = _asMap(item);
       if (map.isEmpty) continue;
       final friendId =
-          _raw(map['friend_id'] ?? map['receiver_id'] ?? map['user_id']);
+      _raw(map['friend_id'] ?? map['receiver_id'] ?? map['user_id']);
       if (friendId.isEmpty || seen.contains(friendId)) continue;
       seen.add(friendId);
       result.add(map);
@@ -535,21 +536,21 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     final rawImage = _recentFriendImage(item);
     if (rawImage.isEmpty || rawImage == 'null') {
       return const AssetImage(AppImage.placeHolder2Icon)
-          as ImageProvider<Object>;
+      as ImageProvider<Object>;
     }
     if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
       return NetworkImage(rawImage) as ImageProvider<Object>;
     }
     return NetworkImage('${AppConfigProvider.imageUrl}$rawImage')
-        as ImageProvider<Object>;
+    as ImageProvider<Object>;
   }
 
   Widget _avatarLoader(double size) => Center(
-        child: LoadingAnimationWidget.dotsTriangle(
-          color: AppColor.buttonColor,
-          size: size,
-        ),
-      );
+    child: LoadingAnimationWidget.dotsTriangle(
+      color: AppColor.buttonColor,
+      size: size,
+    ),
+  );
 
   Widget _animatedChatAvatar(
       {required String imageUrl, required double size, double radius = 35}) {
@@ -561,26 +562,26 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
         child: imageUrl.isEmpty
             ? Image.asset(AppImage.placeHolder2Icon, fit: BoxFit.cover)
             : Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
-                  if (wasSynchronouslyLoaded) return child;
-                  return AnimatedOpacity(
-                    opacity: frame == null ? 0 : 1,
-                    duration: const Duration(milliseconds: 220),
-                    curve: Curves.easeOut,
-                    child: child,
-                  );
-                },
-                loadingBuilder: (context, child, loadingProgress) {
-                  if (loadingProgress == null) return child;
-                  return Container(
-                      color: Colors.transparent,
-                      child: _avatarLoader(size > 40 ? 28 : 22));
-                },
-                errorBuilder: (_, __, ___) =>
-                    Image.asset(AppImage.placeHolder2Icon, fit: BoxFit.cover),
-              ),
+          imageUrl,
+          fit: BoxFit.cover,
+          frameBuilder: (context, child, frame, wasSynchronouslyLoaded) {
+            if (wasSynchronouslyLoaded) return child;
+            return AnimatedOpacity(
+              opacity: frame == null ? 0 : 1,
+              duration: const Duration(milliseconds: 220),
+              curve: Curves.easeOut,
+              child: child,
+            );
+          },
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) return child;
+            return Container(
+                color: Colors.transparent,
+                child: _avatarLoader(size > 40 ? 28 : 22));
+          },
+          errorBuilder: (_, __, ___) =>
+              Image.asset(AppImage.placeHolder2Icon, fit: BoxFit.cover),
+        ),
       ),
     );
   }
@@ -591,7 +592,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     String conversationId = _raw(friend['conversation_id']);
     if (conversationId.isEmpty) {
       final conversationController =
-          Provider.of<ConversionListController>(context, listen: false);
+      Provider.of<ConversionListController>(context, listen: false);
       conversationId = await conversationController.fetchConversationIdByUserId(
         otherUserId: receiverId,
       );
@@ -637,7 +638,9 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
+          if (didPop) return;
           AppConstant.selectFooterIndex = 0;
+          context.findAncestorStateOfType<MyAppFooterState>()?.onItemTapped(0);
         },
         child: GestureDetector(
           onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -710,7 +713,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           type: PageTransitionType.topToBottom,
                                           child: const Notifications(),
                                           duration:
-                                              const Duration(milliseconds: 500),
+                                          const Duration(milliseconds: 500),
                                         ),
                                       );
                                     },
@@ -754,7 +757,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                           .rightToLeftWithFade,
                                       child: Profile(),
                                       duration:
-                                          const Duration(milliseconds: 500),
+                                      const Duration(milliseconds: 500),
                                     ),
                                   );
                                 },
@@ -790,7 +793,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             spreadRadius: 0,
                             blurRadius: 4,
                             color:
-                                AppColor.primaryColor(context).withOpacity(0.1),
+                            AppColor.primaryColor(context).withOpacity(0.1),
                           ),
                         ],
                       ),
@@ -868,7 +871,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           color: AppColor.secondryColor(context),
                           borderRadius: BorderRadius.circular(16),
                           border:
-                              Border.all(color: AppColor.textfieldfillColor),
+                          Border.all(color: AppColor.textfieldfillColor),
                         ),
                         child: Row(
                           children: [
@@ -946,98 +949,98 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                               width: size.width * 91 / 100,
                               child: recentFriends.isEmpty
                                   ? Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 8),
-                                      child: Text(
-                                        'No recent friends',
-                                        style: TextStyle(
-                                          color:
-                                              AppColor.secondryColor(context),
-                                          fontSize: 12,
-                                        ),
-                                      ),
-                                    )
+                                padding: const EdgeInsets.symmetric(
+                                    vertical: 8),
+                                child: Text(
+                                  'No recent friends',
+                                  style: TextStyle(
+                                    color:
+                                    AppColor.secondryColor(context),
+                                    fontSize: 12,
+                                  ),
+                                ),
+                              )
                                   : SingleChildScrollView(
-                                      scrollDirection: Axis.horizontal,
-                                      child: Row(
-                                        children: List.generate(
-                                            recentFriends.length, (index) {
-                                          final friend = recentFriends[index];
-                                          final name =
-                                              _recentFriendName(friend);
-                                          final avatar =
-                                              _recentFriendAvatar(friend);
-                                          return Padding(
-                                            padding: const EdgeInsets.symmetric(
-                                                horizontal: 8.0, vertical: 5.0),
-                                            child: Column(
-                                              children: [
-                                                GestureDetector(
-                                                  onTap: () =>
-                                                      _openRecentFriendChat(
-                                                          friend),
-                                                  child: Container(
-                                                    width:
-                                                        size.width * 15 / 100,
-                                                    height:
-                                                        size.width * 15 / 100,
-                                                    decoration: BoxDecoration(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      boxShadow: [
-                                                        BoxShadow(
-                                                          color: AppColor
-                                                                  .primaryColor(
-                                                                      context)
-                                                              .withOpacity(
-                                                                  0.25),
-                                                          blurRadius: 4,
-                                                          offset: const Offset(
-                                                              0, 4),
-                                                        ),
-                                                      ],
-                                                    ),
-                                                    child: ClipRRect(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              35),
-                                                      child: Image(
-                                                          image: avatar,
-                                                          fit: BoxFit.cover),
-                                                    ),
+                                scrollDirection: Axis.horizontal,
+                                child: Row(
+                                  children: List.generate(
+                                      recentFriends.length, (index) {
+                                    final friend = recentFriends[index];
+                                    final name =
+                                    _recentFriendName(friend);
+                                    final avatar =
+                                    _recentFriendAvatar(friend);
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 8.0, vertical: 5.0),
+                                      child: Column(
+                                        children: [
+                                          GestureDetector(
+                                            onTap: () =>
+                                                _openRecentFriendChat(
+                                                    friend),
+                                            child: Container(
+                                              width:
+                                              size.width * 15 / 100,
+                                              height:
+                                              size.width * 15 / 100,
+                                              decoration: BoxDecoration(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    35),
+                                                boxShadow: [
+                                                  BoxShadow(
+                                                    color: AppColor
+                                                        .primaryColor(
+                                                        context)
+                                                        .withOpacity(
+                                                        0.25),
+                                                    blurRadius: 4,
+                                                    offset: const Offset(
+                                                        0, 4),
                                                   ),
-                                                ),
-                                                SizedBox(
-                                                    height: size.height *
-                                                        0.8 /
-                                                        100),
-                                                SizedBox(
-                                                  width: size.width * 16 / 100,
-                                                  child: Text(
-                                                    name.isEmpty
-                                                        ? 'User'
-                                                        : name,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    textAlign: TextAlign.center,
-                                                    style: TextStyle(
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context),
-                                                      fontWeight:
-                                                          FontWeight.w500,
-                                                      fontSize: 12,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ],
+                                                ],
+                                              ),
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                BorderRadius.circular(
+                                                    35),
+                                                child: Image(
+                                                    image: avatar,
+                                                    fit: BoxFit.cover),
+                                              ),
                                             ),
-                                          );
-                                        }),
+                                          ),
+                                          SizedBox(
+                                              height: size.height *
+                                                  0.8 /
+                                                  100),
+                                          SizedBox(
+                                            width: size.width * 16 / 100,
+                                            child: Text(
+                                              name.isEmpty
+                                                  ? 'User'
+                                                  : name,
+                                              maxLines: 1,
+                                              overflow:
+                                              TextOverflow.ellipsis,
+                                              textAlign: TextAlign.center,
+                                              style: TextStyle(
+                                                color: AppColor
+                                                    .secondryColor(
+                                                    context),
+                                                fontWeight:
+                                                FontWeight.w500,
+                                                fontSize: 12,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ),
+                                    );
+                                  }),
+                                ),
+                              ),
                             ),
                           ],
                         );
@@ -1075,233 +1078,233 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           }
 
                           final filteredConversations =
-                              socketProvider.conversationList
-                                  .where((item) => _matchesConversationSearch(
-                                        Map<String, dynamic>.from(item),
-                                        searchController.text,
-                                      ))
-                                  .toList();
+                          socketProvider.conversationList
+                              .where((item) => _matchesConversationSearch(
+                            Map<String, dynamic>.from(item),
+                            searchController.text,
+                          ))
+                              .toList();
 
                           return Container(
                             width: size.width,
                             decoration: BoxDecoration(
                               gradient:
-                                  AppColor.backgroundGradientcolor(context),
+                              AppColor.backgroundGradientcolor(context),
                               borderRadius: const BorderRadius.only(
                                 topLeft: Radius.circular(32),
                                 topRight: Radius.circular(32),
                               ),
                             ),
                             child: !socketProvider.hasConversationListLoaded &&
-                                    socketProvider.conversationList.isEmpty
+                                socketProvider.conversationList.isEmpty
                                 ? Center(
-                                    child: CircularProgressIndicator(
-                                      color: AppColor.buttonColor,
-                                    ),
-                                  )
+                              child: CircularProgressIndicator(
+                                color: AppColor.buttonColor,
+                              ),
+                            )
                                 : filteredConversations.isEmpty
-                                    ? Center(
-                                        child: Text(
-                                          searchController.text.trim().isEmpty
-                                              ? 'No conversations found'
-                                              : 'No results found',
-                                          style: TextStyle(
-                                            color:
-                                                AppColor.secondryColor(context),
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w500,
+                                ? Center(
+                              child: Text(
+                                searchController.text.trim().isEmpty
+                                    ? 'No conversations found'
+                                    : 'No results found',
+                                style: TextStyle(
+                                  color:
+                                  AppColor.secondryColor(context),
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            )
+                                : ListView.builder(
+                              key: const PageStorageKey<String>(
+                                'chat_conversation_list',
+                              ),
+                              controller:
+                              _conversationScrollController,
+                              padding: EdgeInsets.only(
+                                top: size.height * 0.03,
+                                bottom: size.height * 0.05,
+                              ),
+                              physics:
+                              const AlwaysScrollableScrollPhysics(),
+                              keyboardDismissBehavior:
+                              ScrollViewKeyboardDismissBehavior
+                                  .onDrag,
+                              itemCount: filteredConversations.length,
+                              itemBuilder: (context, index) {
+                                final chat =
+                                Map<String, dynamic>.from(
+                                    filteredConversations[index]);
+                                final title = _conversationName(chat);
+                                final subtitle =
+                                _messagePreview(chat);
+                                final time = _conversationTime(chat);
+                                final unreadCount =
+                                _conversationUnreadCount(chat);
+                                final isUnread = unreadCount > 0 ||
+                                    _isConversationUnread(chat);
+                                final receiverId =
+                                _conversationReceiverId(chat);
+                                final conversationId =
+                                _conversationId(chat);
+                                final avatar =
+                                _conversationAvatar(chat);
+
+                                return Column(
+                                  crossAxisAlignment:
+                                  CrossAxisAlignment.start,
+                                  children: [
+                                    SizedBox(
+                                      width: size.width * 0.92,
+                                      height: size.height * 0.095,
+                                      child: ListTile(
+                                        contentPadding:
+                                        EdgeInsets.zero,
+                                        horizontalTitleGap: 9,
+                                        leading: Container(
+                                          margin: EdgeInsets.only(
+                                              left:
+                                              size.width * 0.036),
+                                          height: size.width * 0.18,
+                                          width: size.width * 0.18,
+                                          child: CircleAvatar(
+                                            backgroundImage: avatar,
+                                            backgroundColor:
+                                            Colors.transparent,
                                           ),
                                         ),
-                                      )
-                                    : ListView.builder(
-                                        key: const PageStorageKey<String>(
-                                          'chat_conversation_list',
+                                        title: Text(
+                                          title,
+                                          style: TextStyle(
+                                            fontWeight:
+                                            FontWeight.w600,
+                                            fontSize: 16,
+                                            color: AppColor
+                                                .secondryColor(
+                                                context),
+                                          ),
                                         ),
-                                        controller:
-                                            _conversationScrollController,
-                                        padding: EdgeInsets.only(
-                                          top: size.height * 0.03,
-                                          bottom: size.height * 0.05,
+                                        subtitle: Text(
+                                          subtitle,
+                                          maxLines: 1,
+                                          overflow:
+                                          TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontSize: 14,
+                                            color: isUnread
+                                                ? AppColor
+                                                .secondryColor(
+                                                context)
+                                                : AppColor
+                                                .greyLightColor(
+                                                context),
+                                          ),
                                         ),
-                                        physics:
-                                            const AlwaysScrollableScrollPhysics(),
-                                        keyboardDismissBehavior:
-                                            ScrollViewKeyboardDismissBehavior
-                                                .onDrag,
-                                        itemCount: filteredConversations.length,
-                                        itemBuilder: (context, index) {
-                                          final chat =
-                                              Map<String, dynamic>.from(
-                                                  filteredConversations[index]);
-                                          final title = _conversationName(chat);
-                                          final subtitle =
-                                              _messagePreview(chat);
-                                          final time = _conversationTime(chat);
-                                          final unreadCount =
-                                              _conversationUnreadCount(chat);
-                                          final isUnread = unreadCount > 0 ||
-                                              _isConversationUnread(chat);
-                                          final receiverId =
-                                              _conversationReceiverId(chat);
-                                          final conversationId =
-                                              _conversationId(chat);
-                                          final avatar =
-                                              _conversationAvatar(chat);
-
-                                          return Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
-                                            children: [
-                                              SizedBox(
-                                                width: size.width * 0.92,
-                                                height: size.height * 0.095,
-                                                child: ListTile(
-                                                  contentPadding:
-                                                      EdgeInsets.zero,
-                                                  horizontalTitleGap: 9,
-                                                  leading: Container(
-                                                    margin: EdgeInsets.only(
-                                                        left:
-                                                            size.width * 0.036),
-                                                    height: size.width * 0.18,
-                                                    width: size.width * 0.18,
-                                                    child: CircleAvatar(
-                                                      backgroundImage: avatar,
-                                                      backgroundColor:
-                                                          Colors.transparent,
-                                                    ),
-                                                  ),
-                                                  title: Text(
-                                                    title,
-                                                    style: TextStyle(
-                                                      fontWeight:
-                                                          FontWeight.w600,
-                                                      fontSize: 16,
-                                                      color: AppColor
-                                                          .secondryColor(
-                                                              context),
-                                                    ),
-                                                  ),
-                                                  subtitle: Text(
-                                                    subtitle,
-                                                    maxLines: 1,
-                                                    overflow:
-                                                        TextOverflow.ellipsis,
-                                                    style: TextStyle(
-                                                      fontSize: 14,
-                                                      color: isUnread
-                                                          ? AppColor
-                                                              .secondryColor(
-                                                                  context)
-                                                          : AppColor
-                                                              .greyLightColor(
-                                                                  context),
-                                                    ),
-                                                  ),
-                                                  trailing: Column(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .center,
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment.end,
-                                                    children: [
-                                                      if (isUnread)
-                                                        Container(
-                                                          width: size.width *
-                                                              0.025,
-                                                          height: size.height *
-                                                              0.02,
-                                                          decoration:
-                                                              const BoxDecoration(
-                                                            color: AppColor
-                                                                .pinkColor,
-                                                            shape:
-                                                                BoxShape.circle,
-                                                          ),
-                                                        )
-                                                      else
-                                                        SizedBox(
-                                                          width: size.width *
-                                                              0.025,
-                                                          height: size.height *
-                                                              0.02,
-                                                        ),
-                                                      SizedBox(
-                                                          height: size.height *
-                                                              0.01),
-                                                      Text(
-                                                        time,
-                                                        style: TextStyle(
-                                                          fontSize: 14,
-                                                          color: AppColor
-                                                              .greyLightColor(
-                                                                  context),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                  onTap: () {
-                                                    Navigator.push(
-                                                      context,
-                                                      PageTransition(
-                                                        type: PageTransitionType
-                                                            .rightToLeftWithFade,
-                                                        child:
-                                                            ChatMessageScreen(
-                                                          name: title,
-                                                          image: _raw(_otherUserMap(chat)['profile_image']) ==
-                                                                  ''
-                                                              ? (_raw(_otherUserMap(chat)['image'])
-                                                                      .isNotEmpty
-                                                                  ? _raw(_otherUserMap(
-                                                                          chat)[
-                                                                      'image'])
-                                                                  : (_extractId(chat['sender_id']) ==
-                                                                          _userId
-                                                                      ? _raw(
-                                                                          chat['receiver_image'] ??
-                                                                              '')
-                                                                      : _raw(chat['sender_image'] ??
-                                                                          '')))
-                                                              : _raw(_otherUserMap(
-                                                                      chat)[
-                                                                  'profile_image']),
-                                                          autoSendSharedEvent:
-                                                              false,
-                                                          receiverId:
-                                                              receiverId,
-                                                          conversationId:
-                                                              conversationId,
-                                                        ),
-                                                        duration:
-                                                            const Duration(
-                                                                milliseconds:
-                                                                    500),
-                                                      ),
-                                                    );
-                                                  },
+                                        trailing: Column(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment
+                                              .center,
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.end,
+                                          children: [
+                                            if (isUnread)
+                                              Container(
+                                                width: size.width *
+                                                    0.025,
+                                                height: size.height *
+                                                    0.02,
+                                                decoration:
+                                                const BoxDecoration(
+                                                  color: AppColor
+                                                      .pinkColor,
+                                                  shape:
+                                                  BoxShape.circle,
                                                 ),
-                                              ),
-                                              Divider(
-                                                height: 0.2,
-                                                thickness: 0.5,
-                                                color: AppColor.greyLightColor(
-                                                    context),
-                                                indent: 30,
-                                                endIndent: 30,
-                                              ),
+                                              )
+                                            else
                                               SizedBox(
-                                                  height: size.height * 0.025),
-                                              if (index ==
-                                                  filteredConversations.length -
-                                                      1)
-                                                SizedBox(
-                                                    height:
-                                                        size.height * 0.046),
-                                            ],
+                                                width: size.width *
+                                                    0.025,
+                                                height: size.height *
+                                                    0.02,
+                                              ),
+                                            SizedBox(
+                                                height: size.height *
+                                                    0.01),
+                                            Text(
+                                              time,
+                                              style: TextStyle(
+                                                fontSize: 14,
+                                                color: AppColor
+                                                    .greyLightColor(
+                                                    context),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageTransition(
+                                              type: PageTransitionType
+                                                  .rightToLeftWithFade,
+                                              child:
+                                              ChatMessageScreen(
+                                                name: title,
+                                                image: _raw(_otherUserMap(chat)['profile_image']) ==
+                                                    ''
+                                                    ? (_raw(_otherUserMap(chat)['image'])
+                                                    .isNotEmpty
+                                                    ? _raw(_otherUserMap(
+                                                    chat)[
+                                                'image'])
+                                                    : (_extractId(chat['sender_id']) ==
+                                                    _userId
+                                                    ? _raw(
+                                                    chat['receiver_image'] ??
+                                                        '')
+                                                    : _raw(chat['sender_image'] ??
+                                                    '')))
+                                                    : _raw(_otherUserMap(
+                                                    chat)[
+                                                'profile_image']),
+                                                autoSendSharedEvent:
+                                                false,
+                                                receiverId:
+                                                receiverId,
+                                                conversationId:
+                                                conversationId,
+                                              ),
+                                              duration:
+                                              const Duration(
+                                                  milliseconds:
+                                                  500),
+                                            ),
                                           );
                                         },
                                       ),
+                                    ),
+                                    Divider(
+                                      height: 0.2,
+                                      thickness: 0.5,
+                                      color: AppColor.greyLightColor(
+                                          context),
+                                      indent: 30,
+                                      endIndent: 30,
+                                    ),
+                                    SizedBox(
+                                        height: size.height * 0.025),
+                                    if (index ==
+                                        filteredConversations.length -
+                                            1)
+                                      SizedBox(
+                                          height:
+                                          size.height * 0.046),
+                                  ],
+                                );
+                              },
+                            ),
                           );
                         },
                       ),

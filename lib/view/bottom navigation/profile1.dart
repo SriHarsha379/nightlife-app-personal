@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
@@ -238,9 +239,11 @@ class _Profile1State extends State<Profile1> {
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
-          setState(() {
-            AppConstant.selectFooterIndex = 0;
-          });
+          if (didPop) return;
+          AppConstant.selectFooterIndex = 0;
+          // Actually switch the visible tab back to Home instead of just
+          // setting a static field that nothing reactively reads.
+          context.findAncestorStateOfType<MyAppFooterState>()?.onItemTapped(0);
         },
         child: Scaffold(
           body: Container(

@@ -70,7 +70,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   // -- Chat --
   final TextEditingController messageTextEditingController =
-      TextEditingController();
+  TextEditingController();
   final ScrollController _scrollController = ScrollController();
   final FocusNode _messageFocusNode = FocusNode();
   final stt.SpeechToText _speech = stt.SpeechToText();
@@ -311,15 +311,15 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (_conversationId.isEmpty && _socketProvider!.messages.isNotEmpty) {
       for (final msg in _socketProvider!.messages.reversed) {
         final msgConvId =
-            (msg['conversation_id'] ?? msg['conversationId'] ?? '')
-                .toString()
-                .trim();
+        (msg['conversation_id'] ?? msg['conversationId'] ?? '')
+            .toString()
+            .trim();
         if (msgConvId.isNotEmpty) {
           final msgSender = _extractId(msg['sender_id'] ?? msg['senderId']);
           final msgReceiver =
-              _extractId(msg['receiver_id'] ?? msg['receiverId']);
+          _extractId(msg['receiver_id'] ?? msg['receiverId']);
           if ((_receiverId.isNotEmpty &&
-                  (msgSender == _receiverId || msgReceiver == _receiverId)) ||
+              (msgSender == _receiverId || msgReceiver == _receiverId)) ||
               msgSender == _userId ||
               msgReceiver == _userId) {
             _conversationId = msgConvId;
@@ -486,9 +486,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
         _shareConversationLookupInFlight = true;
         try {
           final conversionController =
-              Provider.of<ConversionListController>(context, listen: false);
+          Provider.of<ConversionListController>(context, listen: false);
           final resolvedConversationId =
-              await conversionController.fetchConversationIdByUserId(
+          await conversionController.fetchConversationIdByUserId(
             otherUserId: _receiverId,
           );
           if (!mounted) return;
@@ -634,9 +634,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   // -----------------------------------------------------------------
   bool _belongsToCurrentConversation(Map<String, dynamic> message) {
     final msgConversationId =
-        (message['conversation_id'] ?? message['conversationId'] ?? '')
-            .toString()
-            .trim();
+    (message['conversation_id'] ?? message['conversationId'] ?? '')
+        .toString()
+        .trim();
 
     if (_conversationId.isNotEmpty && msgConversationId.isNotEmpty) {
       return msgConversationId == _conversationId;
@@ -645,7 +645,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     // Fallback for first-send (no conversationId yet)
     final sender = _extractId(message['sender_id'] ?? message['senderId']);
     final receiver =
-        _extractId(message['receiver_id'] ?? message['receiverId']);
+    _extractId(message['receiver_id'] ?? message['receiverId']);
     if (_receiverId.isEmpty || _userId.isEmpty) return false;
     return (sender == _userId && receiver == _receiverId) ||
         (sender == _receiverId && receiver == _userId);
@@ -710,8 +710,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Map<String, dynamic>? _normalizeSharedEventData(
-    Map<String, dynamic>? source,
-  ) {
+      Map<String, dynamic>? source,
+      ) {
     if (source == null || source.isEmpty) return null;
 
     final normalizedType = _firstNonEmptyRaw(<dynamic>[
@@ -857,8 +857,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   List<Map<String, dynamic>> _dedupeVisibleMessages(
-    List<Map<String, dynamic>> messages,
-  ) {
+      List<Map<String, dynamic>> messages,
+      ) {
     final seen = <String>{};
     final result = <Map<String, dynamic>>[];
     for (final message in messages) {
@@ -887,7 +887,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       limit: 50,
     );
     Future.delayed(const Duration(milliseconds: 700),
-        () => _historyRequestInFlight = false);
+            () => _historyRequestInFlight = false);
   }
 
   void _maybeAutoScroll(int messageCount) {
@@ -907,8 +907,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Map<String, dynamic>? _latestApprovalGateMessage(
-    List<Map<String, dynamic>> messages,
-  ) {
+      List<Map<String, dynamic>> messages,
+      ) {
     final hasApprovedRequest = messages.any((message) {
       final eventObject = _eventObjectForMessage(message);
       return eventObject != null && _isApprovedEvent(message);
@@ -968,9 +968,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Future<void> _emitEventApprovalUpdate(
-    Map<String, dynamic> message, {
-    required bool isApprove,
-  }) async {
+      Map<String, dynamic> message, {
+        required bool isApprove,
+      }) async {
     final messageId = _raw(message['_id']);
     if (messageId.isEmpty || _userId.isEmpty) return;
     final sent = Provider.of<UserChatSocketProvider>(context, listen: false)
@@ -982,9 +982,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (!sent) return;
 
     final socketProvider =
-        Provider.of<UserChatSocketProvider>(context, listen: false);
+    Provider.of<UserChatSocketProvider>(context, listen: false);
     final index =
-        socketProvider.messages.indexWhere((m) => _raw(m['_id']) == messageId);
+    socketProvider.messages.indexWhere((m) => _raw(m['_id']) == messageId);
     if (index != -1) {
       socketProvider.messages[index]['approve_event'] = isApprove;
       socketProvider.messages[index]['reject_event'] = !isApprove;
@@ -1012,9 +1012,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   Future<void> _resolveConversationAfterFirstSend() async {
     if (!mounted || _receiverId.isEmpty) return;
     final conversionController =
-        Provider.of<ConversionListController>(context, listen: false);
+    Provider.of<ConversionListController>(context, listen: false);
     final resolvedConversationId =
-        await conversionController.fetchConversationIdByUserId(
+    await conversionController.fetchConversationIdByUserId(
       otherUserId: _receiverId,
     );
     if (!mounted || resolvedConversationId.isEmpty) return;
@@ -1052,8 +1052,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     final entityId = _raw(eventObject['id']).isNotEmpty
         ? _raw(eventObject['id'])
         : entityType == 'venue'
-            ? _raw(eventObject['venue_id'])
-            : _raw(eventObject['event_id']);
+        ? _raw(eventObject['venue_id'])
+        : _raw(eventObject['event_id']);
 
     if (entityId.isEmpty) return;
 
@@ -1251,7 +1251,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       final lat = position.latitude.toStringAsFixed(6);
       final lng = position.longitude.toStringAsFixed(6);
       final address =
-          await _resolveAddress(position.latitude, position.longitude);
+      await _resolveAddress(position.latitude, position.longitude);
       final locationPayload = '$_locationPrefix$lat,$lng|$address';
 
       if (!mounted) return false;
@@ -1324,7 +1324,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (uploadPaths.isEmpty) return;
 
     final bool containsVideo = picked.any(
-      (item) => (item['type'] ?? '').toLowerCase().trim() == 'video',
+          (item) => (item['type'] ?? '').toLowerCase().trim() == 'video',
     );
     final String pendingId = 'pending_${DateTime.now().microsecondsSinceEpoch}';
     final Map<String, dynamic> pendingMessage = <String, dynamic>{
@@ -1355,7 +1355,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     final pending = _pendingMediaMessages[idx];
     final paths = (pending['files'] is List)
         ? List<String>.from(
-            (pending['files'] as List).map((e) => e?.toString() ?? ''))
+        (pending['files'] as List).map((e) => e?.toString() ?? ''))
         : <String>[];
 
     if (paths.isEmpty) return;
@@ -1385,7 +1385,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (!mounted) return;
 
     final currentIdx =
-        _pendingMediaMessages.indexWhere((m) => m['_id'] == pendingId);
+    _pendingMediaMessages.indexWhere((m) => m['_id'] == pendingId);
     if (currentIdx == -1) {
       _isUploadingMedia = false;
       return;
@@ -1438,16 +1438,16 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (_isUploadingMedia) return;
     try {
       final List<XFile> pickedList =
-          await ImagePicker().pickMultiImage(imageQuality: 100);
+      await ImagePicker().pickMultiImage(imageQuality: 100);
       if (!mounted || pickedList.isEmpty) return;
 
       await _sendPickedMedia(
         pickedList
             .map((f) => <String, String>{
-                  'type': 'image',
-                  'file': f.path,
-                  'thumbnail': '',
-                })
+          'type': 'image',
+          'file': f.path,
+          'thumbnail': '',
+        })
             .toList(),
       );
     } catch (e) {
@@ -1468,7 +1468,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       if (!mounted || pickedVideo == null) return;
 
       final thumbnailPath =
-          await MediaPickerHelper.generateThumbnail(pickedVideo.path);
+      await MediaPickerHelper.generateThumbnail(pickedVideo.path);
 
       await _sendPickedMedia([
         <String, String>{
@@ -1572,10 +1572,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildNetworkImageWithLoader(
-    String url, {
-    required BoxFit fit,
-    required Widget fallback,
-  }) {
+      String url, {
+        required BoxFit fit,
+        required Widget fallback,
+      }) {
     return Image.network(
       url,
       fit: fit,
@@ -1600,10 +1600,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildFileImageWithLoader(
-    String path, {
-    required BoxFit fit,
-    required Widget fallback,
-  }) {
+      String path, {
+        required BoxFit fit,
+        required Widget fallback,
+      }) {
     return Image.file(
       File(path),
       fit: fit,
@@ -1652,7 +1652,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     final payload = (message['message'] ?? '').toString().trim();
     if (payload.isEmpty) return null;
     final looksLikeCoordinates =
-        RegExp(r'^\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?').hasMatch(payload);
+    RegExp(r'^\s*-?\d+(\.\d+)?\s*,\s*-?\d+(\.\d+)?').hasMatch(payload);
     final looksLikeLocationMessage = type == 'location' ||
         payload.startsWith(_locationPrefix) ||
         looksLikeCoordinates;
@@ -1703,7 +1703,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
   Future<void> _openInGoogleMaps(double lat, double lng) async {
     final uri =
-        Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
+    Uri.parse('https://www.google.com/maps/search/?api=1&query=$lat,$lng');
     final launched = await launchUrl(uri, mode: LaunchMode.externalApplication);
     if (!launched && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -1713,13 +1713,13 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildLocationMessage(
-    BuildContext context,
-    bool mine,
-    Size size, {
-    required double lat,
-    required double lng,
-    required String address,
-  }) {
+      BuildContext context,
+      bool mine,
+      Size size, {
+        required double lat,
+        required double lng,
+        required String address,
+      }) {
     return GestureDetector(
       onTap: () => _openInGoogleMaps(lat, lng),
       child: Container(
@@ -1788,8 +1788,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   List<Map<String, String>> _previewMediaItemsForMessage(
-    Map<String, dynamic> message,
-  ) {
+      Map<String, dynamic> message,
+      ) {
     final dynamic filesRaw = message['files'];
     if (filesRaw is! List) return const [];
 
@@ -1806,9 +1806,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
 
     if (type == 'video') {
       final videoPath =
-          files.firstWhere((f) => _isVideoFile(f), orElse: () => '');
+      files.firstWhere((f) => _isVideoFile(f), orElse: () => '');
       final thumbnailPath =
-          files.firstWhere((f) => _isImageFile(f), orElse: () => '');
+      files.firstWhere((f) => _isImageFile(f), orElse: () => '');
       final source = _fileUrl(videoPath.isNotEmpty ? videoPath : files.first);
       final thumb = _fileUrl(thumbnailPath.isNotEmpty ? thumbnailPath : source);
       return <Map<String, String>>[
@@ -1824,19 +1824,19 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     return files
         .map(
           (f) => <String, String>{
-            'type': _isVideoFile(f) ? 'video' : 'image',
-            'url': _fileUrl(f),
-            'thumbnail': _isVideoFile(f) ? _fileUrl(f) : '',
-            'source': _isVideoFile(f) ? _fileUrl(f) : _fileUrl(f),
-          },
-        )
+        'type': _isVideoFile(f) ? 'video' : 'image',
+        'url': _fileUrl(f),
+        'thumbnail': _isVideoFile(f) ? _fileUrl(f) : '',
+        'source': _isVideoFile(f) ? _fileUrl(f) : _fileUrl(f),
+      },
+    )
         .toList();
   }
 
   void _openMediaPreviewFromMessage(
-    Map<String, dynamic> message, {
-    int tappedIndex = 0,
-  }) {
+      Map<String, dynamic> message, {
+        int tappedIndex = 0,
+      }) {
     final media = _previewMediaItemsForMessage(message);
     if (media.isEmpty) return;
     final safeIndex = tappedIndex < 0
@@ -1856,11 +1856,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildMediaMessage(
-    BuildContext context,
-    Map<String, dynamic> message,
-    bool mine,
-    Size size,
-  ) {
+      BuildContext context,
+      Map<String, dynamic> message,
+      bool mine,
+      Size size,
+      ) {
     final files = _messageFiles(message);
     if (files.isEmpty) return const SizedBox.shrink();
 
@@ -1869,11 +1869,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     final int visibleCount = total > 4 ? 4 : total;
     final List<String> visible = files.take(visibleCount).toList();
     final bool isVideoMessage =
-        ((message['type'] ?? message['message_type'] ?? '')
-                .toString()
-                .toLowerCase()
-                .trim() ==
-            'video');
+    ((message['type'] ?? message['message_type'] ?? '')
+        .toString()
+        .toLowerCase()
+        .trim() ==
+        'video');
 
     Widget tile(String filePath, {int index = 0, int extraCount = 0}) {
       final url = _fileUrl(filePath);
@@ -2067,49 +2067,49 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildEventCard(
-    BuildContext context,
-    Size size, {
-    required Map<String, dynamic> eventObject,
-    required bool mine,
-    bool approved = false,
-    bool showActions = false,
-    VoidCallback? onApprove,
-    VoidCallback? onReject,
-  }) {
+      BuildContext context,
+      Size size, {
+        required Map<String, dynamic> eventObject,
+        required bool mine,
+        bool approved = false,
+        bool showActions = false,
+        VoidCallback? onApprove,
+        VoidCallback? onReject,
+      }) {
     final entityType = _raw(eventObject['type']).isNotEmpty
         ? _raw(eventObject['type']).toLowerCase()
         : _raw(eventObject['entity_type']).toLowerCase();
     final entityId = _raw(eventObject['id']).isNotEmpty
         ? _raw(eventObject['id'])
         : entityType == 'venue'
-            ? _raw(eventObject['venue_id'])
-            : _raw(eventObject['event_id']);
+        ? _raw(eventObject['venue_id'])
+        : _raw(eventObject['event_id']);
     final title = _raw(eventObject['name']).isNotEmpty
         ? _raw(eventObject['name'])
         : _raw(eventObject['venue_name']).isNotEmpty
-            ? _raw(eventObject['venue_name'])
-            : _raw(eventObject['event_name']);
+        ? _raw(eventObject['venue_name'])
+        : _raw(eventObject['event_name']);
     final time = _raw(eventObject['time']).isNotEmpty
         ? _raw(eventObject['time'])
         : _raw(eventObject['venue_time']).isNotEmpty
-            ? _raw(eventObject['venue_time'])
-            : _raw(eventObject['event_time']);
+        ? _raw(eventObject['venue_time'])
+        : _raw(eventObject['event_time']);
     final address = _raw(eventObject['address']).isNotEmpty
         ? _raw(eventObject['address'])
         : _raw(eventObject['venue_address']).isNotEmpty
-            ? _raw(eventObject['venue_address'])
-            : _raw(eventObject['event_address']);
+        ? _raw(eventObject['venue_address'])
+        : _raw(eventObject['event_address']);
     final image = _raw(eventObject['image']).isNotEmpty
         ? _raw(eventObject['image'])
         : _raw(eventObject['venue_image']).isNotEmpty
-            ? _raw(eventObject['venue_image'])
-            : _raw(eventObject['event_image']);
+        ? _raw(eventObject['venue_image'])
+        : _raw(eventObject['event_image']);
     final imageUrl = image.isEmpty ? '' : _fileUrl(image);
     return Padding(
       padding: EdgeInsets.only(bottom: size.height * 1 / 100),
       child: Column(
         crossAxisAlignment:
-            mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        mine ? CrossAxisAlignment.end : CrossAxisAlignment.start,
         children: [
           SizedBox(
             width: size.width * 90 / 100,
@@ -2132,17 +2132,17 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               height: size.height * 0.40,
                               child: imageUrl.isNotEmpty
                                   ? _buildNetworkImageWithLoader(
-                                      imageUrl,
-                                      fit: BoxFit.cover,
-                                      fallback: Image.asset(
-                                        AppImage.msgCardicon,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    )
+                                imageUrl,
+                                fit: BoxFit.cover,
+                                fallback: Image.asset(
+                                  AppImage.msgCardicon,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
                                   : Image.asset(
-                                      AppImage.msgCardicon,
-                                      fit: BoxFit.cover,
-                                    ),
+                                AppImage.msgCardicon,
+                                fit: BoxFit.cover,
+                              ),
                             ),
                             Positioned.fill(
                               child: DecoratedBox(
@@ -2248,7 +2248,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(50),
                       color:
-                          approved ? AppColor.greenColor1 : AppColor.statusbar,
+                      approved ? AppColor.greenColor1 : AppColor.statusbar,
                     ),
                     child: Center(
                       child: Row(
@@ -2359,6 +2359,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                         child: Row(
                           children: [
                             GestureDetector(
+                              behavior: HitTestBehavior.opaque,
                               onTap: () => Navigator.pop(context),
                               child: Container(
                                 height: size.width * 10 / 100,
@@ -2385,7 +2386,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                       height: size.width * 10 / 100,
                                       decoration: BoxDecoration(
                                         borderRadius:
-                                            BorderRadius.circular(100),
+                                        BorderRadius.circular(100),
                                         image: DecorationImage(
                                           image: _chatAvatar(_receiverImage),
                                           fit: BoxFit.cover,
@@ -2395,9 +2396,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                     SizedBox(width: size.width * 2 / 100),
                                     Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      MainAxisAlignment.center,
                                       children: [
                                         SizedBox(
                                           width: size.width * 45 / 100,
@@ -2408,22 +2409,22 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                   fontSize: 16,
                                                   fontWeight: FontWeight.w500,
                                                   fontFamily:
-                                                      AppFont.fontFamily)),
+                                                  AppFont.fontFamily)),
                                         ),
                                         if (!_blockedByMe)
                                           Consumer<UserChatSocketProvider>(
                                             builder:
                                                 (context, socketProvider, _) =>
-                                                    Text(
-                                              _presenceSubtitle(socketProvider),
-                                              style: TextStyle(
-                                                  height: 1,
-                                                  color: AppColor.textcolor,
-                                                  fontSize: 12,
-                                                  fontWeight: FontWeight.w500,
-                                                  fontFamily:
+                                                Text(
+                                                  _presenceSubtitle(socketProvider),
+                                                  style: TextStyle(
+                                                      height: 1,
+                                                      color: AppColor.textcolor,
+                                                      fontSize: 12,
+                                                      fontWeight: FontWeight.w500,
+                                                      fontFamily:
                                                       AppFont.fontFamily),
-                                            ),
+                                                ),
                                           ),
                                       ],
                                     ),
@@ -2452,266 +2453,266 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               SizedBox(height: size.height * 1 / 100),
                               _isBootstrapping
                                   ? const Padding(
-                                      padding:
-                                          EdgeInsets.symmetric(vertical: 20),
-                                      child: CircularProgressIndicator(
-                                          color: AppColor.buttonColor),
-                                    )
+                                padding:
+                                EdgeInsets.symmetric(vertical: 20),
+                                child: CircularProgressIndicator(
+                                    color: AppColor.buttonColor),
+                              )
                                   : Consumer<UserChatSocketProvider>(
-                                      builder: (context, socketProvider, _) {
-                                        final visibleMessages = socketProvider
-                                            .messages
-                                            .where(
-                                                _belongsToCurrentConversation)
-                                            .map((e) =>
-                                                Map<String, dynamic>.from(e))
-                                            .toList();
-                                        final allVisibleMessages =
-                                            _dedupeVisibleMessages(<Map<String,
-                                                dynamic>>[
-                                          ...visibleMessages,
-                                          ..._pendingMediaMessages,
-                                        ]);
-                                        final approvalFlowActive =
-                                            _isApprovalFlowActive(
-                                          visibleMessages,
-                                        );
-                                        _maybeAutoScroll(
-                                            allVisibleMessages.length);
+                                builder: (context, socketProvider, _) {
+                                  final visibleMessages = socketProvider
+                                      .messages
+                                      .where(
+                                      _belongsToCurrentConversation)
+                                      .map((e) =>
+                                  Map<String, dynamic>.from(e))
+                                      .toList();
+                                  final allVisibleMessages =
+                                  _dedupeVisibleMessages(<Map<String,
+                                      dynamic>>[
+                                    ...visibleMessages,
+                                    ..._pendingMediaMessages,
+                                  ]);
+                                  final approvalFlowActive =
+                                  _isApprovalFlowActive(
+                                    visibleMessages,
+                                  );
+                                  _maybeAutoScroll(
+                                      allVisibleMessages.length);
 
-                                        if (allVisibleMessages.isEmpty) {
-                                          return const SizedBox.shrink();
-                                        }
+                                  if (allVisibleMessages.isEmpty) {
+                                    return const SizedBox.shrink();
+                                  }
 
-                                        return Wrap(
-                                          runSpacing: 2.0,
-                                          children: List.generate(
-                                              allVisibleMessages.length,
-                                              (index) {
-                                            final message =
-                                                allVisibleMessages[index];
-                                            final mine = _isMine(message);
-                                            final text = _messageText(message);
-                                            final hasMedia =
-                                                _messageFiles(message)
-                                                    .isNotEmpty;
-                                            final eventObject =
-                                                _eventObjectForMessage(message);
-                                            final hasEventCard =
-                                                eventObject != null;
-                                            final approvedEvent =
-                                                _isApprovedEvent(message);
-                                            final rejectedEvent =
-                                                _isRejectedEvent(message);
-                                            final location =
-                                                _extractLocation(message);
-                                            final locationAddress =
-                                                _extractLocationAddress(
-                                                    message);
-                                            final hasLocation =
-                                                location != null;
-                                            final showText =
-                                                text.trim().isNotEmpty &&
-                                                    !hasLocation;
-                                            if (!showText &&
-                                                !hasMedia &&
-                                                !hasLocation &&
-                                                !hasEventCard) {
-                                              return const SizedBox.shrink();
-                                            }
+                                  return Wrap(
+                                    runSpacing: 2.0,
+                                    children: List.generate(
+                                        allVisibleMessages.length,
+                                            (index) {
+                                          final message =
+                                          allVisibleMessages[index];
+                                          final mine = _isMine(message);
+                                          final text = _messageText(message);
+                                          final hasMedia =
+                                              _messageFiles(message)
+                                                  .isNotEmpty;
+                                          final eventObject =
+                                          _eventObjectForMessage(message);
+                                          final hasEventCard =
+                                              eventObject != null;
+                                          final approvedEvent =
+                                          _isApprovedEvent(message);
+                                          final rejectedEvent =
+                                          _isRejectedEvent(message);
+                                          final location =
+                                          _extractLocation(message);
+                                          final locationAddress =
+                                          _extractLocationAddress(
+                                              message);
+                                          final hasLocation =
+                                              location != null;
+                                          final showText =
+                                              text.trim().isNotEmpty &&
+                                                  !hasLocation;
+                                          if (!showText &&
+                                              !hasMedia &&
+                                              !hasLocation &&
+                                              !hasEventCard) {
+                                            return const SizedBox.shrink();
+                                          }
 
-                                            return SizedBox(
-                                              width: size.width * 92 / 100,
-                                              child: Column(
-                                                crossAxisAlignment: mine
-                                                    ? CrossAxisAlignment.end
-                                                    : CrossAxisAlignment.start,
-                                                children: [
-                                                  Row(
-                                                    mainAxisAlignment: mine
-                                                        ? MainAxisAlignment.end
-                                                        : MainAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      if (!mine)
-                                                        GestureDetector(
-                                                          onTap:
-                                                              _openOtherUserProfile,
-                                                          child: Container(
-                                                            width: size.width *
-                                                                10 /
-                                                                100,
-                                                            height: size.width *
-                                                                10 /
-                                                                100,
-                                                            decoration:
-                                                                BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          100),
+                                          return SizedBox(
+                                            width: size.width * 92 / 100,
+                                            child: Column(
+                                              crossAxisAlignment: mine
+                                                  ? CrossAxisAlignment.end
+                                                  : CrossAxisAlignment.start,
+                                              children: [
+                                                Row(
+                                                  mainAxisAlignment: mine
+                                                      ? MainAxisAlignment.end
+                                                      : MainAxisAlignment
+                                                      .start,
+                                                  children: [
+                                                    if (!mine)
+                                                      GestureDetector(
+                                                        onTap:
+                                                        _openOtherUserProfile,
+                                                        child: Container(
+                                                          width: size.width *
+                                                              10 /
+                                                              100,
+                                                          height: size.width *
+                                                              10 /
+                                                              100,
+                                                          decoration:
+                                                          BoxDecoration(
+                                                            borderRadius:
+                                                            BorderRadius
+                                                                .circular(
+                                                                100),
+                                                            image:
+                                                            DecorationImage(
                                                               image:
-                                                                  DecorationImage(
-                                                                image:
-                                                                    _chatAvatar(
-                                                                  _receiverImage,
-                                                                ),
-                                                                fit: BoxFit
-                                                                    .cover,
+                                                              _chatAvatar(
+                                                                _receiverImage,
                                                               ),
+                                                              fit: BoxFit
+                                                                  .cover,
                                                             ),
                                                           ),
                                                         ),
-                                                      if (!mine)
-                                                        SizedBox(
-                                                            width: size.width *
-                                                                2 /
-                                                                100),
-                                                      Column(
-                                                        crossAxisAlignment: mine
-                                                            ? CrossAxisAlignment
-                                                                .end
-                                                            : CrossAxisAlignment
-                                                                .start,
-                                                        children: [
-                                                          if (hasLocation)
-                                                            _buildLocationMessage(
-                                                              context,
-                                                              mine,
-                                                              size,
-                                                              lat: location[
-                                                                  'lat']!,
-                                                              lng: location[
-                                                                  'lng']!,
-                                                              address:
-                                                                  locationAddress,
-                                                            ),
-                                                          if (hasMedia)
-                                                            _buildMediaMessage(
-                                                              context,
-                                                              message,
-                                                              mine,
-                                                              size,
-                                                            ),
-                                                          if (hasEventCard)
-                                                            _buildEventCard(
-                                                              context,
-                                                              size,
-                                                              eventObject:
-                                                                  eventObject,
-                                                              mine: mine,
-                                                              approved:
-                                                                  approvedEvent,
-                                                              showActions: !mine &&
-                                                                  approvalFlowActive &&
-                                                                  !approvedEvent &&
-                                                                  !rejectedEvent,
-                                                              onApprove: () =>
-                                                                  _emitEventApprovalUpdate(
-                                                                message,
-                                                                isApprove: true,
-                                                              ),
-                                                              onReject: () =>
-                                                                  _emitEventApprovalUpdate(
-                                                                message,
-                                                                isApprove:
-                                                                    false,
-                                                              ),
-                                                            ),
-                                                          if (showText)
-                                                            Container(
-                                                              constraints:
-                                                                  BoxConstraints(
-                                                                maxWidth:
-                                                                    size.width *
-                                                                        65 /
-                                                                        100,
-                                                              ),
-                                                              padding: EdgeInsets
-                                                                  .symmetric(
-                                                                vertical:
-                                                                    size.height *
-                                                                        1.5 /
-                                                                        100,
-                                                                horizontal:
-                                                                    size.width *
-                                                                        3 /
-                                                                        100,
-                                                              ),
-                                                              decoration:
-                                                                  BoxDecoration(
-                                                                color: !mine
-                                                                    ? AppColor
-                                                                        .washpressColor
-                                                                    : AppColor
-                                                                        .buttonColor,
-                                                                boxShadow: [
-                                                                  BoxShadow(
-                                                                    color: Colors
-                                                                        .black
-                                                                        .withOpacity(
-                                                                            0.2),
-                                                                    blurRadius:
-                                                                        10,
-                                                                    offset:
-                                                                        const Offset(
-                                                                            0,
-                                                                            4),
-                                                                  ),
-                                                                ],
-                                                                borderRadius:
-                                                                    BorderRadius
-                                                                        .only(
-                                                                  topLeft: mine
-                                                                      ? const Radius
-                                                                          .circular(
-                                                                          25)
-                                                                      : const Radius
-                                                                          .circular(
-                                                                          0),
-                                                                  topRight: mine
-                                                                      ? const Radius
-                                                                          .circular(
-                                                                          0)
-                                                                      : const Radius
-                                                                          .circular(
-                                                                          25),
-                                                                  bottomLeft:
-                                                                      const Radius
-                                                                          .circular(
-                                                                          25),
-                                                                  bottomRight:
-                                                                      const Radius
-                                                                          .circular(
-                                                                          25),
-                                                                ),
-                                                              ),
-                                                              child: Text(
-                                                                text,
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        14,
-                                                                    fontWeight:
-                                                                        FontWeight
-                                                                            .w400,
-                                                                    fontFamily:
-                                                                        AppFont
-                                                                            .fontFamily),
-                                                              ),
-                                                            ),
-                                                        ],
                                                       ),
-                                                    ],
-                                                  ),
-                                                ],
-                                              ),
-                                            );
-                                          }),
-                                        );
-                                      },
-                                    ),
+                                                    if (!mine)
+                                                      SizedBox(
+                                                          width: size.width *
+                                                              2 /
+                                                              100),
+                                                    Column(
+                                                      crossAxisAlignment: mine
+                                                          ? CrossAxisAlignment
+                                                          .end
+                                                          : CrossAxisAlignment
+                                                          .start,
+                                                      children: [
+                                                        if (hasLocation)
+                                                          _buildLocationMessage(
+                                                            context,
+                                                            mine,
+                                                            size,
+                                                            lat: location[
+                                                            'lat']!,
+                                                            lng: location[
+                                                            'lng']!,
+                                                            address:
+                                                            locationAddress,
+                                                          ),
+                                                        if (hasMedia)
+                                                          _buildMediaMessage(
+                                                            context,
+                                                            message,
+                                                            mine,
+                                                            size,
+                                                          ),
+                                                        if (hasEventCard)
+                                                          _buildEventCard(
+                                                            context,
+                                                            size,
+                                                            eventObject:
+                                                            eventObject,
+                                                            mine: mine,
+                                                            approved:
+                                                            approvedEvent,
+                                                            showActions: !mine &&
+                                                                approvalFlowActive &&
+                                                                !approvedEvent &&
+                                                                !rejectedEvent,
+                                                            onApprove: () =>
+                                                                _emitEventApprovalUpdate(
+                                                                  message,
+                                                                  isApprove: true,
+                                                                ),
+                                                            onReject: () =>
+                                                                _emitEventApprovalUpdate(
+                                                                  message,
+                                                                  isApprove:
+                                                                  false,
+                                                                ),
+                                                          ),
+                                                        if (showText)
+                                                          Container(
+                                                            constraints:
+                                                            BoxConstraints(
+                                                              maxWidth:
+                                                              size.width *
+                                                                  65 /
+                                                                  100,
+                                                            ),
+                                                            padding: EdgeInsets
+                                                                .symmetric(
+                                                              vertical:
+                                                              size.height *
+                                                                  1.5 /
+                                                                  100,
+                                                              horizontal:
+                                                              size.width *
+                                                                  3 /
+                                                                  100,
+                                                            ),
+                                                            decoration:
+                                                            BoxDecoration(
+                                                              color: !mine
+                                                                  ? AppColor
+                                                                  .washpressColor
+                                                                  : AppColor
+                                                                  .buttonColor,
+                                                              boxShadow: [
+                                                                BoxShadow(
+                                                                  color: Colors
+                                                                      .black
+                                                                      .withOpacity(
+                                                                      0.2),
+                                                                  blurRadius:
+                                                                  10,
+                                                                  offset:
+                                                                  const Offset(
+                                                                      0,
+                                                                      4),
+                                                                ),
+                                                              ],
+                                                              borderRadius:
+                                                              BorderRadius
+                                                                  .only(
+                                                                topLeft: mine
+                                                                    ? const Radius
+                                                                    .circular(
+                                                                    25)
+                                                                    : const Radius
+                                                                    .circular(
+                                                                    0),
+                                                                topRight: mine
+                                                                    ? const Radius
+                                                                    .circular(
+                                                                    0)
+                                                                    : const Radius
+                                                                    .circular(
+                                                                    25),
+                                                                bottomLeft:
+                                                                const Radius
+                                                                    .circular(
+                                                                    25),
+                                                                bottomRight:
+                                                                const Radius
+                                                                    .circular(
+                                                                    25),
+                                                              ),
+                                                            ),
+                                                            child: Text(
+                                                              text,
+                                                              style: TextStyle(
+                                                                  color: Colors
+                                                                      .white,
+                                                                  fontSize:
+                                                                  14,
+                                                                  fontWeight:
+                                                                  FontWeight
+                                                                      .w400,
+                                                                  fontFamily:
+                                                                  AppFont
+                                                                      .fontFamily),
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
+                                                  ],
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        }),
+                                  );
+                                },
+                              ),
                               SizedBox(height: size.height * 4 / 100),
                               if (_pendingSharedEvent != null &&
                                   !widget.autoSendSharedEvent)
@@ -2749,9 +2750,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                       .where(_belongsToCurrentConversation)
                                       .toList();
                                   final conversationHasApprovedRequest =
-                                      _hasApprovedRequest(visibleMessages);
+                                  _hasApprovedRequest(visibleMessages);
                                   final gateMessage =
-                                      _latestApprovalGateMessage(
+                                  _latestApprovalGateMessage(
                                     visibleMessages,
                                   );
                                   final gatePending = gateMessage != null &&
@@ -2775,7 +2776,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                         boxShadow: [
                                           BoxShadow(
                                               color:
-                                                  Colors.black.withOpacity(0.1),
+                                              Colors.black.withOpacity(0.1),
                                               blurRadius: 20,
                                               offset: const Offset(0, 2))
                                         ],
@@ -2787,31 +2788,31 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                         ),
                                         child: TextFormField(
                                           cursorColor:
-                                              AppColor.secondryColor(context),
+                                          AppColor.secondryColor(context),
                                           style: TextStyle(
                                               height: 1.25,
                                               color: AppColor.secondryColor(
                                                   context)),
                                           textAlignVertical:
-                                              TextAlignVertical.top,
+                                          TextAlignVertical.top,
                                           keyboardType: TextInputType.multiline,
                                           textInputAction:
-                                              TextInputAction.newline,
+                                          TextInputAction.newline,
                                           maxLength: AppConstant.describeLength,
                                           minLines: 1,
                                           maxLines: 3,
                                           focusNode: _messageFocusNode,
                                           controller:
-                                              messageTextEditingController,
+                                          messageTextEditingController,
                                           decoration: InputDecoration(
                                             isDense: true,
                                             suffixIconConstraints:
-                                                BoxConstraints(
-                                                    maxWidth:
-                                                        size.width * 30 / 100),
+                                            BoxConstraints(
+                                                maxWidth:
+                                                size.width * 30 / 100),
                                             counterText: '',
                                             contentPadding:
-                                                const EdgeInsets.symmetric(
+                                            const EdgeInsets.symmetric(
                                               vertical: 14,
                                             ),
                                             prefixIcon: Padding(
@@ -2826,44 +2827,44 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                         horizontal: 8.0),
                                                     child: GestureDetector(
                                                       onTap:
-                                                          _pickFromCameraAndSend,
+                                                      _pickFromCameraAndSend,
                                                       child: Container(
                                                         height:
-                                                            size.height * 0.04,
+                                                        size.height * 0.04,
                                                         width:
-                                                            size.height * 0.04,
+                                                        size.height * 0.04,
                                                         decoration:
-                                                            const BoxDecoration(
-                                                                color: AppColor
-                                                                    .buttonColor,
-                                                                shape: BoxShape
-                                                                    .circle),
+                                                        const BoxDecoration(
+                                                            color: AppColor
+                                                                .buttonColor,
+                                                            shape: BoxShape
+                                                                .circle),
                                                         child: Center(
                                                           child:
-                                                              _isUploadingMedia
-                                                                  ? SizedBox(
-                                                                      width: size
-                                                                              .height *
-                                                                          0.018,
-                                                                      height: size
-                                                                              .height *
-                                                                          0.018,
-                                                                      child:
-                                                                          const CircularProgressIndicator(
-                                                                        strokeWidth:
-                                                                            2,
-                                                                        color: Colors
-                                                                            .white,
-                                                                      ),
-                                                                    )
-                                                                  : Image.asset(
-                                                                      AppImage
-                                                                          .cameraIcon,
-                                                                      fit: BoxFit
-                                                                          .contain,
-                                                                      height: size
-                                                                              .height *
-                                                                          0.026),
+                                                          _isUploadingMedia
+                                                              ? SizedBox(
+                                                            width: size
+                                                                .height *
+                                                                0.018,
+                                                            height: size
+                                                                .height *
+                                                                0.018,
+                                                            child:
+                                                            const CircularProgressIndicator(
+                                                              strokeWidth:
+                                                              2,
+                                                              color: Colors
+                                                                  .white,
+                                                            ),
+                                                          )
+                                                              : Image.asset(
+                                                              AppImage
+                                                                  .cameraIcon,
+                                                              fit: BoxFit
+                                                                  .contain,
+                                                              height: size
+                                                                  .height *
+                                                                  0.026),
                                                         ),
                                                       ),
                                                     ),
@@ -2877,7 +2878,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 mainAxisAlignment:
-                                                    MainAxisAlignment.end,
+                                                MainAxisAlignment.end,
                                                 children: [
                                                   GestureDetector(
                                                     onTap: _sendMessage,
@@ -2891,11 +2892,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                             100,
                                                         color: AppColor
                                                             .secondryColor(
-                                                                context)),
+                                                            context)),
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                          size.width * 1 / 100),
+                                                      size.width * 1 / 100),
                                                   GestureDetector(
                                                     onTap: _toggleSpeechToText,
                                                     child: Image.asset(
@@ -2908,20 +2909,20 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                             100,
                                                         color: _isListening
                                                             ? AppColor
-                                                                .buttonColor
+                                                            .buttonColor
                                                             : AppColor
-                                                                .secondryColor(
-                                                                    context)),
+                                                            .secondryColor(
+                                                            context)),
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                          size.width * 2 / 100),
+                                                      size.width * 2 / 100),
                                                   GestureDetector(
                                                     onTap: () async {
                                                       _dismissComposerKeyboard();
                                                       setState(() {
                                                         isBottomSheetOpen =
-                                                            true;
+                                                        true;
                                                       });
                                                       await plusiconsBottomSheet(
                                                           context);
@@ -2929,7 +2930,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                       _dismissComposerKeyboard();
                                                       setState(() {
                                                         isBottomSheetOpen =
-                                                            false;
+                                                        false;
                                                       });
                                                     },
                                                     child: Image.asset(
@@ -2942,11 +2943,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                             100,
                                                         color: AppColor
                                                             .secondryColor(
-                                                                context)),
+                                                            context)),
                                                   ),
                                                   SizedBox(
                                                       width:
-                                                          size.width * 3 / 100),
+                                                      size.width * 3 / 100),
                                                 ],
                                               ),
                                             ),
@@ -3042,9 +3043,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                             child: Image.asset(
                               AppImage.vedioIcon,
                               width:
-                                  MediaQuery.of(context).size.width * 5 / 100,
+                              MediaQuery.of(context).size.width * 5 / 100,
                               height:
-                                  MediaQuery.of(context).size.width * 5 / 100,
+                              MediaQuery.of(context).size.width * 5 / 100,
                               color: Colors.white,
                             ),
                           ),
@@ -3067,11 +3068,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                         child: Row(children: [
                           SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 10 / 100,
+                              MediaQuery.of(context).size.width * 10 / 100,
                               child: Icon(
                                 Icons.photo_library,
                                 size:
-                                    MediaQuery.of(context).size.width * 4 / 100,
+                                MediaQuery.of(context).size.width * 4 / 100,
                                 color: Colors.white,
                               )),
                           Text(AppLanguage.galleryText[language],
@@ -3096,9 +3097,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                             child: Image.asset(
                               AppImage.eventIcon,
                               width:
-                                  MediaQuery.of(context).size.width * 5 / 100,
+                              MediaQuery.of(context).size.width * 5 / 100,
                               height:
-                                  MediaQuery.of(context).size.width * 5 / 100,
+                              MediaQuery.of(context).size.width * 5 / 100,
                               color: Colors.white,
                             ),
                           ),
@@ -3125,23 +3126,23 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                             width: MediaQuery.of(context).size.width * 10 / 100,
                             child: _isSendingLocation
                                 ? const SizedBox(
-                                    width: 18,
-                                    height: 18,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      color: AppColor.buttonColor,
-                                    ),
-                                  )
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: AppColor.buttonColor,
+                              ),
+                            )
                                 : Image.asset(
-                                    AppImage.locationBlackicon,
-                                    width: MediaQuery.of(context).size.width *
-                                        5 /
-                                        100,
-                                    height: MediaQuery.of(context).size.width *
-                                        5 /
-                                        100,
-                                    color: Colors.white,
-                                  ),
+                              AppImage.locationBlackicon,
+                              width: MediaQuery.of(context).size.width *
+                                  5 /
+                                  100,
+                              height: MediaQuery.of(context).size.width *
+                                  5 /
+                                  100,
+                              color: Colors.white,
+                            ),
                           ),
                           Text(
                               _isSendingLocation
@@ -3208,20 +3209,20 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 Navigator.pop(context);
                                 if (_blockedByMe) {
                                   final shouldUnblock =
-                                      await _showConfirmActionDialog(
+                                  await _showConfirmActionDialog(
                                     title: 'Unblock User',
                                     message:
-                                        'Are you sure you want to unblock this user?',
+                                    'Are you sure you want to unblock this user?',
                                     confirmText: 'Unblock',
                                   );
                                   if (shouldUnblock != true) return;
                                   await _handleUnblockUser();
                                 } else {
                                   final shouldBlock =
-                                      await _showConfirmActionDialog(
+                                  await _showConfirmActionDialog(
                                     title: 'Block User',
                                     message:
-                                        'Are you sure you want to block this user?',
+                                    'Are you sure you want to block this user?',
                                     confirmText: 'Block',
                                   );
                                   if (shouldBlock != true) return;
@@ -3248,10 +3249,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 onTap: () async {
                                   Navigator.pop(context);
                                   final shouldUnmatch =
-                                      await _showConfirmActionDialog(
+                                  await _showConfirmActionDialog(
                                     title: 'Unmatch',
                                     message:
-                                        'Are you sure you want to unmatch this user?',
+                                    'Are you sure you want to unmatch this user?',
                                     confirmText: 'Unmatch',
                                   );
                                   if (shouldUnmatch != true) return;
@@ -3274,10 +3275,10 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 onTap: () async {
                                   Navigator.pop(context);
                                   final shouldReport =
-                                      await _showConfirmActionDialog(
+                                  await _showConfirmActionDialog(
                                     title: 'Report User',
                                     message:
-                                        'Are you sure you want to report this user?',
+                                    'Are you sure you want to report this user?',
                                     confirmText: 'Report',
                                   );
                                   if (shouldReport != true) return;
@@ -3589,11 +3590,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   Widget _buildApprovalComposerPlaceholder(
-    Size size, {
-    required bool rejected,
-  }) {
+      Size size, {
+        required bool rejected,
+      }) {
     final text =
-        rejected ? 'Chat request rejected' : 'Chat request pending approval';
+    rejected ? 'Chat request rejected' : 'Chat request pending approval';
     return Container(
       width: size.width * 90 / 100,
       padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
@@ -3621,7 +3622,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       MaterialPageRoute(
         builder: (_) => const MyAppFooter(initialIndex: 0),
       ),
-      (route) => false,
+          (route) => false,
     );
   }
 }

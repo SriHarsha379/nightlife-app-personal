@@ -59,12 +59,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
 
   TextEditingController passwordTextEditingController = TextEditingController();
   TextEditingController mobileNumberTextEditingController =
-      TextEditingController();
+  TextEditingController();
   TextEditingController confirmpasswordTextEditingController =
-      TextEditingController();
+  TextEditingController();
 
   TextEditingController referCodeTextEditingController =
-      TextEditingController();
+  TextEditingController();
   String selectLocation = "NA";
 
   final FocusNode _focusNode = FocusNode();
@@ -81,9 +81,9 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   void initState() {
     super.initState();
     mobileNumberTextEditingController.text =
-        widget.mobile == null ? "" : widget.mobile.toString();
+    widget.mobile == null ? "" : widget.mobile.toString();
     referCodeTextEditingController.text =
-        widget.refercode == null ? "" : widget.refercode.toString();
+    widget.refercode == null ? "" : widget.refercode.toString();
     if (_isSocialSignup && widget.socialUser != null) {
       final Map<String, dynamic> socialUser = widget.socialUser!;
       NameTextEditingController.text =
@@ -213,7 +213,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   // City selection method
   void _showCitySelectionSheet(BuildContext context) {
     final cityController =
-        Provider.of<CityPreferenceController>(context, listen: false);
+    Provider.of<CityPreferenceController>(context, listen: false);
 
     showModalBottomSheet(
       context: context,
@@ -301,6 +301,28 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 4 / 100,
                 ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width * 90 / 100,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: GestureDetector(
+                      onTap: () => Navigator.pop(context),
+                      child: Container(
+                        height: MediaQuery.of(context).size.width * 10 / 100,
+                        width: MediaQuery.of(context).size.width * 12 / 100,
+                        color: AppColor.transparentColor,
+                        alignment: Alignment.centerLeft,
+                        child: Image.asset(
+                          AppImage.backArrowIcon,
+                          fit: BoxFit.contain,
+                          height: MediaQuery.of(context).size.width * 5 / 100,
+                          width: MediaQuery.of(context).size.width * 5 / 100,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
                 Expanded(
                   child: SingleChildScrollView(
                     child: Column(
@@ -360,21 +382,21 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           color: isDark
                                               ? AppColor.themeColor
                                               : Color.fromARGB(
-                                                  255, 235, 234, 234),
+                                              255, 235, 234, 234),
                                           border: Border.all(
                                               color: AppColor.buttonColor),
                                           shape: BoxShape.circle,
                                           image: profilePhoto != null
                                               ? DecorationImage(
-                                                  image: FileImage(
-                                                      File(profilePhoto!.path)),
-                                                  fit: BoxFit.cover,
-                                                )
+                                            image: FileImage(
+                                                File(profilePhoto!.path)),
+                                            fit: BoxFit.cover,
+                                          )
                                               : null,
                                         ),
                                         child: profilePhoto == null
                                             ? Icon(Icons.add,
-                                                size: 40, color: Colors.grey)
+                                            size: 40, color: Colors.grey)
                                             : null,
                                       ),
                                       const SizedBox(height: 8),
@@ -384,7 +406,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           fontSize: 14,
                                           decoration: TextDecoration.underline,
                                           decorationColor:
-                                              AppColor.appHeadTextColor,
+                                          AppColor.appHeadTextColor,
                                           color: AppColor.appHeadTextColor,
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
@@ -435,7 +457,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       100,
                                   child: CustomTextField(
                                     hintText:
-                                        AppLanguage.firstNameText[language],
+                                    AppLanguage.firstNameText[language],
                                     maxLength: AppConstant.fullNameText,
                                     controller: NameTextEditingController,
                                     readOnly: false,
@@ -465,7 +487,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       100,
                                   child: CustomTextField(
                                     hintText:
-                                        AppLanguage.lastNameText[language],
+                                    AppLanguage.lastNameText[language],
                                     maxLength: AppConstant.fullNameText,
                                     controller: lastnameTextEditingController,
                                     readOnly: false,
@@ -515,7 +537,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       100,
                                   child: CustomTextField(
                                     hintText:
-                                        AppLanguage.emailAddressText[language],
+                                    AppLanguage.emailAddressText[language],
                                     maxLength: AppConstant.emailMaxLength,
                                     controller: emailController,
                                     readOnly: _isSocialSignup,
@@ -541,12 +563,12 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       100,
                                   child: CustomTextField(
                                     hintText:
-                                        AppLanguage.phoneNumberText[language],
+                                    AppLanguage.phoneNumberText[language],
                                     maxLength: AppConstant.mobileMaxLenth,
                                     controller:
-                                        mobileNumberTextEditingController,
+                                    mobileNumberTextEditingController,
                                     readOnly: (widget.screen == "refer" ||
-                                            _isSocialSignup)
+                                        _isSocialSignup)
                                         ? false
                                         : true,
                                     // keyboardType: TextInputType.name,
@@ -603,7 +625,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       hintText: "Enter Confirm Password",
                                       maxLength: 50,
                                       controller:
-                                          confirmpasswordTextEditingController,
+                                      confirmpasswordTextEditingController,
                                       isPassword: true,
                                     ),
                                   ),
@@ -689,7 +711,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         ),
                                       ),
                                       suffixIconConstraints:
-                                          const BoxConstraints(
+                                      const BoxConstraints(
                                         minWidth: 35,
                                         minHeight: 10,
                                       ),
@@ -697,10 +719,10 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         borderRadius: BorderRadius.circular(40),
                                         borderSide: BorderSide(
                                           color: Theme.of(context).brightness ==
-                                                  Brightness.dark
+                                              Brightness.dark
                                               ? AppColor.buttonColor
                                               : AppColor.greyLightColor(
-                                                  context),
+                                              context),
                                           width: 1,
                                         ),
                                       ),
@@ -724,7 +746,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         fontSize: 14,
                                       ),
                                       contentPadding:
-                                          const EdgeInsets.symmetric(
+                                      const EdgeInsets.symmetric(
                                         horizontal: 30,
                                         vertical: 15,
                                       ),
@@ -782,13 +804,13 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                             child: Image.asset(
                                               AppImage.downArrowicon,
                                               width: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  .size
+                                                  .width *
                                                   3 /
                                                   100,
                                               height: MediaQuery.of(context)
-                                                      .size
-                                                      .width *
+                                                  .size
+                                                  .width *
                                                   1 /
                                                   100,
                                               color: AppColor.greyLightColor(
@@ -796,44 +818,44 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                             ),
                                           ),
                                           suffixIconConstraints:
-                                              const BoxConstraints(
+                                          const BoxConstraints(
                                             minWidth: 32,
                                             minHeight: 10,
                                           ),
                                           enabledBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(40),
+                                            BorderRadius.circular(40),
                                             borderSide: BorderSide(
                                               color: Theme.of(context)
-                                                          .brightness ==
-                                                      Brightness.dark
+                                                  .brightness ==
+                                                  Brightness.dark
                                                   ? AppColor.buttonColor
                                                   : AppColor.greyLightColor(
-                                                      context),
+                                                  context),
                                               width: 1,
                                             ),
                                           ),
                                           focusedBorder: OutlineInputBorder(
                                             borderRadius:
-                                                BorderRadius.circular(40),
+                                            BorderRadius.circular(40),
                                             borderSide: const BorderSide(
                                               color: AppColor.buttonColor,
                                               width: 1.5,
                                             ),
                                           ),
                                           fillColor:
-                                              AppColor.textFieldColor(context),
+                                          AppColor.textFieldColor(context),
                                           filled: true,
                                           hintText: "Select City",
                                           hintStyle: TextStyle(
                                             color:
-                                                AppColor.hinttextcolor(context),
+                                            AppColor.hinttextcolor(context),
                                             fontWeight: FontWeight.w400,
                                             fontFamily: AppFont.fontFamily,
                                             fontSize: 14,
                                           ),
                                           contentPadding:
-                                              const EdgeInsets.symmetric(
+                                          const EdgeInsets.symmetric(
                                             horizontal: 30,
                                             vertical: 15,
                                           ),
@@ -862,7 +884,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       hintText: "Referral Code",
                                       maxLength: AppConstant.fullNameText,
                                       controller:
-                                          referCodeTextEditingController,
+                                      referCodeTextEditingController,
                                       readOnly: true,
                                     ),
                                   ),
@@ -881,15 +903,15 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                 builder: (context, apiprovider, child) {
                                   return apiprovider.loading
                                       ? const CircularProgressIndicator(
-                                          color: AppColor.pinkColor)
+                                      color: AppColor.pinkColor)
                                       : AppButton(
-                                          text: AppLanguage
-                                              .continueText[language],
-                                          onPress: () {
-                                            FocusScope.of(context).unfocus();
-                                            profileDetailsValidation();
-                                          },
-                                        );
+                                    text: AppLanguage
+                                        .continueText[language],
+                                    onPress: () {
+                                      FocusScope.of(context).unfocus();
+                                      profileDetailsValidation();
+                                    },
+                                  );
                                 },
                               ),
                               SizedBox(
