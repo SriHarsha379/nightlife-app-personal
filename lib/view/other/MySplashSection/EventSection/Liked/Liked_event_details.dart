@@ -491,86 +491,86 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     const SizedBox(height: 10),
                   ],
                   Container(
-                decoration: BoxDecoration(
-                  color:
-                  AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(32),
-                ),
-                width: size.width * 0.9,
-                height: 64,
-                padding: const EdgeInsets.symmetric(horizontal: 10),
-                child: Row(
-                  children: [
-                    _buildDecisionButton(
-                      label: 'Reject',
-                      icon: Icons.close_rounded,
-                      backgroundColor: AppColor.redColor,
-                      foregroundColor: Colors.white,
-                      onTap: () async {
-                        await _submitEventSwipeAction(
-                          'dislike',
-                          targetEventId: targetEventId,
-                        );
-                      },
+                    decoration: BoxDecoration(
+                      color:
+                      AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(32),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () {
-                          eventstypebottomsheet(
-                            context,
-                            sharedEventData:
-                            Map<String, dynamic>.from(eventDetails),
-                          );
-                        },
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: AppColor.secondryColor(context),
-                            borderRadius: BorderRadius.circular(50),
-                            border: Border.all(
-                              color: AppColor.secondryColor(context),
-                            ),
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.send_rounded,
-                                    color: AppColor.pinkColor, size: 16),
-                                const SizedBox(width: 8),
-                                Text(
-                                  AppLanguage.sendInviteText[language],
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.w500,
-                                    fontFamily: AppFont.fontFamily,
-                                    color: AppColor.pinkColor,
-                                  ),
+                    width: size.width * 0.9,
+                    height: 64,
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: Row(
+                      children: [
+                        _buildDecisionButton(
+                          label: 'Reject',
+                          icon: Icons.close_rounded,
+                          backgroundColor: AppColor.redColor,
+                          foregroundColor: Colors.white,
+                          onTap: () async {
+                            await _submitEventSwipeAction(
+                              'dislike',
+                              targetEventId: targetEventId,
+                            );
+                          },
+                        ),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () {
+                              eventstypebottomsheet(
+                                context,
+                                sharedEventData:
+                                Map<String, dynamic>.from(eventDetails),
+                              );
+                            },
+                            child: Container(
+                              height: 48,
+                              decoration: BoxDecoration(
+                                color: AppColor.secondryColor(context),
+                                borderRadius: BorderRadius.circular(50),
+                                border: Border.all(
+                                  color: AppColor.secondryColor(context),
                                 ),
-                              ],
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Icon(Icons.send_rounded,
+                                        color: AppColor.pinkColor, size: 16),
+                                    const SizedBox(width: 8),
+                                    Text(
+                                      AppLanguage.sendInviteText[language],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w500,
+                                        fontFamily: AppFont.fontFamily,
+                                        color: AppColor.pinkColor,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
-                      ),
+                        if (!showDislikeOnly) ...[
+                          const SizedBox(width: 10),
+                          _buildDecisionButton(
+                            label: 'Accept',
+                            icon: Icons.favorite_rounded,
+                            backgroundColor: AppColor.buttonColor,
+                            foregroundColor: Colors.white,
+                            onTap: () async {
+                              await _submitEventSwipeAction(
+                                'like',
+                                targetEventId: targetEventId,
+                              );
+                            },
+                          ),
+                        ],
+                      ],
                     ),
-                    if (!showDislikeOnly) ...[
-                      const SizedBox(width: 10),
-                      _buildDecisionButton(
-                        label: 'Accept',
-                        icon: Icons.favorite_rounded,
-                        backgroundColor: AppColor.buttonColor,
-                        foregroundColor: Colors.white,
-                        onTap: () async {
-                          await _submitEventSwipeAction(
-                            'like',
-                            targetEventId: targetEventId,
-                          );
-                        },
-                      ),
-                    ],
-                  ],
-                ),
                   ),
                 ],
               ),
@@ -1774,8 +1774,22 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ],
                                 ),
                               ),
+                              // Reserves space for the floating Book Now +
+                              // reject/invite/heart bar, which sits fixed
+                              // on top of this scroll view via
+                              // Scaffold.floatingActionButton. The old
+                              // fixed 12%-of-screen-height spacer here
+                              // undershot the bar's real height (Book Now
+                              // button + spacing + action row + bottom
+                              // safe-area padding), so the ticket price
+                              // panel and anything after it could end up
+                              // hidden underneath it.
                               SizedBox(
-                                height: size.height * 12 / 100,
+                                height: (hasAssignedTicket ? 62.0 : 0.0) +
+                                    74.0 +
+                                    16.0 +
+                                    MediaQuery.of(context).padding.bottom +
+                                    24.0,
                               ),
                             ],
                           ),

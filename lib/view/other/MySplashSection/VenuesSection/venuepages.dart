@@ -398,89 +398,89 @@ class _VenuePagesState extends State<VenuePages> {
                           const SizedBox(height: 10),
                         ],
                         Container(
-                      decoration: BoxDecoration(
-                        color: AppColor.sendinvitecontainercolor(context)
-                            .withOpacity(0.9),
-                        borderRadius: BorderRadius.circular(32),
-                      ),
-                      width: size.width * 0.9,
-                      height: 64,
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Row(
-                        children: [
-                          _buildDecisionButton(
-                            label: 'Reject',
-                            icon: Icons.close_rounded,
-                            backgroundColor: AppColor.redColor,
-                            foregroundColor: Colors.white,
-                            onTap: () async {
-                              await _submitVenueSwipeAction(
-                                'dislike',
-                                targetVenueId: targetVenueId,
-                              );
-                            },
+                          decoration: BoxDecoration(
+                            color: AppColor.sendinvitecontainercolor(context)
+                                .withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(32),
                           ),
-                          const SizedBox(width: 10),
-                          Expanded(
-                            child: GestureDetector(
-                              onTap: () {
-                                documenttypebottomsheet(
-                                  context,
-                                  sharedVenueData:
-                                  Map<String, dynamic>.from(venueData),
-                                );
-                              },
-                              child: Container(
-                                height: 48,
-                                decoration: BoxDecoration(
-                                  color: AppColor.secondryColor(context),
-                                  borderRadius: BorderRadius.circular(50),
-                                  border: Border.all(
-                                    color: AppColor.secondryColor(context),
-                                  ),
-                                ),
-                                child: Center(
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Icon(Icons.send_rounded,
-                                          color: AppColor.pinkColor, size: 16),
-                                      const SizedBox(width: 8),
-                                      Text(
-                                        AppLanguage.sendInviteText[language],
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontWeight: FontWeight.w500,
-                                          fontFamily: AppFont.fontFamily,
-                                          color: AppColor.pinkColor,
-                                        ),
+                          width: size.width * 0.9,
+                          height: 64,
+                          padding: const EdgeInsets.symmetric(horizontal: 10),
+                          child: Row(
+                            children: [
+                              _buildDecisionButton(
+                                label: 'Reject',
+                                icon: Icons.close_rounded,
+                                backgroundColor: AppColor.redColor,
+                                foregroundColor: Colors.white,
+                                onTap: () async {
+                                  await _submitVenueSwipeAction(
+                                    'dislike',
+                                    targetVenueId: targetVenueId,
+                                  );
+                                },
+                              ),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: GestureDetector(
+                                  onTap: () {
+                                    documenttypebottomsheet(
+                                      context,
+                                      sharedVenueData:
+                                      Map<String, dynamic>.from(venueData),
+                                    );
+                                  },
+                                  child: Container(
+                                    height: 48,
+                                    decoration: BoxDecoration(
+                                      color: AppColor.secondryColor(context),
+                                      borderRadius: BorderRadius.circular(50),
+                                      border: Border.all(
+                                        color: AppColor.secondryColor(context),
                                       ),
-                                    ],
+                                    ),
+                                    child: Center(
+                                      child: Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Icon(Icons.send_rounded,
+                                              color: AppColor.pinkColor, size: 16),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            AppLanguage.sendInviteText[language],
+                                            style: TextStyle(
+                                              fontSize: 14,
+                                              fontWeight: FontWeight.w500,
+                                              fontFamily: AppFont.fontFamily,
+                                              color: AppColor.pinkColor,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
+                              if (!showDislikeOnly) ...[
+                                const SizedBox(width: 10),
+                                _buildDecisionButton(
+                                  label: 'Accept',
+                                  icon: Icons.favorite_rounded,
+                                  backgroundColor: AppColor.buttonColor,
+                                  foregroundColor: Colors.white,
+                                  onTap: () async {
+                                    await _submitVenueSwipeAction(
+                                      'like',
+                                      targetVenueId: targetVenueId,
+                                    );
+                                  },
+                                ),
+                              ],
+                            ],
                           ),
-                          if (!showDislikeOnly) ...[
-                            const SizedBox(width: 10),
-                            _buildDecisionButton(
-                              label: 'Accept',
-                              icon: Icons.favorite_rounded,
-                              backgroundColor: AppColor.buttonColor,
-                              foregroundColor: Colors.white,
-                              onTap: () async {
-                                await _submitVenueSwipeAction(
-                                  'like',
-                                  targetVenueId: targetVenueId,
-                                );
-                              },
-                            ),
-                          ],
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
-                        ],
-                      ),
                   ),
                   backgroundColor: AppColor.primaryColor(context),
                   body: Container(
@@ -943,148 +943,148 @@ class _VenuePagesState extends State<VenuePages> {
                             ),
                           ),
                           if (hasAssignedTicket) ...[
-                          SizedBox(height: size.height * 3 / 100),
-                          SizedBox(
-                            width: size.width * 88 / 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Container(
-                                  child: Text(
-                                    AppLanguage.TicketText[language],
-                                    style: TextStyle(
-                                      fontSize: 16,
-                                      fontFamily: AppFont.fontFamily,
-                                      fontWeight: FontWeight.w600,
-                                      color: AppColor.secondryColor(context),
+                            SizedBox(height: size.height * 3 / 100),
+                            SizedBox(
+                              width: size.width * 88 / 100,
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Container(
+                                    child: Text(
+                                      AppLanguage.TicketText[language],
+                                      style: TextStyle(
+                                        fontSize: 16,
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.secondryColor(context),
+                                      ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
-                          SizedBox(height: size.height * 2 / 100),
-                          Container(
-                            width: size.width * 90 / 100,
-                            height: size.height * 18 / 100,
-                            margin: const EdgeInsets.only(right: 6),
-                            decoration: BoxDecoration(
-                              color: AppColor.backgroundColor,
-                              borderRadius: BorderRadius.circular(15),
-                            ),
-                            child: Column(
-                              children: [
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * 4 / 100,
-                                    vertical: size.height * 2 / 100,
-                                  ),
-                                  child: Row(
-                                    mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                    children: [
-                                      Column(
-                                        children: [
-                                          SizedBox(
-                                            width: size.width * 25 / 100,
-                                            child: Text(
-                                              AppLanguage
-                                                  .reservationsText[language],
-                                              style: TextStyle(
-                                                fontSize: 13,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w500,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                          SizedBox(
-                                            width: size.width * 25 / 100,
-                                            child: Text(
-                                              "₹$reservationFee",
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            PageTransition(
-                                              type: PageTransitionType
-                                                  .rightToLeftWithFade,
-                                              child: BookTable(
-                                                venueId: widget.venueId,
-                                                // venueName: venueName.toString(),
-                                                // venueAddress: address,
-                                                // // venueImage: venueImage,
-                                                // venueLikes: totalLikes,
-                                              ),
-                                              duration: const Duration(
-                                                  milliseconds: 500),
-                                            ),
-                                          );
-                                        },
-                                        child: Container(
-                                          width: size.width * 45 / 100,
-                                          decoration: BoxDecoration(
-                                            color: Colors.white,
-                                            borderRadius:
-                                            BorderRadius.circular(40),
-                                          ),
-                                          child: Center(
-                                            child: Padding(
-                                              padding: EdgeInsets.symmetric(
-                                                horizontal:
-                                                size.width * 3 / 100,
-                                                vertical:
-                                                size.height * 1.5 / 100,
-                                              ),
+                            SizedBox(height: size.height * 2 / 100),
+                            Container(
+                              width: size.width * 90 / 100,
+                              height: size.height * 18 / 100,
+                              margin: const EdgeInsets.only(right: 6),
+                              decoration: BoxDecoration(
+                                color: AppColor.backgroundColor,
+                                borderRadius: BorderRadius.circular(15),
+                              ),
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * 4 / 100,
+                                      vertical: size.height * 2 / 100,
+                                    ),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                      children: [
+                                        Column(
+                                          children: [
+                                            SizedBox(
+                                              width: size.width * 25 / 100,
                                               child: Text(
                                                 AppLanguage
-                                                    .BookNowText[language],
-                                                style: const TextStyle(
-                                                  fontSize: 20,
-                                                  fontFamily:
-                                                  AppFont.fontFamily,
+                                                    .reservationsText[language],
+                                                style: TextStyle(
+                                                  fontSize: 13,
+                                                  fontFamily: AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w500,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              width: size.width * 25 / 100,
+                                              child: Text(
+                                                "₹$reservationFee",
+                                                style: TextStyle(
+                                                  fontSize: 24,
+                                                  fontFamily: AppFont.fontFamily,
                                                   fontWeight: FontWeight.w600,
-                                                  color: AppColor.pinkColor,
+                                                  color: Colors.white,
+                                                ),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              PageTransition(
+                                                type: PageTransitionType
+                                                    .rightToLeftWithFade,
+                                                child: BookTable(
+                                                  venueId: widget.venueId,
+                                                  // venueName: venueName.toString(),
+                                                  // venueAddress: address,
+                                                  // // venueImage: venueImage,
+                                                  // venueLikes: totalLikes,
+                                                ),
+                                                duration: const Duration(
+                                                    milliseconds: 500),
+                                              ),
+                                            );
+                                          },
+                                          child: Container(
+                                            width: size.width * 45 / 100,
+                                            decoration: BoxDecoration(
+                                              color: Colors.white,
+                                              borderRadius:
+                                              BorderRadius.circular(40),
+                                            ),
+                                            child: Center(
+                                              child: Padding(
+                                                padding: EdgeInsets.symmetric(
+                                                  horizontal:
+                                                  size.width * 3 / 100,
+                                                  vertical:
+                                                  size.height * 1.5 / 100,
+                                                ),
+                                                child: Text(
+                                                  AppLanguage
+                                                      .BookNowText[language],
+                                                  style: const TextStyle(
+                                                    fontSize: 20,
+                                                    fontFamily:
+                                                    AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: AppColor.pinkColor,
+                                                  ),
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: EdgeInsets.symmetric(
-                                    horizontal: size.width * 6 / 100,
-                                  ),
-                                  child: Align(
-                                    alignment: Alignment.center,
-                                    child: Text(
-                                      textAlign: TextAlign.center,
-                                      AppLanguage.secureYourspotText[language],
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w400,
-                                        color: Colors.white,
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: size.width * 6 / 100,
+                                    ),
+                                    child: Align(
+                                      alignment: Alignment.center,
+                                      child: Text(
+                                        textAlign: TextAlign.center,
+                                        AppLanguage.secureYourspotText[language],
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.white,
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
-                          ),
                           ],
                           SizedBox(height: size.height * 5 / 100),
                           Center(
@@ -1094,7 +1094,18 @@ class _VenuePagesState extends State<VenuePages> {
                               color: AppColor.lightgreyColor,
                             ),
                           ),
-                          SizedBox(height: size.height * 12 / 100),
+                          // Reserves space for the floating Book Now +
+                          // reject/invite/heart bar (Scaffold.floatingActionButton),
+                          // matching the same fix applied to the event
+                          // details page - the old fixed 12%-of-screen
+                          // spacer undershot the bar's real height.
+                          SizedBox(
+                            height: (hasAssignedTicket ? 62.0 : 0.0) +
+                                74.0 +
+                                16.0 +
+                                MediaQuery.of(context).padding.bottom +
+                                24.0,
+                          ),
                         ],
                       ),
                     ),

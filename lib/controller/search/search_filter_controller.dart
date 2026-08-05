@@ -42,6 +42,7 @@ class _SearchParams {
 class SearchFilterController with ChangeNotifier {
   bool _isVenueLoading = false;
   bool _isEventLoading = false;
+  bool _isMemberLoading = false;
 
   List<Map<String, String>> _venueFeaturedList = [];
   List<Map<String, String>> _venueNearbyList = [];
@@ -51,13 +52,19 @@ class SearchFilterController with ChangeNotifier {
   List<Map<String, String>> _eventNearbyList = [];
   List<Map<String, String>> _eventRecommendedList = [];
 
+  List<Map<String, String>> _memberFeaturedList = [];
+  List<Map<String, String>> _memberNearbyList = [];
+  List<Map<String, String>> _memberRecommendedList = [];
+
   /// Tracks the params from the last successful fetch to avoid re-fetching
   /// when the caller requests the same query again (e.g. on tab switch).
   _SearchParams? _lastVenueParams;
   _SearchParams? _lastEventParams;
+  _SearchParams? _lastMemberParams;
 
   bool get isVenueLoading => _isVenueLoading;
   bool get isEventLoading => _isEventLoading;
+  bool get isMemberLoading => _isMemberLoading;
 
   List<Map<String, String>> get venueFeaturedList => _venueFeaturedList;
   List<Map<String, String>> get venueNearbyList => _venueNearbyList;
@@ -66,6 +73,10 @@ class SearchFilterController with ChangeNotifier {
   List<Map<String, String>> get eventFeaturedList => _eventFeaturedList;
   List<Map<String, String>> get eventNearbyList => _eventNearbyList;
   List<Map<String, String>> get eventRecommendedList => _eventRecommendedList;
+
+  List<Map<String, String>> get memberFeaturedList => _memberFeaturedList;
+  List<Map<String, String>> get memberNearbyList => _memberNearbyList;
+  List<Map<String, String>> get memberRecommendedList => _memberRecommendedList;
 
   Future<void> fetchFilterEventsVenues(
       BuildContext context, {
@@ -92,21 +103,29 @@ class SearchFilterController with ChangeNotifier {
     if (params.search.isEmpty) {
       if (type == 'venue') {
         _lastVenueParams = null;
-      } else {
+      } else if (type == 'event') {
         _lastEventParams = null;
+      } else {
+        _lastMemberParams = null;
       }
     }
 
     // Skip the network call when params are identical to the last fetch.
     if (!forceRefresh) {
-      final lastParams = type == 'venue' ? _lastVenueParams : _lastEventParams;
+      final lastParams = type == 'venue'
+          ? _lastVenueParams
+          : type == 'event'
+          ? _lastEventParams
+          : _lastMemberParams;
       if (params == lastParams) return;
     }
 
     if (type == 'venue') {
       _isVenueLoading = true;
-    } else {
+    } else if (type == 'event') {
       _isEventLoading = true;
+    } else {
+      _isMemberLoading = true;
     }
     notifyListeners();
 
@@ -159,11 +178,16 @@ class SearchFilterController with ChangeNotifier {
       _venueNearbyList = nearbyRaw.map(_toNearbyMap).toList();
       _venueRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
       _lastVenueParams = params;
-    } else {
+    } else if (type == 'event') {
       _eventFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
       _eventNearbyList = nearbyRaw.map(_toNearbyMap).toList();
       _eventRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
       _lastEventParams = params;
+    } else {
+      _memberFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
+      _memberNearbyList = nearbyRaw.map(_toNearbyMap).toList();
+      _memberRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
+      _lastMemberParams = params;
     }
 
     _setLoading(type, false);
@@ -179,16 +203,22 @@ class SearchFilterController with ChangeNotifier {
     _eventFeaturedList = [];
     _eventNearbyList = [];
     _eventRecommendedList = [];
+    _memberFeaturedList = [];
+    _memberNearbyList = [];
+    _memberRecommendedList = [];
     _lastVenueParams = null;
     _lastEventParams = null;
+    _lastMemberParams = null;
     notifyListeners();
   }
 
   void _setLoading(String type, bool value) {
     if (type == 'venue') {
       _isVenueLoading = value;
-    } else {
+    } else if (type == 'event') {
       _isEventLoading = value;
+    } else {
+      _isMemberLoading = value;
     }
   }
 
@@ -199,9 +229,15 @@ class SearchFilterController with ChangeNotifier {
       _venueRecommendedList = [];
       return;
     }
-    _eventFeaturedList = [];
-    _eventNearbyList = [];
-    _eventRecommendedList = [];
+    if (type == 'event') {
+      _eventFeaturedList = [];
+      _eventNearbyList = [];
+      _eventRecommendedList = [];
+      return;
+    }
+    _memberFeaturedList = [];
+    _memberNearbyList = [];
+    _memberRecommendedList = [];
   }
 
   List<Map<String, dynamic>> _toMapList(dynamic value) {
@@ -224,10 +260,15 @@ class SearchFilterController with ChangeNotifier {
         : _readString(item['location']);
 
     return {
-      'id': _readString(
-          item['id'] ?? item['event_id'] ?? item['venue_id'] ?? item['_id']),
-      'image': _readString(
-          item['image'] ?? item['venue_image'] ?? item['event_image']),
+      'id': _readString(item['id'] ??
+          item['event_id'] ??
+          item['venue_id'] ??
+          item['member_id'] ??
+          item['_id']),
+      'image': _readString(item['image'] ??
+          item['venue_image'] ??
+          item['event_image'] ??
+          item['profile_image']),
       'title':
       _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'subtitle': subtitle,
@@ -239,10 +280,15 @@ class SearchFilterController with ChangeNotifier {
 
   Map<String, String> _toNearbyMap(Map<String, dynamic> item) {
     return {
-      'id': _readString(
-          item['id'] ?? item['event_id'] ?? item['venue_id'] ?? item['_id']),
-      'image': _readString(
-          item['image'] ?? item['venue_image'] ?? item['event_image']),
+      'id': _readString(item['id'] ??
+          item['event_id'] ??
+          item['venue_id'] ??
+          item['member_id'] ??
+          item['_id']),
+      'image': _readString(item['image'] ??
+          item['venue_image'] ??
+          item['event_image'] ??
+          item['profile_image']),
       'title':
       _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'distance': _distance(item['distance_km']),
@@ -254,10 +300,15 @@ class SearchFilterController with ChangeNotifier {
     final distance = _distance(item['distance_km']);
     final location = _readString(item['location'] ?? item['address']);
     return {
-      'id': _readString(
-          item['id'] ?? item['event_id'] ?? item['venue_id'] ?? item['_id']),
-      'image': _readString(
-          item['image'] ?? item['venue_image'] ?? item['event_image']),
+      'id': _readString(item['id'] ??
+          item['event_id'] ??
+          item['venue_id'] ??
+          item['member_id'] ??
+          item['_id']),
+      'image': _readString(item['image'] ??
+          item['venue_image'] ??
+          item['event_image'] ??
+          item['profile_image']),
       'title':
       _readString(item['name'] ?? item['venue_name'] ?? item['event_name']),
       'location': _locationLabel(distance, location),
