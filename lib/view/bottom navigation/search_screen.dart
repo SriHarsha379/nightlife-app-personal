@@ -1437,10 +1437,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                             100,
                                       ),
                                       Container(
-                                        key: _venueNearbyKey,
+                                        key: _memberNearbyKey,
                                         width: size.width * 90 / 100,
                                         child: Text(
-                                          "Places near you",
+                                          "Members near you",
                                           style: TextStyle(
                                               fontFamily:
                                               AppFont.fontFamily,
