@@ -1237,211 +1237,18 @@ class _SearchScreenState extends State<SearchScreen> {
                                             2 /
                                             100,
                                       ),
+                                      // Featured section removed for Members tab —
+                                      // members go straight into "Premium Members near you" below.
                                       Container(
                                         key: _memberFeaturedKey,
-                                        width: MediaQuery.of(context)
-                                            .size
-                                            .width *
-                                            90 /
-                                            100,
-                                        child: Text(
-                                          "Featured",
-                                          style: const TextStyle(
-                                              fontFamily:
-                                              AppFont.fontFamily,
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.pinkColor),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        height: MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            2 /
-                                            100,
-                                      ),
-                                      (searchFilterProvider
-                                          .isMemberLoading &&
-                                          memberFeaturedList.isEmpty)
-                                          ? _buildSectionLoader()
-                                          : memberFeaturedList.isEmpty
-                                          ? _buildEmptySectionText(
-                                          "No featured members found")
-                                          : Container(
-                                          width: MediaQuery.of(
-                                              context)
-                                              .size
-                                              .width *
-                                              96 /
-                                              100,
-                                          child: GestureDetector(
-                                            onTap: () {
-                                            },
-                                            child:
-                                            SingleChildScrollView(
-                                                scrollDirection:
-                                                Axis.horizontal,
-                                                child: Wrap(
-                                                  children: [
-                                                    ...List
-                                                        .generate(
-                                                      memberFeaturedList
-                                                          .length,
-                                                          (index) {
-                                                        final categoryList = (memberFeaturedList[index]['categories'] ?? '')
-                                                            .split('||')
-                                                            .map((value) => value.trim())
-                                                            .where((value) => value.isNotEmpty)
-                                                            .take(3)
-                                                            .toList();
-                                                        return Container(
-                                                            margin: const EdgeInsets.symmetric(horizontal: 8),
-                                                            decoration: BoxDecoration(
-                                                                borderRadius: BorderRadius.circular(25),
-                                                                border: Border.all(
-                                                                  color: AppColor.pinkColor,
-                                                                  width: 0.5,
-                                                                )),
-                                                            child: GestureDetector(
-                                                              onTap: () async {
-                                                                await _openMemberDetail(
-                                                                  memberFeaturedList[index]['id'].toString(),
-                                                                );
-                                                              },
-                                                              child: Column(
-                                                                children: [
-                                                                  Stack(
-                                                                    children: [
-                                                                      Container(
-                                                                        width: MediaQuery.of(context).size.width * 55 / 100,
-                                                                        height: MediaQuery.of(context).size.height * 28 / 100,
-                                                                        decoration: BoxDecoration(
-                                                                          boxShadow: _featuredCardShadow(context),
-                                                                          borderRadius: BorderRadius.circular(25),
-                                                                        ),
-                                                                        child: ClipRRect(
-                                                                          borderRadius: const BorderRadius.only(topLeft: Radius.circular(25), topRight: Radius.circular(25)),
-                                                                          child: _buildCachedSearchImage(
-                                                                            imageName: memberFeaturedList[index]['image']!,
-                                                                            fit: BoxFit.cover,
-                                                                          ),
-                                                                        ),
-                                                                      ),
-                                                                      if (categoryList.isNotEmpty)
-                                                                        Positioned(
-                                                                          left: 10,
-                                                                          right: 10,
-                                                                          top: 10,
-                                                                          child: SingleChildScrollView(
-                                                                            scrollDirection: Axis.horizontal,
-                                                                            child: Row(
-                                                                              children: categoryList.map((tag) {
-                                                                                return Container(
-                                                                                  margin: const EdgeInsets.only(right: 6),
-                                                                                  padding: const EdgeInsets.symmetric(
-                                                                                    horizontal: 10,
-                                                                                    vertical: 5,
-                                                                                  ),
-                                                                                  decoration: _featuredTagDecoration(),
-                                                                                  child: Text(
-                                                                                    tag,
-                                                                                    style: const TextStyle(
-                                                                                      color: Colors.white,
-                                                                                      fontSize: 10,
-                                                                                      fontFamily: AppFont.fontFamily,
-                                                                                      fontWeight: FontWeight.w600,
-                                                                                    ),
-                                                                                  ),
-                                                                                );
-                                                                              }).toList(),
-                                                                            ),
-                                                                          ),
-                                                                        ),
-                                                                    ],
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: MediaQuery.of(context).size.height * 2 / 100,
-                                                                  ),
-                                                                  Container(
-                                                                    width: MediaQuery.of(context).size.width * 55 / 100,
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets.symmetric(horizontal: 10),
-                                                                      child: Text(
-                                                                        memberFeaturedList[index]['title'] ?? "",
-                                                                        style: TextStyle(
-                                                                          fontFamily: AppFont.fontFamily,
-                                                                          fontSize: 16,
-                                                                          fontWeight: FontWeight.w700,
-                                                                          color: AppColor.secondryColor(context),
-                                                                        ),
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  Container(
-                                                                    width: MediaQuery.of(context).size.width * 55 / 100,
-                                                                    child: Padding(
-                                                                      padding: EdgeInsets.symmetric(horizontal: 6),
-                                                                      child: Row(
-                                                                        children: [
-                                                                          Container(
-                                                                            width: MediaQuery.of(context).size.width * 6 / 100,
-                                                                            height: MediaQuery.of(context).size.width * 6 / 100,
-                                                                            child: Image.asset(
-                                                                              AppImage.locationBlackicon,
-                                                                              color: AppColor.pinkColor,
-                                                                              fit: BoxFit.cover,
-                                                                            ),
-                                                                          ),
-                                                                          SizedBox(
-                                                                            width: MediaQuery.of(context).size.width * 0.1 / 100,
-                                                                          ),
-                                                                          Expanded(
-                                                                            child: Text(
-                                                                              memberFeaturedList[index]['location'] ?? "",
-                                                                              maxLines: 1,
-                                                                              overflow: TextOverflow.ellipsis,
-                                                                              style: const TextStyle(
-                                                                                fontFamily: AppFont.fontFamily,
-                                                                                fontSize: 12,
-                                                                                fontWeight: FontWeight.w400,
-                                                                                color: AppColor.pinkColor,
-                                                                              ),
-                                                                            ),
-                                                                          ),
-                                                                        ],
-                                                                      ),
-                                                                    ),
-                                                                  ),
-                                                                  SizedBox(
-                                                                    height: MediaQuery.of(context).size.height * 2 / 100,
-                                                                  ),
-                                                                ],
-                                                              ),
-                                                            ));
-                                                      },
-                                                    )
-                                                  ],
-                                                )),
-                                          )),
-                                      SizedBox(
-                                        height: memberFeaturedList.isEmpty
-                                            ? MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            0 /
-                                            100
-                                            : MediaQuery.of(context)
-                                            .size
-                                            .height *
-                                            4 /
-                                            100,
+                                        width: 0,
+                                        height: 0,
                                       ),
                                       Container(
-                                        key: _venueNearbyKey,
+                                        key: _memberNearbyKey,
                                         width: size.width * 90 / 100,
                                         child: Text(
-                                          "Places near you",
+                                          "Premium Members near you",
                                           style: TextStyle(
                                               fontFamily:
                                               AppFont.fontFamily,
@@ -1738,7 +1545,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                             child:
                                                             Center(
                                                               child: Text(
-                                                                "Reserve",
+                                                                "Send Invite",
                                                                 style: TextStyle(
                                                                   fontSize: 14,
                                                                   color: Colors.black,
@@ -1832,7 +1639,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                 ),
                                                                 child: Center(
                                                                   child: Text(
-                                                                    "Reserve",
+                                                                    "Send Invite",
                                                                     style: TextStyle(
                                                                       fontSize: 14,
                                                                       color: Colors.black,
