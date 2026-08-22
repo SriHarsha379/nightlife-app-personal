@@ -447,7 +447,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/signup_step_one',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
@@ -572,7 +571,6 @@ class PostApiProvider with ChangeNotifier {
       'chat/send',
       {'messages': messages},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setSecondaryLoading(false);
@@ -597,7 +595,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_otp',
       {},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -638,7 +635,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/signup_step_two',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -803,7 +799,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/verify_email_otp',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -837,7 +832,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_email_otp',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -874,7 +868,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/forgot_password',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -911,7 +904,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/verify_forgot_otp',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -951,7 +943,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_forgot_otp',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -975,7 +966,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/reset_password',
       {'new_password': newPassword.toString(), 'email': email.toString()},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -997,7 +987,6 @@ class PostApiProvider with ChangeNotifier {
       'auth/confirm_password',
       {'new_password': newPassword.trim()},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -1024,7 +1013,6 @@ class PostApiProvider with ChangeNotifier {
         "new_password": newPassword.toString(),
       },
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -1077,7 +1065,6 @@ class PostApiProvider with ChangeNotifier {
       'user/edit_profile',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
@@ -1136,7 +1123,6 @@ class PostApiProvider with ChangeNotifier {
       'user/add_event_preferences',
       fields,
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1170,7 +1156,6 @@ class PostApiProvider with ChangeNotifier {
       'user/add_vibes',
       {'vibes': ids},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1193,7 +1178,6 @@ class PostApiProvider with ChangeNotifier {
       'user/update_hobbies',
       {'hobbies': hobbies},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1227,7 +1211,6 @@ class PostApiProvider with ChangeNotifier {
       'user/delete_gallery_item',
       {'url': url},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1547,7 +1530,6 @@ class PostApiProvider with ChangeNotifier {
       'common/send_messageTo_admin',
       {'description': message.toString()},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -1570,7 +1552,6 @@ class PostApiProvider with ChangeNotifier {
       'user/delete_account',
       {'reason': message.toString()},
       context,
-      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {

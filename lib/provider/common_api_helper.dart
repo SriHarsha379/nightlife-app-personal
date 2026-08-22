@@ -457,6 +457,9 @@ Future<Map<String, dynamic>?> postMultipartData(
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
+    print("MULTIPART URL: $url");
+    print("MULTIPART STATUS CODE: ${response.statusCode}");
+    print("MULTIPART RESPONSE BODY: ${response.body}");
 
     return _handleStatusCode(
       response,
