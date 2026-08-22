@@ -31,6 +31,7 @@ Future<Map<String, dynamic>?> _handleRequest(
     String endpoint,
     BuildContext? context, {
       Map<String, String>? headers,
+      bool skipAuth = false,
     }) async {
   try {
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
@@ -40,6 +41,7 @@ Future<Map<String, dynamic>?> _handleRequest(
     Map<String, String> requestHeaders = await _prepareRequestHeaders(
       headers ?? {},
       context,
+      skipAuth: skipAuth,
     );
 
     print("REQUEST HEADERS: $requestHeaders");
@@ -79,8 +81,9 @@ Future<Map<String, dynamic>?> _handleRequest(
 
 Future<Map<String, String>> _prepareRequestHeaders(
     Map<String, String> headers,
-    BuildContext? context,
-    ) async {
+    BuildContext? context, {
+      bool skipAuth = false,
+    }) async {
   final requestHeaders = Map<String, String>.from(headers);
 
   // ── Baseline headers to prevent Imunify360 bot-detection ──
@@ -95,6 +98,10 @@ Future<Map<String, String>> _prepareRequestHeaders(
         () => 'com.davisantony.nightlife',
   );
   // ──────────────────────────────────────────────────────────
+
+  if (skipAuth) {
+    return requestHeaders;
+  }
 
   try {
     // ── Token priority: backend JWT > Firebase token ──
@@ -401,6 +408,7 @@ Future<Map<String, dynamic>?> postJsonData(
     Map<String, dynamic> jsonData,
     BuildContext? context, {
       Map<String, String>? headers,
+      bool skipAuth = false,
     }) async {
   print("POST BODY for $endpoint: ${jsonEncode(jsonData)}"); // TEMP DEBUG
   return _handleRequest(
@@ -416,6 +424,7 @@ Future<Map<String, dynamic>?> postJsonData(
     endpoint,
     context,
     headers: headers,
+    skipAuth: skipAuth,
   );
 }
 

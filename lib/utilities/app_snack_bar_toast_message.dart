@@ -285,6 +285,7 @@ enum NotificationType { success, error }
 class TopNotification {
   static OverlayEntry? _overlayEntry;
   static Timer? _timer;
+  static String? _currentMessage;
 
   static void show(
     BuildContext context,
@@ -293,6 +294,11 @@ class TopNotification {
     Duration duration = const Duration(seconds: 2),
   }) {
     // Check if context is valid and mounted
+    if (_overlayEntry != null && _currentMessage == message) {
+      return;
+    }
+    _currentMessage = message;
+
     if (!context.mounted) {
       print('TopNotification: Context is not mounted');
       return;
@@ -346,6 +352,7 @@ class TopNotification {
       print('Error removing notification: $e');
     } finally {
       _overlayEntry = null;
+      _currentMessage = null;
     }
   }
 

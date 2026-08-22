@@ -375,7 +375,7 @@ class PostApiProvider with ChangeNotifier {
       'player_id': AppConstant.playerID.toString(),
     };
     log("fields$fields");
-    final res = await postJsonData('auth/social_login', fields, context);
+    final res = await postJsonData('auth/social_login', fields, context, skipAuth: true);
 
     if (res != null) {
       if (res['success'] == true) {
