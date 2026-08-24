@@ -1,23 +1,28 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Manages display frequency and trigger logic for Advertisement and Poll popups.
+/// Manages display frequency and trigger logic for Advertisement, Poll, and
+/// Contest popups.
 ///
 /// Frequency rules:
 /// - Advertisement popup: shown at most [_maxAdsPerDay] times per day, with a
 ///   minimum [_adCooldown] interval between consecutive shows.
 /// - Poll popup: shown at most [_maxPollsPerDay] times per day.
+/// - Contest popup: shown at most [_maxContestsPerDay] times per day.
 ///
 /// Trigger thresholds (used by the caller):
-/// - Ad popup  : every [adSwipeTriggerCount] swipes.
-/// - Poll popup: every [pollSwipeTriggerCount] swipes.
+/// - Ad popup     : every [adSwipeTriggerCount] swipes.
+/// - Poll popup   : every [pollSwipeTriggerCount] swipes.
+/// - Contest popup: every [contestSwipeTriggerCount] swipes.
 class PopupManager {
   // ── Trigger thresholds ───────────────────────────────────────────────────────
   static const int adSwipeTriggerCount = 5;
   static const int pollSwipeTriggerCount = 10;
+  static const int contestSwipeTriggerCount = 20;
 
   // ── Frequency limits ─────────────────────────────────────────────────────────
   static const int _maxAdsPerDay = 3;
   static const int _maxPollsPerDay = 1;
+  static const int _maxContestsPerDay = 1;
   static const Duration _adCooldown = Duration(minutes: 5);
 
   // ── SharedPreferences keys ───────────────────────────────────────────────────
@@ -27,11 +32,19 @@ class PopupManager {
   static const String _kPollLastShownMs = 'popup_poll_last_shown_ms';
   static const String _kPollCountToday = 'popup_poll_count_today';
   static const String _kPollCountDate = 'popup_poll_count_date';
+  static const String _kContestLastShownMs = 'popup_contest_last_shown_ms';
+  static const String _kContestCountToday = 'popup_contest_count_today';
+  static const String _kContestCountDate = 'popup_contest_count_date';
 
   static void validateConfiguration() {
     if (pollSwipeTriggerCount % adSwipeTriggerCount != 0) {
       throw StateError(
         'pollSwipeTriggerCount must be a multiple of adSwipeTriggerCount',
+      );
+    }
+    if (contestSwipeTriggerCount % pollSwipeTriggerCount != 0) {
+      throw StateError(
+        'contestSwipeTriggerCount must be a multiple of pollSwipeTriggerCount',
       );
     }
   }
@@ -46,13 +59,13 @@ class PopupManager {
 
     final countDate = prefs.getString(_kAdCountDate) ?? '';
     final countToday =
-        countDate == todayKey ? (prefs.getInt(_kAdCountToday) ?? 0) : 0;
+    countDate == todayKey ? (prefs.getInt(_kAdCountToday) ?? 0) : 0;
     if (countToday >= _maxAdsPerDay) return false;
 
     final lastShownMs = prefs.getInt(_kAdLastShownMs) ?? 0;
     if (lastShownMs > 0) {
       final elapsed =
-          now.difference(DateTime.fromMillisecondsSinceEpoch(lastShownMs));
+      now.difference(DateTime.fromMillisecondsSinceEpoch(lastShownMs));
       if (elapsed < _adCooldown) return false;
     }
 
@@ -67,7 +80,7 @@ class PopupManager {
 
     final countDate = prefs.getString(_kAdCountDate) ?? '';
     final countToday =
-        countDate == todayKey ? (prefs.getInt(_kAdCountToday) ?? 0) : 0;
+    countDate == todayKey ? (prefs.getInt(_kAdCountToday) ?? 0) : 0;
 
     await prefs.setInt(_kAdLastShownMs, now.millisecondsSinceEpoch);
     await prefs.setString(_kAdCountDate, todayKey);
@@ -84,7 +97,7 @@ class PopupManager {
 
     final countDate = prefs.getString(_kPollCountDate) ?? '';
     final countToday =
-        countDate == todayKey ? (prefs.getInt(_kPollCountToday) ?? 0) : 0;
+    countDate == todayKey ? (prefs.getInt(_kPollCountToday) ?? 0) : 0;
 
     return countToday < _maxPollsPerDay;
   }
@@ -97,16 +110,46 @@ class PopupManager {
 
     final countDate = prefs.getString(_kPollCountDate) ?? '';
     final countToday =
-        countDate == todayKey ? (prefs.getInt(_kPollCountToday) ?? 0) : 0;
+    countDate == todayKey ? (prefs.getInt(_kPollCountToday) ?? 0) : 0;
 
     await prefs.setInt(_kPollLastShownMs, now.millisecondsSinceEpoch);
     await prefs.setString(_kPollCountDate, todayKey);
     await prefs.setInt(_kPollCountToday, countToday + 1);
   }
 
+  // ── Contest ──────────────────────────────────────────────────────────────────
+
+  /// Returns `true` if a contest popup may be shown right now.
+  static Future<bool> shouldShowContestPopup() async {
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final todayKey = _dateKey(now);
+
+    final countDate = prefs.getString(_kContestCountDate) ?? '';
+    final countToday =
+    countDate == todayKey ? (prefs.getInt(_kContestCountToday) ?? 0) : 0;
+
+    return countToday < _maxContestsPerDay;
+  }
+
+  /// Records that a contest popup was shown.
+  static Future<void> recordContestShown() async {
+    final prefs = await SharedPreferences.getInstance();
+    final now = DateTime.now();
+    final todayKey = _dateKey(now);
+
+    final countDate = prefs.getString(_kContestCountDate) ?? '';
+    final countToday =
+    countDate == todayKey ? (prefs.getInt(_kContestCountToday) ?? 0) : 0;
+
+    await prefs.setInt(_kContestLastShownMs, now.millisecondsSinceEpoch);
+    await prefs.setString(_kContestCountDate, todayKey);
+    await prefs.setInt(_kContestCountToday, countToday + 1);
+  }
+
   // ── Helpers ──────────────────────────────────────────────────────────────────
 
   static String _dateKey(DateTime dt) =>
       '${dt.year}-${dt.month.toString().padLeft(2, '0')}-'
-      '${dt.day.toString().padLeft(2, '0')}';
+          '${dt.day.toString().padLeft(2, '0')}';
 }

@@ -6,6 +6,7 @@ import '../controller/book_venue/book_venue_details_controller.dart';
 import '../controller/blocked_users/blocked_users_controller.dart';
 import '../controller/bookingEvent/booking_event_controller.dart';
 import '../controller/city/city_preference.dart';
+import '../controller/contest/contest_controller.dart';
 import '../controller/eventBookingDetails/event_booking_details_controller.dart';
 import '../controller/eventDetails/events_details_controller.dart';
 import '../controller/event_preference/event_preference_controller.dart';
@@ -21,6 +22,7 @@ import '../controller/my_profile/my_visibility_controller.dart';
 import '../controller/my_profile/profile_indicator_controller.dart';
 import '../controller/notification/notification_controller.dart';
 import '../controller/notification/notification_setting_controller.dart';
+import '../controller/poll/poll_controller.dart';
 import '../controller/search/search_calender_filter_controller.dart';
 import '../controller/search/search_filter_controller.dart';
 import '../controller/support/faq_controller.dart';
@@ -28,7 +30,6 @@ import '../controller/venues/my_venues_controller.dart';
 import '../controller/venues/venues_details_controller.dart';
 import '../controller/vibe_check/vibe_check_controller.dart';
 import '../controller/vibe_preference/vibe_prefernce_controller.dart';
-import 'ai_companion_provider.dart';
 import 'darkmode_provider.dart';
 import 'post_api_provider.dart';
 import 'socket_provider.dart';
@@ -43,11 +44,10 @@ List<SingleChildWidget> buildAppProviders() {
         Provider.of<SocketProvider>(ctx, listen: false),
       ),
       update: (ctx, socketProvider, previous) =>
-          previous!..update(socketProvider),
+      previous!..update(socketProvider),
     ),
     ChangeNotifierProvider(create: (_) => ThemeProvider()),
     ChangeNotifierProvider(create: (_) => PostApiProvider()),
-    ChangeNotifierProvider(create: (_) => AiCompanionProvider()),
     ChangeNotifierProvider(create: (_) => VibeCheckController()),
     ChangeNotifierProvider(create: (_) => UserController()),
     ChangeNotifierProvider(create: (_) => CityPreferenceController()),
@@ -56,6 +56,8 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => VibePreferenceController()),
     ChangeNotifierProvider(create: (_) => VibeCheckController()),
     ChangeNotifierProvider(create: (_) => HomeController()),
+    ChangeNotifierProvider(create: (_) => PollController()),
+    ChangeNotifierProvider(create: (_) => ContestController()),
     ChangeNotifierProvider(create: (_) => InviteEventVenueListController()),
     ChangeNotifierProvider(create: (_) => ProfileController()),
     ChangeNotifierProvider(create: (_) => GetMySwipeProfileController()),

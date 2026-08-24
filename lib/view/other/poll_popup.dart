@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../../controller/poll/poll_controller.dart';
 import '../../utilities/app_color.dart';
 import '../../utilities/app_font.dart';
 
@@ -10,7 +12,7 @@ class PollOption {
   final String id;
   final String text;
 
-  /// Seed vote count used to make results look realistic before any user votes.
+  /// Real vote count for this option, from the backend.
   final int votes;
 
   const PollOption({
@@ -26,6 +28,14 @@ class PollOption {
       votes: votes ?? this.votes,
     );
   }
+
+  factory PollOption.fromJson(Map<String, dynamic> json) {
+    return PollOption(
+      id: (json['id'] ?? '').toString(),
+      text: (json['text'] ?? '').toString(),
+      votes: (json['votes'] is num) ? (json['votes'] as num).toInt() : 0,
+    );
+  }
 }
 
 /// Data model that describes a poll.
@@ -34,51 +44,38 @@ class PollData {
   final String question;
   final List<PollOption> options;
 
+  /// True if this user has already voted — set from the real API so the
+  /// popup opens straight into the results view instead of letting them
+  /// vote twice (the backend also enforces this server-side, but the UI
+  /// shouldn't even offer the option).
+  final bool alreadyVoted;
+  final String? selectedOptionId;
+
   const PollData({
     required this.id,
     required this.question,
     required this.options,
+    this.alreadyVoted = false,
+    this.selectedOptionId,
   });
 
   int get totalVotes => options.fold(0, (sum, o) => sum + o.votes);
+
+  factory PollData.fromJson(Map<String, dynamic> json) {
+    final rawOptions = json['options'];
+    return PollData(
+      id: (json['id'] ?? '').toString(),
+      question: (json['question'] ?? '').toString(),
+      options: rawOptions is List
+          ? rawOptions
+          .map((e) => PollOption.fromJson(e as Map<String, dynamic>))
+          .toList()
+          : const <PollOption>[],
+      alreadyVoted: json['already_voted'] == true,
+      selectedOptionId: json['selected_option']?.toString(),
+    );
+  }
 }
-
-// ── Sample poll data ─────────────────────────────────────────────────────────
-
-/// Sample polls shown when no backend data is available.
-///
-/// Replace or augment this list with real API-sourced data as needed.
-const List<PollData> samplePolls = [
-  PollData(
-    id: 'poll_vibe_1',
-    question: 'What\'s your go-to nightlife vibe? 🎶',
-    options: [
-      PollOption(id: 'a', text: '🍸  Cocktail bar with friends', votes: 42),
-      PollOption(id: 'b', text: '🎵  Live music venue', votes: 37),
-      PollOption(id: 'c', text: '🪩  Dance club', votes: 61),
-      PollOption(id: 'd', text: '🌆  Rooftop lounge', votes: 29),
-    ],
-  ),
-  PollData(
-    id: 'poll_time_1',
-    question: 'When do you usually head out? ⏰',
-    options: [
-      PollOption(id: 'a', text: '🌅  Before midnight', votes: 34),
-      PollOption(id: 'b', text: '🌙  Around midnight', votes: 55),
-      PollOption(id: 'c', text: '🦉  After midnight', votes: 28),
-    ],
-  ),
-  PollData(
-    id: 'poll_feature_1',
-    question: 'Which app feature do you use most? 🔥',
-    options: [
-      PollOption(id: 'a', text: '👥  Finding members', votes: 48),
-      PollOption(id: 'b', text: '🎉  Discovering events', votes: 53),
-      PollOption(id: 'c', text: '🏛️  Browsing venues', votes: 31),
-      PollOption(id: 'd', text: '💬  Chatting', votes: 22),
-    ],
-  ),
-];
 
 // ── Widget ───────────────────────────────────────────────────────────────────
 
@@ -130,6 +127,7 @@ class _PollPopupState extends State<PollPopup>
     with SingleTickerProviderStateMixin {
   String? _selectedOptionId;
   bool _hasVoted = false;
+  bool _isSubmitting = false;
 
   /// Live copy of options – updated when the user votes.
   late List<PollOption> _options;
@@ -141,6 +139,13 @@ class _PollPopupState extends State<PollPopup>
   void initState() {
     super.initState();
     _options = List<PollOption>.from(widget.data.options);
+    // If the API already told us this user voted (poll/active returns
+    // already_voted + selected_option per poll), open straight into the
+    // results view instead of letting them pick again — the backend
+    // would reject a second vote anyway (one vote per user per poll,
+    // enforced by a unique index), but the UI shouldn't even offer it.
+    _hasVoted = widget.data.alreadyVoted;
+    _selectedOptionId = widget.data.selectedOptionId;
     _barAnimController = AnimationController(
       duration: const Duration(milliseconds: 750),
       vsync: this,
@@ -149,6 +154,9 @@ class _PollPopupState extends State<PollPopup>
       parent: _barAnimController,
       curve: Curves.easeOut,
     );
+    if (_hasVoted) {
+      _barAnimController.forward();
+    }
   }
 
   @override
@@ -164,15 +172,38 @@ class _PollPopupState extends State<PollPopup>
     setState(() => _selectedOptionId = id);
   }
 
-  void _submitVote() {
+  Future<void> _submitVote() async {
     final id = _selectedOptionId;
-    if (id == null) return;
+    if (id == null || _isSubmitting) return;
+
+    setState(() => _isSubmitting = true);
+
+    // Real vote — records it server-side (one vote per user per poll,
+    // enforced there too) and gets back genuine tallies from every user
+    // who's voted, not just this device's local count.
+    final pollController = Provider.of<PollController>(context, listen: false);
+    final result = await pollController.submitVote(
+      context,
+      widget.data.id,
+      id,
+    );
+
+    if (!mounted) return;
 
     setState(() {
-      _options = _options.map((opt) {
-        return opt.id == id ? opt.copyWith(votes: opt.votes + 1) : opt;
-      }).toList();
+      _isSubmitting = false;
       _hasVoted = true;
+      if (result != null && result.options.isNotEmpty) {
+        _options = result.options;
+      } else {
+        // Server call failed (offline, session expired, etc.) — fall
+        // back to an optimistic local +1 so the vote still visually
+        // registers instead of leaving the user stuck. The next time
+        // polls are fetched, real counts take over again.
+        _options = _options.map((opt) {
+          return opt.id == id ? opt.copyWith(votes: opt.votes + 1) : opt;
+        }).toList();
+      }
     });
     _barAnimController.forward();
   }
@@ -209,10 +240,6 @@ class _PollPopupState extends State<PollPopup>
             decoration: BoxDecoration(
               color: isDark ? const Color(0xFF1E0E2A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
-              border: Border.all(
-                color: AppColor.buttonColor.withOpacity(0.85),
-                width: 2,
-              ),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.30),
@@ -343,15 +370,15 @@ class _PollPopupState extends State<PollPopup>
           color: isSelected
               ? AppColor.buttonColor.withOpacity(0.10)
               : isDark
-                  ? Colors.white.withOpacity(0.05)
-                  : Colors.grey.shade50,
+              ? Colors.white.withOpacity(0.05)
+              : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? AppColor.buttonColor
                 : isDark
-                    ? Colors.white.withOpacity(0.12)
-                    : Colors.grey.shade200,
+                ? Colors.white.withOpacity(0.12)
+                : Colors.grey.shade200,
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -364,13 +391,13 @@ class _PollPopupState extends State<PollPopup>
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
                 color:
-                    isSelected ? AppColor.buttonColor : Colors.transparent,
+                isSelected ? AppColor.buttonColor : Colors.transparent,
                 border: Border.all(
                   color: isSelected
                       ? AppColor.buttonColor
                       : isDark
-                          ? Colors.white38
-                          : Colors.grey.shade400,
+                      ? Colors.white38
+                      : Colors.grey.shade400,
                   width: 2,
                 ),
               ),
@@ -386,12 +413,12 @@ class _PollPopupState extends State<PollPopup>
                   fontFamily: AppFont.fontFamily,
                   fontSize: 14,
                   fontWeight:
-                      isSelected ? FontWeight.w600 : FontWeight.w400,
+                  isSelected ? FontWeight.w600 : FontWeight.w400,
                   color: isSelected
                       ? AppColor.buttonColor
                       : isDark
-                          ? Colors.white.withOpacity(0.87)
-                          : Colors.black87,
+                      ? Colors.white.withOpacity(0.87)
+                      : Colors.black87,
                 ),
               ),
             ),
@@ -416,15 +443,15 @@ class _PollPopupState extends State<PollPopup>
             color: isVoted
                 ? AppColor.buttonColor.withOpacity(0.08)
                 : isDark
-                    ? Colors.white.withOpacity(0.04)
-                    : Colors.grey.shade50,
+                ? Colors.white.withOpacity(0.04)
+                : Colors.grey.shade50,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isVoted
                   ? AppColor.buttonColor.withOpacity(0.50)
                   : isDark
-                      ? Colors.white.withOpacity(0.08)
-                      : Colors.grey.shade200,
+                  ? Colors.white.withOpacity(0.08)
+                  : Colors.grey.shade200,
               width: isVoted ? 1.5 : 1,
             ),
           ),
@@ -445,12 +472,12 @@ class _PollPopupState extends State<PollPopup>
                         fontFamily: AppFont.fontFamily,
                         fontSize: 14,
                         fontWeight:
-                            isVoted ? FontWeight.w600 : FontWeight.w400,
+                        isVoted ? FontWeight.w600 : FontWeight.w400,
                         color: isVoted
                             ? AppColor.buttonColor
                             : isDark
-                                ? Colors.white.withOpacity(0.87)
-                                : Colors.black87,
+                            ? Colors.white.withOpacity(0.87)
+                            : Colors.black87,
                       ),
                     ),
                   ),
@@ -463,8 +490,8 @@ class _PollPopupState extends State<PollPopup>
                       color: isVoted
                           ? AppColor.buttonColor
                           : isDark
-                              ? Colors.white54
-                              : Colors.grey.shade600,
+                          ? Colors.white54
+                          : Colors.grey.shade600,
                     ),
                   ),
                 ],
@@ -490,13 +517,13 @@ class _PollPopupState extends State<PollPopup>
                             gradient: LinearGradient(
                               colors: isVoted
                                   ? [
-                                      AppColor.buttonColor,
-                                      AppColor.darkPurpleColor,
-                                    ]
+                                AppColor.buttonColor,
+                                AppColor.darkPurpleColor,
+                              ]
                                   : [
-                                      const Color(0xFF5B308D),
-                                      const Color(0xFF331F53),
-                                    ],
+                                const Color(0xFF5B308D),
+                                const Color(0xFF331F53),
+                              ],
                             ),
                             borderRadius: BorderRadius.circular(6),
                           ),
@@ -543,7 +570,8 @@ class _PollPopupState extends State<PollPopup>
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _selectedOptionId != null ? _submitVote : null,
+        onPressed:
+        (_selectedOptionId != null && !_isSubmitting) ? _submitVote : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.buttonColor,
           disabledBackgroundColor: AppColor.buttonColor.withOpacity(0.35),
@@ -554,7 +582,16 @@ class _PollPopupState extends State<PollPopup>
           ),
           elevation: 0,
         ),
-        child: const Text(
+        child: _isSubmitting
+            ? const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+          ),
+        )
+            : const Text(
           'Submit Vote',
           style: TextStyle(
             fontFamily: AppFont.fontFamily,
@@ -572,7 +609,7 @@ class _PollPopupState extends State<PollPopup>
         onPressed: _dismiss,
         style: TextButton.styleFrom(
           foregroundColor:
-              isDark ? Colors.grey.shade400 : Colors.grey.shade600,
+          isDark ? Colors.grey.shade400 : Colors.grey.shade600,
         ),
         child: Text(
           'Skip',
