@@ -1,18 +1,15 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-/// Manages display frequency and trigger logic for Advertisement, Poll, and
-/// Contest popups.
+/// Manages display frequency and trigger logic for Advertisement and Poll popups.
 ///
 /// Frequency rules:
 /// - Advertisement popup: shown at most [_maxAdsPerDay] times per day, with a
 ///   minimum [_adCooldown] interval between consecutive shows.
 /// - Poll popup: shown at most [_maxPollsPerDay] times per day.
-/// - Contest popup: shown at most [_maxContestsPerDay] times per day.
 ///
 /// Trigger thresholds (used by the caller):
-/// - Ad popup     : every [adSwipeTriggerCount] swipes.
-/// - Poll popup   : every [pollSwipeTriggerCount] swipes.
-/// - Contest popup: every [contestSwipeTriggerCount] swipes.
+/// - Ad popup  : every [adSwipeTriggerCount] swipes.
+/// - Poll popup: every [pollSwipeTriggerCount] swipes.
 class PopupManager {
   // ── Trigger thresholds ───────────────────────────────────────────────────────
   static const int adSwipeTriggerCount = 5;

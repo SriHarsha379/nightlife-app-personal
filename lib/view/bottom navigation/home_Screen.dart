@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
@@ -15,7 +14,6 @@ import '../../commonWidget/home_widget.dart';
 import '../../commonWidget/event_types_bottomsheet.dart';
 import '../../commonWidget/invite_members_type_bottomsheet.dart';
 import '../../controller/home/home_controller.dart';
-import '../../provider/common_api_helper.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
@@ -30,6 +28,9 @@ import '../other/advertisement_popup.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
 import '../other/poll_popup.dart';
+import '../other/contest_popup.dart';
+import '../../controller/polls/poll_controller.dart';
+import '../../controller/contests/contest_controller.dart';
 
 class Home extends StatefulWidget {
   static String routeName = './Home';
@@ -150,62 +151,6 @@ class _HomeState extends State<Home> {
     return AppImage.dummyImageIcon;
   }
 
-  String _adId(dynamic item) {
-    if (item is! Map) return '';
-    return (item['ad_id'] ?? '').toString().trim();
-  }
-
-  // Ad analytics — previously untracked entirely. Fired exactly once per
-  // ad becoming the active card (see _startAdPlayback, which only calls
-  // this the first time a given adKey becomes active).
-  Future<void> _logAdImpression(dynamic item) async {
-    final adId = _adId(item);
-    if (adId.isEmpty) return;
-    final token = AppConstant.token;
-    if (token.isEmpty) return;
-    try {
-      await postData(
-        'ads/$adId/impression',
-        context,
-        headers: {'authorization': 'Bearer $token'},
-      );
-    } catch (e) {
-      // Analytics calls should never disrupt the swipe experience.
-      log('Ad impression log failed: $e');
-    }
-  }
-
-  // Logs a click and opens the ad's link, if any. Wired to onTap (a full
-  // tap-down+up), separate from the existing onTapDown/onTapUp pause/resume
-  // handlers so playback still pauses while the finger is down.
-  Future<void> _handleAdTap(dynamic item) async {
-    final adId = _adId(item);
-    final linkUrl = (item is Map ? (item['link_url'] ?? '') : '')
-        .toString()
-        .trim();
-
-    if (adId.isNotEmpty) {
-      final token = AppConstant.token;
-      if (token.isNotEmpty) {
-        postData(
-          'ads/$adId/click',
-          context,
-          headers: {'authorization': 'Bearer $token'},
-        ).catchError((e) {
-          log('Ad click log failed: $e');
-          return null;
-        });
-      }
-    }
-
-    if (linkUrl.isNotEmpty) {
-      final uri = Uri.tryParse(linkUrl);
-      if (uri != null) {
-        launchUrl(uri, mode: LaunchMode.externalApplication);
-      }
-    }
-  }
-
   Widget _skipActionChip(VoidCallback onTap) {
     return GestureDetector(
       onTap: onTap,
@@ -320,6 +265,15 @@ class _HomeState extends State<Home> {
     _totalSwipeCount++;
     final count = _totalSwipeCount;
 
+    // Contest popup takes priority over poll/ad on its trigger swipes
+    // (contestSwipeTriggerCount is a multiple of pollSwipeTriggerCount,
+    // which is itself a multiple of adSwipeTriggerCount — enforced by
+    // PopupManager.validateConfiguration()).
+    if (count % PopupManager.contestSwipeTriggerCount == 0) {
+      _maybeShowContestPopup();
+      return;
+    }
+
     // Poll popup takes priority over ad on its trigger swipes (since poll
     // trigger is a multiple of ad trigger, we check it first).
     if (count % PopupManager.pollSwipeTriggerCount == 0) {
@@ -357,15 +311,72 @@ class _HomeState extends State<Home> {
     if (!allowed || !mounted) return;
 
     _isShowingPopup = true;
-    await PopupManager.recordPollShown();
 
-    final polls = samplePolls;
-    if (polls.isEmpty || !mounted) {
+    // Real, admin-created polls via PollController — previously this
+    // always used the hardcoded samplePolls list regardless of what
+    // admin had actually created.
+    final pollController = context.read<PollController>();
+    await pollController.fetchActivePolls(context);
+    if (!mounted) {
       _isShowingPopup = false;
       return;
     }
+
+    final polls = pollController.activePolls;
+    if (polls.isEmpty) {
+      _isShowingPopup = false;
+      return;
+    }
+
+    await PopupManager.recordPollShown();
+
     final poll = polls[_totalSwipeCount % polls.length];
-    await PollPopup.show(context, poll);
+    await PollPopup.show(
+      context,
+      poll,
+      onVote: (optionIndex) =>
+          pollController.submitVote(context, poll.id, optionIndex).then(
+                (updated) => updated?.options,
+          ),
+    );
+    if (mounted) _isShowingPopup = false;
+  }
+
+  Future<void> _maybeShowContestPopup() async {
+    if (_isShowingPopup || !mounted) return;
+    final allowed = await PopupManager.shouldShowContestPopup();
+    if (!allowed || !mounted) return;
+
+    _isShowingPopup = true;
+
+    // First-ever app-side surface for Contests — previously there was no
+    // screen, popup, or API call for this feature anywhere in the app.
+    final contestController = context.read<ContestController>();
+    await contestController.fetchActiveContests(context);
+    if (!mounted) {
+      _isShowingPopup = false;
+      return;
+    }
+
+    final contests = contestController.activeContests;
+    if (contests.isEmpty) {
+      _isShowingPopup = false;
+      return;
+    }
+
+    await PopupManager.recordContestShown();
+
+    final contest = contests[_totalSwipeCount % contests.length];
+    await ContestPopup.show(
+      context,
+      title: contest.title,
+      rules: contest.rules,
+      reward: contest.reward,
+      deadline: contest.deadline,
+      participants: contest.participants,
+      alreadyEntered: contest.alreadyEntered,
+      onEnter: () => contestController.enterContest(context, contest.id),
+    );
     if (mounted) _isShowingPopup = false;
   }
 
@@ -494,7 +505,6 @@ class _HomeState extends State<Home> {
         '$type-${selectedId}-${_itemId(currentItem)}-${_adImage(currentItem)}';
     if (_activeAdKey == adKey) return;
     _activeAdKey = adKey;
-    _logAdImpression(currentItem);
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -1597,8 +1607,6 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
-                                      onTap: () =>
-                                          _handleAdTap(member),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(member),
@@ -1795,8 +1803,6 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
-                                      onTap: () =>
-                                          _handleAdTap(event),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(event),
@@ -2019,8 +2025,6 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
-                                      onTap: () =>
-                                          _handleAdTap(venue),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(venue),
