@@ -161,6 +161,28 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                                       ),
                                     ),
                                   ),
+                                  // Moved up from a full-width button below
+                                  // the questions — client asked for Skip
+                                  // to be "more prominent and moved on top",
+                                  // not just restyled.
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                              const VibeCheckScreen2()));
+                                    },
+                                    child: Text(
+                                      AppLanguage.skip[language],
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.pinkColor,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -372,27 +394,14 @@ class _VibeCheckScreen1State extends State<VibeCheckScreen1> {
                     ),
                   ),
                 ),
-                // Continue / Skip block - now a normal part of the layout,
-                // pinned below the scrollable content via Expanded above,
-                // instead of a floatingActionButton sitting outside the
-                // gradient-decorated body.
+                // Continue block — Skip moved up into the header above,
+                // per the client's ask to move it on top rather than have
+                // it duplicated here too.
                 Padding(
                   padding: const EdgeInsets.only(bottom: 16, top: 8),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AppButton(
-                        backgroundColor: AppColor.borderColor,
-                        text: AppLanguage.skip[language],
-                        onPress: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  const VibeCheckScreen2()));
-                        },
-                      ),
-                      const SizedBox(height: 12),
                       AppButton(
                         height: 62,
                         fontSize: 18,

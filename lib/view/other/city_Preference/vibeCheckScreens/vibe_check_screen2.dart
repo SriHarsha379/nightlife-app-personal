@@ -149,6 +149,28 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                                       ),
                                     ),
                                   ),
+                                  // Moved up from a full-width button below
+                                  // the questions — client asked for Skip
+                                  // to be "more prominent and moved on top",
+                                  // not just restyled.
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                              const VibeCheckScreen3()));
+                                    },
+                                    child: Text(
+                                      AppLanguage.skip[language],
+                                      style: TextStyle(
+                                        fontFamily: AppFont.fontFamily,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w600,
+                                        color: AppColor.pinkColor,
+                                      ),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ],
@@ -366,18 +388,6 @@ class _VibeCheckScreen2State extends State<VibeCheckScreen2> {
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      AppButton(
-                        backgroundColor: AppColor.borderColor,
-                        text: AppLanguage.skip[language],
-                        onPress: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) =>
-                                  const VibeCheckScreen3()));
-                        },
-                      ),
-                      const SizedBox(height: 12),
                       AppButton(
                         height: 62,
                         fontSize: 18,

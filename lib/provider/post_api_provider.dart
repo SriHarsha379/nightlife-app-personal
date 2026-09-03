@@ -618,8 +618,11 @@ class PostApiProvider with ChangeNotifier {
       String spotify,
       String snapchat,
       List<String> hobbies,
-      int? status,
-      ) async {
+      int? status, [
+        double? latitude,
+        double? longitude,
+        double? radius,
+      ]) async {
     setLoading(true);
 
     final Map<String, dynamic> fields = {
@@ -630,6 +633,14 @@ class PostApiProvider with ChangeNotifier {
       'snapchat_account': snapchat.toString(),
       'hobbies': hobbies,
     };
+
+    // Real feed-filtering location — previously nothing sent these during
+    // onboarding at all (see signupStepTwo on the backend). Only included
+    // when actually provided by the caller so existing behavior is
+    // unaffected wherever this isn't wired up yet.
+    if (latitude != null) fields['latitude'] = latitude;
+    if (longitude != null) fields['longitude'] = longitude;
+    if (radius != null) fields['radius'] = radius;
 
     final res = await postJsonData(
       'auth/signup_step_two',

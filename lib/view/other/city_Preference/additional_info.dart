@@ -18,8 +18,20 @@ import 'package:url_launcher/url_launcher.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
   final List<Map<String, dynamic>>? preferredCities;
+  // Real, top-level feed-filtering coordinates — see CityPreference's
+  // "All Cities" option and the fix in signupStepTwo on the backend for
+  // why these are now passed through separately from preferredCities.
+  final double? latitude;
+  final double? longitude;
+  final double? radius;
 
-  const AdditionalInfoScreen({super.key, this.preferredCities});
+  const AdditionalInfoScreen({
+    super.key,
+    this.preferredCities,
+    this.latitude,
+    this.longitude,
+    this.radius,
+  });
   static String routeName = './AdditionalInfoScreen';
   @override
   State<AdditionalInfoScreen> createState() => _AdditionalInfoScreenState();
@@ -202,6 +214,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       snapchattexteditingController.text.trim(),
       hobbies,
       1,
+      widget.latitude,
+      widget.longitude,
+      widget.radius,
     );
   }
 
@@ -256,6 +271,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           "",
                           <String>[],
                           0,
+                          widget.latitude,
+                          widget.longitude,
+                          widget.radius,
                         );
                       },
                     ),

@@ -168,10 +168,32 @@ class _CityPreferenceState extends State<CityPreference> {
                     bottom: 40 + MediaQuery.of(context).padding.bottom,
                   ),
                   child: AppButton(
-                    text: controller.allCitiesConfigured
+                    text: controller.isAllCitiesSelected ||
+                        controller.allCitiesConfigured
                         ? AppLanguage.continueText[language]
                         : "Next",
                     onPress: () {
+                      // All Cities — skip specific-city selection and the
+                      // per-city radius step entirely, go straight through.
+                      if (controller.isAllCitiesSelected) {
+                        final anchor = controller.allCitiesAnchor;
+                        Navigator.push(
+                          context,
+                          PageTransition(
+                            type: PageTransitionType.rightToLeftWithFade,
+                            child: AdditionalInfoScreen(
+                              preferredCities: const [],
+                              latitude: anchor['latitude'],
+                              longitude: anchor['longitude'],
+                              radius: CityPreferenceController
+                                  .allCitiesRadiusKm,
+                            ),
+                            duration: const Duration(milliseconds: 500),
+                          ),
+                        );
+                        return;
+                      }
+
                       if (controller.getSelectedCities.isEmpty) {
                         SnackBarToastMessage.showSnackBar(
                           context,
@@ -213,6 +235,14 @@ class _CityPreferenceState extends State<CityPreference> {
 
                       print("✅ Preferred Cities Data: $preferredCities");
 
+                      // Also carry the first selected city's coordinates as
+                      // the real, top-level latitude/longitude/radius —
+                      // previously nothing set these during onboarding at
+                      // all, so a fresh account had no working feed
+                      // distance-filter center point until the person
+                      // separately used the location filter later.
+                      final firstCity = cityRadiusData.isNotEmpty ? cityRadiusData.first : null;
+
                       // ✅ Navigate to AdditionalInfo with city data
                       Navigator.push(
                         context,
@@ -220,6 +250,11 @@ class _CityPreferenceState extends State<CityPreference> {
                           type: PageTransitionType.rightToLeftWithFade,
                           child: AdditionalInfoScreen(
                             preferredCities: preferredCities,
+                            latitude: firstCity?['latitude'] as double?,
+                            longitude: firstCity?['longitude'] as double?,
+                            radius: firstCity != null
+                                ? (firstCity['radius'] as num).toDouble()
+                                : null,
                           ),
                           duration: const Duration(milliseconds: 500),
                         ),
@@ -313,6 +348,76 @@ class _CityPreferenceState extends State<CityPreference> {
                                     ),
 
                                     SizedBox(height: size.height * 2 / 100),
+
+                                    // All Cities — the client's own ask:
+                                    // "he needs 'all city option' not the
+                                    // active/preferred cities". Prominent,
+                                    // full-width, above the search bar so
+                                    // it's the first real choice offered.
+                                    GestureDetector(
+                                      onTap: () {
+                                        searchController.clear();
+                                        controller.selectAllCities();
+                                      },
+                                      child: Container(
+                                        width: size.width * 95 / 100,
+                                        padding: EdgeInsets.symmetric(
+                                            vertical: size.height * 1.6 / 100),
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                          BorderRadius.circular(_cityChipRadius),
+                                          gradient: controller.isAllCitiesSelected
+                                              ? LinearGradient(colors: [
+                                            AppColor.pinkColor,
+                                            AppColor.pinkColor.withOpacity(0.7),
+                                          ])
+                                              : null,
+                                          color: controller.isAllCitiesSelected
+                                              ? null
+                                              : AppColor.filledcolor(context),
+                                          border: Border.all(
+                                            color: controller.isAllCitiesSelected
+                                                ? AppColor.pinkColor
+                                                : AppColor.secondryColor(context)
+                                                .withOpacity(0.2),
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                          children: [
+                                            Icon(
+                                              Icons.public,
+                                              size: 18,
+                                              color: controller.isAllCitiesSelected
+                                                  ? Colors.white
+                                                  : AppColor.secondryColor(context),
+                                            ),
+                                            SizedBox(width: size.width * 2 / 100),
+                                            Text(
+                                              "All Cities",
+                                              style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontSize: 15,
+                                                fontWeight: FontWeight.w600,
+                                                color: controller.isAllCitiesSelected
+                                                    ? Colors.white
+                                                    : AppColor.secondryColor(
+                                                    context),
+                                              ),
+                                            ),
+                                            if (controller.isAllCitiesSelected) ...[
+                                              SizedBox(width: size.width * 2 / 100),
+                                              const Icon(Icons.check_circle,
+                                                  size: 16,
+                                                  color: Colors.white),
+                                            ],
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: size.height * 1.5 / 100),
 
                                     // Search Field
                                     Container(

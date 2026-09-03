@@ -15,6 +15,52 @@ class CityPreferenceController with ChangeNotifier {
   List<Map<String, dynamic>> _selectedCities = [];
   List<Map<String, dynamic>> get getSelectedCities => _selectedCities;
 
+  // "All Cities" — lets a new member skip picking specific cities
+  // entirely, instead of being forced to choose from a fixed list. Backend
+  // has no dedicated flag for this; it's represented as a single large
+  // radius around an anchor point, which is exactly what the real feed
+  // distance-filter in manageController.js already reads
+  // (user.latitude/longitude/radius) — no schema change needed.
+  static const double allCitiesRadiusKm = 5000.0;
+
+  bool _allCitiesSelected = false;
+  bool get isAllCitiesSelected => _allCitiesSelected;
+
+  /// Picks "All Cities" instead of specific ones. Clears any individual
+  /// selections and skips the per-city radius configuration step — fine-
+  /// tuning a radius doesn't make sense when the point is "show me
+  /// everything".
+  void selectAllCities() {
+    _allCitiesSelected = true;
+    _selectedCities.clear();
+    _cityRadiusData.clear();
+    _currentCityIndex = 0;
+    notifyListeners();
+  }
+
+  /// Reverts back to picking specific cities (e.g. the user taps a city
+  /// chip after having chosen "All Cities").
+  void clearAllCitiesSelection() {
+    _allCitiesSelected = false;
+    notifyListeners();
+  }
+
+  /// A representative anchor point for the "All Cities" radius — the
+  /// first city in the loaded list if available, otherwise the
+  /// geographic center of India as a safe fallback so the request always
+  /// has *some* real coordinates to send.
+  Map<String, double> get allCitiesAnchor {
+    if (_cityList.isNotEmpty) {
+      final first = _cityList.first;
+      final lat = double.tryParse(first['latitude']?.toString() ?? '');
+      final lng = double.tryParse(first['longitude']?.toString() ?? '');
+      if (lat != null && lng != null) {
+        return {'latitude': lat, 'longitude': lng};
+      }
+    }
+    return {'latitude': 22.9734, 'longitude': 78.6569}; // Center of India
+  }
+
   // Current city index for map view (which city is being configured)
   int _currentCityIndex = 0;
   int get getCurrentCityIndex => _currentCityIndex;
@@ -163,6 +209,9 @@ class CityPreferenceController with ChangeNotifier {
 
   // Toggle city selection (max 4)
   void toggleCitySelection(Map<String, dynamic> city) {
+    // Picking a specific city overrides "All Cities".
+    _allCitiesSelected = false;
+
     int index = _selectedCities.indexWhere((c) => c['_id'] == city['_id']);
 
     if (index != -1) {
@@ -174,7 +223,7 @@ class CityPreferenceController with ChangeNotifier {
       // Reset configuration if removing affects current index
       if (_currentCityIndex >= _selectedCities.length) {
         _currentCityIndex =
-            _selectedCities.isEmpty ? 0 : _selectedCities.length - 1;
+        _selectedCities.isEmpty ? 0 : _selectedCities.length - 1;
       }
     } else {
       // City not selected, add if less than 4
@@ -246,7 +295,7 @@ class CityPreferenceController with ChangeNotifier {
       'selected_city_ids': getSelectedCityIds(),
       'selected_city_names': getSelectedCityNames(),
       'city_radius_data':
-          getAllCityRadiusData(), // List of all cities with their radius data
+      getAllCityRadiusData(), // List of all cities with their radius data
     };
   }
 
@@ -257,6 +306,7 @@ class CityPreferenceController with ChangeNotifier {
     _currentCityIndex = 0;
     _currentDistance = 1.0;
     _isBroadened = false;
+    _allCitiesSelected = false;
     notifyListeners();
   }
 
@@ -268,6 +318,7 @@ class CityPreferenceController with ChangeNotifier {
     _currentCityIndex = 0;
     _currentDistance = 1.0;
     _isBroadened = false;
+    _allCitiesSelected = false;
     _isLoading = false;
     notifyListeners();
   }
