@@ -951,7 +951,15 @@ class _VenuePagesState extends State<VenuePages> {
                                 children: [
                                   Container(
                                     child: Text(
-                                      AppLanguage.TicketText[language],
+                                      // FIXED: was AppLanguage.TicketText
+                                      // ("Tickets") here — this section
+                                      // shows venue table-reservation
+                                      // pricing (tickets['reservation_fee']
+                                      // above), not an event ticket. Per
+                                      // the client's own wording rule:
+                                      // Events say Tickets, Venues say
+                                      // Reservations.
+                                      AppLanguage.reservationsText[language],
                                       style: TextStyle(
                                         fontSize: 16,
                                         fontFamily: AppFont.fontFamily,

@@ -451,45 +451,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (hasAssignedTicket) ...[
-                    GestureDetector(
-                      onTap: () {
-                        if (isEnded) {
-                          SnackBarToastMessage.info(
-                              context, "This event has ended");
-                          return;
-                        }
-                        Navigator.push(
-                          context,
-                          PageTransition(
-                            type: PageTransitionType.rightToLeftWithFade,
-                            child: BookEvent(eventId: widget.eventId),
-                            duration: const Duration(milliseconds: 500),
-                          ),
-                        );
-                      },
-                      child: Container(
-                        width: size.width * 0.9,
-                        height: 52,
-                        decoration: BoxDecoration(
-                          color: isEnded ? AppColor.textcolor : Colors.white,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Center(
-                          child: Text(
-                            AppLanguage.BookNowText[language],
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w600,
-                              color: AppColor.pinkColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                  ],
+                  // FIXED: this floating "Book Now" duplicated the one
+                  // already inside the Tickets card below — same label,
+                  // same action (BookEvent), just stacked immediately on
+                  // top of each other with barely any gap once scrolled
+                  // to the bottom, which read as a broken/duplicated
+                  // layout rather than two intentional buttons. The
+                  // in-card one already covers this action in context;
+                  // the floating bar now only carries the persistent
+                  // swipe actions (reject/invite/like).
                   Container(
                     decoration: BoxDecoration(
                       color:
@@ -1774,19 +1744,18 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   ],
                                 ),
                               ),
-                              // Reserves space for the floating Book Now +
+                              // Reserves space for the floating
                               // reject/invite/heart bar, which sits fixed
                               // on top of this scroll view via
-                              // Scaffold.floatingActionButton. The old
-                              // fixed 12%-of-screen-height spacer here
-                              // undershot the bar's real height (Book Now
-                              // button + spacing + action row + bottom
-                              // safe-area padding), so the ticket price
-                              // panel and anything after it could end up
-                              // hidden underneath it.
+                              // Scaffold.floatingActionButton. (The
+                              // duplicate floating Book Now button that
+                              // used to sit above this bar was removed —
+                              // see the comment at the top of
+                              // floatingActionButton above — so this no
+                              // longer needs the variable hasAssignedTicket
+                              // term it used to.)
                               SizedBox(
-                                height: (hasAssignedTicket ? 62.0 : 0.0) +
-                                    74.0 +
+                                height: 74.0 +
                                     16.0 +
                                     MediaQuery.of(context).padding.bottom +
                                     24.0,

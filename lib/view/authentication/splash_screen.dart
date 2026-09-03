@@ -155,7 +155,11 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _checkLoginStatus() async {
-    await Future.delayed(const Duration(seconds: 1));
+    // Was 1 second — the logo GIF's own natural playback is 1.87s (28
+    // frames, measured directly from assets/icons/newsplashgif.gif), so
+    // the animation was being cut off mid-loop before anyone finished
+    // seeing it. 2.2s gives it room to complete with a small buffer.
+    await Future.delayed(const Duration(milliseconds: 2200));
 
     // Request location on app start
     LocationService.requestAndGetLocation().then((position) {

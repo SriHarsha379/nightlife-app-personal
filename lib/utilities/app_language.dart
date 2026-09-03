@@ -450,6 +450,7 @@ class AppLanguage {
   static const appPreferences = ["App Preferences"];
   static const supportText = ["Support"];
   static const aboutText = ["About"];
+  static const aboutUsText = ["About Us"];
   static const deletetext = ["Delete"];
   static const recentFriends = ["Recent friends"];
   static const myspacetext = ["My Space"];
@@ -824,6 +825,7 @@ class AppLanguage {
 
 //09
   static const referaFriText = ["Refer a Friend"];
+  static const darkModeText = ["Dark Mode"];
   static const privacypoliciesText = ["Privacy Policies"];
 
   //============chat support===========//

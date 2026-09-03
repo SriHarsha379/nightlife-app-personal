@@ -27,10 +27,11 @@ import '../../utilities/url_utils.dart';
 import '../other/advertisement_popup.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
+import '../other/MySplashSection/VenuesSection/venues_map_screen.dart';
 import '../other/poll_popup.dart';
 import '../other/contest_popup.dart';
-import '../../controller/polls/poll_controller.dart';
-import '../../controller/contests/contest_controller.dart';
+import '../../controller/poll/poll_controller.dart';
+import '../../controller/contest/contest_controller.dart';
 
 class Home extends StatefulWidget {
   static String routeName = './Home';
@@ -323,14 +324,22 @@ class _HomeState extends State<Home> {
     }
 
     final polls = pollController.activePolls;
-    if (polls.isEmpty) {
+    // Client's exact ask: polls should only repeat if the user hasn't
+    // participated yet. Previously any active poll could be picked here,
+    // including ones the user already voted on — the popup would still
+    // technically work (it opens straight into results, per PollData's
+    // alreadyVoted handling), but it kept resurfacing polls that were
+    // already answered instead of skipping to something fresh or simply
+    // not showing anything once everything's been voted on.
+    final unvotedPolls = polls.where((p) => !p.alreadyVoted).toList();
+    if (unvotedPolls.isEmpty) {
       _isShowingPopup = false;
       return;
     }
 
     await PopupManager.recordPollShown();
 
-    final poll = polls[_totalSwipeCount % polls.length];
+    final poll = unvotedPolls[_totalSwipeCount % unvotedPolls.length];
     await PollPopup.show(
       context,
       poll,
@@ -1515,6 +1524,69 @@ class _HomeState extends State<Home> {
                     height: MediaQuery.of(context).size.height * 2 / 100,
                   ),
 
+                  // "Venues – map is missing" — venues could only ever be
+                  // browsed as a swipe deck, no way to see where they
+                  // actually are. Only shown on the Venues tab; reuses the
+                  // exact list already loaded for the swipe deck rather
+                  // than a separate fetch.
+                  if (selectedId == 3)
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                          horizontal: size.width * 4 / 100),
+                      child: Align(
+                        alignment: Alignment.centerRight,
+                        child: GestureDetector(
+                          onTap: () {
+                            final homeController = Provider.of<HomeController>(
+                                context,
+                                listen: false);
+                            Navigator.push(
+                              context,
+                              PageTransition(
+                                type: PageTransitionType.rightToLeftWithFade,
+                                child: VenuesMapScreen(
+                                  venues: homeController.getVenuesList,
+                                ),
+                                duration: const Duration(milliseconds: 500),
+                              ),
+                            );
+                          },
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color: AppColor.filledcolor(context),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                color: AppColor.secondryColor(context)
+                                    .withOpacity(0.2),
+                              ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.map_outlined,
+                                    size: 15,
+                                    color: AppColor.secondryColor(context)),
+                                const SizedBox(width: 6),
+                                Text(
+                                  "Map View",
+                                  style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w600,
+                                    color: AppColor.secondryColor(context),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (selectedId == 3)
+                    SizedBox(height: size.height * 1 / 100),
+
                   //! Loading Indicator
                   if (homeController.getIsLoading)
                     Expanded(
@@ -1690,8 +1762,19 @@ class _HomeState extends State<Home> {
                                                 .right);
                                       },
                                       bio: member['bio'] ?? '',
-                                      vibes: List<String>.from(
-                                          member['vibes'] ?? []),
+                                      // FIXED: HomeWidget.membersCard's
+                                      // parameter was renamed from `vibes`
+                                      // to `musicGenres` when vibe-check
+                                      // display was replaced with music
+                                      // genres — this call site was never
+                                      // updated, so it referenced a
+                                      // parameter that no longer exists at
+                                      // all (compile error) and read the
+                                      // wrong API field (member['vibes']
+                                      // isn't sent by the backend anymore;
+                                      // it sends member['music_genres']).
+                                      musicGenres: List<String>.from(
+                                          member['music_genres'] ?? []),
                                       distance: member[
                                       'distance_km'] !=
                                           null

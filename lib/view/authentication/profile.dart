@@ -9,6 +9,9 @@ import 'package:night_life/view/authentication/support_screen.dart';
 import 'package:night_life/controller/my_profile/profile_indicator_controller.dart';
 import 'package:night_life/view/other/about/aboutscreen.dart';
 import 'package:night_life/view/other/referafriend_screen.dart';
+import 'package:night_life/view/other/contact_us_screen.dart';
+import 'package:night_life/view/content_screen/content_screen.dart';
+import 'package:night_life/provider/content_service.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../animation/purple_screen.dart';
@@ -35,6 +38,15 @@ class Profile extends StatefulWidget {
 }
 
 class _ProfileState extends State<Profile> {
+  // About Us (content_type 0) / Terms & Conditions (content_type 2) —
+  // the backend already has a working CMS for these (Content model +
+  // common/get_content), and ContentScreen already knows how to render
+  // a content_url (used for Privacy Policy/T&C from the Login screen) —
+  // this was just never linked to from the Profile page, and About Us
+  // specifically wasn't displayed anywhere in the app at all.
+  String _aboutUsContentUrl = '';
+  String _termsContentUrl = '';
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +56,21 @@ class _ProfileState extends State<Profile> {
           .read<MyProfleCompltetionController>()
           .fetchMyProfleCompltetion(context);
     });
+    _loadLegalContent();
+  }
+
+  void _loadLegalContent() {
+    fetchAllContent((List data) {
+      if (!mounted) return;
+      for (var item in data) {
+        if (item['content_type'] == 0) {
+          setState(() => _aboutUsContentUrl = item['content_url'] ?? '');
+        }
+        if (item['content_type'] == 2) {
+          setState(() => _termsContentUrl = item['content_url'] ?? '');
+        }
+      }
+    });
   }
 
   @override
@@ -51,11 +78,11 @@ class _ProfileState extends State<Profile> {
     final isLoggingOut = context.watch<PostApiProvider>().secondaryLoading;
     final userController = context.watch<UserController>();
     final profileCompletionController =
-        context.watch<MyProfleCompltetionController>();
+    context.watch<MyProfleCompltetionController>();
     final profileCompletionPercent =
         profileCompletionController.profileCompletionPercentage;
     final profileCompletionValue =
-        (profileCompletionPercent.clamp(0, 100) / 100.0);
+    (profileCompletionPercent.clamp(0, 100) / 100.0);
     final profileImageSize = MediaQuery.of(context).size.width * 33 / 100;
     final completionTasks = profileCompletionController.completionMessages;
     final fallbackTasks = [
@@ -65,7 +92,7 @@ class _ProfileState extends State<Profile> {
       // AppLanguage.addHobbyText[language],
     ];
     final tasksToShow =
-        completionTasks.isNotEmpty ? completionTasks : fallbackTasks;
+    completionTasks.isNotEmpty ? completionTasks : fallbackTasks;
     final completionText = profileCompletionController.hasLoadedOnce
         ? '$profileCompletionPercent% complete'
         : AppLanguage.seventySevencompleteText[language];
@@ -76,8 +103,8 @@ class _ProfileState extends State<Profile> {
     final hasNetworkImage = profileImage.isNotEmpty;
     final profileImageUrl = hasNetworkImage
         ? (profileImage.startsWith('http')
-            ? profileImage
-            : '${AppConfigProvider.imageUrl}$profileImage')
+        ? profileImage
+        : '${AppConfigProvider.imageUrl}$profileImage')
         : '';
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDark = themeProvider.isDarkMode;
@@ -124,7 +151,7 @@ class _ProfileState extends State<Profile> {
                                   context,
                                   PageTransition(
                                     type:
-                                        PageTransitionType.rightToLeftWithFade,
+                                    PageTransitionType.rightToLeftWithFade,
                                     child: const EditProfile(),
                                     duration: const Duration(milliseconds: 500),
                                   ),
@@ -134,7 +161,7 @@ class _ProfileState extends State<Profile> {
                                 children: [
                                   Container(
                                     margin:
-                                        const EdgeInsets.only(top: 15, left: 5),
+                                    const EdgeInsets.only(top: 15, left: 5),
                                     width: profileImageSize + 8,
                                     height: profileImageSize + 12,
                                     decoration: const BoxDecoration(
@@ -157,7 +184,7 @@ class _ProfileState extends State<Profile> {
                                               height: profileImageSize + 10,
                                               child: CustomPaint(
                                                 painter:
-                                                    GradientCircularProgressPainter(
+                                                GradientCircularProgressPainter(
                                                   progress: value,
                                                   strokeWidth: 8,
                                                   gradientColors: const [
@@ -185,20 +212,20 @@ class _ProfileState extends State<Profile> {
                                           child: ClipOval(
                                             child: hasNetworkImage
                                                 ? Image.network(
-                                                    profileImageUrl,
-                                                    fit: BoxFit.cover,
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return Image.asset(
-                                                        AppImage.userprofile,
-                                                        fit: BoxFit.cover,
-                                                      );
-                                                    },
-                                                  )
+                                              profileImageUrl,
+                                              fit: BoxFit.cover,
+                                              errorBuilder: (context,
+                                                  error, stackTrace) {
+                                                return Image.asset(
+                                                  AppImage.userprofile,
+                                                  fit: BoxFit.cover,
+                                                );
+                                              },
+                                            )
                                                 : Image.asset(
-                                                    AppImage.placeHolder2Icon,
-                                                    fit: BoxFit.cover,
-                                                  ),
+                                              AppImage.placeHolder2Icon,
+                                              fit: BoxFit.cover,
+                                            ),
                                           ),
                                         ),
                                       ],
@@ -225,15 +252,15 @@ class _ProfileState extends State<Profile> {
                                     SizedBox(
                                         height: profileCompletionPercent == 100
                                             ? MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                7 /
-                                                100
+                                            .size
+                                            .height *
+                                            7 /
+                                            100
                                             : MediaQuery.of(context)
-                                                    .size
-                                                    .height *
-                                                1 /
-                                                100),
+                                            .size
+                                            .height *
+                                            1 /
+                                            100),
                                     Text(
                                       fullName,
                                       maxLines: 1,
@@ -247,22 +274,22 @@ class _ProfileState extends State<Profile> {
                                     ),
                                     SizedBox(
                                         height:
-                                            MediaQuery.of(context).size.height *
-                                                2 /
-                                                100),
+                                        MediaQuery.of(context).size.height *
+                                            2 /
+                                            100),
                                     ...List.generate(tasksToShow.length,
-                                        (index) {
-                                      const colors = [
-                                        Colors.pinkAccent,
-                                        Colors.orangeAccent,
-                                        Colors.purpleAccent,
-                                        Colors.redAccent,
-                                      ];
-                                      return buildTaskRow(
-                                        tasksToShow[index],
-                                        colors[index % colors.length],
-                                      );
-                                    }),
+                                            (index) {
+                                          const colors = [
+                                            Colors.pinkAccent,
+                                            Colors.orangeAccent,
+                                            Colors.purpleAccent,
+                                            Colors.redAccent,
+                                          ];
+                                          return buildTaskRow(
+                                            tasksToShow[index],
+                                            colors[index % colors.length],
+                                          );
+                                        }),
                                   ],
                                 ),
                               ),
@@ -322,7 +349,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingprofile,
                             title: AppLanguage.accountSetting[language],
@@ -339,7 +366,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingsecurity,
                             title: AppLanguage.privacyPolicyText[language],
@@ -356,7 +383,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingNotification,
                             title: AppLanguage.notificationText[language],
@@ -373,7 +400,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingApppreference,
                             title: AppLanguage.appPreferences[language],
@@ -390,7 +417,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.referIcon,
                             title: AppLanguage.referaFriText[language],
@@ -407,7 +434,85 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
+                          // Dark/Light theme — ThemeProvider was already
+                          // fully built (persistence, MaterialApp wiring,
+                          // isDarkMode read across 15+ screens) but had no
+                          // UI control anywhere that actually called
+                          // toggleTheme().
+                          SettingSwitchRow(
+                            leadingIcon: AppImage.settingApppreference,
+                            title: AppLanguage.darkModeText[language],
+                            value: themeProvider.isDarkMode,
+                            onChanged: (isOn) => themeProvider.toggleTheme(isOn),
+                          ),
+                          SizedBox(
+                              height:
+                              MediaQuery.of(context).size.height * 2 / 100),
+                          // About Us / Terms & Conditions / Contact Us —
+                          // client's own ask, explicitly suggested for the
+                          // profile page. About Us content wasn't
+                          // displayed anywhere in the app before this;
+                          // Terms & Conditions reuses the same
+                          // ContentScreen already used for Privacy Policy
+                          // on the Login screen, just not linked from here.
+                          SettingRow(
+                            leadingIcon: AppImage.blacksettingAbout,
+                            title: AppLanguage.aboutUsText[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: ContentScreen(
+                                    contenttype: _aboutUsContentUrl,
+                                    header: AppLanguage.aboutUsText[language],
+                                  ),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                              height:
+                              MediaQuery.of(context).size.height * 2 / 100),
+                          SettingRow(
+                            leadingIcon: AppImage.blacksettingAbout,
+                            title: AppLanguage.termsConditionText[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: ContentScreen(
+                                    contenttype: _termsContentUrl,
+                                    header: AppLanguage.termsConditionText[language],
+                                  ),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                              height:
+                              MediaQuery.of(context).size.height * 2 / 100),
+                          SettingRow(
+                            leadingIcon: AppImage.blacksettingSupport,
+                            title: AppLanguage.contactUsText[language],
+                            onPress: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.rightToLeftWithFade,
+                                  child: const ContactUsScreen(),
+                                  duration: const Duration(milliseconds: 500),
+                                ),
+                              );
+                            },
+                          ),
+                          SizedBox(
+                              height:
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingSupport,
                             title: AppLanguage.supportText[language],
@@ -424,7 +529,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blacksettingAbout,
                             title: AppLanguage.aboutText[language],
@@ -441,7 +546,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 2 / 100),
+                              MediaQuery.of(context).size.height * 2 / 100),
                           SettingRow(
                             leadingIcon: AppImage.blackdeleteIcon,
                             title: AppLanguage.deleteAccounttext[language],
@@ -451,7 +556,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 3 / 100),
+                              MediaQuery.of(context).size.height * 3 / 100),
                           GestureDetector(
                             onTap: () async {
                               final apiProvider = Provider.of<PostApiProvider>(
@@ -469,12 +574,12 @@ class _ProfileState extends State<Profile> {
                                   ),
                                   duration: const Duration(milliseconds: 400),
                                 ),
-                                (route) => false,
+                                    (route) => false,
                               );
                             },
                             child: Container(
                               width:
-                                  MediaQuery.of(context).size.width * 90 / 100,
+                              MediaQuery.of(context).size.width * 90 / 100,
                               padding: const EdgeInsets.symmetric(
                                   horizontal: 10, vertical: 18),
                               decoration: BoxDecoration(
@@ -512,7 +617,7 @@ class _ProfileState extends State<Profile> {
                           ),
                           SizedBox(
                               height:
-                                  MediaQuery.of(context).size.height * 4 / 100),
+                              MediaQuery.of(context).size.height * 4 / 100),
                         ],
                       ),
                     ],
@@ -575,7 +680,7 @@ class _ProfileState extends State<Profile> {
         return ActionBottomSheet(
           heading: "Are you sure?",
           subheading:
-              "After deleting the account, the same mobile number cannot be used to log in. This action cannot be undone.",
+          "After deleting the account, the same mobile number cannot be used to log in. This action cannot be undone.",
           otherButton: "Cancel",
           mainButton: "Delete",
           onTapOtherButton: () {
