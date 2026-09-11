@@ -33,13 +33,16 @@ Future<Map<String, dynamic>?> _handleRequest(
     String endpoint,
     BuildContext? context, {
       Map<String, String>? headers,
+      bool skipAuth = false,
     }) async {
   try {
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
 
     print("URL: $url");
 
-    Map<String, String> requestHeaders = await _prepareRequestHeaders(
+    Map<String, String> requestHeaders = skipAuth
+        ? Map<String, String>.from(headers ?? {})
+        : await _prepareRequestHeaders(
       headers ?? {},
       context,
     );
@@ -49,7 +52,7 @@ Future<Map<String, dynamic>?> _handleRequest(
     http.Response response = await requestFn(url, requestHeaders);
 
     // Retry once if token expired
-    if (response.statusCode == 401 || response.statusCode == 403) {
+    if (!skipAuth && (response.statusCode == 401 || response.statusCode == 403)) {
       final didRefresh = await SessionManager.tryRefreshSession();
 
       if (didRefresh) {
@@ -402,6 +405,7 @@ Future<Map<String, dynamic>?> postJsonData(
     Map<String, dynamic> jsonData,
     BuildContext? context, {
       Map<String, String>? headers,
+      bool skipAuth = false,
     }) async {
   return _handleRequest(
         (url, h) => http.post(
@@ -416,6 +420,7 @@ Future<Map<String, dynamic>?> postJsonData(
     endpoint,
     context,
     headers: headers,
+    skipAuth: skipAuth,
   );
 }
 

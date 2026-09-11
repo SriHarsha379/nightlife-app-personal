@@ -25,11 +25,27 @@ import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'view/other/chats/chat_message_screen.dart';
 import 'firebase_options.dart';
 
+/// Initializes Firebase, tolerating the case where Android's native
+/// Firebase SDK has already auto-created the "[DEFAULT]" app from
+/// google-services.json before this Dart code runs. In that situation
+/// Firebase.initializeApp() throws a FirebaseException with code
+/// 'duplicate-app', which is harmless here (the app already exists and is
+/// perfectly usable) so it's swallowed rather than pre-checking
+/// Firebase.apps.isEmpty, which isn't reliably in sync with native state
+/// at this point in startup.
+Future<void> _initializeFirebaseIfNeeded() async {
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } on FirebaseException catch (e) {
+    if (e.code != 'duplicate-app') rethrow;
+  }
+}
+
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  await _initializeFirebaseIfNeeded();
   await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
   final String? title = message.notification?.title?.trim();
@@ -53,9 +69,12 @@ Future<void> main() async {
       debugPrint('FlutterError caught: ${details.exceptionAsString()}');
     };
 
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    // On Android, the Firebase Android SDK auto-initializes a "[DEFAULT]"
+    // app natively from google-services.json before this Dart code ever
+    // runs. Checking Firebase.apps.isEmpty first isn't reliable here (the
+    // Dart-side cache isn't guaranteed to reflect that native app yet), so
+    // catch the specific duplicate-app exception instead of pre-checking.
+    await _initializeFirebaseIfNeeded();
     await FirebaseMessaging.instance
         .setForegroundNotificationPresentationOptions(
       alert: true,

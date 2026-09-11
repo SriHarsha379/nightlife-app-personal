@@ -6,7 +6,6 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/view_all_events.dart';
-import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -729,31 +728,6 @@ class _Profile1State extends State<Profile1> {
                       ),
                       SizedBox(height: size.height * 0.02),
 
-                      //! Vibes Section
-                      Text(
-                        AppLanguage.vibe[language],
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.secondryColor(context)),
-                      ),
-                      SizedBox(height: size.height * 0.01),
-                      _buildVibesSection(context, profileController),
-                      SizedBox(height: size.height * 0.01),
-                      ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(30),
-                          top: Radius.circular(30),
-                        ),
-                        child: Image.asset(
-                          AppImage.lineIcon,
-                          fit: BoxFit.cover,
-                          color: AppColor.secondryColor(context),
-                        ),
-                      ),
-                      SizedBox(height: size.height * 0.02),
-
                       //! Gallery Section
                       Text(
                         AppLanguage.GalleryText[language],
@@ -965,145 +939,6 @@ class _Profile1State extends State<Profile1> {
                 ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
-
-  Widget _buildVibesSection(
-      BuildContext context, ProfileController controller) {
-    // Curated Vibe collection removed - `vibes` and `customVibes` are now
-    // both just plain free-text strings from the backend (in fact the
-    // same content), so this just dedupes them into a flat name list
-    // instead of the old {name, image}-object handling.
-    final Set<String> allVibeNames = {
-      ...controller.vibes.map((v) => v.toString()),
-      ...controller.getCustomVibeNames(),
-    }..removeWhere((name) => name.isEmpty);
-
-    final allItems = allVibeNames
-        .map((name) => {'name': name, 'image': ''})
-        .toList();
-
-    return SizedBox(
-      height: 100,
-      child: ListView.separated(
-        scrollDirection: Axis.horizontal,
-        padding: EdgeInsets.zero,
-        itemCount: allItems.length + 1,
-        separatorBuilder: (_, __) => const SizedBox(width: 10),
-        itemBuilder: (context, index) {
-          if (index == 0) {
-            return Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      PageTransition(
-                        type: PageTransitionType.rightToLeftWithFade,
-                        child: EditVibePreference(
-                          initialVibes: allVibeNames.toList(),
-                        ),
-                        duration: const Duration(milliseconds: 400),
-                      ),
-                    );
-                  },
-                  child: Container(
-                    width: 50,
-                    height: 50,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColor.themeColor,
-                    ),
-                    child: const Center(
-                      child: Icon(
-                        Icons.add,
-                        color: Colors.white,
-                        size: 32,
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 8),
-                SizedBox(
-                  width: 70,
-                  child: Text(
-                    'Add new',
-                    textAlign: TextAlign.center,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 11.5,
-                      fontFamily: AppFont.fontFamily,
-                      fontWeight: FontWeight.w400,
-                      color: AppColor.secondryColor(context),
-                    ),
-                  ),
-                ),
-              ],
-            );
-          }
-
-          final item = allItems[index - 1];
-          final name = item['name'] ?? '';
-          final imageUrl = item['image'] ?? '';
-
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Container(
-                width: 50,
-                height: 50,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: AppColor.themeColor,
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: imageUrl.isNotEmpty
-                      ? ClipRRect(
-                    borderRadius: BorderRadius.circular(22),
-                    child: Image.network(
-                      imageUrl,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) {
-                        return Icon(
-                          Icons.music_note,
-                          size: 15,
-                          color: AppColor.secondryColor(context)
-                              .withOpacity(0.3),
-                        );
-                      },
-                    ),
-                  )
-                      : Icon(
-                    Icons.music_note,
-                    size: 15,
-                    color:
-                    AppColor.secondryColor(context).withOpacity(0.3),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 8),
-              SizedBox(
-                width: 70,
-                child: Text(
-                  name,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 11.5,
-                    fontFamily: AppFont.fontFamily,
-                    fontWeight: FontWeight.w400,
-                    color: AppColor.secondryColor(context),
-                  ),
-                ),
-              ),
-            ],
           );
         },
       ),
