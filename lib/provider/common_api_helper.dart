@@ -4,7 +4,9 @@ import 'dart:developer';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart' as http_parser;
 import 'package:image_picker/image_picker.dart';
+import 'package:mime/mime.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 
@@ -31,7 +33,6 @@ Future<Map<String, dynamic>?> _handleRequest(
     String endpoint,
     BuildContext? context, {
       Map<String, String>? headers,
-      bool skipAuth = false,
     }) async {
   try {
     final Uri url = Uri.parse("${AppConfigProvider.apiUrl}$endpoint");
@@ -41,7 +42,6 @@ Future<Map<String, dynamic>?> _handleRequest(
     Map<String, String> requestHeaders = await _prepareRequestHeaders(
       headers ?? {},
       context,
-      skipAuth: skipAuth,
     );
 
     print("REQUEST HEADERS: $requestHeaders");
@@ -81,9 +81,8 @@ Future<Map<String, dynamic>?> _handleRequest(
 
 Future<Map<String, String>> _prepareRequestHeaders(
     Map<String, String> headers,
-    BuildContext? context, {
-      bool skipAuth = false,
-    }) async {
+    BuildContext? context,
+    ) async {
   final requestHeaders = Map<String, String>.from(headers);
 
   // ── Baseline headers to prevent Imunify360 bot-detection ──
@@ -95,13 +94,9 @@ Future<Map<String, String>> _prepareRequestHeaders(
   requestHeaders.putIfAbsent('Accept', () => 'application/json');
   requestHeaders.putIfAbsent(
     'X-Requested-With',
-        () => 'com.davisantony.nightlife',
+        () => 'com.example.nightLife',
   );
   // ──────────────────────────────────────────────────────────
-
-  if (skipAuth) {
-    return requestHeaders;
-  }
 
   try {
     // ── Token priority: backend JWT > Firebase token ──
@@ -232,8 +227,7 @@ Future<Map<String, dynamic>?> _handleStatusCode(
   }
 
   if (statusCode == 401 || statusCode == 403 || statusCode == 423) {
-    final isLogout = response.request?.url.toString().contains('auth/logout') ?? false;
-    if (context != null && !isLogout) {
+    if (context != null) {
       await _redirectToLogin(
         context,
         _getErrorMessage(body),
@@ -408,9 +402,7 @@ Future<Map<String, dynamic>?> postJsonData(
     Map<String, dynamic> jsonData,
     BuildContext? context, {
       Map<String, String>? headers,
-      bool skipAuth = false,
     }) async {
-  print("POST BODY for $endpoint: ${jsonEncode(jsonData)}"); // TEMP DEBUG
   return _handleRequest(
         (url, h) => http.post(
       url,
@@ -424,7 +416,6 @@ Future<Map<String, dynamic>?> postJsonData(
     endpoint,
     context,
     headers: headers,
-    skipAuth: skipAuth,
   );
 }
 
@@ -454,10 +445,31 @@ Future<Map<String, dynamic>?> postMultipartData(
       for (var entry in files.entries) {
         List<int> imageBytes = await entry.value.readAsBytes();
 
+        // Detect the real mime type from the picked file's path/bytes instead
+        // of assuming JPEG. Falls back to image/jpeg only if detection fails.
+        final String? detectedMimeType =
+            lookupMimeType(entry.value.path, headerBytes: imageBytes) ??
+                entry.value.mimeType;
+        final String mimeType = detectedMimeType ?? 'image/jpeg';
+
+        // Prefer the picked file's own name (it already has the right
+        // extension). Only fall back to building one from the mime type.
+        final String originalName = entry.value.name.isNotEmpty
+            ? entry.value.name
+            : entry.value.path.split('/').last;
+        String filename = originalName;
+        if (!originalName.contains('.')) {
+          final String subtype =
+          mimeType.contains('/') ? mimeType.split('/').last : 'jpeg';
+          final String extension = subtype == 'jpg' ? 'jpeg' : subtype;
+          filename = '${entry.key}.$extension';
+        }
+
         http.MultipartFile imageFile = http.MultipartFile.fromBytes(
           entry.key,
           imageBytes,
-          filename: '${entry.key}.jpg',
+          filename: filename,
+          contentType: http_parser.MediaType.parse(mimeType),
         );
 
         request.files.add(imageFile);
@@ -466,9 +478,6 @@ Future<Map<String, dynamic>?> postMultipartData(
 
     final streamedResponse = await request.send();
     final response = await http.Response.fromStream(streamedResponse);
-    print("MULTIPART URL: $url");
-    print("MULTIPART STATUS CODE: ${response.statusCode}");
-    print("MULTIPART RESPONSE BODY: ${response.body}");
 
     return _handleStatusCode(
       response,

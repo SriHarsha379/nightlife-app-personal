@@ -4,7 +4,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:image_cropper/image_cropper.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:share_plus/share_plus.dart';
@@ -182,7 +181,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
         emailController.text,
         mobileNumberTextEditingController.text,
         passwordTextEditingController.text,
-        _formatDobForApi(dobtexteditingController.text),
+        dobtexteditingController.text,
         selectedGender.toString(),
         heightTextEditingController.text,
         selectedCityId.toString(),
@@ -246,38 +245,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   String selectDate = '';
   TextEditingController birthTextEditingController = TextEditingController();
 
-  Widget _buildPasswordRule(String label, bool met) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 3),
-      child: Row(
-        children: [
-          Icon(
-            met ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-            size: 13,
-            color: met ? Colors.greenAccent : Colors.white38,
-          ),
-          const SizedBox(width: 6),
-          Text(
-            label,
-            style: TextStyle(
-              fontSize: 11,
-              color: met ? Colors.greenAccent : Colors.white54,
-              fontFamily: AppFont.fontFamily,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  String _formatDobForApi(String dob) {
-    final parts = dob.split('/');
-    if (parts.length == 3 && parts[2].length == 4) {
-      return '${parts[2]}-${parts[1]}-${parts[0]}'; // DD/MM/YYYY → YYYY-MM-DD
-    }
-    return dob;
-  }
-
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -300,28 +267,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
               children: [
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 4 / 100,
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width * 90 / 100,
-                  child: Align(
-                    alignment: Alignment.centerLeft,
-                    child: GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        height: MediaQuery.of(context).size.width * 10 / 100,
-                        width: MediaQuery.of(context).size.width * 12 / 100,
-                        color: AppColor.transparentColor,
-                        alignment: Alignment.centerLeft,
-                        child: Image.asset(
-                          AppImage.backArrowIcon,
-                          fit: BoxFit.contain,
-                          height: MediaQuery.of(context).size.width * 5 / 100,
-                          width: MediaQuery.of(context).size.width * 5 / 100,
-                          color: AppColor.secondryColor(context),
-                        ),
-                      ),
-                    ),
-                  ),
                 ),
                 Expanded(
                   child: SingleChildScrollView(
@@ -461,13 +406,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.fullNameText,
                                     controller: NameTextEditingController,
                                     readOnly: false,
-                                    inputFormatters: [
-                                      TextInputFormatter.withFunction((oldValue, newValue) {
-                                        if (newValue.text.isEmpty) return newValue;
-                                        final text = newValue.text[0].toUpperCase() + newValue.text.substring(1);
-                                        return newValue.copyWith(text: text);
-                                      }),
-                                    ],
                                   ),
                                 ),
                               ),
@@ -491,13 +429,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.fullNameText,
                                     controller: lastnameTextEditingController,
                                     readOnly: false,
-                                    inputFormatters: [
-                                      TextInputFormatter.withFunction((oldValue, newValue) {
-                                        if (newValue.text.isEmpty) return newValue;
-                                        final text = newValue.text[0].toUpperCase() + newValue.text.substring(1);
-                                        return newValue.copyWith(text: text);
-                                      }),
-                                    ],
                                   ),
                                 ),
                               ),
@@ -541,10 +472,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     maxLength: AppConstant.emailMaxLength,
                                     controller: emailController,
                                     readOnly: _isSocialSignup,
-                                    onChanged: (value) {
-                                      // Clear any shown error when user types
-                                      SnackBarToastMessage.dismiss(context);
-                                    },
                                   ),
                                 ),
                               ),
@@ -597,17 +524,6 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     ),
                                   ),
                                 ),
-                                Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 4),
-                                  child: Text(
-                                    "Password must be 8+ characters with uppercase, lowercase, a number & special character",
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: AppColor.greyLightColor(context),
-                                      fontFamily: AppFont.fontFamily,
-                                    ),
-                                  ),
-                                ),
                                 SizedBox(
                                   height: MediaQuery.of(context).size.height *
                                       2 /
@@ -645,69 +561,34 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                       7 /
                                       100,
                                   child: TextFormField(
-                                    readOnly: false,
-                                    onTap: () {},
+                                    readOnly: true,
+                                    onTap: () {
+                                      _showDatePicker();
+                                    },
                                     style: TextStyle(
                                         color: AppColor.secondryColor(context)),
-                                    keyboardType: TextInputType.datetime,
-                                    inputFormatters: [
-                                      FilteringTextInputFormatter.allow(RegExp(r'[0-9/]')),
-                                      LengthLimitingTextInputFormatter(10),
-                                      TextInputFormatter.withFunction((oldValue, newValue) {
-                                        String text = newValue.text.replaceAll('/', '');
-                                        if (text.length > 2) {
-                                          text = text.substring(0, 2) + '/' + text.substring(2);
-                                        }
-                                        if (text.length > 5) {
-                                          text = text.substring(0, 5) + '/' + text.substring(5);
-                                        }
-                                        if (text.length > 10) text = text.substring(0, 10);
-                                        return newValue.copyWith(
-                                          text: text,
-                                          selection: TextSelection.collapsed(offset: text.length),
-                                        );
-                                      }),
-                                    ],
-                                    onChanged: (value) {
-                                      if (value.length == 10) {
-                                        try {
-                                          final parts = value.split('/');
-                                          if (parts.length == 3) {
-                                            final date = DateTime(
-                                              int.parse(parts[2]), // year
-                                              int.parse(parts[1]), // month
-                                              int.parse(parts[0]), // day
-                                            );
-                                            final minAge = DateTime.now().subtract(const Duration(days: 365 * 18));
-                                            if (date.isAfter(minAge)) {
-                                              SnackBarToastMessage.error(context, "You must be at least 18 years old");
-                                              dobtexteditingController.clear();
-                                            } else {
-                                              setState(() {
-                                                selectDate = value;
-                                                selectedDate = date;
-                                              });
-                                            }
-                                          }
-                                        } catch (e) {
-                                          // Invalid date format
-                                        }
-                                      }
-                                    },
+                                    keyboardType: TextInputType.name,
                                     controller: dobtexteditingController,
                                     focusNode: _dobFocusNode,
-                                    maxLength: null,
+                                    maxLength: AppConstant.fullNameText,
                                     decoration: InputDecoration(
-                                      suffixIcon: GestureDetector(
-                                        onTap: () => _showDatePicker(),
-                                        child: Padding(
-                                          padding: const EdgeInsets.only(right: 20),
-                                          child: Image.asset(
-                                            AppImage.dobCalendericon,
-                                            width: MediaQuery.of(context).size.width * 4 / 100,
-                                            height: MediaQuery.of(context).size.width * 5 / 100,
-                                            color: AppColor.greyLightColor(context),
-                                          ),
+                                      suffixIcon: Padding(
+                                        padding:
+                                        const EdgeInsets.only(right: 20),
+                                        child: Image.asset(
+                                          AppImage.dobCalendericon,
+                                          width: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              4 /
+                                              100,
+                                          height: MediaQuery.of(context)
+                                              .size
+                                              .width *
+                                              5 /
+                                              100,
+                                          color:
+                                          AppColor.greyLightColor(context),
                                         ),
                                       ),
                                       suffixIconConstraints:
@@ -738,7 +619,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                           : AppColor.textFieldColor(context),
                                       filled: true,
                                       counterText: '',
-                                      hintText: 'DD/MM/YYYY (or tap 📅)',
+                                      hintText: 'DOB',
                                       hintStyle: TextStyle(
                                         color: AppColor.hinttextcolor(context),
                                         fontWeight: FontWeight.w400,
@@ -871,6 +752,28 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                     2 /
                                     100,
                               ),
+                              Center(
+                                child: SizedBox(
+                                  width: MediaQuery.of(context).size.width *
+                                      90 /
+                                      100,
+                                  height: MediaQuery.of(context).size.height *
+                                      7 /
+                                      100,
+                                  child: CustomTextField(
+                                    hintText: AppLanguage
+                                        .heightOptionalText[language],
+                                    maxLength: AppConstant.mobileMaxLenth,
+                                    controller: heightTextEditingController,
+                                    readOnly: false,
+                                  ),
+                                ),
+                              ),
+                              SizedBox(
+                                height: MediaQuery.of(context).size.height *
+                                    2 /
+                                    100,
+                              ),
                               if (widget.screen == "refer")
                                 Center(
                                   child: SizedBox(
@@ -881,7 +784,7 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                                         7 /
                                         100,
                                     child: CustomTextField(
-                                      hintText: "Referral Code",
+                                      hintText: "ReferCode",
                                       maxLength: AppConstant.fullNameText,
                                       controller:
                                       referCodeTextEditingController,
@@ -1024,77 +927,91 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
   }
 
   Future<void> _showDatePicker() async {
-    final DateTime maxDate = DateTime(
-      DateTime.now().year - 18,
-      DateTime.now().month,
-      DateTime.now().day,
+    final DateTime currentDate = DateTime.now();
+    final DateTime eighteenYearsAgo = DateTime(
+      currentDate.year - 18,
+      currentDate.month,
+      currentDate.day,
     );
-    final DateTime initialDate = (selectedDate != null && selectedDate!.isBefore(maxDate))
-        ? selectedDate!
-        : maxDate;
-    final DateTime? picked = await showDatePicker(
+
+    selectedDate = eighteenYearsAgo;
+
+    showModalBottomSheet(
+      backgroundColor: AppColor.themeColor,
       context: context,
-      initialDate: initialDate,
-      firstDate: DateTime(1940),
-      lastDate: maxDate,
-      builder: (context, child) {
-        return Theme(
-          data: ThemeData.dark().copyWith(
-            colorScheme: const ColorScheme.dark(
-              primary: Color(0xFFE91E8C),
-              onPrimary: Colors.white,
-              surface: Color(0xFF341A41),
-              onSurface: Colors.white,
-            ),
-            dialogBackgroundColor: const Color(0xFF341A41),
-            textButtonTheme: TextButtonThemeData(
-              style: TextButton.styleFrom(
-                foregroundColor: const Color(0xFFE91E8C),
+      builder: (context) {
+        return SizedBox(
+          height: MediaQuery.of(context).size.height * 0.4,
+          child: Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  CupertinoButton(
+                    child: const Text(
+                      'Cancel',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: AppFont.fontFamily,
+                        fontWeight: FontWeight.w500,
+                        fontSize: 16,
+                      ),
+                    ),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                  CupertinoButton(
+                      child: const Text(
+                        'Done',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontFamily: AppFont.fontFamily,
+                          fontWeight: FontWeight.w500,
+                          fontSize: 16,
+                        ),
+                      ),
+                      onPressed: () {
+                        if (selectedDate != null) {
+                          setState(() {
+                            String dateStr =
+                            DateFormat('yyyy/MM/dd').format(selectedDate!);
+                            dobtexteditingController.text = dateStr;
+                            selectDate = dateStr;
+                            log("Selected DOB: $dateStr");
+                          });
+                        }
+                        Navigator.pop(context);
+                      }),
+                ],
               ),
-            ),
+              Expanded(
+                child: CupertinoTheme(
+                  data: const CupertinoThemeData(
+                    textTheme: CupertinoTextThemeData(
+                      dateTimePickerTextStyle: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                  child: CupertinoDatePicker(
+                    maximumDate: eighteenYearsAgo,
+                    initialDateTime: eighteenYearsAgo,
+                    mode: CupertinoDatePickerMode.date,
+                    use24hFormat: true,
+                    onDateTimeChanged: (DateTime dateTime) {
+                      setState(() {
+                        selectedDate = dateTime;
+                      });
+                      print("selectedDate $selectedDate");
+                    },
+                  ),
+                ),
+              ),
+            ],
           ),
-          child: child!,
         );
       },
     );
-    if (picked != null) {
-      setState(() {
-        selectedDate = picked;
-        final dateStr = DateFormat('dd/MM/yyyy').format(picked);
-        dobtexteditingController.text = dateStr;
-        selectDate = dateStr;
-        log("Selected DOB: $dateStr");
-      });
-    }
-  }
-
-  Future<XFile?> _cropPickedImage(XFile pickedFile) async {
-    final croppedFile = await ImageCropper().cropImage(
-      sourcePath: pickedFile.path,
-      uiSettings: [
-        AndroidUiSettings(
-          toolbarTitle: 'Adjust Photo',
-          toolbarColor: AppColor.themeColor,
-          toolbarWidgetColor: Colors.white,
-          lockAspectRatio: true,
-          initAspectRatio: CropAspectRatioPreset.square,
-          hideBottomControls: false,
-          cropStyle: CropStyle.circle,
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-        ),
-        IOSUiSettings(
-          title: 'Adjust Photo',
-          aspectRatioLockEnabled: true,
-          resetAspectRatioEnabled: false,
-          aspectRatioPickerButtonHidden: true,
-          cropStyle: CropStyle.circle,
-          aspectRatioPresets: [CropAspectRatioPreset.square],
-        ),
-      ],
-    );
-
-    if (croppedFile == null) return null;
-    return XFile(croppedFile.path);
   }
 
   void _showImagePickerSheet() {
@@ -1123,16 +1040,20 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   onTap: () async {
                     Navigator.pop(sheetContext);
-                    final pickedFile = await ImagePicker().pickImage(
-                      source: ImageSource.camera,
-                      imageQuality: 90,
-                    );
-                    if (pickedFile == null || !mounted) return;
-                    final cropped = await _cropPickedImage(pickedFile);
-                    if (cropped == null || !mounted) return;
-                    setState(() {
-                      profilePhoto = cropped;
-                    });
+                    try {
+                      final pickedFile = await ImagePicker().pickImage(
+                        source: ImageSource.camera,
+                        imageQuality: 90,
+                      );
+                      if (pickedFile == null || !mounted) return;
+                      setState(() {
+                        profilePhoto = pickedFile;
+                      });
+                    } catch (e) {
+                      if (!mounted) return;
+                      SnackBarToastMessage.error(
+                          context, "Couldn't open camera. Please try again.");
+                    }
                   },
                 ),
                 ListTile(
@@ -1146,16 +1067,20 @@ class _ProfileDetailsScreenState extends State<ProfileDetailsScreen> {
                   ),
                   onTap: () async {
                     Navigator.pop(sheetContext);
-                    final pickedFile = await ImagePicker().pickImage(
-                      source: ImageSource.gallery,
-                      imageQuality: 90,
-                    );
-                    if (pickedFile == null || !mounted) return;
-                    final cropped = await _cropPickedImage(pickedFile);
-                    if (cropped == null || !mounted) return;
-                    setState(() {
-                      profilePhoto = cropped;
-                    });
+                    try {
+                      final pickedFile = await ImagePicker().pickImage(
+                        source: ImageSource.gallery,
+                        imageQuality: 90,
+                      );
+                      if (pickedFile == null || !mounted) return;
+                      setState(() {
+                        profilePhoto = pickedFile;
+                      });
+                    } catch (e) {
+                      if (!mounted) return;
+                      SnackBarToastMessage.error(context,
+                          "Couldn't open gallery. Please try again.");
+                    }
                   },
                 ),
               ],

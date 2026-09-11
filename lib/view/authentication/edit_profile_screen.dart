@@ -18,6 +18,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
 import '../other/edit_hobbies.dart';
@@ -150,21 +151,30 @@ class _EditProfileState extends State<EditProfile> {
         value: lastName, fieldName: AppLanguage.lastNameText[language])) {
       return;
     }
-    if (!Validation.isInstagramValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: instagramController.text,
+      fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
     )) {
       return;
     }
-    if (!Validation.isSpotifyValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: spotifyController.text,
+      fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
     )) {
       return;
     }
-    if (!Validation.isSnapchatValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: snapchatController.text,
+      fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
     )) {
       return;
     }
@@ -213,15 +223,21 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _pickProfileImage(ImageSource source) async {
-    final pickedFile = await ImagePicker().pickImage(
-      source: source,
-      imageQuality: 90,
-    );
-    if (pickedFile == null || !mounted) return;
-    setState(() {
-      _selectedProfileImage = pickedFile;
-      profileImage = pickedFile.path;
-    });
+    try {
+      final pickedFile = await ImagePicker().pickImage(
+        source: source,
+        imageQuality: 90,
+      );
+      if (pickedFile == null || !mounted) return;
+      setState(() {
+        _selectedProfileImage = pickedFile;
+        profileImage = pickedFile.path;
+      });
+    } catch (e) {
+      if (!mounted) return;
+      SnackBarToastMessage.error(
+          context, "Couldn't pick that photo. Please try again.");
+    }
   }
 
   void _showImagePickerSheet() {

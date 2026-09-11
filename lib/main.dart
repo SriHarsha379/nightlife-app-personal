@@ -15,8 +15,6 @@ import 'utilities/app_theme.dart';
 import 'utilities/auth_session_service.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
-import 'utilities/profile_completion_reminder.dart';
-import 'utilities/responsive_app_clamp.dart';
 import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
@@ -25,18 +23,13 @@ import 'view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venue_booking_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'view/other/chats/chat_message_screen.dart';
-import 'view/authentication/edit_profile_screen.dart';
 import 'firebase_options.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } on FirebaseException catch (e) {
-    if (e.code != 'duplicate-app') rethrow;
-  }
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
   final String? title = message.notification?.title?.trim();
@@ -50,26 +43,38 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  try {
+  await runZonedGuarded(() async {
+    WidgetsFlutterBinding.ensureInitialized();
+
+    // Catch framework (widget build/layout/paint) errors instead of letting
+    // them crash the app; log them so they show up in device logs.
+    FlutterError.onError = (FlutterErrorDetails details) {
+      FlutterError.presentError(details);
+      debugPrint('FlutterError caught: ${details.exceptionAsString()}');
+    };
+
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-  } on FirebaseException catch (e) {
-    if (e.code != 'duplicate-app') rethrow;
-  }
-  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
-    alert: true,
-    badge: true,
-    sound: true,
-  );
-  await LocalNotificationService.initialize();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-  await FcmTokenService.generateAndStoreToken();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]);
-  runApp(const MyApp());
+    await FirebaseMessaging.instance
+        .setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
+    await LocalNotificationService.initialize();
+    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+    await FcmTokenService.generateAndStoreToken();
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+    ]);
+    runApp(const MyApp());
+  }, (Object error, StackTrace stack) {
+    // Catch anything thrown outside the Flutter widget tree (e.g. an
+    // unhandled PlatformException from a plugin call like the image
+    // picker) so it gets logged instead of taking down the app.
+    debugPrint('Uncaught zone error: $error\n$stack');
+  });
 }
 
 class MyApp extends StatefulWidget {
@@ -79,7 +84,7 @@ class MyApp extends StatefulWidget {
   State<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
+class _MyAppState extends State<MyApp> {
   final AppLinks _appLinks = AppLinks();
   final AuthSessionService _authSessionService = FirebaseAuthSessionService();
   late final List<SingleChildWidget> _appProviders;
@@ -95,25 +100,13 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addObserver(this);
     _appProviders = buildAppProviders();
     _initDeepLinks();
     _initNotificationRedirections();
   }
 
   @override
-  void didChangeAppLifecycleState(AppLifecycleState state) {
-    // Cold start is already handled by Splash right after login/session
-    // validation, so only re-check on resume (app brought back from
-    // background) here - avoids nudging twice on first launch.
-    if (state == AppLifecycleState.resumed) {
-      ProfileCompletionReminder.maybeCheckAndShow();
-    }
-  }
-
-  @override
   void dispose() {
-    WidgetsBinding.instance.removeObserver(this);
     _deepLinkSub?.cancel();
     super.dispose();
   }
@@ -370,15 +363,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
       return;
     }
 
-    if (action == 'complete_profile') {
-      navigator.push(
-        MaterialPageRoute(
-          builder: (_) => const EditProfile(),
-        ),
-      );
-      return;
-    }
-
     // welcome / signup / unknown actions -> Notifications screen
     _openNotificationScreen();
   }
@@ -453,26 +437,6 @@ class _MyAppState extends State<MyApp> with WidgetsBindingObserver {
             themeMode: themeProvider.themeMode,
             darkTheme: AppThemeConfig.darkTheme,
             theme: AppThemeConfig.lightTheme,
-            // Makes every screen's existing percentage-of-screen-width
-            // sizing (MediaQuery.of(context).size.width * X / 100, used
-            // throughout the app) behave sanely on tablets/iPads instead
-            // of stretching - see responsive_app_clamp.dart for details.
-            // No-op on phones.
-            builder: (context, child) =>
-                ResponsiveAppClamp(child: child ?? const SizedBox.shrink()),
-            // Firebase Phone Auth's reCAPTCHA/App Verification flow on iOS
-            // redirects back into the app via a universal link like
-            // "/link?deep_link_id=https://<project>.firebaseapp.com/__/auth/callback?...".
-            // FirebaseAuth's native SDK should consume this before Flutter's
-            // router ever sees it, but if it still arrives here, this
-            // prevents a crash instead of letting "Could not find a
-            // generator for route" interrupt the verification handshake.
-            onUnknownRoute: (settings) {
-              return MaterialPageRoute(
-                builder: (_) => const SizedBox.shrink(),
-                settings: settings,
-              );
-            },
             home: AuthStateGate(
               authSessionService: _authSessionService,
               loadingChild: const Splash(),
