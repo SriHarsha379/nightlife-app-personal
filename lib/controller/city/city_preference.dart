@@ -26,6 +26,19 @@ class CityPreferenceController with ChangeNotifier {
   bool _allCitiesSelected = false;
   bool get isAllCitiesSelected => _allCitiesSelected;
 
+  // Name used by citypreference_screen.dart.
+  bool get getAllCitiesSelected => _allCitiesSelected;
+
+  /// lat/lng/radius sent to signup_step_two for the "All Cities" path.
+  Map<String, double> getAllCitiesPayload() {
+    final anchor = allCitiesAnchor;
+    return {
+      'latitude': anchor['latitude']!,
+      'longitude': anchor['longitude']!,
+      'radius': allCitiesRadiusKm,
+    };
+  }
+
   /// Picks "All Cities" instead of specific ones. Clears any individual
   /// selections and skips the per-city radius configuration step — fine-
   /// tuning a radius doesn't make sense when the point is "show me

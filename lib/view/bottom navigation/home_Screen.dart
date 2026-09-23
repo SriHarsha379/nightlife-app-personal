@@ -1705,8 +1705,6 @@ class _HomeState extends State<Home> {
                                                 .right);
                                       },
                                       bio: member['bio'] ?? '',
-                                      vibes: List<String>.from(
-                                          member['vibes'] ?? []),
                                       distance: member[
                                       'distance_km'] !=
                                           null

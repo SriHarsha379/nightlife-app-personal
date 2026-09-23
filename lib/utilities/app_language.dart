@@ -448,6 +448,7 @@ class AppLanguage {
   static const profileCompleteText = ["Profile :"];
   static const accountSetting = ["Account Settings"];
   static const appPreferences = ["App Preferences"];
+  static const darkModeText = ["Dark Mode"];
   static const supportText = ["Support"];
   static const aboutText = ["About"];
   static const deletetext = ["Delete"];
