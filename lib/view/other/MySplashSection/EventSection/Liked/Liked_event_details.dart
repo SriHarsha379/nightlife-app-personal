@@ -351,6 +351,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     Navigator.pop(context, _swipeResult);
   }
 
+  // screen-size-safety-fix
   Widget _buildDecisionButton({
     required String label,
     required IconData icon,
@@ -471,7 +472,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Row(
                       children: [
-                        _buildDecisionButton(
+                        Expanded(child: _buildDecisionButton(
                           label: 'Reject',
                           icon: Icons.close_rounded,
                           backgroundColor: AppColor.redColor,
@@ -482,7 +483,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                               targetEventId: targetEventId,
                             );
                           },
-                        ),
+                        )),
                         const SizedBox(width: 10),
                         Expanded(
                           child: GestureDetector(
@@ -502,7 +503,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                   color: AppColor.secondryColor(context),
                                 ),
                               ),
-                              child: Center(
+                              child: FittedBox(fit: BoxFit.scaleDown, child: Center(
                                 child: Row(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
@@ -520,13 +521,13 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     ),
                                   ],
                                 ),
-                              ),
+                              )),
                             ),
                           ),
                         ),
                         if (!showDislikeOnly) ...[
                           const SizedBox(width: 10),
-                          _buildDecisionButton(
+                          Expanded(child: _buildDecisionButton(
                             label: 'Accept',
                             icon: Icons.favorite_rounded,
                             backgroundColor: AppColor.buttonColor,
@@ -537,7 +538,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 targetEventId: targetEventId,
                               );
                             },
-                          ),
+                          )),
                         ],
                       ],
                     ),
@@ -1664,7 +1665,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                 ),
                                                                 child: Text(
                                                                   AppLanguage
-                                                                      .BookNowText[
+                                                                      .getTicketsText[
                                                                   language],
                                                                   style: TextStyle(
                                                                       fontSize:

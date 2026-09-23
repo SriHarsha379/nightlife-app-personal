@@ -48,7 +48,7 @@ class LikedMemberDetail extends StatefulWidget {
 
 class _LikedMemberDetailState extends State<LikedMemberDetail> {
   static const double _dislikeOnlyActionBarWidthFactor = 0.68;
-  static const double _fullActionBarWidthFactor = 0.85;
+  static const double _fullActionBarWidthFactor = 0.9;
   Map<String, dynamic>? _memberData;
   bool _isLoading = false;
   Map<String, String>? _swipeResult;
@@ -240,7 +240,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       _str(_memberData?['name']).isNotEmpty ? _str(_memberData?['name']) : "";
 
   String _memberVibesText() {
-    if (_vibeNames.isNotEmpty) return _vibeNames.join(' · ');
+    // Vibes are no longer shown on profiles (client: "Vibes not needed").
     final hobbies = _toList(_memberData?['hobbies'])
         .map((e) => _str(e))
         .where((e) => e.isNotEmpty)
@@ -370,6 +370,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     }
   }
 
+  // screen-size-safety-fix
   Widget _buildDecisionButton({
     required String label,
     required IconData icon,
@@ -385,7 +386,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
             borderRadius: BorderRadius.circular(18),
@@ -400,7 +401,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             ]
                 : const [],
           ),
-          child: Row(
+          child: FittedBox(fit: BoxFit.scaleDown, child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -416,7 +417,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                 ),
               ),
             ],
-          ),
+          )),
         ),
       ),
     );
@@ -461,7 +462,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                 padding: EdgeInsets.symmetric(horizontal: 9),
                 child: Row(
                   children: [
-                    _buildDecisionButton(
+                    Expanded(child: _buildDecisionButton(
                       label: 'Reject',
                       icon: Icons.close_rounded,
                       backgroundColor: AppColor.redColor,
@@ -469,11 +470,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       onTap: () async {
                         await _submitSwipeAction('left');
                       },
-                    ),
+                    )),
                     SizedBox(
                       width: size.width * 3 / 100,
                     ),
-                    GestureDetector(
+                    Expanded(child: GestureDetector(
                       onTap: () {
                         showInviteMemberstypebottomsheet(
                           context,
@@ -489,7 +490,6 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                         );
                       },
                       child: Container(
-                        width: size.width * 29 / 100,
                         height: size.height * 4.6 / 100,
                         decoration: BoxDecoration(
                           color: AppColor.secondryColor(context),
@@ -498,7 +498,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                             color: AppColor.secondryColor(context),
                           ),
                         ),
-                        child: Center(
+                        child: FittedBox(fit: BoxFit.scaleDown, child: Center(
                           child: Text(
                             AppLanguage.sendInviteText[language],
                             style: TextStyle(
@@ -508,15 +508,15 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                               color: AppColor.pinkColor,
                             ),
                           ),
-                        ),
+                        )),
                       ),
-                    ),
+                    )),
                     if (!_showDislikeOnly)
                       ...[
                         SizedBox(
                           width: size.width * 3 / 100,
                         ),
-                        _buildDecisionButton(
+                        Expanded(child: _buildDecisionButton(
                           label: 'Accept',
                           icon: Icons.favorite_rounded,
                           backgroundColor: AppColor.buttonColor,
@@ -524,7 +524,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                           onTap: () async {
                             await _submitSwipeAction('right');
                           },
-                        ),
+                        )),
                       ],
                   ],
                 ),
@@ -1356,7 +1356,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     _buildVibeCheckSection(context),
                                     if (_toList(_memberData?[
                                     'vibe_checks'])
-                                        .isNotEmpty)
+                                        .any((vc) => vc is Map && _isMeaningfulAnswer(vc['answer'])))
                                       SizedBox(
                                         height:
                                         size.height * 1 / 100,
@@ -1780,7 +1780,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
       'answer': _str(vc['answer']),
     })
         .where((vc) =>
-    (vc['question'] ?? '').isNotEmpty && (vc['answer'] ?? '').isNotEmpty)
+    (vc['question'] ?? '').isNotEmpty && _isMeaningfulAnswer(vc['answer']))
         .toList();
 
     if (vibeChecks.isEmpty) {
@@ -2091,4 +2091,23 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
     );
   }
 
+}
+
+/// Mirrors the backend's isMeaningfulAnswer (utility/helper.js): answers like
+/// "later", "skip", "na", "-" are typed just to get past signup, so they're
+/// treated as unanswered and not shown on the profile.
+const Set<String> _placeholderAnswers = {
+  'later', 'skip', 'skipped', 'na', 'none', 'nil', 'null', 'nothing', 'no',
+  'idk', 'dontknow', 'notsure', 'tbd', 'test', 'testing', 'asdf', 'abc',
+  'xyz', 'ok', 'okay', 'hi', 'hello',
+};
+final RegExp _laterPhrase = RegExp(
+    r'^(iwill|will|ill|to)?(do|add|fill|update|answer|write|tell)?(it|this|them)?later$');
+
+bool _isMeaningfulAnswer(dynamic answer) {
+  final norm = (answer ?? '').toString().toLowerCase().replaceAll(RegExp(r'[^a-z0-9]'), '');
+  if (norm.length < 2) return false;
+  if (_placeholderAnswers.contains(norm)) return false;
+  if (_laterPhrase.hasMatch(norm)) return false;
+  return true;
 }

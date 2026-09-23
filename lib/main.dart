@@ -16,6 +16,7 @@ import 'utilities/auth_session_service.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
 import 'utilities/profile_completion_navigation.dart';
+import 'utilities/responsive_app_clamp.dart';
 import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
@@ -437,6 +438,9 @@ class _MyAppState extends State<MyApp> {
             navigatorKey: _navigatorKey,
             title: "Hii",
             debugShowCheckedModeBanner: false,
+            // Caps extreme system font sizes + keeps tablets phone-proportioned.
+            builder: (context, child) =>
+                ResponsiveAppClamp(child: child ?? const SizedBox.shrink()),
             themeMode: themeProvider.themeMode,
             darkTheme: AppThemeConfig.darkTheme,
             theme: AppThemeConfig.lightTheme,

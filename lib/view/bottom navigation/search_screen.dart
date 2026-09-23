@@ -1,4 +1,6 @@
 // ignore_for_file: prefer_const_constructors
+import '../other/MySplashSection/MembersSection/member_liked_details.dart';
+import '../other/MySplashSection/VenuesSection/venues_map_screen.dart';
 import 'dart:async';
 import 'dart:developer';
 import 'package:flutter/material.dart';
@@ -52,7 +54,10 @@ class _SearchScreenState extends State<SearchScreen> {
   final GlobalKey _eventNearbyKey = GlobalKey();
   final GlobalKey _eventRecommendedKey = GlobalKey();
 
-  int tapBarStatus = 0;
+  int tapBarStatus = 0; // 1 = Venues, 2 = Events, 3 = Members
+  String get _currentType =>
+      tapBarStatus == 1 ? 'venue' : tapBarStatus == 3 ? 'member' : 'event';
+  List<String> memberTrendingSearchList = [];
   bool _isInitialLoading = true;
   String selectedCityId = '';
   String cityName = '';
@@ -157,7 +162,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchDebounce?.cancel();
     searchController.clear();
     _searchFocusNode.unfocus();
-    await _loadSearchData(type: tapBarStatus == 1 ? 'venue' : 'event');
+    await _loadSearchData(type: _currentType);
   }
 
   Future<void> _loadSearchData({
@@ -234,7 +239,7 @@ class _SearchScreenState extends State<SearchScreen> {
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 500), () async {
       if (!mounted) return;
-      await _loadSearchData(type: tapBarStatus == 1 ? 'venue' : 'event');
+      await _loadSearchData(type: _currentType);
     });
   }
 
@@ -262,6 +267,13 @@ class _SearchScreenState extends State<SearchScreen> {
         if (tapBarStatus == 1) {
           trendingSearchList = venueTrendingSearchList.isNotEmpty
               ? venueTrendingSearchList
+              : [..._defaultTrendingKeywords];
+        }
+      } else if (type == 'member') {
+        memberTrendingSearchList = keywords;
+        if (tapBarStatus == 3) {
+          trendingSearchList = memberTrendingSearchList.isNotEmpty
+              ? memberTrendingSearchList
               : [..._defaultTrendingKeywords];
         }
       } else {
@@ -324,7 +336,7 @@ class _SearchScreenState extends State<SearchScreen> {
       TextPosition(offset: keyword.length),
     );
     _searchDebounce?.cancel();
-    await _loadSearchData(type: tapBarStatus == 1 ? 'venue' : 'event');
+    await _loadSearchData(type: _currentType);
   }
 
   Future<void> _handleVenueDetailResult(dynamic result) async {
@@ -475,6 +487,216 @@ class _SearchScreenState extends State<SearchScreen> {
           height: 25,
         )
       ],
+    );
+  }
+
+  // PDF #12: opens every venue from the current search on a map.
+  Widget _buildVenuesMapButton(BuildContext context) {
+    return GestureDetector(
+      onTap: () => _openVenuesMap(context),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: AppColor.pinkColor),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(Icons.map_outlined, size: 16, color: AppColor.pinkColor),
+            const SizedBox(width: 6),
+            Text('Map', style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 13,
+                fontWeight: FontWeight.w600, color: AppColor.pinkColor)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _openVenuesMap(BuildContext context) {
+    final venues = context.read<SearchFilterController>().venueMapItems;
+    if (venues.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No venues with a location to show yet.')),
+      );
+      return;
+    }
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => VenuesMapScreen(venues: venues)),
+    );
+  }
+
+  // ---------------------------------------------------------------------
+  // Search > Members. Sections: "Members near you" (renamed from the old
+  // "Premium Members") and "Recommended". Typing searches every member.
+  // ---------------------------------------------------------------------
+  Widget _buildMembersTab(BuildContext context, SearchFilterController provider) {
+    final size = MediaQuery.of(context).size;
+    final seen = <String>{};
+    bool fresh(Map<String, String> m) {
+      final id = m['id'] ?? '';
+      return id.isNotEmpty && seen.add(id);
+    }
+    final nearby = [...provider.memberFeaturedList, ...provider.memberNearbyList]
+        .where(fresh).toList();
+    final recommended = provider.memberRecommendedList.where(fresh).toList();
+    final query = searchController.text.trim();
+
+    Widget header(String title) => Container(
+          width: size.width * 90 / 100,
+          padding: const EdgeInsets.only(bottom: 12),
+          child: Text(title,
+              style: TextStyle(
+                  fontFamily: AppFont.fontFamily,
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  color: AppColor.pinkColor)),
+        );
+
+    if (provider.isMemberLoading && nearby.isEmpty && recommended.isEmpty) {
+      return Column(children: [
+        SizedBox(height: size.height * 2 / 100),
+        _buildSectionLoader(),
+      ]);
+    }
+    if (nearby.isEmpty && recommended.isEmpty) {
+      return Column(children: [
+        SizedBox(height: size.height * 2 / 100),
+        _buildEmptySectionText(query.isNotEmpty
+            ? 'No members found for "$query"'
+            : 'No members near you yet'),
+      ]);
+    }
+
+    final double cardW = size.width * 40 / 100;
+    return Column(children: [
+      SizedBox(height: size.height * 2 / 100),
+      if (nearby.isNotEmpty) ...[
+        header(query.isNotEmpty ? 'Members' : 'Members near you'),
+        SizedBox(
+          height: cardW * 1.2 + 56,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+            itemCount: nearby.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, i) => _memberCard(context, nearby[i], cardW),
+          ),
+        ),
+        SizedBox(height: size.height * 3 / 100),
+      ],
+      if (recommended.isNotEmpty) ...[
+        header('Recommended'),
+        ...recommended.map((m) => _memberTile(context, m, size)),
+      ],
+    ]);
+  }
+
+  Widget _memberPhoto(String path, double w, double h, BorderRadius radius) {
+    final url = path.startsWith('http') ? path : '${AppConfigProvider.imageUrl}$path';
+    final fallback = Image.asset(AppImage.dummyImageIcon, width: w, height: h, fit: BoxFit.cover);
+    return ClipRRect(
+      borderRadius: radius,
+      child: path.trim().isEmpty
+          ? fallback
+          : CachedNetworkImage(
+              imageUrl: url,
+              width: w,
+              height: h,
+              fit: BoxFit.cover,
+              placeholder: (_, __) => Container(width: w, height: h, color: Colors.black12),
+              errorWidget: (_, __, ___) => fallback,
+            ),
+    );
+  }
+
+  void _openMember(BuildContext context, Map<String, String> m) {
+    final id = m['id'] ?? '';
+    if (id.isEmpty) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => LikedMemberDetail(memberId: id)),
+    );
+  }
+
+  Widget _memberCard(BuildContext context, Map<String, String> m, double w) {
+    final distance = m['distance'] ?? '';
+    return GestureDetector(
+      onTap: () => _openMember(context, m),
+      child: SizedBox(
+        width: w,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _memberPhoto(m['image'] ?? '', w, w * 1.2, BorderRadius.circular(16)),
+            const SizedBox(height: 8),
+            Text(m['title'] ?? '',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColor.secondryColor(context))),
+            if (distance.isNotEmpty)
+              Text(distance,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                      fontFamily: AppFont.fontFamily,
+                      fontSize: 12,
+                      color: AppColor.secondryColor(context).withOpacity(0.6))),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _memberTile(BuildContext context, Map<String, String> m, Size size) {
+    final subtitle = (m['location'] ?? '').isNotEmpty ? m['location']! : (m['distance'] ?? '');
+    return GestureDetector(
+      onTap: () => _openMember(context, m),
+      child: Container(
+        width: size.width * 90 / 100,
+        margin: const EdgeInsets.only(bottom: 10),
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: AppColor.secondryColor(context).withOpacity(0.06),
+          borderRadius: BorderRadius.circular(14),
+        ),
+        child: Row(
+          children: [
+            _memberPhoto(m['image'] ?? '', 48, 48, BorderRadius.circular(24)),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(m['title'] ?? '',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                          fontFamily: AppFont.fontFamily,
+                          fontSize: 15,
+                          fontWeight: FontWeight.w600,
+                          color: AppColor.secondryColor(context))),
+                  if (subtitle.isNotEmpty)
+                    Text(subtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            fontFamily: AppFont.fontFamily,
+                            fontSize: 12,
+                            color: AppColor.secondryColor(context).withOpacity(0.6))),
+                ],
+              ),
+            ),
+            Icon(Icons.chevron_right_rounded,
+                color: AppColor.secondryColor(context).withOpacity(0.5)),
+          ],
+        ),
+      ),
     );
   }
 
@@ -698,7 +920,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           _searchDebounce?.cancel();
                           _loadSearchData(
                               type:
-                              tapBarStatus == 1 ? 'venue' : 'event');
+                              _currentType);
                         },
                         cursorColor: AppColor.secondryColor(context),
                         style: TextStyle(
@@ -781,6 +1003,60 @@ class _SearchScreenState extends State<SearchScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
+                          // Members option (was "Premium Members" in the old design)
+                          GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                tapBarStatus = 3;
+                                trendingSearchList =
+                                memberTrendingSearchList.isNotEmpty
+                                    ? memberTrendingSearchList
+                                    : [..._defaultTrendingKeywords];
+                              });
+                              if (memberTrendingSearchList.isEmpty) {
+                                _loadTrendingKeywords(type: 'member');
+                              }
+                              final c = context.read<SearchFilterController>();
+                              if (searchController.text.trim().isNotEmpty) {
+                                _loadSearchData(type: 'member');
+                              } else if (c.memberFeaturedList.isEmpty &&
+                                  c.memberNearbyList.isEmpty &&
+                                  c.memberRecommendedList.isEmpty &&
+                                  !c.isMemberLoading) {
+                                _loadSearchData(type: 'member');
+                              }
+                            },
+                            child: SizedBox(
+                              width: MediaQuery.of(context).size.width * 22 / 100,
+                              child: Column(
+                                children: [
+                                  SizedBox(
+                                    width: MediaQuery.of(context).size.width * 6 / 100,
+                                    height: MediaQuery.of(context).size.width * 6 / 100,
+                                    child: Image.asset(
+                                      AppImage.memberIcon,
+                                      fit: BoxFit.contain,
+                                      color: tapBarStatus == 3
+                                          ? AppColor.pinkColor
+                                          : AppColor.textTapColor(context),
+                                    ),
+                                  ),
+                                  Text(
+                                    AppLanguage.membersText[language],
+                                    style: TextStyle(
+                                      fontFamily: AppFont.fontFamily,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w400,
+                                      color: tapBarStatus == 3
+                                          ? AppColor.pinkColor
+                                          : AppColor.textTapColor(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+
                           // Venues option
                           GestureDetector(
                             onTap: () {
@@ -930,9 +1206,9 @@ class _SearchScreenState extends State<SearchScreen> {
                       child: AnimatedAlign(
                         duration: const Duration(milliseconds: 250),
                         curve: Curves.easeInOut,
-                        alignment: tapBarStatus == 1
-                            ? Alignment.centerLeft
-                            : Alignment.centerRight,
+                        alignment: Alignment(
+                            tapBarStatus == 3 ? -0.915 : tapBarStatus == 1 ? 0.0 : 0.915,
+                            0),
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 250),
                           curve: Curves.easeInOut,
@@ -971,7 +1247,7 @@ class _SearchScreenState extends State<SearchScreen> {
                             color: AppColor.pinkColor,
                             onRefresh: () async {
                               await _loadSearchData(
-                                type: tapBarStatus == 1 ? 'venue' : 'event',
+                                type: _currentType,
                                 forceRefresh: true,
                               );
                             },
@@ -1086,7 +1362,9 @@ class _SearchScreenState extends State<SearchScreen> {
                                           ))),
                                   ////////////////////
 
-                                  tapBarStatus == 1
+                                  tapBarStatus == 3
+                                      ? _buildMembersTab(context, searchFilterProvider)
+                                      : tapBarStatus == 1
                                       ? Column(children: [
                                     SizedBox(
                                       height: MediaQuery.of(context)
@@ -1326,7 +1604,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                     Container(
                                       key: _venueNearbyKey,
                                       width: size.width * 90 / 100,
-                                      child: Text(
+                                      child: Row(children: [Expanded(child: Text(
                                         "Places near you",
                                         style: TextStyle(
                                             fontFamily:
@@ -1334,7 +1612,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                             fontSize: 14,
                                             fontWeight: FontWeight.w700,
                                             color: AppColor.pinkColor),
-                                      ),
+                                      )), _buildVenuesMapButton(context)]),
                                     ),
                                     SizedBox(
                                       height: MediaQuery.of(context)
@@ -2271,7 +2549,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                               ),
                                                               child: const Center(
                                                                 child: Text(
-                                                                  "Book Now",
+                                                                  "Get Tickets",
                                                                   style: TextStyle(
                                                                     fontSize: 14,
                                                                     color: Colors.black,
@@ -2365,7 +2643,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                 ),
                                                                 child: const Center(
                                                                   child: Text(
-                                                                    "Book Now",
+                                                                    "Get Tickets",
                                                                     style: TextStyle(
                                                                       fontSize: 14,
                                                                       color: Colors.black,
@@ -2449,5 +2727,6 @@ class _SearchScreenState extends State<SearchScreen> {
 
     await _loadSearchData(type: 'venue', forceRefresh: true);
     await _loadSearchData(type: 'event', forceRefresh: true);
+    await _loadSearchData(type: 'member', forceRefresh: true);
   }
 }

@@ -1,3 +1,4 @@
+import '../../utilities/profile_completion_prompt.dart';
 import 'dart:async';
 import 'dart:developer';
 import 'dart:io';
@@ -63,6 +64,8 @@ class _HomeState extends State<Home> {
           .fetchActivePolls(context);
     });
     context.read<UserController>().getUserDetails();
+    // PDF #5: profile % prompt every time the app opens.
+    ProfileCompletionPrompt.attach(context);
   }
 
   int reportId = 0;
@@ -325,7 +328,11 @@ class _HomeState extends State<Home> {
     }
 
     // Ad popup: every [adSwipeTriggerCount] swipes.
-    if (count % PopupManager.adSwipeTriggerCount == 0) {
+    // PDF #6: the swipe popup only ever had hard-coded sample ads (no real
+    // ads API behind it), so it's switched off for beta. Real brand ads still
+    // appear - and repeat - inside the feed itself.
+    const bool showSampleAdPopup = false;
+    if (showSampleAdPopup && count % PopupManager.adSwipeTriggerCount == 0) {
       _maybeShowAdPopup();
     }
   }

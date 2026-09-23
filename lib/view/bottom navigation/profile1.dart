@@ -830,20 +830,6 @@ class _Profile1State extends State<Profile1> {
                             context, profileController),
                       ],
                       SizedBox(height: size.height * 0.02),
-                      //! Top Artist Section
-                      if (profileController.hasTopArtist) ...[
-                        Text(
-                          AppLanguage.mytopArtistonspotifyText[language],
-                          style: TextStyle(
-                              fontSize: 18,
-                              fontFamily: AppFont.fontFamily,
-                              fontWeight: FontWeight.w500,
-                              color: AppColor.secondryColor(context)),
-                        ),
-                        SizedBox(height: size.height * 0.02),
-                        _buildTopArtistSection(
-                            context, profileController),
-                      ],
                       SizedBox(height: size.height * 0.15),
                     ],
                   ),
@@ -1630,36 +1616,6 @@ class _Profile1State extends State<Profile1> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _buildTopArtistSection(
-      BuildContext context, ProfileController controller) {
-    final topArtist = controller.topArtist;
-
-    if (topArtist == null || topArtist.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
-    final artistName = topArtist['name'] ?? '';
-
-    if (artistName.isEmpty || artistName == 'Unknown Artist') {
-      return const SizedBox.shrink();
-    }
-
-    final artists = [
-      {'name': artistName},
-    ];
-
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
-      children: artists.map((artist) {
-        return _buildArtistChip(
-          context,
-          artist['name'] ?? 'Unknown',
-        );
-      }).toList(),
     );
   }
 

@@ -1,3 +1,4 @@
+// screen-size-safety-fix
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -562,7 +563,7 @@ class _splashMembersState extends State<splashMembers> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
+                                                          Flexible(child: Text(
                                                             memberName.isEmpty
                                                                 ? ''
                                                                 : memberName,
@@ -577,7 +578,9 @@ class _splashMembersState extends State<splashMembers> {
                                                                   .secondryColor(
                                                                       context),
                                                             ),
-                                                          ),
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          )),
                                                           SizedBox(
                                                             width: size.width *
                                                                 8 /
@@ -663,7 +666,7 @@ class _splashMembersState extends State<splashMembers> {
                                                                   size.width *
                                                                       0.8 /
                                                                       100),
-                                                          Text(
+                                                          Flexible(child: Text(
                                                             memberAddress,
                                                             style: TextStyle(
                                                               fontSize: 14,
@@ -676,7 +679,9 @@ class _splashMembersState extends State<splashMembers> {
                                                                   .secondryColor(
                                                                       context),
                                                             ),
-                                                          ),
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          )),
                                                         ],
                                                       ),
 
@@ -857,7 +862,7 @@ class _splashMembersState extends State<splashMembers> {
                                                             MainAxisAlignment
                                                                 .spaceBetween,
                                                         children: [
-                                                          Text(
+                                                          Flexible(child: Text(
                                                             memberName.isEmpty
                                                                 ? 'Unknown'
                                                                 : memberName,
@@ -872,7 +877,9 @@ class _splashMembersState extends State<splashMembers> {
                                                                   .secondryColor(
                                                                       context),
                                                             ),
-                                                          ),
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          )),
                                                         ],
                                                       ),
 
@@ -945,7 +952,7 @@ class _splashMembersState extends State<splashMembers> {
                                                                   size.width *
                                                                       0.8 /
                                                                       100),
-                                                          Text(
+                                                          Flexible(child: Text(
                                                             memberAddress,
                                                             style: TextStyle(
                                                               fontSize: 14,
@@ -958,7 +965,9 @@ class _splashMembersState extends State<splashMembers> {
                                                                   .secondryColor(
                                                                       context),
                                                             ),
-                                                          ),
+                                                            maxLines: 2,
+                                                            overflow: TextOverflow.ellipsis,
+                                                          )),
                                                         ],
                                                       ),
 

@@ -2436,7 +2436,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                 ),
                               ),
                             ),
-                            SizedBox(width: size.width * 15 / 100),
+                            const Spacer(), // screen-size-safety-fix
                             GestureDetector(
                               onTap: () => reportBottomSheet(context),
                               child: Image.asset(AppImage.threedotIcon,

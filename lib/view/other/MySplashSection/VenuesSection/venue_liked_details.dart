@@ -753,7 +753,7 @@ class _LikedvenueDetailState extends State<LikedvenueDetail> {
                                                               100,
                                                     ),
                                                     child: Text(
-                                                      AppLanguage.BookNowText[
+                                                      AppLanguage.reserveText[
                                                           language],
                                                       style: const TextStyle(
                                                           fontSize: 20,

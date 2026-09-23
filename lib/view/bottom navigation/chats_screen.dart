@@ -854,7 +854,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                           PageTransition(
                             type: PageTransitionType.rightToLeftWithFade,
                             child: const AiCompanionChatScreen(
-                              personaName: 'Aria',
+                              personaName: 'Hii Owl',
                               personaImage: AppImage.placeHolder2Icon,
                             ),
                             duration: const Duration(milliseconds: 500),
@@ -898,7 +898,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'Aria',
+                                    'Hii Owl',
                                     style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w600,
@@ -907,7 +907,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                     ),
                                   ),
                                   const Text(
-                                    'Your AI companion • tap to chat',
+                                    'Your nightlife guide • tap to chat',
                                     style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 12,

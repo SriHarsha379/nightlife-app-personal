@@ -37,7 +37,7 @@ class VenuePages extends StatefulWidget {
 
 class _VenuePagesState extends State<VenuePages> {
   static const double _dislikeOnlyActionBarWidthFactor = 0.68;
-  static const double _fullActionBarWidthFactor = 0.85;
+  static const double _fullActionBarWidthFactor = 0.9;
   late TextEditingController searchController;
   Map<String, String>? _swipeResult;
 
@@ -332,6 +332,7 @@ class _VenuePagesState extends State<VenuePages> {
         result is Map ? Map<String, dynamic>.from(result) : null);
   }
 
+  // screen-size-safety-fix
   Widget _buildDecisionButton({
     required String label,
     required IconData icon,
@@ -347,7 +348,7 @@ class _VenuePagesState extends State<VenuePages> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
             borderRadius: BorderRadius.circular(18),
@@ -362,7 +363,7 @@ class _VenuePagesState extends State<VenuePages> {
             ]
                 : const [],
           ),
-          child: Row(
+          child: FittedBox(fit: BoxFit.scaleDown, child: Row(
             mainAxisSize: MainAxisSize.min,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -378,7 +379,7 @@ class _VenuePagesState extends State<VenuePages> {
                 ),
               ),
             ],
-          ),
+          )),
         ),
       ),
     );
@@ -474,7 +475,7 @@ class _VenuePagesState extends State<VenuePages> {
                     child: Row(
                       children: [
                         SizedBox(width: size.width * 3 / 100),
-                        _buildDecisionButton(
+                        Expanded(child: _buildDecisionButton(
                           label: 'Reject',
                           icon: Icons.close_rounded,
                           backgroundColor: AppColor.redColor,
@@ -485,9 +486,9 @@ class _VenuePagesState extends State<VenuePages> {
                               targetVenueId: targetVenueId,
                             );
                           },
-                        ),
+                        )),
                         SizedBox(width: size.width * 3 / 100),
-                        GestureDetector(
+                        Expanded(child: GestureDetector(
                           onTap: () {
                             documenttypebottomsheet(
                               context,
@@ -496,7 +497,6 @@ class _VenuePagesState extends State<VenuePages> {
                             );
                           },
                           child: Container(
-                            width: size.width * 30 / 100,
                             height: size.height * 4.6 / 100,
                             decoration: BoxDecoration(
                               color: AppColor.secondryColor(context),
@@ -505,7 +505,7 @@ class _VenuePagesState extends State<VenuePages> {
                                 color: AppColor.secondryColor(context),
                               ),
                             ),
-                            child: Center(
+                            child: FittedBox(fit: BoxFit.scaleDown, child: Center(
                               child: Text(
                                 AppLanguage.sendInviteText[language],
                                 style: TextStyle(
@@ -515,12 +515,12 @@ class _VenuePagesState extends State<VenuePages> {
                                   color: AppColor.pinkColor,
                                 ),
                               ),
-                            ),
+                            )),
                           ),
-                        ),
+                        )),
                         if (!showDislikeOnly) ...[
                           SizedBox(width: size.width * 3 / 100),
-                          _buildDecisionButton(
+                          Expanded(child: _buildDecisionButton(
                             label: 'Accept',
                             icon: Icons.favorite_rounded,
                             backgroundColor: AppColor.buttonColor,
@@ -531,8 +531,9 @@ class _VenuePagesState extends State<VenuePages> {
                                 targetVenueId: targetVenueId,
                               );
                             },
-                          ),
+                          )),
                         ],
+                        SizedBox(width: size.width * 3 / 100),
                       ],
                     ),
                   ),
@@ -1113,7 +1114,7 @@ class _VenuePagesState extends State<VenuePages> {
                                               ),
                                               child: Text(
                                                 AppLanguage
-                                                    .BookNowText[language],
+                                                    .reserveText[language],
                                                 style: const TextStyle(
                                                   fontSize: 20,
                                                   fontFamily:

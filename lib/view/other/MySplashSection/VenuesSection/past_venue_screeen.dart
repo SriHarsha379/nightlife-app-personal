@@ -816,6 +816,7 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
     );
   }
 
+  // screen-size-safety-fix
   Widget detailsRow(String title, String value,
       {bool isBold = false,
       bool highlight = false,
@@ -835,14 +836,16 @@ class _PastVenueScreenState extends State<PastVenueScreen> {
               color: AppColor.lightGreyColor(context),
             ),
           ),
-          Text(
+          const SizedBox(width: 12),
+          Flexible(child: Text(
             value,
             style: TextStyle(
               fontSize: fontSize ?? 13,
               fontWeight: FontWeight.w400,
               color: isDark ? Colors.white : const Color(0xff1A0F29),
             ),
-          ),
+            textAlign: TextAlign.end,
+          )),
         ],
       ),
     );

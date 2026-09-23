@@ -614,6 +614,7 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
   }
 
   // ✅ subText + valueColor parameters add kiye
+  // screen-size-safety-fix
   Widget detailsRow(
     String title,
     String value, {
@@ -637,14 +638,16 @@ class _VenueBookedDetailsState extends State<VenueBookedDetails> {
               color: AppColor.lightGreyColor(context),
             ),
           ),
-          Text(
+          const SizedBox(width: 12),
+          Flexible(child: Text(
             value,
             style: TextStyle(
               fontSize: fontSize ?? 13,
               fontWeight: FontWeight.w400,
               color: valueColor,
             ),
-          ),
+            textAlign: TextAlign.end,
+          )),
         ],
       ),
     );

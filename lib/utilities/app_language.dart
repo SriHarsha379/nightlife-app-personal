@@ -25,6 +25,8 @@ class AppLanguage {
   static const likedText = ["Liked"]; // Kalash
   static const BookedText = ["Booked"]; // Kalash
   static const BookNowText = ["Book Now"]; // Kalash
+  static const getTicketsText = ["Get Tickets"];
+  static const reserveText = ["Reserve"];
 //  Your confirmed event bookings are listed here for quick access.
   static const confirmBookeddetailsText = [
     "Your confirmed event bookings are listed here for quick access"

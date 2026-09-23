@@ -68,6 +68,29 @@ class SearchFilterController with ChangeNotifier {
 
   List<Map<String, String>> get venueFeaturedList => _venueFeaturedList;
   List<Map<String, String>> get venueNearbyList => _venueNearbyList;
+
+  // PDF #12: raw venues (with coordinates) for the Search > Venues map.
+  List<Map<String, dynamic>> _venueMapItems = [];
+  List<Map<String, dynamic>> get venueMapItems => _venueMapItems;
+  void _setVenueMapItems(List<List<Map<String, dynamic>>> groups) {
+    final seen = <String>{};
+    _venueMapItems = [];
+    for (final group in groups) {
+      for (final v in group) {
+        final id = (v['venue_id'] ?? v['_id'] ?? '').toString();
+        if (id.isEmpty || !seen.add(id)) continue;
+        if (v['latitude'] == null || v['longitude'] == null) continue;
+        _venueMapItems.add({
+          '_id': id,
+          'venue_name': v['venue_name'],
+          'venue_image': v['venue_image'],
+          'address': v['address'] ?? v['location'],
+          'latitude': v['latitude'],
+          'longitude': v['longitude'],
+        });
+      }
+    }
+  }
   List<Map<String, String>> get venueRecommendedList => _venueRecommendedList;
 
   List<Map<String, String>> get eventFeaturedList => _eventFeaturedList;
@@ -177,6 +200,7 @@ class SearchFilterController with ChangeNotifier {
       _venueFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
       _venueNearbyList = nearbyRaw.map(_toNearbyMap).toList();
       _venueRecommendedList = recommendedRaw.map(_toRecommendedMap).toList();
+      _setVenueMapItems([nearbyRaw, featuredRaw, recommendedRaw]);
       _lastVenueParams = params;
     } else if (type == 'event') {
       _eventFeaturedList = featuredRaw.map(_toFeaturedMap).toList();
