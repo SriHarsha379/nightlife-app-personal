@@ -28,6 +28,9 @@ class ReviewBooking2Details extends StatefulWidget {
   final String selectedSlotTime;
   final int selectedGuests;
   final bool coverChargeApplied;
+  // "Reservation with friends" — connection IDs invited from the guest
+  // picker on BookTable, threaded through to the final booking API call.
+  final List<String> selectedFriendIds;
 
   ReviewBooking2Details({
     super.key,
@@ -36,6 +39,7 @@ class ReviewBooking2Details extends StatefulWidget {
     this.selectedSlotTime = '',
     this.selectedGuests = 2,
     required this.coverChargeApplied,
+    this.selectedFriendIds = const [],
   });
 
   @override
@@ -82,7 +86,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
   final TextEditingController phoneController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController specialRequestController =
-      TextEditingController();
+  TextEditingController();
 
   String userName = '';
   String userPhone = '';
@@ -178,6 +182,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
             cityName: cityName.trim(),
             countryCode: countryCode.isEmpty ? '+91' : countryCode,
             specialRequest: specialRequestController.text.trim(),
+            selectedFriendIds: widget.selectedFriendIds,
           ),
           duration: const Duration(milliseconds: 500),
         ),
@@ -199,9 +204,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
         floatingActionButton: Padding(
-          padding: EdgeInsets.only(
-            bottom: 20 + MediaQuery.of(context).padding.bottom,
-          ),
+          padding: const EdgeInsets.only(bottom: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -309,522 +312,522 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                     flex: 1,
                     child: SingleChildScrollView(
                         child: SizedBox(
-                      width: size.width * 90 / 100,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          SizedBox(
-                            height: size.height * 2 / 100,
-                          ),
-                          // State variable upar add karo:
+                          width: size.width * 90 / 100,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: size.height * 2 / 100,
+                              ),
+                              // State variable upar add karo:
 
-                          GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                _noteExpanded = !_noteExpanded;
-                              });
-                            },
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Image.asset(
-                                  AppImage.infoIcon,
-                                  height: size.width * 6 / 100,
-                                  width: size.width * 6 / 100,
-                                  color: AppColor.secondryColor(context),
-                                ),
-                                SizedBox(width: size.width * 5 / 100),
-                                Expanded(
-                                  child: AnimatedSize(
-                                    duration: const Duration(milliseconds: 200),
-                                    curve: Curves.easeInOut,
-                                    child: Text(
-                                      AppLanguage.noteMsgText[language],
-                                      maxLines: _noteExpanded ? null : 1,
-                                      overflow: _noteExpanded
-                                          ? TextOverflow.visible
-                                          : TextOverflow.ellipsis,
-                                      style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 16,
-                                        color: AppColor.secondryColor(context),
+                              GestureDetector(
+                                onTap: () {
+                                  setState(() {
+                                    _noteExpanded = !_noteExpanded;
+                                  });
+                                },
+                                child: Row(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Image.asset(
+                                      AppImage.infoIcon,
+                                      height: size.width * 6 / 100,
+                                      width: size.width * 6 / 100,
+                                      color: AppColor.secondryColor(context),
+                                    ),
+                                    SizedBox(width: size.width * 5 / 100),
+                                    Expanded(
+                                      child: AnimatedSize(
+                                        duration: const Duration(milliseconds: 200),
+                                        curve: Curves.easeInOut,
+                                        child: Text(
+                                          AppLanguage.noteMsgText[language],
+                                          maxLines: _noteExpanded ? null : 1,
+                                          overflow: _noteExpanded
+                                              ? TextOverflow.visible
+                                              : TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 16,
+                                            color: AppColor.secondryColor(context),
+                                          ),
+                                        ),
                                       ),
                                     ),
-                                  ),
+                                  ],
                                 ),
-                              ],
-                            ),
-                          ),
+                              ),
 
-                          SizedBox(
-                            height: size.height * 5 / 100,
-                          ),
+                              SizedBox(
+                                height: size.height * 5 / 100,
+                              ),
 
-                          //! Event Details
-                          Consumer<VenuesDetailsController>(
-                            builder: (BuildContext context, controller, _) {
-                              dynamic eventData = controller.getVenuesDetail;
-                              if (eventData.isEmpty) {
-                                return const SizedBox();
-                              }
-                              String eventName = eventData['venue_name'] ?? "";
-                              String eventImage =
-                                  eventData['venue_image'] ?? "";
-                              // String eventDate = eventData['event_date'] ?? "";
-                              String address = eventData['address'] ?? "";
-                              return GestureDetector(
-                                onTap: address.trim().isEmpty
-                                    ? null
-                                    : () => _openVenueLocationInMaps(eventData),
-                                child: Row(
-                                  mainAxisAlignment:
+                              //! Event Details
+                              Consumer<VenuesDetailsController>(
+                                builder: (BuildContext context, controller, _) {
+                                  dynamic eventData = controller.getVenuesDetail;
+                                  if (eventData.isEmpty) {
+                                    return const SizedBox();
+                                  }
+                                  String eventName = eventData['venue_name'] ?? "";
+                                  String eventImage =
+                                      eventData['venue_image'] ?? "";
+                                  // String eventDate = eventData['event_date'] ?? "";
+                                  String address = eventData['address'] ?? "";
+                                  return GestureDetector(
+                                    onTap: address.trim().isEmpty
+                                        ? null
+                                        : () => _openVenueLocationInMaps(eventData),
+                                    child: Row(
+                                      mainAxisAlignment:
                                       MainAxisAlignment.spaceBetween,
-                                  children: [
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          bookingSummary,
-                                          style: const TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 13.5,
-                                              color: AppColor.pinkColor),
-                                        ),
-                                        SizedBox(
-                                          height: size.height * 0.1 / 100,
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
+                                        Column(
+                                          crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              bookingSummary,
+                                              style: const TextStyle(
+                                                  fontFamily: AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 13.5,
+                                                  color: AppColor.pinkColor),
+                                            ),
+                                            SizedBox(
+                                              height: size.height * 0.1 / 100,
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              45 /
-                                              100,
-                                          child: Text(
-                                            eventName,
-                                            maxLines: 1,
-                                            style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w700,
-                                                fontSize: 16,
-                                                color: AppColor.secondryColor(
-                                                    context)),
-                                          ),
-                                        ),
-                                        SizedBox(
-                                          height: size.height * 0.1 / 100,
-                                        ),
-                                        Container(
-                                          width: MediaQuery.of(context)
+                                                  45 /
+                                                  100,
+                                              child: Text(
+                                                eventName,
+                                                maxLines: 1,
+                                                style: TextStyle(
+                                                    fontFamily: AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w700,
+                                                    fontSize: 16,
+                                                    color: AppColor.secondryColor(
+                                                        context)),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                              height: size.height * 0.1 / 100,
+                                            ),
+                                            Container(
+                                              width: MediaQuery.of(context)
                                                   .size
                                                   .width *
-                                              45 /
-                                              100,
-                                          // color: AppColor.pinkColor,
-                                          child: Text(
-                                            address,
-                                            maxLines: 2,
-                                            style: const TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 14,
-                                                overflow: TextOverflow.ellipsis,
-                                                color: AppColor.pinkColor),
-                                          ),
+                                                  45 /
+                                                  100,
+                                              // color: AppColor.pinkColor,
+                                              child: Text(
+                                                address,
+                                                maxLines: 2,
+                                                style: const TextStyle(
+                                                    fontFamily: AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 14,
+                                                    overflow: TextOverflow.ellipsis,
+                                                    color: AppColor.pinkColor),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                        Consumer<VenuesDetailsController>(
+                                          builder: (BuildContext context,
+                                              controller, _) {
+                                            return SizedBox(
+                                              width: MediaQuery.of(context)
+                                                  .size
+                                                  .width *
+                                                  35 /
+                                                  100,
+                                              height: MediaQuery.of(context)
+                                                  .size
+                                                  .height *
+                                                  10 /
+                                                  100,
+                                              child: ClipRRect(
+                                                borderRadius:
+                                                BorderRadius.circular(20),
+                                                child: CachedNetworkImage(
+                                                  imageBuilder:
+                                                      (context, imageProvider) =>
+                                                      Container(
+                                                        decoration: BoxDecoration(
+                                                          image: DecorationImage(
+                                                            image: imageProvider,
+                                                            fit: BoxFit.cover,
+                                                          ),
+                                                        ),
+                                                      ),
+                                                  imageUrl:
+                                                  "${AppConfigProvider.imageUrl}$eventImage",
+                                                  fit: BoxFit.cover,
+                                                  errorWidget:
+                                                      (context, url, error) =>
+                                                      Image.asset(
+                                                        AppImage.dummyImageIcon,
+                                                        fit: BoxFit.cover,
+                                                      ),
+                                                  placeholder: (context, url) =>
+                                                      Center(
+                                                        child: LoadingAnimationWidget
+                                                            .dotsTriangle(
+                                                          color: AppColor.themeColor,
+                                                          size: 35,
+                                                        ),
+                                                      ),
+                                                ),
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ],
                                     ),
-                                    Consumer<VenuesDetailsController>(
-                                      builder: (BuildContext context,
-                                          controller, _) {
-                                        return SizedBox(
-                                          width: MediaQuery.of(context)
-                                                  .size
-                                                  .width *
-                                              35 /
-                                              100,
-                                          height: MediaQuery.of(context)
-                                                  .size
-                                                  .height *
-                                              10 /
-                                              100,
-                                          child: ClipRRect(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                            child: CachedNetworkImage(
-                                              imageBuilder:
-                                                  (context, imageProvider) =>
-                                                      Container(
-                                                decoration: BoxDecoration(
-                                                  image: DecorationImage(
-                                                    image: imageProvider,
-                                                    fit: BoxFit.cover,
-                                                  ),
-                                                ),
-                                              ),
-                                              imageUrl:
-                                                  "${AppConfigProvider.imageUrl}$eventImage",
-                                              fit: BoxFit.cover,
-                                              errorWidget:
-                                                  (context, url, error) =>
-                                                      Image.asset(
-                                                AppImage.dummyImageIcon,
-                                                fit: BoxFit.cover,
-                                              ),
-                                              placeholder: (context, url) =>
-                                                  Center(
-                                                child: LoadingAnimationWidget
-                                                    .dotsTriangle(
-                                                  color: AppColor.themeColor,
-                                                  size: 35,
-                                                ),
-                                              ),
-                                            ),
-                                          ),
-                                        );
+                                  );
+                                },
+                              ),
+
+                              SizedBox(
+                                height: size.height * 3 / 100,
+                              ),
+
+                              GestureDetector(
+                                onTap: () {
+                                  _showSpecialRequestBottomSheet();
+                                },
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      AppLanguage.addSpecialRequestText[language],
+                                      style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w400,
+                                          fontSize: 16,
+                                          color: AppColor.secondryColor(context)),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () {
+                                        _showSpecialRequestBottomSheet();
                                       },
+                                      child: Text(
+                                        AppLanguage.plusText[language],
+                                        style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w300,
+                                            fontSize: 30,
+                                            color: AppColor.secondryColor(context)),
+                                      ),
                                     ),
                                   ],
                                 ),
-                              );
-                            },
-                          ),
-
-                          SizedBox(
-                            height: size.height * 3 / 100,
-                          ),
-
-                          GestureDetector(
-                            onTap: () {
-                              _showSpecialRequestBottomSheet();
-                            },
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
+                              ),
+                              if (specialRequestController.text.isNotEmpty)
                                 Text(
-                                  AppLanguage.addSpecialRequestText[language],
-                                  style: TextStyle(
+                                  specialRequestController.text,
+                                  style: const TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontWeight: FontWeight.w400,
-                                      fontSize: 16,
-                                      color: AppColor.secondryColor(context)),
+                                      fontSize: 14,
+                                      color: AppColor.pinkColor),
                                 ),
-                                GestureDetector(
-                                  onTap: () {
-                                    _showSpecialRequestBottomSheet();
-                                  },
-                                  child: Text(
-                                    AppLanguage.plusText[language],
-                                    style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w300,
-                                        fontSize: 30,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (specialRequestController.text.isNotEmpty)
-                            Text(
-                              specialRequestController.text,
-                              style: const TextStyle(
-                                  fontFamily: AppFont.fontFamily,
-                                  fontWeight: FontWeight.w400,
-                                  fontSize: 14,
-                                  color: AppColor.pinkColor),
-                            ),
-                          SizedBox(
-                            height: size.height * 2 / 100,
-                          ),
-                          //! Your Details
-                          Text(
-                            AppLanguage.yourDetailsText[language],
-                            style: TextStyle(
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w700,
-                                fontSize: 18,
-                                color: AppColor.secondryColor(context)),
-                          ),
-                          SizedBox(
-                            height: size.height * 2 / 100,
-                          ),
-
-                          // Name Field
-                          SizedBox(
-                            width: size.width * 90 / 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Name',
-                                      style: TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                          color:
-                                              AppColor.secondryColor(context)),
-                                    ),
-                                    Text(
-                                      userName,
-                                      style: const TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          color: AppColor.pinkColor),
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: _showEditNameBottomSheet,
-                                  child: Text(
-                                    AppLanguage.editText[language],
-                                    style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 3 / 100,
-                          ),
-
-                          // Phone Field
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'Phone Number',
-                                    style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                  Text(
-                                    "+91 ${userPhone}",
-                                    style: const TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w400,
-                                        fontSize: 14,
-                                        color: AppColor.pinkColor),
-                                  ),
-                                ],
+                              SizedBox(
+                                height: size.height * 2 / 100,
                               ),
-                              GestureDetector(
-                                onTap: _showEditPhoneBottomSheet,
-                                child: Text(
-                                  AppLanguage.editText[language],
-                                  style: TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontWeight: FontWeight.w500,
-                                      fontSize: 16,
-                                      color: AppColor.secondryColor(context)),
-                                ),
+                              //! Your Details
+                              Text(
+                                AppLanguage.yourDetailsText[language],
+                                style: TextStyle(
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 18,
+                                    color: AppColor.secondryColor(context)),
                               ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: size.height * 3 / 100,
-                          ),
+                              SizedBox(
+                                height: size.height * 2 / 100,
+                              ),
 
-                          // Email Field
-                          SizedBox(
-                            width: size.width * 92 / 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                              // Name Field
+                              SizedBox(
+                                width: size.width * 90 / 100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                   children: [
-                                    Text(
-                                      'Email id',
-                                      style: TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                          color:
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Name',
+                                          style: TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              color:
                                               AppColor.secondryColor(context)),
+                                        ),
+                                        Text(
+                                          userName,
+                                          style: const TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                              color: AppColor.pinkColor),
+                                        ),
+                                      ],
                                     ),
-                                    Text(
-                                      userEmail,
-                                      style: const TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 14,
-                                          color: AppColor.pinkColor),
-                                    ),
-                                  ],
-                                ),
-                                GestureDetector(
-                                  onTap: _showEditEmailBottomSheet,
-                                  child: Text(
-                                    AppLanguage.editText[language],
-                                    style: TextStyle(
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w500,
-                                        fontSize: 16,
-                                        color: AppColor.secondryColor(context)),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 3 / 100,
-                          ),
-
-                          // Select City (kept as is)
-                          SizedBox(
-                            width: size.width * 90 / 100,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'City',
-                                      style: TextStyle(
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w500,
-                                          fontSize: 16,
-                                          color:
-                                              AppColor.secondryColor(context)),
-                                    ),
-                                    Padding(
-                                      padding: EdgeInsets.only(right: 81.0),
+                                    GestureDetector(
+                                      onTap: _showEditNameBottomSheet,
                                       child: Text(
-                                        cityName,
+                                        AppLanguage.editText[language],
+                                        style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: AppColor.secondryColor(context)),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height * 3 / 100,
+                              ),
+
+                              // Phone Field
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Phone Number',
+                                        style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: AppColor.secondryColor(context)),
+                                      ),
+                                      Text(
+                                        "+91 ${userPhone}",
                                         style: const TextStyle(
                                             fontFamily: AppFont.fontFamily,
                                             fontWeight: FontWeight.w400,
                                             fontSize: 14,
                                             color: AppColor.pinkColor),
                                       ),
+                                    ],
+                                  ),
+                                  GestureDetector(
+                                    onTap: _showEditPhoneBottomSheet,
+                                    child: Text(
+                                      AppLanguage.editText[language],
+                                      style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontWeight: FontWeight.w500,
+                                          fontSize: 16,
+                                          color: AppColor.secondryColor(context)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              SizedBox(
+                                height: size.height * 3 / 100,
+                              ),
+
+                              // Email Field
+                              SizedBox(
+                                width: size.width * 92 / 100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          'Email id',
+                                          style: TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              color:
+                                              AppColor.secondryColor(context)),
+                                        ),
+                                        Text(
+                                          userEmail,
+                                          style: const TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w400,
+                                              fontSize: 14,
+                                              color: AppColor.pinkColor),
+                                        ),
+                                      ],
+                                    ),
+                                    GestureDetector(
+                                      onTap: _showEditEmailBottomSheet,
+                                      child: Text(
+                                        AppLanguage.editText[language],
+                                        style: TextStyle(
+                                            fontFamily: AppFont.fontFamily,
+                                            fontWeight: FontWeight.w500,
+                                            fontSize: 16,
+                                            color: AppColor.secondryColor(context)),
+                                      ),
                                     ),
                                   ],
                                 ),
-                                // GestureDetector(
-                                //   onTap: () {},
-                                //   child: Text(
-                                //     AppLanguage.editText[language],
-                                //     style: TextStyle(
-                                //         fontFamily: AppFont.fontFamily,
-                                //         fontWeight: FontWeight.w500,
-                                //         fontSize: 16,
-                                //         color: AppColor.secondryColor(context)),
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ),
-                          SizedBox(
-                            height: size.height * 3 / 100,
-                          ),
+                              ),
+                              SizedBox(
+                                height: size.height * 3 / 100,
+                              ),
 
-                          // Terms and Conditions
-                          Consumer<VenuesDetailsController>(
-                            builder: (context, venueController, _) {
-                              final List<dynamic> termsList = (() {
-                                final data = venueController.getVenuesDetail;
-                                if (data != null &&
-                                    data['terms_and_conditions'] is List) {
-                                  return data['terms_and_conditions']
-                                      as List<dynamic>;
-                                }
-                                return <dynamic>[];
-                              })();
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  GestureDetector(
-                                    onTap: () {
-                                      setState(() {
-                                        isOpen = !isOpen;
-                                      });
-                                    },
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
+                              // Select City (kept as is)
+                              SizedBox(
+                                width: size.width * 90 / 100,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  children: [
+                                    Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          AppLanguage
-                                              .termAndconditionsText[language],
+                                          'City',
                                           style: TextStyle(
-                                            fontFamily: AppFont.fontFamily,
-                                            fontWeight: FontWeight.w700,
-                                            fontSize: 18,
-                                            color:
-                                                AppColor.secondryColor(context),
-                                          ),
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w500,
+                                              fontSize: 16,
+                                              color:
+                                              AppColor.secondryColor(context)),
                                         ),
-                                        Transform.rotate(
-                                          angle: !isOpen ? 0 : 3.14,
-                                          child: Image.asset(
-                                            AppImage.downArrow,
-                                            height: size.height * 2 / 100,
-                                            width: size.width * 4 / 100,
-                                            fit: BoxFit.cover,
-                                            color:
-                                                AppColor.secondryColor(context),
+                                        Padding(
+                                          padding: EdgeInsets.only(right: 81.0),
+                                          child: Text(
+                                            cityName,
+                                            style: const TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w400,
+                                                fontSize: 14,
+                                                color: AppColor.pinkColor),
                                           ),
                                         ),
                                       ],
                                     ),
-                                  ),
-                                  SizedBox(height: size.height * 2 / 100),
-                                  if (isOpen && termsList.isNotEmpty)
-                                    ListView.builder(
-                                      shrinkWrap: true,
-                                      physics:
-                                          const NeverScrollableScrollPhysics(),
-                                      itemCount: termsList.length,
-                                      itemBuilder: (context, index) {
-                                        final item = termsList[index];
-                                        final String text = (item is Map)
-                                            ? (item['item'] ?? '').toString()
-                                            : item.toString();
-                                        return Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 15),
-                                          child: Text(
-                                            text,
-                                            style: TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontWeight: FontWeight.w400,
-                                              fontSize: 16,
-                                              color: AppColor.secondryColor(
-                                                  context),
+                                    // GestureDetector(
+                                    //   onTap: () {},
+                                    //   child: Text(
+                                    //     AppLanguage.editText[language],
+                                    //     style: TextStyle(
+                                    //         fontFamily: AppFont.fontFamily,
+                                    //         fontWeight: FontWeight.w500,
+                                    //         fontSize: 16,
+                                    //         color: AppColor.secondryColor(context)),
+                                    //   ),
+                                    // ),
+                                  ],
+                                ),
+                              ),
+                              SizedBox(
+                                height: size.height * 3 / 100,
+                              ),
+
+                              // Terms and Conditions
+                              Consumer<VenuesDetailsController>(
+                                builder: (context, venueController, _) {
+                                  final List<dynamic> termsList = (() {
+                                    final data = venueController.getVenuesDetail;
+                                    if (data != null &&
+                                        data['terms_and_conditions'] is List) {
+                                      return data['terms_and_conditions']
+                                      as List<dynamic>;
+                                    }
+                                    return <dynamic>[];
+                                  })();
+                                  return Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            isOpen = !isOpen;
+                                          });
+                                        },
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              AppLanguage
+                                                  .termAndconditionsText[language],
+                                              style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w700,
+                                                fontSize: 18,
+                                                color:
+                                                AppColor.secondryColor(context),
+                                              ),
                                             ),
-                                          ),
-                                        );
-                                      },
-                                    ),
-                                ],
-                              );
-                            },
+                                            Transform.rotate(
+                                              angle: !isOpen ? 0 : 3.14,
+                                              child: Image.asset(
+                                                AppImage.downArrow,
+                                                height: size.height * 2 / 100,
+                                                width: size.width * 4 / 100,
+                                                fit: BoxFit.cover,
+                                                color:
+                                                AppColor.secondryColor(context),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      SizedBox(height: size.height * 2 / 100),
+                                      if (isOpen && termsList.isNotEmpty)
+                                        ListView.builder(
+                                          shrinkWrap: true,
+                                          physics:
+                                          const NeverScrollableScrollPhysics(),
+                                          itemCount: termsList.length,
+                                          itemBuilder: (context, index) {
+                                            final item = termsList[index];
+                                            final String text = (item is Map)
+                                                ? (item['item'] ?? '').toString()
+                                                : item.toString();
+                                            return Padding(
+                                              padding: const EdgeInsets.symmetric(
+                                                  vertical: 15),
+                                              child: Text(
+                                                text,
+                                                style: TextStyle(
+                                                  fontFamily: AppFont.fontFamily,
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 16,
+                                                  color: AppColor.secondryColor(
+                                                      context),
+                                                ),
+                                              ),
+                                            );
+                                          },
+                                        ),
+                                    ],
+                                  );
+                                },
+                              ),
+                              SizedBox(
+                                height: isOpen
+                                    ? size.height * 24 / 100
+                                    : size.height * 16 / 100,
+                              ),
+                            ],
                           ),
-                          SizedBox(
-                            height: isOpen
-                                ? size.height * 24 / 100
-                                : size.height * 16 / 100,
-                          ),
-                        ],
-                      ),
-                    )))
+                        )))
               ],
             ),
           ),
@@ -848,8 +851,8 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
             alignment: Alignment.bottomCenter,
             child: Padding(
               padding: EdgeInsets.only(
-                  // bottom: MediaQuery.of(context).viewInsets.bottom,
-                  ),
+                // bottom: MediaQuery.of(context).viewInsets.bottom,
+              ),
               child: Container(
                 decoration: BoxDecoration(
                   color: AppColor.primaryColor(context),
@@ -890,17 +893,17 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide:
-                              const BorderSide(color: AppColor.pinkColor),
+                          const BorderSide(color: AppColor.pinkColor),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide:
-                              const BorderSide(color: AppColor.pinkColor),
+                          const BorderSide(color: AppColor.pinkColor),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide:
-                              const BorderSide(color: AppColor.darkPurpleColor),
+                          const BorderSide(color: AppColor.darkPurpleColor),
                         ),
                       ),
                     ),
@@ -996,12 +999,12 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -1109,12 +1112,12 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
@@ -1221,12 +1224,12 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide:
-                                    const BorderSide(color: AppColor.pinkColor),
+                                const BorderSide(color: AppColor.pinkColor),
                               ),
                               focusedBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),

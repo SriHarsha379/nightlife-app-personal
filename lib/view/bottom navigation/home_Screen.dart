@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
@@ -11,9 +12,11 @@ import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_e
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../commonWidget/home_widget.dart';
+import '../../commonWidget/ai_assistant_launcher.dart';
 import '../../commonWidget/event_types_bottomsheet.dart';
 import '../../commonWidget/invite_members_type_bottomsheet.dart';
 import '../../controller/home/home_controller.dart';
+import '../../provider/common_api_helper.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/user_controller.dart';
 import '../../utilities/app_color.dart';
@@ -27,11 +30,8 @@ import '../../utilities/url_utils.dart';
 import '../other/advertisement_popup.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
-import '../other/MySplashSection/VenuesSection/venues_map_screen.dart';
 import '../other/poll_popup.dart';
-import '../other/contest_popup.dart';
 import '../../controller/poll/poll_controller.dart';
-import '../../controller/contest/contest_controller.dart';
 
 class Home extends StatefulWidget {
   static String routeName = './Home';
@@ -56,6 +56,11 @@ class _HomeState extends State<Home> {
     // Fetch initial data
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _homeController.refreshAllData(context);
+      // Real polls (poll/active) — replaces the old hardcoded samplePolls
+      // list so the "only repeat if not participated" trigger has real
+      // already_voted data to filter on.
+      Provider.of<PollController>(context, listen: false)
+          .fetchActivePolls(context);
     });
     context.read<UserController>().getUserDetails();
   }
@@ -133,6 +138,52 @@ class _HomeState extends State<Home> {
   bool _isAdItem(dynamic item) =>
       item is Map &&
           (item['type'] ?? '').toString().trim().toLowerCase() == 'ad';
+
+  String _adId(dynamic item) =>
+      (item is Map ? (item['ad_id'] ?? '') : '').toString().trim();
+
+  String _adLinkUrl(dynamic item) =>
+      (item is Map ? (item['link_url'] ?? '') : '').toString().trim();
+
+  // Impressions/clicks were injected into feeds but never actually
+  // tracked anywhere — the backend endpoints (ads/:id/impression,
+  // ads/:id/click) already existed and worked, nothing on the app side
+  // ever called them. Both are fire-and-forget: a failed analytics call
+  // should never interrupt what the member is doing.
+  final Set<String> _impressionLoggedAdIds = {};
+
+  Future<void> _logAdImpression(String adId) async {
+    if (adId.isEmpty || _impressionLoggedAdIds.contains(adId)) return;
+    _impressionLoggedAdIds.add(adId);
+    try {
+      await postJsonData('ads/$adId/impression', {}, mounted ? context : null);
+    } catch (_) {
+      // Analytics only — safe to ignore.
+    }
+  }
+
+  Future<void> _logAdClickAndOpen(dynamic item) async {
+    final adId = _adId(item);
+    final linkUrl = _adLinkUrl(item);
+
+    if (adId.isNotEmpty) {
+      unawaited(
+        postJsonData('ads/$adId/click', {}, mounted ? context : null)
+            .catchError((_) => null),
+      );
+    }
+
+    if (linkUrl.isEmpty) return;
+    final uri = Uri.tryParse(linkUrl);
+    if (uri == null) return;
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {
+      if (mounted) {
+        SnackBarToastMessage.error(context, "Couldn't open that link.");
+      }
+    }
+  }
 
   String _adImage(dynamic item) {
     if (item is! Map) return AppImage.dummyImageIcon;
@@ -266,15 +317,6 @@ class _HomeState extends State<Home> {
     _totalSwipeCount++;
     final count = _totalSwipeCount;
 
-    // Contest popup takes priority over poll/ad on its trigger swipes
-    // (contestSwipeTriggerCount is a multiple of pollSwipeTriggerCount,
-    // which is itself a multiple of adSwipeTriggerCount — enforced by
-    // PopupManager.validateConfiguration()).
-    if (count % PopupManager.contestSwipeTriggerCount == 0) {
-      _maybeShowContestPopup();
-      return;
-    }
-
     // Poll popup takes priority over ad on its trigger swipes (since poll
     // trigger is a multiple of ad trigger, we check it first).
     if (count % PopupManager.pollSwipeTriggerCount == 0) {
@@ -308,83 +350,32 @@ class _HomeState extends State<Home> {
 
   Future<void> _maybeShowPollPopup() async {
     if (_isShowingPopup || !mounted) return;
+
+    final pollController = Provider.of<PollController>(context, listen: false);
+    // Make sure we're not deciding based on stale/empty data if the
+    // initial fetch from initState hasn't landed yet.
+    if (!pollController.hasFetchedOnce) {
+      await pollController.fetchActivePolls(context);
+      if (!mounted) return;
+    }
+
+    final eligiblePolls = pollController.unvotedPolls;
+    // Nothing worth showing — don't spend the popup-trigger's cooldown on
+    // an empty slot; try again next time one comes due.
+    if (eligiblePolls.isEmpty) return;
+
     final allowed = await PopupManager.shouldShowPollPopup();
     if (!allowed || !mounted) return;
 
     _isShowingPopup = true;
-
-    // Real, admin-created polls via PollController — previously this
-    // always used the hardcoded samplePolls list regardless of what
-    // admin had actually created.
-    final pollController = context.read<PollController>();
-    await pollController.fetchActivePolls(context);
-    if (!mounted) {
-      _isShowingPopup = false;
-      return;
-    }
-
-    final polls = pollController.activePolls;
-    // Client's exact ask: polls should only repeat if the user hasn't
-    // participated yet. Previously any active poll could be picked here,
-    // including ones the user already voted on — the popup would still
-    // technically work (it opens straight into results, per PollData's
-    // alreadyVoted handling), but it kept resurfacing polls that were
-    // already answered instead of skipping to something fresh or simply
-    // not showing anything once everything's been voted on.
-    final unvotedPolls = polls.where((p) => !p.alreadyVoted).toList();
-    if (unvotedPolls.isEmpty) {
-      _isShowingPopup = false;
-      return;
-    }
-
     await PopupManager.recordPollShown();
 
-    final poll = unvotedPolls[_totalSwipeCount % unvotedPolls.length];
+    final poll = eligiblePolls[_totalSwipeCount % eligiblePolls.length];
     await PollPopup.show(
       context,
       poll,
-      onVote: (optionIndex) =>
-          pollController.submitVote(context, poll.id, optionIndex).then(
-                (updated) => updated?.options,
-          ),
-    );
-    if (mounted) _isShowingPopup = false;
-  }
-
-  Future<void> _maybeShowContestPopup() async {
-    if (_isShowingPopup || !mounted) return;
-    final allowed = await PopupManager.shouldShowContestPopup();
-    if (!allowed || !mounted) return;
-
-    _isShowingPopup = true;
-
-    // First-ever app-side surface for Contests — previously there was no
-    // screen, popup, or API call for this feature anywhere in the app.
-    final contestController = context.read<ContestController>();
-    await contestController.fetchActiveContests(context);
-    if (!mounted) {
-      _isShowingPopup = false;
-      return;
-    }
-
-    final contests = contestController.activeContests;
-    if (contests.isEmpty) {
-      _isShowingPopup = false;
-      return;
-    }
-
-    await PopupManager.recordContestShown();
-
-    final contest = contests[_totalSwipeCount % contests.length];
-    await ContestPopup.show(
-      context,
-      title: contest.title,
-      rules: contest.rules,
-      reward: contest.reward,
-      deadline: contest.deadline,
-      participants: contest.participants,
-      alreadyEntered: contest.alreadyEntered,
-      onEnter: () => contestController.enterContest(context, contest.id),
+      onVote: (optionId) =>
+          pollController.submitVote(context, poll.id, optionId),
     );
     if (mounted) _isShowingPopup = false;
   }
@@ -514,6 +505,9 @@ class _HomeState extends State<Home> {
         '$type-${selectedId}-${_itemId(currentItem)}-${_adImage(currentItem)}';
     if (_activeAdKey == adKey) return;
     _activeAdKey = adKey;
+
+    // New ad actually became the visible one — this is the "impression".
+    unawaited(_logAdImpression(_adId(currentItem)));
 
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
@@ -1291,6 +1285,15 @@ class _HomeState extends State<Home> {
         },
         child: Scaffold(
           backgroundColor: AppColor.primaryColor(context),
+          // AI assistant launcher (owl icon) — client asked for the same
+          // assistant available here too, on Members/Events/Venues; all
+          // three live in this one screen (see `selectedTab`), so one
+          // launcher here covers all of them.
+          floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+          floatingActionButton: const Padding(
+            padding: EdgeInsets.only(bottom: 8),
+            child: AiAssistantLauncher(),
+          ),
           body: SafeArea(
             child: SizedBox(
               width: MediaQuery.of(context).size.width * 100 / 100,
@@ -1524,69 +1527,6 @@ class _HomeState extends State<Home> {
                     height: MediaQuery.of(context).size.height * 2 / 100,
                   ),
 
-                  // "Venues – map is missing" — venues could only ever be
-                  // browsed as a swipe deck, no way to see where they
-                  // actually are. Only shown on the Venues tab; reuses the
-                  // exact list already loaded for the swipe deck rather
-                  // than a separate fetch.
-                  if (selectedId == 3)
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                          horizontal: size.width * 4 / 100),
-                      child: Align(
-                        alignment: Alignment.centerRight,
-                        child: GestureDetector(
-                          onTap: () {
-                            final homeController = Provider.of<HomeController>(
-                                context,
-                                listen: false);
-                            Navigator.push(
-                              context,
-                              PageTransition(
-                                type: PageTransitionType.rightToLeftWithFade,
-                                child: VenuesMapScreen(
-                                  venues: homeController.getVenuesList,
-                                ),
-                                duration: const Duration(milliseconds: 500),
-                              ),
-                            );
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                                horizontal: 12, vertical: 6),
-                            decoration: BoxDecoration(
-                              color: AppColor.filledcolor(context),
-                              borderRadius: BorderRadius.circular(20),
-                              border: Border.all(
-                                color: AppColor.secondryColor(context)
-                                    .withOpacity(0.2),
-                              ),
-                            ),
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.map_outlined,
-                                    size: 15,
-                                    color: AppColor.secondryColor(context)),
-                                const SizedBox(width: 6),
-                                Text(
-                                  "Map View",
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 12,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.secondryColor(context),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  if (selectedId == 3)
-                    SizedBox(height: size.height * 1 / 100),
-
                   //! Loading Indicator
                   if (homeController.getIsLoading)
                     Expanded(
@@ -1679,6 +1619,9 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
+                                      onTap: () =>
+                                          _logAdClickAndOpen(
+                                              member),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(member),
@@ -1762,19 +1705,8 @@ class _HomeState extends State<Home> {
                                                 .right);
                                       },
                                       bio: member['bio'] ?? '',
-                                      // FIXED: HomeWidget.membersCard's
-                                      // parameter was renamed from `vibes`
-                                      // to `musicGenres` when vibe-check
-                                      // display was replaced with music
-                                      // genres — this call site was never
-                                      // updated, so it referenced a
-                                      // parameter that no longer exists at
-                                      // all (compile error) and read the
-                                      // wrong API field (member['vibes']
-                                      // isn't sent by the backend anymore;
-                                      // it sends member['music_genres']).
-                                      musicGenres: List<String>.from(
-                                          member['music_genres'] ?? []),
+                                      vibes: List<String>.from(
+                                          member['vibes'] ?? []),
                                       distance: member[
                                       'distance_km'] !=
                                           null
@@ -1886,6 +1818,9 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
+                                      onTap: () =>
+                                          _logAdClickAndOpen(
+                                              event),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(event),
@@ -2108,6 +2043,9 @@ class _HomeState extends State<Home> {
                                           _resumeAdPlayback(),
                                       onTapCancel: () =>
                                           _resumeAdPlayback(),
+                                      onTap: () =>
+                                          _logAdClickAndOpen(
+                                              venue),
                                       child: HomeWidget.adCard(
                                         context,
                                         _adImage(venue),

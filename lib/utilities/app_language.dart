@@ -232,7 +232,7 @@ class AppLanguage {
   static const mobilevalidMessage = ["Enter a valid mobile number"];
 
   static const otpMessage = ["Please enter OTP"];
-  static const otpMinLenthMessage = ["OTP can not be less than 6 digit"];
+  static const otpMinLenthMessage = ["OTP can not be less than 4 digit"];
 
 // Please enter your first name
 
@@ -477,7 +477,6 @@ class AppLanguage {
   static const foodieExplorecreativeText = ["Foodie · Explorer · Creative"];
   static const username = [" Username"];
   static const bioText = ["Bio"];
-  static const imLookingForText = ["I'm looking for"];
   static const addAboutyourselfText = ["Add about yourself........"];
   static const privateinformationText = ["Private Information"];
   static const maleText = ["Male"];
@@ -504,9 +503,6 @@ class AppLanguage {
   static const Heighttext = ["Height:"];
   static const heightSize = ["5'9 | "];
   static const pronouncsText = ["Pronouns"];
-  static const sexualityLabelText = ["Sexuality:"];
-  static const musicGenresLabelText = ["Music Genres"];
-  static const eventPreferencesLabelText = ["Event Preferences"];
   static const hehimText = ["He/Him"];
   static const Hobbiestext = ["Hobbies:"];
   static const hobbiestext = ["Hobbies"];
@@ -562,7 +558,6 @@ class AppLanguage {
   static const postsText = ["Posts"];
   static const reelsText = ["Reels"];
   static const spotifyText = ["Spotify"];
-  static const snapchatText = ["Snapchat"];
   static const eventRemaindersText = ["Event Reminders"];
   static const visibilityText = ["Visibility"];
   static const showMeonText = ["Show me on Hii Around Me"];
@@ -772,7 +767,7 @@ class AppLanguage {
   static const distanceText = ["Distance"];
   static const currentLocationText = ["Use current location"];
   static const whereDoYouGoOutText = ["Where do you go out?"];
-  static const selectYourPrefferedCityText = ["Add cities you are interested in"];
+  static const selectYourPrefferedCityText = ["Select your Preferred Cities"];
   static const calendarText = ["Calendar"];
   static const viewdetailsText = ["View details"];
   static const pastEventsText = ["Past Events"];
@@ -824,7 +819,6 @@ class AppLanguage {
 
 //09
   static const referaFriText = ["Refer a Friend"];
-  static const darkModeText = ["Dark Mode"];
   static const privacypoliciesText = ["Privacy Policies"];
 
   //============chat support===========//

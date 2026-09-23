@@ -6,6 +6,7 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../provider/darkmode_provider.dart';
+import '../../../commonWidget/onboarding_footnote.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
@@ -28,14 +29,14 @@ class GalleryScreen extends StatefulWidget {
 
   const GalleryScreen(
       {super.key,
-      this.selectedGenres,
-      this.customGenre,
-      this.selectedEvents,
-      this.customEvent,
-      this.selectedVibes,
-      this.sexuality,
-      this.interestedIn,
-      this.pronouns});
+        this.selectedGenres,
+        this.customGenre,
+        this.selectedEvents,
+        this.customEvent,
+        this.selectedVibes,
+        this.sexuality,
+        this.interestedIn,
+        this.pronouns});
 
   @override
   State<GalleryScreen> createState() => _GalleryScreenState();
@@ -153,7 +154,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             },
                             child: SizedBox(
                               width:
-                                  MediaQuery.of(context).size.width * 4 / 100,
+                              MediaQuery.of(context).size.width * 4 / 100,
                               child: SizedBox(
                                 height: MediaQuery.of(context).size.height *
                                     5 /
@@ -207,6 +208,19 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 2 / 100,
                 ),
+                OnboardingFootnote(
+                  padding: EdgeInsets.only(
+                    top: 0,
+                    bottom: 4,
+                    left: MediaQuery.of(context).size.width * 0.06,
+                    right: MediaQuery.of(context).size.width * 0.06,
+                  ),
+                  text:
+                  "Just one good photo is enough to continue — add more anytime from your profile later.",
+                ),
+                SizedBox(
+                  height: MediaQuery.of(context).size.height * 1 / 100,
+                ),
                 // Media Grid
                 SizedBox(
                   width: size.width,
@@ -217,7 +231,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                     itemBuilder: (context, rowIndex) {
                       return Padding(
                         padding:
-                            EdgeInsets.only(bottom: size.height * 2.5 / 100),
+                        EdgeInsets.only(bottom: size.height * 2.5 / 100),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: List.generate(3, (colIndex) {
@@ -317,23 +331,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
               borderRadius: BorderRadius.circular(21),
               child: isVideo
                   ? (thumbnailPath.isNotEmpty &&
-                          File(thumbnailPath).existsSync()
-                      ? Image.file(
-                          File(thumbnailPath),
-                          fit: BoxFit.cover,
-                        )
-                      : Container(
-                          color: Colors.black54,
-                          child: const Icon(
-                            Icons.videocam,
-                            color: Colors.white,
-                            size: 40,
-                          ),
-                        ))
+                  File(thumbnailPath).existsSync()
+                  ? Image.file(
+                File(thumbnailPath),
+                fit: BoxFit.cover,
+              )
+                  : Container(
+                color: Colors.black54,
+                child: const Icon(
+                  Icons.videocam,
+                  color: Colors.white,
+                  size: 40,
+                ),
+              ))
                   : Image.file(
-                      File(filePath),
-                      fit: BoxFit.cover,
-                    ),
+                File(filePath),
+                fit: BoxFit.cover,
+              ),
             ),
           ),
           // Video play icon overlay
@@ -429,36 +443,36 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
-  // // Show media options
-  // void _showMediaOptions(int index) {
-  //   showModalBottomSheet(
-  //     context: context,
-  //     backgroundColor: AppColor.themeColor,
-  //     builder: (context) {
-  //       return Container(
-  //         padding: const EdgeInsets.all(20),
-  //         child: Column(
-  //           mainAxisSize: MainAxisSize.min,
-  //           children: [
-  //             ListTile(
-  //               leading: const Icon(Icons.delete, color: Colors.red),
-  //               title: const Text('Remove'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //                 _removeMediaItem(index);
-  //               },
-  //             ),
-  //             ListTile(
-  //               leading: const Icon(Icons.cancel),
-  //               title: const Text('Cancel'),
-  //               onTap: () {
-  //                 Navigator.pop(context);
-  //               },
-  //             ),
-  //           ],
-  //         ),
-  //       );
-  //     },
-  //   );
-  // }
+// // Show media options
+// void _showMediaOptions(int index) {
+//   showModalBottomSheet(
+//     context: context,
+//     backgroundColor: AppColor.themeColor,
+//     builder: (context) {
+//       return Container(
+//         padding: const EdgeInsets.all(20),
+//         child: Column(
+//           mainAxisSize: MainAxisSize.min,
+//           children: [
+//             ListTile(
+//               leading: const Icon(Icons.delete, color: Colors.red),
+//               title: const Text('Remove'),
+//               onTap: () {
+//                 Navigator.pop(context);
+//                 _removeMediaItem(index);
+//               },
+//             ),
+//             ListTile(
+//               leading: const Icon(Icons.cancel),
+//               title: const Text('Cancel'),
+//               onTap: () {
+//                 Navigator.pop(context);
+//               },
+//             ),
+//           ],
+//         ),
+//       );
+//     },
+//   );
+// }
 }

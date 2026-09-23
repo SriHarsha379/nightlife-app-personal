@@ -15,6 +15,7 @@ import 'utilities/app_theme.dart';
 import 'utilities/auth_session_service.dart';
 import 'utilities/fcm_token_service.dart';
 import 'utilities/local_notification_service.dart';
+import 'utilities/profile_completion_navigation.dart';
 import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
@@ -25,27 +26,11 @@ import 'view/other/MySplashSection/VenuesSection/venuepages.dart';
 import 'view/other/chats/chat_message_screen.dart';
 import 'firebase_options.dart';
 
-/// Initializes Firebase, tolerating the case where Android's native
-/// Firebase SDK has already auto-created the "[DEFAULT]" app from
-/// google-services.json before this Dart code runs. In that situation
-/// Firebase.initializeApp() throws a FirebaseException with code
-/// 'duplicate-app', which is harmless here (the app already exists and is
-/// perfectly usable) so it's swallowed rather than pre-checking
-/// Firebase.apps.isEmpty, which isn't reliably in sync with native state
-/// at this point in startup.
-Future<void> _initializeFirebaseIfNeeded() async {
-  try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-  } on FirebaseException catch (e) {
-    if (e.code != 'duplicate-app') rethrow;
-  }
-}
-
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await _initializeFirebaseIfNeeded();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await LocalNotificationService.initialize();
   print("Handling background message: ${message.messageId}");
   final String? title = message.notification?.title?.trim();
@@ -59,41 +44,22 @@ Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 Future<void> main() async {
-  await runZonedGuarded(() async {
-    WidgetsFlutterBinding.ensureInitialized();
-
-    // Catch framework (widget build/layout/paint) errors instead of letting
-    // them crash the app; log them so they show up in device logs.
-    FlutterError.onError = (FlutterErrorDetails details) {
-      FlutterError.presentError(details);
-      debugPrint('FlutterError caught: ${details.exceptionAsString()}');
-    };
-
-    // On Android, the Firebase Android SDK auto-initializes a "[DEFAULT]"
-    // app natively from google-services.json before this Dart code ever
-    // runs. Checking Firebase.apps.isEmpty first isn't reliable here (the
-    // Dart-side cache isn't guaranteed to reflect that native app yet), so
-    // catch the specific duplicate-app exception instead of pre-checking.
-    await _initializeFirebaseIfNeeded();
-    await FirebaseMessaging.instance
-        .setForegroundNotificationPresentationOptions(
-      alert: true,
-      badge: true,
-      sound: true,
-    );
-    await LocalNotificationService.initialize();
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    await FcmTokenService.generateAndStoreToken();
-    SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-    ]);
-    runApp(const MyApp());
-  }, (Object error, StackTrace stack) {
-    // Catch anything thrown outside the Flutter widget tree (e.g. an
-    // unhandled PlatformException from a plugin call like the image
-    // picker) so it gets logged instead of taking down the app.
-    debugPrint('Uncaught zone error: $error\n$stack');
-  });
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+  await FirebaseMessaging.instance.setForegroundNotificationPresentationOptions(
+    alert: true,
+    badge: true,
+    sound: true,
+  );
+  await LocalNotificationService.initialize();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  await FcmTokenService.generateAndStoreToken();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+  ]);
+  runApp(const MyApp());
 }
 
 class MyApp extends StatefulWidget {
@@ -378,6 +344,24 @@ class _MyAppState extends State<MyApp> {
         MaterialPageRoute(
           builder: (_) => VenueBookedDetails(venueId: bookingId),
         ),
+      );
+      return;
+    }
+
+    if (action == 'profile_completion') {
+      // "80% profile completed, you need to do this" — previously fell
+      // through to the generic Notifications list with no way to act on
+      // it directly. Now takes the member straight to whichever specific
+      // field is actually missing (bio, Instagram, hobbies, or gallery),
+      // using the stable `next_step_field` key sent by the backend
+      // (falls back to a plain Edit Profile open if it's absent/unknown).
+      final String nextStepField = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['next_step_field'],
+      );
+      navigateToProfileCompletionField(
+        navigator.context,
+        nextStepField.isEmpty ? null : nextStepField,
       );
       return;
     }

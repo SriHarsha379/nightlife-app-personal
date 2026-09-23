@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:night_life/controller/home/home_controller.dart';
 import 'package:night_life/controller/venues/venues_details_controller.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
@@ -35,6 +36,8 @@ class VenuePages extends StatefulWidget {
 }
 
 class _VenuePagesState extends State<VenuePages> {
+  static const double _dislikeOnlyActionBarWidthFactor = 0.68;
+  static const double _fullActionBarWidthFactor = 0.85;
   late TextEditingController searchController;
   Map<String, String>? _swipeResult;
 
@@ -74,6 +77,95 @@ class _VenuePagesState extends State<VenuePages> {
         const SnackBar(content: Text('Unable to open location')),
       );
     }
+  }
+
+  Widget _buildVenueMapPreview(
+      Map<String, dynamic> venueData,
+      Size size,
+      BuildContext context,
+      ) {
+    final latRaw = venueData['latitude'];
+    final lngRaw = venueData['longitude'];
+    final latitude = latRaw is num
+        ? latRaw.toDouble()
+        : double.tryParse(_str(latRaw));
+    final longitude = lngRaw is num
+        ? lngRaw.toDouble()
+        : double.tryParse(_str(lngRaw));
+
+    // No coordinates to plot — nothing sensible to show, so skip the
+    // section entirely rather than rendering an empty/broken map.
+    if (latitude == null || longitude == null) {
+      return const SizedBox.shrink();
+    }
+
+    final venueName = _str(venueData['venue_name']);
+    final position = LatLng(latitude, longitude);
+
+    return GestureDetector(
+      onTap: () => _openVenueLocationInMaps(venueData),
+      child: Container(
+        width: size.width * 92 / 100,
+        height: size.height * 18 / 100,
+        margin: EdgeInsets.only(bottom: size.height * 2.5 / 100),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: AppColor.secondryColor(context).withOpacity(0.12),
+          ),
+        ),
+        child: Stack(
+          children: [
+            AbsorbPointer(
+              // Preview only — tapping the card opens full external maps
+              // (via the GestureDetector above) rather than letting the
+              // embedded map itself be panned/zoomed here.
+              absorbing: true,
+              child: GoogleMap(
+                initialCameraPosition: CameraPosition(
+                  target: position,
+                  zoom: 15.5,
+                ),
+                markers: {
+                  Marker(
+                    markerId: const MarkerId('venue_location'),
+                    position: position,
+                    infoWindow: InfoWindow(
+                      title: venueName.isNotEmpty ? venueName : 'Venue',
+                    ),
+                  ),
+                },
+                zoomControlsEnabled: false,
+                myLocationButtonEnabled: false,
+                liteModeEnabled: true,
+              ),
+            ),
+            Positioned(
+              right: 10,
+              bottom: 10,
+              child: Container(
+                padding:
+                const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                decoration: BoxDecoration(
+                  color: AppColor.primaryColor(context).withOpacity(0.92),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  "Open in Maps",
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontFamily: AppFont.fontFamily,
+                    fontWeight: FontWeight.w600,
+                    color: AppColor.secondryColor(context),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   // Helper method to build image URL
@@ -255,11 +347,10 @@ class _VenuePagesState extends State<VenuePages> {
         onTap: onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 180),
-          width: 52,
-          height: 52,
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 11),
           decoration: BoxDecoration(
             color: filled ? backgroundColor : Colors.transparent,
-            shape: BoxShape.circle,
+            borderRadius: BorderRadius.circular(18),
             border: Border.all(color: backgroundColor, width: 1.4),
             boxShadow: filled
                 ? [
@@ -271,7 +362,23 @@ class _VenuePagesState extends State<VenuePages> {
             ]
                 : const [],
           ),
-          child: Icon(icon, color: foregroundColor, size: 22),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, color: foregroundColor, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                label,
+                style: TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w700,
+                  fontFamily: AppFont.fontFamily,
+                  color: foregroundColor,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
@@ -327,8 +434,6 @@ class _VenuePagesState extends State<VenuePages> {
         final about = _str(venueData['about']);
         final tickets = venueData['tickets'] as Map<String, dynamic>? ?? {};
         final reservationFee = tickets['reservation_fee'] ?? 0;
-        // Ticket is only assigned by admin when this map is populated.
-        final hasAssignedTicket = tickets.isNotEmpty;
         final isLiked = _toBool(venueData['is_liked']);
         final showDislikeOnly = widget.forceDislikeOnly || isLiked;
         final targetVenueId = _targetVenueId(venueData['_id']);
@@ -356,129 +461,78 @@ class _VenuePagesState extends State<VenuePages> {
                 child: Scaffold(
                   floatingActionButtonLocation:
                   FloatingActionButtonLocation.centerFloat,
-                  floatingActionButton: Padding(
-                    padding: EdgeInsets.only(
-                      bottom: 16 + MediaQuery.of(context).padding.bottom,
+                  floatingActionButton: Container(
+                    decoration: BoxDecoration(
+                      color: AppColor.sendinvitecontainercolor(context)
+                          .withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(25),
                     ),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
+                    width: showDislikeOnly
+                        ? size.width * _dislikeOnlyActionBarWidthFactor
+                        : size.width * _fullActionBarWidthFactor,
+                    height: size.height * 7 / 100,
+                    child: Row(
                       children: [
-                        if (hasAssignedTicket) ...[
-                          GestureDetector(
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                PageTransition(
-                                  type: PageTransitionType.rightToLeftWithFade,
-                                  child: BookTable(venueId: widget.venueId),
-                                  duration: const Duration(milliseconds: 500),
-                                ),
-                              );
-                            },
-                            child: Container(
-                              width: size.width * 0.9,
-                              height: 52,
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                borderRadius: BorderRadius.circular(30),
+                        SizedBox(width: size.width * 3 / 100),
+                        _buildDecisionButton(
+                          label: 'Reject',
+                          icon: Icons.close_rounded,
+                          backgroundColor: AppColor.redColor,
+                          foregroundColor: Colors.white,
+                          onTap: () async {
+                            await _submitVenueSwipeAction(
+                              'dislike',
+                              targetVenueId: targetVenueId,
+                            );
+                          },
+                        ),
+                        SizedBox(width: size.width * 3 / 100),
+                        GestureDetector(
+                          onTap: () {
+                            documenttypebottomsheet(
+                              context,
+                              sharedVenueData:
+                              Map<String, dynamic>.from(venueData),
+                            );
+                          },
+                          child: Container(
+                            width: size.width * 30 / 100,
+                            height: size.height * 4.6 / 100,
+                            decoration: BoxDecoration(
+                              color: AppColor.secondryColor(context),
+                              borderRadius: BorderRadius.circular(50),
+                              border: Border.all(
+                                color: AppColor.secondryColor(context),
                               ),
-                              child: Center(
-                                child: Text(
-                                  AppLanguage.BookNowText[language],
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontFamily: AppFont.fontFamily,
-                                    fontWeight: FontWeight.w600,
-                                    color: AppColor.pinkColor,
-                                  ),
+                            ),
+                            child: Center(
+                              child: Text(
+                                AppLanguage.sendInviteText[language],
+                                style: TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w500,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.pinkColor,
                                 ),
                               ),
                             ),
                           ),
-                          const SizedBox(height: 10),
-                        ],
-                        Container(
-                          decoration: BoxDecoration(
-                            color: AppColor.sendinvitecontainercolor(context)
-                                .withOpacity(0.9),
-                            borderRadius: BorderRadius.circular(32),
-                          ),
-                          width: size.width * 0.9,
-                          height: 64,
-                          padding: const EdgeInsets.symmetric(horizontal: 10),
-                          child: Row(
-                            children: [
-                              _buildDecisionButton(
-                                label: 'Reject',
-                                icon: Icons.close_rounded,
-                                backgroundColor: AppColor.redColor,
-                                foregroundColor: Colors.white,
-                                onTap: () async {
-                                  await _submitVenueSwipeAction(
-                                    'dislike',
-                                    targetVenueId: targetVenueId,
-                                  );
-                                },
-                              ),
-                              const SizedBox(width: 10),
-                              Expanded(
-                                child: GestureDetector(
-                                  onTap: () {
-                                    documenttypebottomsheet(
-                                      context,
-                                      sharedVenueData:
-                                      Map<String, dynamic>.from(venueData),
-                                    );
-                                  },
-                                  child: Container(
-                                    height: 48,
-                                    decoration: BoxDecoration(
-                                      color: AppColor.secondryColor(context),
-                                      borderRadius: BorderRadius.circular(50),
-                                      border: Border.all(
-                                        color: AppColor.secondryColor(context),
-                                      ),
-                                    ),
-                                    child: Center(
-                                      child: Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Icon(Icons.send_rounded,
-                                              color: AppColor.pinkColor, size: 16),
-                                          const SizedBox(width: 8),
-                                          Text(
-                                            AppLanguage.sendInviteText[language],
-                                            style: TextStyle(
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w500,
-                                              fontFamily: AppFont.fontFamily,
-                                              color: AppColor.pinkColor,
-                                            ),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              if (!showDislikeOnly) ...[
-                                const SizedBox(width: 10),
-                                _buildDecisionButton(
-                                  label: 'Accept',
-                                  icon: Icons.favorite_rounded,
-                                  backgroundColor: AppColor.buttonColor,
-                                  foregroundColor: Colors.white,
-                                  onTap: () async {
-                                    await _submitVenueSwipeAction(
-                                      'like',
-                                      targetVenueId: targetVenueId,
-                                    );
-                                  },
-                                ),
-                              ],
-                            ],
-                          ),
                         ),
+                        if (!showDislikeOnly) ...[
+                          SizedBox(width: size.width * 3 / 100),
+                          _buildDecisionButton(
+                            label: 'Accept',
+                            icon: Icons.favorite_rounded,
+                            backgroundColor: AppColor.buttonColor,
+                            foregroundColor: Colors.white,
+                            onTap: () async {
+                              await _submitVenueSwipeAction(
+                                'like',
+                                targetVenueId: targetVenueId,
+                              );
+                            },
+                          ),
+                        ],
                       ],
                     ),
                   ),
@@ -755,6 +809,13 @@ class _VenuePagesState extends State<VenuePages> {
                             ),
                           ),
                           SizedBox(height: size.height * 3 / 100),
+
+                          // Embedded map preview — venue location was only
+                          // ever a text address + "open in external maps"
+                          // link; this adds an actual visual map showing
+                          // the venue's pin without leaving the app.
+                          _buildVenueMapPreview(venueData, size, context),
+
                           if (gallery.isNotEmpty) ...[
                             SizedBox(
                               width: size.width * 90 / 100,
@@ -942,158 +1003,153 @@ class _VenuePagesState extends State<VenuePages> {
                               },
                             ),
                           ),
-                          if (hasAssignedTicket) ...[
-                            SizedBox(height: size.height * 3 / 100),
-                            SizedBox(
-                              width: size.width * 88 / 100,
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                children: [
-                                  Container(
-                                    child: Text(
-                                      // FIXED: was AppLanguage.TicketText
-                                      // ("Tickets") here — this section
-                                      // shows venue table-reservation
-                                      // pricing (tickets['reservation_fee']
-                                      // above), not an event ticket. Per
-                                      // the client's own wording rule:
-                                      // Events say Tickets, Venues say
-                                      // Reservations.
-                                      AppLanguage.reservationsText[language],
-                                      style: TextStyle(
-                                        fontSize: 16,
-                                        fontFamily: AppFont.fontFamily,
-                                        fontWeight: FontWeight.w600,
-                                        color: AppColor.secondryColor(context),
-                                      ),
+                          SizedBox(height: size.height * 3 / 100),
+                          SizedBox(
+                            width: size.width * 88 / 100,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Container(
+                                  child: Text(
+                                    // Was "Tickets" — wrong word for a
+                                    // venue page (this is table booking,
+                                    // not event ticketing); the price box
+                                    // right below already correctly says
+                                    // "Reservations".
+                                    AppLanguage.reservationsText[language],
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontFamily: AppFont.fontFamily,
+                                      fontWeight: FontWeight.w600,
+                                      color: AppColor.secondryColor(context),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                            SizedBox(height: size.height * 2 / 100),
-                            Container(
-                              width: size.width * 90 / 100,
-                              height: size.height * 18 / 100,
-                              margin: const EdgeInsets.only(right: 6),
-                              decoration: BoxDecoration(
-                                color: AppColor.backgroundColor,
-                                borderRadius: BorderRadius.circular(15),
-                              ),
-                              child: Column(
-                                children: [
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * 4 / 100,
-                                      vertical: size.height * 2 / 100,
-                                    ),
-                                    child: Row(
-                                      mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Column(
-                                          children: [
-                                            SizedBox(
-                                              width: size.width * 25 / 100,
+                          ),
+                          SizedBox(height: size.height * 2 / 100),
+                          Container(
+                            width: size.width * 90 / 100,
+                            height: size.height * 18 / 100,
+                            margin: const EdgeInsets.only(right: 6),
+                            decoration: BoxDecoration(
+                              color: AppColor.backgroundColor,
+                              borderRadius: BorderRadius.circular(15),
+                            ),
+                            child: Column(
+                              children: [
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 4 / 100,
+                                    vertical: size.height * 2 / 100,
+                                  ),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        children: [
+                                          SizedBox(
+                                            width: size.width * 25 / 100,
+                                            child: Text(
+                                              AppLanguage
+                                                  .reservationsText[language],
+                                              style: TextStyle(
+                                                fontSize: 13,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w500,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(
+                                            width: size.width * 25 / 100,
+                                            child: Text(
+                                              "₹$reservationFee",
+                                              style: TextStyle(
+                                                fontSize: 24,
+                                                fontFamily: AppFont.fontFamily,
+                                                fontWeight: FontWeight.w600,
+                                                color: Colors.white,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      GestureDetector(
+                                        onTap: () {
+                                          Navigator.push(
+                                            context,
+                                            PageTransition(
+                                              type: PageTransitionType
+                                                  .rightToLeftWithFade,
+                                              child: BookTable(
+                                                venueId: widget.venueId,
+                                                // venueName: venueName.toString(),
+                                                // venueAddress: address,
+                                                // // venueImage: venueImage,
+                                                // venueLikes: totalLikes,
+                                              ),
+                                              duration: const Duration(
+                                                  milliseconds: 500),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          width: size.width * 45 / 100,
+                                          decoration: BoxDecoration(
+                                            color: Colors.white,
+                                            borderRadius:
+                                            BorderRadius.circular(40),
+                                          ),
+                                          child: Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.symmetric(
+                                                horizontal:
+                                                size.width * 3 / 100,
+                                                vertical:
+                                                size.height * 1.5 / 100,
+                                              ),
                                               child: Text(
                                                 AppLanguage
-                                                    .reservationsText[language],
-                                                style: TextStyle(
-                                                  fontSize: 13,
-                                                  fontFamily: AppFont.fontFamily,
-                                                  fontWeight: FontWeight.w500,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                            SizedBox(
-                                              width: size.width * 25 / 100,
-                                              child: Text(
-                                                "₹$reservationFee",
-                                                style: TextStyle(
-                                                  fontSize: 24,
-                                                  fontFamily: AppFont.fontFamily,
+                                                    .BookNowText[language],
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontFamily:
+                                                  AppFont.fontFamily,
                                                   fontWeight: FontWeight.w600,
-                                                  color: Colors.white,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              PageTransition(
-                                                type: PageTransitionType
-                                                    .rightToLeftWithFade,
-                                                child: BookTable(
-                                                  venueId: widget.venueId,
-                                                  // venueName: venueName.toString(),
-                                                  // venueAddress: address,
-                                                  // // venueImage: venueImage,
-                                                  // venueLikes: totalLikes,
-                                                ),
-                                                duration: const Duration(
-                                                    milliseconds: 500),
-                                              ),
-                                            );
-                                          },
-                                          child: Container(
-                                            width: size.width * 45 / 100,
-                                            decoration: BoxDecoration(
-                                              color: Colors.white,
-                                              borderRadius:
-                                              BorderRadius.circular(40),
-                                            ),
-                                            child: Center(
-                                              child: Padding(
-                                                padding: EdgeInsets.symmetric(
-                                                  horizontal:
-                                                  size.width * 3 / 100,
-                                                  vertical:
-                                                  size.height * 1.5 / 100,
-                                                ),
-                                                child: Text(
-                                                  AppLanguage
-                                                      .BookNowText[language],
-                                                  style: const TextStyle(
-                                                    fontSize: 20,
-                                                    fontFamily:
-                                                    AppFont.fontFamily,
-                                                    fontWeight: FontWeight.w600,
-                                                    color: AppColor.pinkColor,
-                                                  ),
+                                                  color: AppColor.pinkColor,
                                                 ),
                                               ),
                                             ),
                                           ),
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  Padding(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: size.width * 6 / 100,
-                                    ),
-                                    child: Align(
-                                      alignment: Alignment.center,
-                                      child: Text(
-                                        textAlign: TextAlign.center,
-                                        AppLanguage.secureYourspotText[language],
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          fontFamily: AppFont.fontFamily,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.white,
-                                        ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: size.width * 6 / 100,
+                                  ),
+                                  child: Align(
+                                    alignment: Alignment.center,
+                                    child: Text(
+                                      textAlign: TextAlign.center,
+                                      AppLanguage.secureYourspotText[language],
+                                      style: TextStyle(
+                                        fontSize: 14,
+                                        fontFamily: AppFont.fontFamily,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
                           SizedBox(height: size.height * 5 / 100),
                           Center(
                             child: Container(
@@ -1102,18 +1158,7 @@ class _VenuePagesState extends State<VenuePages> {
                               color: AppColor.lightgreyColor,
                             ),
                           ),
-                          // Reserves space for the floating Book Now +
-                          // reject/invite/heart bar (Scaffold.floatingActionButton),
-                          // matching the same fix applied to the event
-                          // details page - the old fixed 12%-of-screen
-                          // spacer undershot the bar's real height.
-                          SizedBox(
-                            height: (hasAssignedTicket ? 62.0 : 0.0) +
-                                74.0 +
-                                16.0 +
-                                MediaQuery.of(context).padding.bottom +
-                                24.0,
-                          ),
+                          SizedBox(height: size.height * 12 / 100),
                         ],
                       ),
                     ),

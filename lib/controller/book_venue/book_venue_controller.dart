@@ -18,11 +18,11 @@ class BookVenueController with ChangeNotifier {
   String get appliedCouponCode => _appliedCouponCode;
 
   Future<double?> fetchCouponDiscountPercentage(
-    BuildContext context, {
-    required String couponCode,
-    required String venueId,
-    required String vendoreId,
-  }) async {
+      BuildContext context, {
+        required String couponCode,
+        required String venueId,
+        required String vendoreId,
+      }) async {
     final token = AppConstant.token;
     final sanitizedCode = couponCode.trim();
     if (token.isEmpty || sanitizedCode.isEmpty) {
@@ -75,28 +75,31 @@ class BookVenueController with ChangeNotifier {
 //==============book venue api-------------//
 
   Future<Map<String, dynamic>?> bookingVenueApi(
-    BuildContext context, {
-    required String venueId,
-    required String date,
-    required String slot,
-    required int numberOfGuests,
-    required bool isCover,
-    required String specialRequest,
-    required String transactionId,
-    required num coverCharge,
-    required num coverChargePercentage,
-    required num discount,
-    required num subTotal,
-    required num total,
-    required String cityName,
-    required String countryCode,
-    required String phoneNumber,
-    required String email,
-    required String fullName,
-    required num gstPercent,
-    required num gstAmount,
-    required num couponDiscountPercent,
-  }) async {
+      BuildContext context, {
+        required String venueId,
+        required String date,
+        required String slot,
+        required int numberOfGuests,
+        required bool isCover,
+        required String specialRequest,
+        required String transactionId,
+        required num coverCharge,
+        required num coverChargePercentage,
+        required num discount,
+        required num subTotal,
+        required num total,
+        required String cityName,
+        required String countryCode,
+        required String phoneNumber,
+        required String email,
+        required String fullName,
+        required num gstPercent,
+        required num gstAmount,
+        required num couponDiscountPercent,
+        // "Reservation with friends" — user IDs from the booker's accepted
+        // connections, invited to join this table.
+        List<String>? invitedFriendIds,
+      }) async {
     final token = AppConstant.token;
     if (token.isEmpty) return null;
 
@@ -124,6 +127,8 @@ class BookVenueController with ChangeNotifier {
       "gst_amount": gstAmount,
       "gst_percentage": gstPercent,
       "discount_percent": couponDiscountPercentage,
+      if (invitedFriendIds != null && invitedFriendIds.isNotEmpty)
+        "invited_friend_ids": invitedFriendIds,
     };
     log("booking field data $fields");
     try {

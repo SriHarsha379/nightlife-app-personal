@@ -4,95 +4,94 @@ import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
 import '../../view/other/poll_popup.dart';
 
-/// Fetches real, admin-created polls from `GET /poll/active` and submits
-/// votes via `POST /poll/:id/vote`.
-///
-/// This replaces the previous behavior where the poll popup only ever
-/// showed the hardcoded `samplePolls` list from poll_popup.dart — admin
-/// could create polls, but the app never called the API at all.
+/// Fetches real polls from the backend (poll/active) and submits votes
+/// (poll/:id/vote) — replaces the hardcoded `samplePolls` the poll popup
+/// used before, which is what makes "polls only repeat if not
+/// participated" possible: the backend already tells us, per poll,
+/// whether this member has voted (`already_voted`), so we just need to
+/// stop offering the ones they've already answered.
 class PollController with ChangeNotifier {
+  List<PollData> _polls = [];
+  List<PollData> get getPolls => _polls;
+
   bool _isLoading = false;
-  List<PollData> _activePolls = [];
-  bool _hasLoadedOnce = false;
+  bool get getIsLoading => _isLoading;
 
-  bool get isLoading => _isLoading;
-  List<PollData> get activePolls => _activePolls;
-  bool get hasLoadedOnce => _hasLoadedOnce;
+  bool _hasFetchedOnce = false;
+  bool get hasFetchedOnce => _hasFetchedOnce;
 
-  Map<String, String> get _authHeaders {
-    final token = AppConstant.token;
-    return token.isEmpty ? {} : {'authorization': 'Bearer $token'};
-  }
+  /// Active polls this member hasn't voted on yet — the pool the "show a
+  /// poll" trigger should pick from.
+  List<PollData> get unvotedPolls =>
+      _polls.where((p) => !p.alreadyVoted).toList();
 
-  PollData _pollFromJson(Map<String, dynamic> json) {
-    final options = (json['options'] as List? ?? [])
-        .map((o) => PollOption(
-      id: (o['id'] ?? '').toString(),
-      text: (o['text'] ?? '').toString(),
-      votes: (o['votes'] is num) ? (o['votes'] as num).toInt() : 0,
-    ))
-        .toList();
-
-    return PollData(
-      id: (json['id'] ?? '').toString(),
-      question: (json['question'] ?? '').toString(),
-      options: options,
-    );
-  }
-
-  /// Loads active polls for the current user. Silently no-ops on failure
-  /// (e.g. no connection) — a missing poll popup should never block the
-  /// rest of the home feed.
   Future<void> fetchActivePolls(BuildContext context) async {
-    final token = AppConstant.token;
-    if (token.isEmpty) return;
-
+    if (_isLoading) return;
     _isLoading = true;
     notifyListeners();
 
     try {
-      final res = await getData('poll/active', context, headers: _authHeaders);
+      final res = await getData(
+        'poll/active',
+        context,
+        headers: {'authorization': 'Bearer ${AppConstant.token}'},
+      );
+
       if (res != null && res['success'] == true && res['data'] is List) {
-        _activePolls = (res['data'] as List)
+        _polls = (res['data'] as List)
             .whereType<Map>()
-            .map((e) => _pollFromJson(Map<String, dynamic>.from(e)))
-            .where((p) => p.id.isNotEmpty && p.options.isNotEmpty)
+            .map((p) => PollData.fromJson(Map<String, dynamic>.from(p)))
             .toList();
       }
-    } catch (e) {
-      debugPrint('Failed to fetch active polls: $e');
+    } catch (_) {
+      // Leave whatever polls we already had rather than clearing them on
+      // a transient network failure.
     } finally {
-      _hasLoadedOnce = true;
+      _hasFetchedOnce = true;
       _isLoading = false;
       notifyListeners();
     }
   }
 
-  /// Submits a vote for [optionIndex] on poll [pollId]. Returns the
-  /// updated PollData (with real vote counts) on success, or null if the
-  /// request failed — callers should keep their optimistic local update
-  /// either way so the UI doesn't feel broken on a flaky connection.
+  /// Submits a vote and updates local state with the real returned
+  /// tallies so the poll immediately drops out of [unvotedPolls].
   Future<PollData?> submitVote(
       BuildContext context,
       String pollId,
-      int optionIndex,
+      String optionId,
       ) async {
-    final token = AppConstant.token;
-    if (token.isEmpty) return null;
+    final optionIndex = int.tryParse(optionId);
+    if (optionIndex == null) return null;
 
     try {
       final res = await postJsonData(
         'poll/$pollId/vote',
         {'option_index': optionIndex},
         context,
-        headers: _authHeaders,
+        headers: {'authorization': 'Bearer ${AppConstant.token}'},
       );
+
       if (res != null && res['success'] == true && res['data'] is Map) {
-        return _pollFromJson(Map<String, dynamic>.from(res['data']));
+        final updated =
+        PollData.fromJson(Map<String, dynamic>.from(res['data']));
+        final index = _polls.indexWhere((p) => p.id == pollId);
+        if (index != -1) {
+          _polls[index] = updated;
+        }
+        notifyListeners();
+        return updated;
       }
-    } catch (e) {
-      debugPrint('Failed to submit poll vote: $e');
+    } catch (_) {
+      // Handled by the caller (poll popup) — falls back to a local-only
+      // tally bump rather than leaving the UI stuck.
     }
     return null;
+  }
+
+  void clearData() {
+    _polls = [];
+    _isLoading = false;
+    _hasFetchedOnce = false;
+    notifyListeners();
   }
 }

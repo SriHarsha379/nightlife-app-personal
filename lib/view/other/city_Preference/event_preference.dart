@@ -6,10 +6,10 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:provider/provider.dart';
 
 import 'package:night_life/view/other/city_Preference/aboutyou_screen.dart';
-import 'package:night_life/view/other/city_Preference/vibe_preference.dart';
 import 'package:night_life/utilities/page_transition.dart';
 
 import '../../../controller/event_preference/event_preference_controller.dart';
+import '../../../commonWidget/onboarding_footnote.dart';
 import '../../../provider/darkmode_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -34,35 +34,6 @@ class _EventPreferenceState extends State<EventPreference> {
   var fileName;
 
   TextEditingController otherEventController = TextEditingController();
-  TextEditingController searchEventController = TextEditingController();
-  List<dynamic> filteredEvents = [];
-
-  void _filterEvents(List<dynamic> allEvents) {
-    final query = searchEventController.text.toLowerCase();
-    setState(() {
-      if (query.isEmpty) {
-        filteredEvents = allEvents;
-      } else {
-        filteredEvents = allEvents.where((event) {
-          final name = _eventNameFrom(event).toLowerCase();
-          return name.contains(query);
-        }).toList();
-      }
-    });
-  }
-
-  String _eventIdFrom(dynamic event) {
-    return (event['_id'] ?? event['id'] ?? event['event_preference_id'] ?? '')
-        .toString();
-  }
-
-  String _eventNameFrom(dynamic event) {
-    return (event['category_name'] ??
-        event['name'] ??
-        event['event_name'] ??
-        '')
-        .toString();
-  }
 
   @override
   void initState() {
@@ -80,7 +51,6 @@ class _EventPreferenceState extends State<EventPreference> {
   @override
   void dispose() {
     otherEventController.dispose();
-    searchEventController.dispose();
     super.dispose();
   }
 
@@ -101,9 +71,7 @@ class _EventPreferenceState extends State<EventPreference> {
         floatingActionButton: Consumer<EventPreferenceController>(
           builder: (context, controller, child) {
             return Padding(
-              padding: EdgeInsets.only(
-                bottom: 20 + MediaQuery.of(context).padding.bottom,
-              ),
+              padding: const EdgeInsets.only(bottom: 20),
               child: AppButton(
                 text: '${AppLanguage.continueText[language]}',
                 onPress: () {
@@ -126,11 +94,10 @@ class _EventPreferenceState extends State<EventPreference> {
                   log("Selected Event IDs: $selectedEvents");
                   log("Custom Event: $customEvent");
 
-                  // TEMPORARILY SKIPPING VibePreference - navigating
-                  // straight to AboutYouScreen instead. The VibePreference
-                  // screen/code itself is untouched (still fully there,
-                  // just not part of the active flow right now) - this can
-                  // be reverted by pointing back at VibePreference here.
+                  // Navigate directly to AboutYouScreen — the "Vibe Types"
+                  // picker step has been removed from onboarding per
+                  // feedback. `vibes` is an optional field on the backend
+                  // (signupStepThreeSchema), so it's safe to leave unset.
                   Navigator.push(
                     context,
                     PageTransition(
@@ -140,7 +107,6 @@ class _EventPreferenceState extends State<EventPreference> {
                         customGenre: widget.customGenre,
                         selectedEvents: selectedEvents,
                         customEvent: customEvent,
-                        selectedVibes: null,
                       ),
                       duration: const Duration(milliseconds: 500),
                     ),
@@ -273,35 +239,14 @@ class _EventPreferenceState extends State<EventPreference> {
 
                     SizedBox(height: size.height * 3 / 100),
 
-                    // Loading or Events List
-                    // Search bar
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
-                      child: TextField(
-                        controller: searchEventController,
-                        style:
-                        TextStyle(color: AppColor.secondryColor(context)),
-                        cursorColor: AppColor.buttonColor,
-                        decoration: InputDecoration(
-                          hintText: 'Search events...',
-                          hintStyle: TextStyle(
-                              color: AppColor.greyLightColor(context)),
-                          prefixIcon: Icon(Icons.search,
-                              color: AppColor.greyLightColor(context)),
-                          filled: true,
-                          fillColor: AppColor.textFieldColor(context),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(30),
-                            borderSide: BorderSide.none,
-                          ),
-                          contentPadding: const EdgeInsets.symmetric(
-                              horizontal: 20, vertical: 12),
-                        ),
-                        onChanged: (value) =>
-                            _filterEvents(controller.getEventsList),
-                      ),
+                    OnboardingFootnote(
+                      text:
+                      "This just helps us personalize what you see first — takes a few seconds, and you can update it anytime later.",
                     ),
+
+                    SizedBox(height: size.height * 1.5 / 100),
+
+                    // Loading or Events List
                     if (controller.getIsLoading)
                       SizedBox(
                         height: size.height * 30 / 100,
@@ -332,19 +277,12 @@ class _EventPreferenceState extends State<EventPreference> {
                           spacing: 10,
                           runSpacing: 10,
                           children: List.generate(
-                            (searchEventController.text.isEmpty
-                                ? controller.getEventsList
-                                : filteredEvents)
-                                .length,
+                            controller.getEventsList.length,
                                 (index) {
-                              var event = (searchEventController.text.isEmpty
-                                  ? controller.getEventsList
-                                  : filteredEvents)[index];
-                              String eventId = _eventIdFrom(event);
-                              String eventName = _eventNameFrom(event);
-                              if (eventName.isEmpty) {
-                                eventName = 'Unknown';
-                              }
+                              var event = controller.getEventsList[index];
+                              String eventId = event['_id'] ?? '';
+                              String eventName =
+                                  event['category_name'] ?? 'Unknown';
                               bool isSelected =
                               controller.isEventSelected(eventId);
 

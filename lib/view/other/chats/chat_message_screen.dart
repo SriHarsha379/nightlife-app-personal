@@ -137,7 +137,12 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeOutBack));
     _controller.forward();
-    _initSpeech();
+    // Was eagerly initializing speech-to-text (which triggers the OS
+    // microphone permission prompt) on every chat open, regardless of
+    // whether the member ever taps the voice-to-text mic button —
+    // that's the unexplained "Why is this needed?" prompt from client
+    // feedback. _toggleSpeechToText() already lazily calls _initSpeech()
+    // on first actual use, so this eager call just needs removing.
 
     _scrollController.addListener(_onChatScroll);
 
@@ -2359,7 +2364,6 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                         child: Row(
                           children: [
                             GestureDetector(
-                              behavior: HitTestBehavior.opaque,
                               onTap: () => Navigator.pop(context),
                               child: Container(
                                 height: size.width * 10 / 100,

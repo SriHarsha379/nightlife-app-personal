@@ -2,7 +2,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/login_screen.dart';
-import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/welcomescreens/app_onboarding_screen.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
@@ -21,11 +20,9 @@ import '../../utilities/auth_session_service.dart';
 import '../../utilities/session_manager.dart';
 import '../../provider/common_sharedpreferences.dart';
 import '../../provider/user_controller.dart';
-import '../../utilities/location_service.dart';
 import '../../controller/home/home_controller.dart';
 import '../../controller/my_profile/get_my_profile.dart';
 import '../../controller/my_profile/get_my_swipe_profile_controller.dart';
-import '../../utilities/profile_completion_reminder.dart';
 
 class Splash extends StatefulWidget {
   static String routeName = './Splash';
@@ -51,20 +48,9 @@ class _SplashState extends State<Splash> {
   }
 
   // Safe navigate — only navigates once, guards against mounted + double-nav.
-// Safe navigate — only navigates once, guards against mounted + double-nav.
   void _safeNavigate(Widget child) {
     if (_hasNavigated) return;
     if (!mounted) return;
-
-    // If some other screen (e.g. the OTP screen's own explicit navigation)
-    // has already been pushed on top of Splash, Splash's route is no
-    // longer the current one. That means navigation already happened
-    // elsewhere — don't fight it with a redundant, stale navigation.
-    final route = ModalRoute.of(context);
-    if (route != null && !route.isCurrent) {
-      return;
-    }
-
     _hasNavigated = true;
     Navigator.pushReplacement(
       context,
@@ -92,11 +78,6 @@ class _SplashState extends State<Splash> {
   }
 
   void _navigateForAuthenticatedUser(Map<String, dynamic> userData) {
-    // Same defensive clear as on fresh login - a confirmed valid session
-    // shouldn't be showing a leftover error banner from a previous,
-    // now-irrelevant session.
-    TopNotification.dispose();
-
     final bool isVerified =
         userData['is_verified'] ?? userData['isEmailVerified'] ?? false;
     final bool isProfileCompleted = userData['is_profile_completed'] ??
@@ -106,12 +87,6 @@ class _SplashState extends State<Splash> {
         userData['is_another_email_verify'] == true;
     final String anotherEmail = (userData['another_email'] ?? '').toString();
     final int signupStep = _parseSignupStep(userData['signup_step']);
-
-    // Fire-and-forget: checks the real profile-completion percentage
-    // (same endpoint the profile-completion UI uses) and nudges with a
-    // local reminder notification if it's not 100%. Throttled internally
-    // so it doesn't fire on every single app open.
-    ProfileCompletionReminder.maybeCheckAndShow();
 
     if (signupStep >= 3 &&
         anotherEmail.trim().isNotEmpty &&
@@ -141,7 +116,6 @@ class _SplashState extends State<Splash> {
     if (signupStep == 1 && !isVerified) {
       _safeNavigate(OtpVerify(
         mobile: userData['phone_number']?.toString() ?? '',
-        autoSendOtp: false,
       ));
       return;
     }
@@ -155,26 +129,16 @@ class _SplashState extends State<Splash> {
   }
 
   Future<void> _checkLoginStatus() async {
-    // Was 1 second — the logo GIF's own natural playback is 1.87s (28
-    // frames, measured directly from assets/icons/newsplashgif.gif), so
-    // the animation was being cut off mid-loop before anyone finished
-    // seeing it. 2.2s gives it room to complete with a small buffer.
+    // "Initial loading of logo to be slower – so the animation is seen."
+    // The splash GIF (assets/icons/newsplashgif.gif) runs ~1.87s (28
+    // frames), but this delay was only 1s — so on fast paths (e.g. no
+    // cached session) the auth check could finish and navigate away
+    // before the animation had played out, cutting it off mid-loop.
+    // 2.2s comfortably covers the full animation plus a small buffer so
+    // the last frame settles before we navigate.
     await Future.delayed(const Duration(milliseconds: 2200));
 
-    // Request location on app start
-    LocationService.requestAndGetLocation().then((position) {
-      if (position != null) {
-        debugPrint('📍 App start location: ${position.latitude}, ${position.longitude}');
-      }
-    });
-
     if (!mounted) return;
-
-    if (SessionManager.authFlowInProgress) {
-      print('🔍 DECISION → Auth flow in progress elsewhere, deferring ⏸️');
-      return;
-    }
-
 
     final cachedData = await SessionManager.readCachedUserDetailsMap();
     final cachedToken = SessionManager.extractToken(cachedData);
@@ -191,35 +155,8 @@ class _SplashState extends State<Splash> {
     Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      // IMPORTANT: `hasAuthenticatedUser` only reflects Firebase Auth's
-      // signed-in state. Google/Apple sign-in goes through Firebase, but
-      // phone/OTP login (AuthService is never touched there) does NOT -
-      // so Firebase never has a signed-in user for those accounts. Treating
-      // "no Firebase user" as "not logged in" wiped a perfectly valid
-      // backend session on every single app restart for OTP-logged-in
-      // users. The backend JWT in cache is the real source of truth for
-      // whether the user is logged in; Firebase is only relevant as a way
-      // to refresh that JWT for Google/Apple accounts.
-      if (SessionManager.hasAuthenticatedUser) {
-        print('🔍 DECISION → Firebase user found, refreshing token...');
-        try {
-          await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
-          print('🔍 TOKEN REFRESH → Success ✅');
-        } on SessionExpiredAuthException {
-          print('🔍 TOKEN REFRESH → SessionExpiredAuthException ❌');
-          if (!mounted) return; // ← GUARD: stop if already navigated away
-          await _clearSessionAndNavigateUnauthenticated(
-            userController,
-            homeController,
-            profileController,
-            swipeProfileController,
-          );
-          return;
-        }
-      } else if (cachedToken.isEmpty) {
-        // No Firebase session AND no backend token cached at all - this is
-        // a genuinely logged-out state (or first launch).
-        print('🔍 DECISION → No Firebase user and no cached token, going to unauthenticated ❌');
+      if (!SessionManager.hasAuthenticatedUser) {
+        print('🔍 DECISION → No Firebase user, going to unauthenticated ❌');
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
@@ -227,8 +164,23 @@ class _SplashState extends State<Splash> {
           swipeProfileController,
         );
         return;
-      } else {
-        print('🔍 DECISION → No Firebase user, but a cached backend token exists (OTP login) - validating it directly ✅');
+      }
+
+      print('🔍 DECISION → Firebase user found, refreshing token...');
+
+      try {
+        await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
+        print('🔍 TOKEN REFRESH → Success ✅');
+      } on SessionExpiredAuthException {
+        print('🔍 TOKEN REFRESH → SessionExpiredAuthException ❌');
+        if (!mounted) return; // ← GUARD: stop if already navigated away
+        await _clearSessionAndNavigateUnauthenticated(
+          userController,
+          homeController,
+          profileController,
+          swipeProfileController,
+        );
+        return;
       }
 
       if (!mounted) return; // ← GUARD after async Firebase call
@@ -259,9 +211,6 @@ class _SplashState extends State<Splash> {
 
         if (isInitiallyExpired) {
           print('🔍 Attempting session refresh...');
-          // tryRefreshSession() uses the cached refresh_token against the
-          // backend directly - it does NOT require a Firebase session, so
-          // this works for phone/OTP logins too.
           final didRefresh = await SessionManager.tryRefreshSession();
           print('🔍 SESSION REFRESH → ${didRefresh ? "Success ✅" : "Failed ❌"}');
           if (didRefresh) {

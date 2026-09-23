@@ -18,14 +18,18 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
-import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_validation.dart';
+import '../../utilities/profile_completion_navigation.dart';
 import '../../utilities/widgets.dart';
 import '../other/edit_hobbies.dart';
 
 class EditProfile extends StatefulWidget {
   static String routeName = './EditProfile';
-  const EditProfile({super.key});
+  // Set when arriving here from a "your profile is X% complete" prompt
+  // (notification tap or the post-save "what's next" chain) — 'bio' or
+  // 'instagram' scrolls to and highlights that field on load.
+  final String? focusField;
+  const EditProfile({super.key, this.focusField});
 
   @override
   State<EditProfile> createState() => _EditProfileState();
@@ -54,6 +58,58 @@ class _EditProfileState extends State<EditProfile> {
   String hobbiesText = '';
   bool hasHobbies = false;
   bool _isLoading = true;
+
+  // "Take him there" support: scroll to + briefly highlight whichever
+  // field the member was sent here to fix.
+  final GlobalKey _bioFieldKey = GlobalKey();
+  final GlobalKey _instagramFieldKey = GlobalKey();
+  final FocusNode _bioFocusNode = FocusNode();
+  String? _highlightedField;
+  bool _hasHandledInitialFocus = false;
+
+  void _scrollToAndHighlightFocusField() {
+    final field = widget.focusField;
+    if (field != 'bio' && field != 'instagram') return;
+
+    final key = field == 'bio' ? _bioFieldKey : _instagramFieldKey;
+    setState(() => _highlightedField = field);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      final fieldContext = key.currentContext;
+      if (fieldContext != null) {
+        await Scrollable.ensureVisible(
+          fieldContext,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.easeInOut,
+          alignment: 0.2,
+        );
+      }
+      if (field == 'bio' && mounted) {
+        _bioFocusNode.requestFocus();
+      }
+    });
+
+    // Fade the highlight out after a few seconds rather than leaving it
+    // on indefinitely.
+    Future.delayed(const Duration(seconds: 3), () {
+      if (mounted) setState(() => _highlightedField = null);
+    });
+  }
+
+  BoxDecoration _highlightableDecoration(
+      BuildContext context, String field, BoxDecoration base) {
+    if (_highlightedField != field) return base;
+    return base.copyWith(
+      border: Border.all(color: AppColor.pinkColor, width: 2),
+      boxShadow: [
+        BoxShadow(
+          color: AppColor.pinkColor.withOpacity(0.35),
+          blurRadius: 10,
+          spreadRadius: 1,
+        ),
+      ],
+    );
+  }
 
   String _profileImageUrl(String value) {
     final trimmed = value.trim();
@@ -136,6 +192,11 @@ class _EditProfileState extends State<EditProfile> {
       hobbiesText = hasHobbies ? hobbies.join(' · ') : 'No hobbies added';
       _isLoading = false;
     });
+
+    if (!_hasHandledInitialFocus) {
+      _hasHandledInitialFocus = true;
+      _scrollToAndHighlightFocusField();
+    }
   }
 
   Future<void> _updateProfile() async {
@@ -220,24 +281,26 @@ class _EditProfileState extends State<EditProfile> {
     setState(() {
       fullName = combinedName;
     });
+
+    if (widget.focusField != null) {
+      await continueToNextMissingProfileField(
+        context,
+        cameFromCompletionPrompt: true,
+        justCompletedField: widget.focusField,
+      );
+    }
   }
 
   Future<void> _pickProfileImage(ImageSource source) async {
-    try {
-      final pickedFile = await ImagePicker().pickImage(
-        source: source,
-        imageQuality: 90,
-      );
-      if (pickedFile == null || !mounted) return;
-      setState(() {
-        _selectedProfileImage = pickedFile;
-        profileImage = pickedFile.path;
-      });
-    } catch (e) {
-      if (!mounted) return;
-      SnackBarToastMessage.error(
-          context, "Couldn't pick that photo. Please try again.");
-    }
+    final pickedFile = await ImagePicker().pickImage(
+      source: source,
+      imageQuality: 90,
+    );
+    if (pickedFile == null || !mounted) return;
+    setState(() {
+      _selectedProfileImage = pickedFile;
+      profileImage = pickedFile.path;
+    });
   }
 
   void _showImagePickerSheet() {
@@ -283,6 +346,7 @@ class _EditProfileState extends State<EditProfile> {
     emailController.dispose();
     mobileController.dispose();
     cityController.dispose();
+    _bioFocusNode.dispose();
     super.dispose();
   }
 
@@ -739,22 +803,28 @@ class _EditProfileState extends State<EditProfile> {
                 SizedBox(
                     height: MediaQuery.of(context).size.height * 1 / 100),
                 Container(
+                  key: _bioFieldKey,
                   width: MediaQuery.of(context).size.width * 90 / 100,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: AppColor.grayColor.withOpacity(0.4),
-                        blurRadius: 4,
-                        offset: const Offset(0, 2),
-                      ),
-                    ],
-                    borderRadius: BorderRadius.circular(24),
+                  decoration: _highlightableDecoration(
+                    context,
+                    'bio',
+                    BoxDecoration(
+                      boxShadow: [
+                        BoxShadow(
+                          color: AppColor.grayColor.withOpacity(0.4),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                      borderRadius: BorderRadius.circular(24),
+                    ),
                   ),
                   child: TextFormField(
                     style:
                     TextStyle(color: AppColor.secondryColor(context)),
                     keyboardType: TextInputType.multiline,
                     controller: bioController,
+                    focusNode: _bioFocusNode,
                     maxLines: 2,
                     minLines: 2,
                     maxLength: AppConstant.describeLength,
@@ -807,15 +877,24 @@ class _EditProfileState extends State<EditProfile> {
                 ),
                 SizedBox(
                     height: MediaQuery.of(context).size.height * 1 / 100),
-                _buildFieldBox(
-                  context: context,
-                  child: CustomTextFieldInput(
-                    hintText:
-                    AppLanguage.yourInstagramProfileText[language],
-                    maxLength: AppConstant.fullNameText,
-                    keyboardType: TextInputType.name,
-                    controller: instagramController,
-                    fillColor: AppColor.textfieldcontainercolor(context),
+                Container(
+                  key: _instagramFieldKey,
+                  decoration: _highlightableDecoration(
+                    context,
+                    'instagram',
+                    const BoxDecoration(),
+                  ),
+                  child: _buildFieldBox(
+                    context: context,
+                    child: CustomTextFieldInput(
+                      hintText:
+                      AppLanguage.yourInstagramProfileText[language],
+                      maxLength: AppConstant.fullNameText,
+                      keyboardType: TextInputType.name,
+                      controller: instagramController,
+                      fillColor:
+                      AppColor.textfieldcontainercolor(context),
+                    ),
                   ),
                 ),
                 SizedBox(

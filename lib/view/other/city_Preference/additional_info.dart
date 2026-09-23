@@ -5,6 +5,7 @@ import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 
 import 'package:provider/provider.dart';
 import '../../../provider/darkmode_provider.dart';
+import '../../../commonWidget/onboarding_footnote.dart';
 import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -14,13 +15,12 @@ import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
   final List<Map<String, dynamic>>? preferredCities;
-  // Real, top-level feed-filtering coordinates — see CityPreference's
-  // "All Cities" option and the fix in signupStepTwo on the backend for
-  // why these are now passed through separately from preferredCities.
+  // Set only when the member picked "All Cities" on the previous screen —
+  // forwarded to signupStepTwoUserApi as the user's primary lat/lng/radius
+  // so discovery isn't restricted to any single city.
   final double? latitude;
   final double? longitude;
   final double? radius;
@@ -117,10 +117,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   }
 
   void _addHobby(String hobby) {
-    // Kept for the individual-row edit flow only (_editHobby handles edits);
-    // this direct-add path is no longer used now that hobbies are chosen via
-    // the chip picker in _showAddHobbyBottomSheet, but left here in case any
-    // other screen calls it directly.
     if (hobby.trim().isEmpty) {
       SnackBarToastMessage.showSnackBar(context, "Please enter a hobby");
       return;
@@ -177,21 +173,30 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       return;
     }
 
-    if (!Validation.isInstagramValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: instagramTextEditingController.text,
+      fieldName: "Instagram",
+      usernameMinLength: 1,
+      usernameMaxLength: 30,
     )) {
       return;
     }
-    if (!Validation.isSpotifyValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: spotifyTextEditingController.text,
+      fieldName: "Spotify",
+      usernameMinLength: 2,
+      usernameMaxLength: 100,
     )) {
       return;
     }
-    if (!Validation.isSnapchatValid(
+    if (!Validation.isOptionalSocialValueValid(
       context,
       value: snapchattexteditingController.text,
+      fieldName: "Snapchat",
+      usernameMinLength: 3,
+      usernameMaxLength: 15,
     )) {
       return;
     }
@@ -214,9 +219,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
       snapchattexteditingController.text.trim(),
       hobbies,
       1,
-      widget.latitude,
-      widget.longitude,
-      widget.radius,
+      latitude: widget.latitude,
+      longitude: widget.longitude,
+      radius: widget.radius,
     );
   }
 
@@ -239,24 +244,16 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
           floatingActionButton: Consumer<PostApiProvider>(
             builder: (context, apiprovider, child) {
               return Padding(
-                padding: EdgeInsets.only(
-                  bottom: 24 + MediaQuery.of(context).padding.bottom,
-                ),
+                padding: const EdgeInsets.only(bottom: 24),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    apiprovider.loading
-                        ? const CircularProgressIndicator(
-                      color: AppColor.pinkColor,
-                    )
-                        : AppButton(
-                      text: AppLanguage.skip[language],
-                      // Secondary color so it's still a real, prominent
-                      // button (not a plain text link like before), but
-                      // visually distinct from Continue so Continue still
-                      // reads as the primary action.
-                      backgroundColor: AppColor.borderColor,
-                      onPress: () {
+                    // "Skip for now" moved above Continue and made more
+                    // prominent (outlined pill button instead of plain text)
+                    // per onboarding feedback: "Make SKIP more prominent and
+                    // move it on top".
+                    GestureDetector(
+                      onTap: () {
                         if (apiprovider.loading) return;
                         final apiProvider = Provider.of<PostApiProvider>(
                           context,
@@ -271,15 +268,40 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                           "",
                           <String>[],
                           0,
-                          widget.latitude,
-                          widget.longitude,
-                          widget.radius,
+                          latitude: widget.latitude,
+                          longitude: widget.longitude,
+                          radius: widget.radius,
                         );
                       },
+                      child: Container(
+                        width: MediaQuery.of(context).size.width * 80 / 100,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          border: Border.all(
+                            color: AppColor.pinkColor,
+                            width: 1.4,
+                          ),
+                        ),
+                        child: Center(
+                          child: Text(
+                            textAlign: TextAlign.center,
+                            AppLanguage.skip[language],
+                            style: TextStyle(
+                              fontFamily: AppFont.fontFamily,
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColor.pinkColor,
+                            ),
+                          ),
+                        ),
+                      ),
                     ),
                     const SizedBox(height: 12),
                     apiprovider.loading
-                        ? const SizedBox.shrink()
+                        ? const CircularProgressIndicator(
+                      color: AppColor.pinkColor,
+                    )
                         : AppButton(
                       text: AppLanguage.continueText[language],
                       onPress: () {
@@ -373,6 +395,22 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     100,
                               ),
 
+                              Center(
+                                child: OnboardingFootnote(
+                                  padding: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).size.height *
+                                        1.5 /
+                                        100,
+                                    left: MediaQuery.of(context).size.width *
+                                        0.05,
+                                    right: MediaQuery.of(context).size.width *
+                                        0.05,
+                                  ),
+                                  text:
+                                  "Everything below is optional — hit Skip for now if you'd rather fill this in later.",
+                                ),
+                              ),
+
                               //! Bio
                               Center(
                                 child: SizedBox(
@@ -443,25 +481,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     prefixIconConstraints: const BoxConstraints(
                                       minWidth: 0,
                                       minHeight: 0,
-                                    ),
-                                    suffixIcon: ValueListenableBuilder(
-                                      valueListenable: instagramTextEditingController,
-                                      builder: (context, value, _) {
-                                        final username = value.text.trim();
-                                        if (username.isEmpty) return const SizedBox.shrink();
-                                        return IconButton(
-                                          icon: const Icon(Icons.open_in_new, size: 18),
-                                          color: AppColor.greyLightColor(context),
-                                          tooltip: 'Verify on Instagram',
-                                          onPressed: () async {
-                                            final extracted = Validation.extractSocialUsername(username, 'instagram.com');
-                                            final url = Uri.parse('https://instagram.com/\$extracted');
-                                            if (await canLaunchUrl(url)) {
-                                              launchUrl(url, mode: LaunchMode.externalApplication);
-                                            }
-                                          },
-                                        );
-                                      },
                                     ),
                                     suffixIconConstraints: const BoxConstraints(
                                       minWidth: 35,
@@ -549,25 +568,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   prefixIconConstraints: const BoxConstraints(
                                     minWidth: 0,
                                     minHeight: 0,
-                                  ),
-                                  suffixIcon: ValueListenableBuilder(
-                                    valueListenable: snapchattexteditingController,
-                                    builder: (context, value, _) {
-                                      final username = value.text.trim();
-                                      if (username.isEmpty) return const SizedBox.shrink();
-                                      return IconButton(
-                                        icon: const Icon(Icons.open_in_new, size: 18),
-                                        color: AppColor.greyLightColor(context),
-                                        tooltip: 'Verify on Snapchat',
-                                        onPressed: () async {
-                                          final extracted = Validation.extractSocialUsername(username, 'snapchat.com');
-                                          final url = Uri.parse('https://snapchat.com/add/\$extracted');
-                                          if (await canLaunchUrl(url)) {
-                                            launchUrl(url, mode: LaunchMode.externalApplication);
-                                          }
-                                        },
-                                      );
-                                    },
                                   ),
                                   suffixIconConstraints: const BoxConstraints(
                                     minWidth: 35,
@@ -875,246 +875,103 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
     });
   }
 
-  // Preset hobby options shown as selectable chips now live in
-  // AppConstant.hobbyOptions (lib/utilities/app_constant.dart) so this
-  // list stays in sync with the edit-hobbies screen.
-  static const List<Map<String, String>> _hobbyOptions =
-      AppConstant.hobbyOptions;
-
-  static const int _maxHobbies = AppConstant.maxHobbies;
-
-  // Add Hobby Bottom Sheet - chip-based multi-select with a custom-entry
-  // fallback for hobbies not in the preset list.
+  // Add Hobby Bottom Sheet
   void _showAddHobbyBottomSheet() {
     hobbyInputController.clear();
-
-    // Working copy so Cancel doesn't affect the real list until "Done".
-    final Set<String> tempSelected = hobbies.toSet();
-
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return StatefulBuilder(
-          builder: (context, setSheetState) {
-            void toggle(String label) {
-              final alreadySelected = tempSelected
-                  .any((h) => h.toLowerCase() == label.toLowerCase());
-              if (alreadySelected) {
-                setSheetState(() {
-                  tempSelected.removeWhere(
-                          (h) => h.toLowerCase() == label.toLowerCase());
-                });
-                return;
-              }
-              if (tempSelected.length >= _maxHobbies) {
-                SnackBarToastMessage.showSnackBar(
-                    context, "You can select up to $_maxHobbies hobbies");
-                return;
-              }
-              setSheetState(() => tempSelected.add(label));
-            }
-
-            return Padding(
-              padding: EdgeInsets.only(
-                bottom: MediaQuery.of(context).viewInsets.bottom,
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+          ),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: AppColor.themeColor,
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(20),
+                topRight: Radius.circular(20),
               ),
-              child: Container(
-                constraints: BoxConstraints(
-                  maxHeight: MediaQuery.of(context).size.height * 0.85,
-                ),
-                decoration: const BoxDecoration(
-                  color: AppColor.themeColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(20),
-                    topRight: Radius.circular(20),
+            ),
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  "Add a hobby",
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    fontFamily: AppFont.fontFamily,
+                    color: Colors.white,
                   ),
                 ),
-                padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                const SizedBox(height: 20),
+                _buildTextField(
+                  context: context,
+                  hint: "Type here...",
+                  controller: hobbyInputController,
+                  // inputFormatters: AppConstant.alphabetFormatter,
+                ),
+                const SizedBox(height: 20),
+                Row(
                   children: [
-                    Text(
-                      "Select your hobbies",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        fontFamily: AppFont.fontFamily,
-                        color: Colors.white,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      "Pick up to $_maxHobbies, or add your own",
-                      style: TextStyle(
-                        fontSize: 13,
-                        fontFamily: AppFont.fontFamily,
-                        color: Colors.white.withOpacity(0.6),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Flexible(
-                      child: SingleChildScrollView(
-                        child: Wrap(
-                          spacing: 10,
-                          runSpacing: 10,
-                          children: _hobbyOptions.map((option) {
-                            final label = option['label']!;
-                            final isSelected = tempSelected
-                                .any((h) => h.toLowerCase() == label.toLowerCase());
-                            return GestureDetector(
-                              onTap: () => toggle(label),
-                              child: AnimatedContainer(
-                                duration: const Duration(milliseconds: 150),
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 14, vertical: 10),
-                                decoration: BoxDecoration(
-                                  color: isSelected
-                                      ? AppColor.pinkColor.withOpacity(0.18)
-                                      : AppColor.primaryColor(context),
-                                  borderRadius: BorderRadius.circular(30),
-                                  border: Border.all(
-                                    color: isSelected
-                                        ? AppColor.pinkColor
-                                        : Colors.transparent,
-                                    width: 1.5,
-                                  ),
-                                ),
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(option['emoji']!,
-                                        style: const TextStyle(fontSize: 15)),
-                                    const SizedBox(width: 6),
-                                    Text(
-                                      label,
-                                      style: TextStyle(
-                                        fontSize: 14,
-                                        fontWeight: isSelected
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                        fontFamily: AppFont.fontFamily,
-                                        color: Colors.white,
-                                      ),
-                                    ),
-                                    if (isSelected) ...[
-                                      const SizedBox(width: 6),
-                                      const Icon(Icons.check,
-                                          size: 14, color: AppColor.pinkColor),
-                                    ],
-                                  ],
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: _buildTextField(
-                            context: context,
-                            hint: "Not listed? Type your own...",
-                            controller: hobbyInputController,
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColor.primaryColor(context),
+                            borderRadius: BorderRadius.circular(8),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        GestureDetector(
-                          onTap: () {
-                            final custom = hobbyInputController.text.trim();
-                            if (custom.isEmpty) return;
-                            final alreadySelected = tempSelected.any(
-                                    (h) => h.toLowerCase() == custom.toLowerCase());
-                            if (alreadySelected) {
-                              SnackBarToastMessage.showSnackBar(
-                                  context, "This hobby already exists");
-                              return;
-                            }
-                            if (tempSelected.length >= _maxHobbies) {
-                              SnackBarToastMessage.showSnackBar(context,
-                                  "You can select up to $_maxHobbies hobbies");
-                              return;
-                            }
-                            setSheetState(() => tempSelected.add(custom));
-                            hobbyInputController.clear();
-                          },
-                          child: Container(
-                            padding: const EdgeInsets.all(14),
-                            decoration: const BoxDecoration(
-                              color: AppColor.pinkColor,
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.add,
-                                color: Colors.white, size: 20),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Row(
-                      children: [
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () => Navigator.pop(context),
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: AppColor.primaryColor(context),
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Cancel",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: AppFont.fontFamily,
-                                  color: AppColor.secondryColor(context),
-                                ),
-                              ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Cancel",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: GestureDetector(
-                            onTap: () {
-                              setState(() {
-                                hobbies = tempSelected.toList();
-                                _updateHobbiesDisplay();
-                              });
-                              Navigator.pop(context);
-                            },
-                            child: Container(
-                              padding: const EdgeInsets.symmetric(vertical: 12),
-                              decoration: BoxDecoration(
-                                color: AppColor.pinkColor,
-                                borderRadius: BorderRadius.circular(8),
-                              ),
-                              alignment: Alignment.center,
-                              child: Text(
-                                "Done",
-                                style: TextStyle(
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w500,
-                                  fontFamily: AppFont.fontFamily,
-                                  color: AppColor.secondryColor(context),
-                                ),
-                              ),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () {
+                          _addHobby(hobbyInputController.text);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                          decoration: BoxDecoration(
+                            color: AppColor.pinkColor,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          alignment: Alignment.center,
+                          child: Text(
+                            "Add",
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.w500,
+                              fontFamily: AppFont.fontFamily,
+                              color: AppColor.secondryColor(context),
                             ),
                           ),
                         ),
-                      ],
+                      ),
                     ),
                   ],
                 ),
-              ),
-            );
-          },
+              ],
+            ),
+          ),
         );
       },
     );

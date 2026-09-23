@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
+import 'package:night_life/view/authentication/signup.dart';
 import 'package:night_life/view/other/city_Preference/additional_info.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../../controller/city/city_preference.dart';
+import '../../../commonWidget/onboarding_footnote.dart';
 import '../../../provider/darkmode_provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -164,29 +166,28 @@ class _CityPreferenceState extends State<CityPreference> {
                 floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
                 floatingActionButton: Padding(
-                  padding: EdgeInsets.only(
-                    bottom: 40 + MediaQuery.of(context).padding.bottom,
-                  ),
+                  padding: const EdgeInsets.only(bottom: 40),
                   child: AppButton(
-                    text: controller.isAllCitiesSelected ||
-                        controller.allCitiesConfigured
+                    text: (controller.getAllCitiesSelected ||
+                        controller.allCitiesConfigured)
                         ? AppLanguage.continueText[language]
                         : "Next",
                     onPress: () {
-                      // All Cities — skip specific-city selection and the
-                      // per-city radius step entirely, go straight through.
-                      if (controller.isAllCitiesSelected) {
-                        final anchor = controller.allCitiesAnchor;
+                      if (controller.getAllCitiesSelected) {
+                        // Skip city/radius configuration entirely — go
+                        // straight to AdditionalInfo with no preferred
+                        // cities and the "All Cities" lat/lng/radius.
+                        final allCitiesPayload =
+                        controller.getAllCitiesPayload();
                         Navigator.push(
                           context,
                           PageTransition(
                             type: PageTransitionType.rightToLeftWithFade,
                             child: AdditionalInfoScreen(
                               preferredCities: const [],
-                              latitude: anchor['latitude'],
-                              longitude: anchor['longitude'],
-                              radius: CityPreferenceController
-                                  .allCitiesRadiusKm,
+                              latitude: allCitiesPayload['latitude'],
+                              longitude: allCitiesPayload['longitude'],
+                              radius: allCitiesPayload['radius'],
                             ),
                             duration: const Duration(milliseconds: 500),
                           ),
@@ -235,14 +236,6 @@ class _CityPreferenceState extends State<CityPreference> {
 
                       print("✅ Preferred Cities Data: $preferredCities");
 
-                      // Also carry the first selected city's coordinates as
-                      // the real, top-level latitude/longitude/radius —
-                      // previously nothing set these during onboarding at
-                      // all, so a fresh account had no working feed
-                      // distance-filter center point until the person
-                      // separately used the location filter later.
-                      final firstCity = cityRadiusData.isNotEmpty ? cityRadiusData.first : null;
-
                       // ✅ Navigate to AdditionalInfo with city data
                       Navigator.push(
                         context,
@@ -250,15 +243,15 @@ class _CityPreferenceState extends State<CityPreference> {
                           type: PageTransitionType.rightToLeftWithFade,
                           child: AdditionalInfoScreen(
                             preferredCities: preferredCities,
-                            latitude: firstCity?['latitude'] as double?,
-                            longitude: firstCity?['longitude'] as double?,
-                            radius: firstCity != null
-                                ? (firstCity['radius'] as num).toDouble()
-                                : null,
                           ),
                           duration: const Duration(milliseconds: 500),
                         ),
                       );
+                      // Note: this specific-city path does not currently
+                      // send latitude/longitude/radius either (same
+                      // pre-existing gap noted in authController.signupStepTwo);
+                      // left as-is here to keep the "All Cities" change
+                      // self-contained — worth a follow-up fix.
                     },
                   ),
                 ),
@@ -279,7 +272,10 @@ class _CityPreferenceState extends State<CityPreference> {
                           children: [
                             GestureDetector(
                               onTap: () {
-                                Navigator.pop(context);
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const SignUp()));
                               },
                               child: Image.asset(
                                   color: AppColor.secondryColor(context),
@@ -348,76 +344,6 @@ class _CityPreferenceState extends State<CityPreference> {
                                     ),
 
                                     SizedBox(height: size.height * 2 / 100),
-
-                                    // All Cities — the client's own ask:
-                                    // "he needs 'all city option' not the
-                                    // active/preferred cities". Prominent,
-                                    // full-width, above the search bar so
-                                    // it's the first real choice offered.
-                                    GestureDetector(
-                                      onTap: () {
-                                        searchController.clear();
-                                        controller.selectAllCities();
-                                      },
-                                      child: Container(
-                                        width: size.width * 95 / 100,
-                                        padding: EdgeInsets.symmetric(
-                                            vertical: size.height * 1.6 / 100),
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.circular(_cityChipRadius),
-                                          gradient: controller.isAllCitiesSelected
-                                              ? LinearGradient(colors: [
-                                            AppColor.pinkColor,
-                                            AppColor.pinkColor.withOpacity(0.7),
-                                          ])
-                                              : null,
-                                          color: controller.isAllCitiesSelected
-                                              ? null
-                                              : AppColor.filledcolor(context),
-                                          border: Border.all(
-                                            color: controller.isAllCitiesSelected
-                                                ? AppColor.pinkColor
-                                                : AppColor.secondryColor(context)
-                                                .withOpacity(0.2),
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                          children: [
-                                            Icon(
-                                              Icons.public,
-                                              size: 18,
-                                              color: controller.isAllCitiesSelected
-                                                  ? Colors.white
-                                                  : AppColor.secondryColor(context),
-                                            ),
-                                            SizedBox(width: size.width * 2 / 100),
-                                            Text(
-                                              "All Cities",
-                                              style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 15,
-                                                fontWeight: FontWeight.w600,
-                                                color: controller.isAllCitiesSelected
-                                                    ? Colors.white
-                                                    : AppColor.secondryColor(
-                                                    context),
-                                              ),
-                                            ),
-                                            if (controller.isAllCitiesSelected) ...[
-                                              SizedBox(width: size.width * 2 / 100),
-                                              const Icon(Icons.check_circle,
-                                                  size: 16,
-                                                  color: Colors.white),
-                                            ],
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    SizedBox(height: size.height * 1.5 / 100),
 
                                     // Search Field
                                     Container(
@@ -497,7 +423,68 @@ class _CityPreferenceState extends State<CityPreference> {
                                       ),
                                     ),
 
-                                    SizedBox(height: size.height * 3.5 / 100),
+                                    SizedBox(height: size.height * 2 / 100),
+
+                                    // "All Cities" option — lets the member
+                                    // opt out of picking specific active/
+                                    // preferred cities altogether.
+                                    GestureDetector(
+                                      onTap: () {
+                                        controller.selectAllCities();
+                                      },
+                                      child: Container(
+                                        width: size.width * 0.9,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 14, horizontal: 18),
+                                        decoration: BoxDecoration(
+                                          color: controller.getAllCitiesSelected
+                                              ? AppColor.pinkColor
+                                              .withOpacity(0.12)
+                                              : cardColor,
+                                          borderRadius:
+                                          BorderRadius.circular(18),
+                                          border: Border.all(
+                                            width: controller
+                                                .getAllCitiesSelected
+                                                ? 1.4
+                                                : 0.7,
+                                            color: AppColor.pinkColor,
+                                          ),
+                                        ),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                          MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "All Cities",
+                                              style: TextStyle(
+                                                fontFamily: AppFont.fontFamily,
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w600,
+                                                color: AppColor.secondryColor(
+                                                    context),
+                                              ),
+                                            ),
+                                            Icon(
+                                              controller.getAllCitiesSelected
+                                                  ? Icons.check_circle
+                                                  : Icons.circle_outlined,
+                                              color: AppColor.pinkColor,
+                                              size: 22,
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+
+                                    SizedBox(height: size.height * 2 / 100),
+
+                                    const OnboardingFootnote(
+                                      text:
+                                      "Tip: pick All Cities if you're not sure yet — you can always narrow it down later from your profile.",
+                                    ),
+
+                                    SizedBox(height: size.height * 1 / 100),
 
                                     // Popular Cities Container
                                     Container(

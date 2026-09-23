@@ -30,8 +30,6 @@ import 'common_api_helper.dart';
 import 'common_sharedpreferences.dart';
 import 'package:http_parser/http_parser.dart' as http_parser;
 
-import 'package:firebase_auth/firebase_auth.dart';
-
 import 'socket_provider.dart';
 import 'user_controller.dart';
 
@@ -174,19 +172,6 @@ class PostApiProvider with ChangeNotifier {
       Provider.of<SocketProvider>(context, listen: false);
       await socketProvider.forceReconnect(token, authUserId: authUserId);
     }
-
-    // Step 4 — sign into Firebase with custom token returned by backend.
-    // Backend must return a 'firebase_token' field in the auth payload.
-    // Generate it server-side: admin.auth().createCustomToken(userId)
-    final firebaseToken = (authData['firebase_token'] ?? '').toString().trim();
-    if (firebaseToken.isNotEmpty) {
-      try {
-        await FirebaseAuth.instance.signInWithCustomToken(firebaseToken);
-        log('_syncAuthSession Firebase sign-in success userId=$authUserId');
-      } catch (e) {
-        log('_syncAuthSession Firebase sign-in failed: $e');
-      }
-    }
   }
 
   void _navigateFromAuthState(
@@ -294,12 +279,6 @@ class PostApiProvider with ChangeNotifier {
         bool showSuccessToast = true,
         Duration footerDuration = const Duration(milliseconds: 500),
       }) async {
-    // A fresh, successful login means whatever session/user this device was
-    // previously acting as is no longer relevant - force-clear any stuck
-    // error banner (e.g. a lingering "User not found" from a since-deleted
-    // account) so it can't survive into the new session.
-    TopNotification.dispose();
-
     await _syncAuthSession(context, authPayload);
     if (!context.mounted) return false;
 
@@ -375,7 +354,7 @@ class PostApiProvider with ChangeNotifier {
       'player_id': AppConstant.playerID.toString(),
     };
     log("fields$fields");
-    final res = await postJsonData('auth/social_login', fields, context, skipAuth: true);
+    final res = await postJsonData('auth/social_login', fields, context);
 
     if (res != null) {
       if (res['success'] == true) {
@@ -447,6 +426,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/signup_step_one',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
@@ -478,7 +458,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(false);
   }
 
-// --------------- Otp Verification -----------
+  // --------------- Otp Verification -----------
   Future<bool> otpVerificationApiCalling(
       BuildContext context,
       String otp,
@@ -487,104 +467,39 @@ class PostApiProvider with ChangeNotifier {
     if (_loading) return false;
     setLoading(true);
 
-    // Get the Firebase ID token from the currently signed-in user
-    // (Firebase phone auth sign-in must have already succeeded before this is called)
-    final firebaseUser = FirebaseAuth.instance.currentUser;
-    if (firebaseUser == null) {
-      setLoading(false);
-      if (context.mounted) {
-        TopNotification.error(context, "Verification session expired. Please try again.");
-      }
-      return false;
-    }
-
-    final String? firebaseIdToken = await firebaseUser.getIdToken();
-    if (firebaseIdToken == null || firebaseIdToken.isEmpty) {
-      setLoading(false);
-      // Keep Firebase and backend state in sync — sign out since we can't proceed
-      await FirebaseAuth.instance.signOut();
-      if (context.mounted) {
-        TopNotification.error(context, "Failed to verify. Please try again.");
-      }
-      return false;
-    }
-
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
-      'firebase_id_token': firebaseIdToken,
-      'otp': otp,
+      'otp': otp.toString(),
     };
 
     final res = await postJsonData(
       'auth/otp_verify',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
-// TEMP DEBUG — remove after diagnosing
-    log("OTP VERIFY REQUEST FIELDS: $fields");
-    log("OTP VERIFY RESPONSE: $res");
-
-    if (res != null && res['success'] == true && res['data'] != "NA") {
-      setLoading(false);
-      await _syncAuthSession(context, res['data']);
-      if (!context.mounted) return true;
-      TopNotification.success(context, res['message'][language]);
-      Navigator.push(
-        context,
-        PageTransition(
-          type: PageTransitionType.rightToLeftWithFade,
-          child: CityPreference(),
-          duration: const Duration(milliseconds: 500),
-        ),
-      );
-      return true;
+    if (res != null) {
+      if (res['success'] == true && res['data'] != "NA") {
+        setLoading(false);
+        await _syncAuthSession(context, res['data']);
+        if (!context.mounted) return true;
+        TopNotification.success(context, res['message'][language]);
+        Navigator.push(
+          context,
+          PageTransition(
+            type: PageTransitionType.rightToLeftWithFade,
+            child: CityPreference(),
+            duration: const Duration(milliseconds: 500),
+          ),
+        );
+        return true;
+      }
     }
 
-    // ── Backend verification failed ──
-    // Firebase thinks the user is signed in, but the backend rejected it.
-    // Sign out of Firebase to keep both sides in sync, so no other part of
-    // the app later discovers this mismatch and silently redirects to login.
     setLoading(false);
-    await FirebaseAuth.instance.signOut();
-    if (context.mounted) {
-      final String errorMsg = (res != null &&
-          res['message'] is List &&
-          (res['message'] as List).isNotEmpty)
-          ? res['message'][0].toString()
-          : "OTP verification failed. Please try again.";
-      TopNotification.error(context, errorMsg);
-    }
     return false;
   }
-
-
-  // ================ AI Chat Api ================//
-  Future<Map<String, dynamic>?> sendChatMessageApi(
-      BuildContext context,
-      List<Map<String, String>> messages,
-      ) async {
-    if (_secondaryLoading) return null;
-    setSecondaryLoading(true);
-
-    final res = await postJsonData(
-      'chat/send',
-      {'messages': messages},
-      context,
-    );
-
-    setSecondaryLoading(false);
-
-    if (res != null && res['success'] == true) {
-      return res;
-    }
-
-    if (context.mounted) {
-      TopNotification.error(context, "Couldn't reach the assistant. Please try again.");
-    }
-    return null;
-  }
-
 
   // =============== Resend Otp Api =================//
   Future<Map<String, dynamic>?> resendotpApiCalling(BuildContext context) async {
@@ -595,6 +510,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_otp',
       {},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -618,11 +534,11 @@ class PostApiProvider with ChangeNotifier {
       String spotify,
       String snapchat,
       List<String> hobbies,
-      int? status, [
+      int? status, {
         double? latitude,
         double? longitude,
         double? radius,
-      ]) async {
+      }) async {
     setLoading(true);
 
     final Map<String, dynamic> fields = {
@@ -632,20 +548,18 @@ class PostApiProvider with ChangeNotifier {
       'spotify_account': spotify.toString(),
       'snapchat_account': snapchat.toString(),
       'hobbies': hobbies,
+      // Only sent for the "All Cities" onboarding path today; see
+      // CityPreferenceController.getAllCitiesPayload().
+      if (latitude != null) 'latitude': latitude,
+      if (longitude != null) 'longitude': longitude,
+      if (radius != null) 'radius': radius,
     };
-
-    // Real feed-filtering location — previously nothing sent these during
-    // onboarding at all (see signupStepTwo on the backend). Only included
-    // when actually provided by the caller so existing behavior is
-    // unaffected wherever this isn't wired up yet.
-    if (latitude != null) fields['latitude'] = latitude;
-    if (longitude != null) fields['longitude'] = longitude;
-    if (radius != null) fields['radius'] = radius;
 
     final res = await postJsonData(
       'auth/signup_step_two',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -810,6 +724,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/verify_email_otp',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -843,6 +758,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_email_otp',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -879,6 +795,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/forgot_password',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -915,6 +832,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/verify_forgot_otp',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -954,6 +872,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/resend_forgot_otp',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -977,6 +896,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/reset_password',
       {'new_password': newPassword.toString(), 'email': email.toString()},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -998,6 +918,7 @@ class PostApiProvider with ChangeNotifier {
       'auth/confirm_password',
       {'new_password': newPassword.trim()},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null && res['success'] == true) {
@@ -1024,6 +945,7 @@ class PostApiProvider with ChangeNotifier {
         "new_password": newPassword.toString(),
       },
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -1076,6 +998,7 @@ class PostApiProvider with ChangeNotifier {
       'user/edit_profile',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
       files: files,
     );
 
@@ -1134,6 +1057,7 @@ class PostApiProvider with ChangeNotifier {
       'user/add_event_preferences',
       fields,
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1167,6 +1091,7 @@ class PostApiProvider with ChangeNotifier {
       'user/add_vibes',
       {'vibes': ids},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1176,6 +1101,42 @@ class PostApiProvider with ChangeNotifier {
       return true;
     }
     return false;
+  }
+
+  // ================ Update Vibe Checks Api ================//
+  // Post-signup save for Vibe Check answers (for members who skipped
+  // during onboarding) — mirrors updateHobbiesApi's shape/behaviour.
+  Future<Map<String, dynamic>?> updateVibeChecksApi(
+      BuildContext context,
+      List<Map<String, String>> vibeChecks,
+      ) async {
+    setLoading(true);
+
+    final res = await postJsonData(
+      'user/update_vibe_checks',
+      {'vibe_checks': vibeChecks},
+      context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
+    );
+
+    setLoading(false);
+
+    if (res != null && res['success'] == true) {
+      if (context.mounted) {
+        TopNotification.success(context, res['message'][language]);
+      }
+      if (res['data'] is Map) {
+        await CacheHelper.save("user_details", jsonEncode(res['data']));
+        final newToken = _extractToken(res['data'] ?? {});
+        if (newToken.isNotEmpty) AppConstant.token = newToken;
+        if (context.mounted) {
+          Provider.of<UserController>(context, listen: false)
+              .setUserFromMap(Map<String, dynamic>.from(res['data']));
+        }
+      }
+      return res;
+    }
+    return null;
   }
 
   // ================ Update Hobbies Api ================//
@@ -1189,6 +1150,7 @@ class PostApiProvider with ChangeNotifier {
       'user/update_hobbies',
       {'hobbies': hobbies},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1222,6 +1184,7 @@ class PostApiProvider with ChangeNotifier {
       'user/delete_gallery_item',
       {'url': url},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     setLoading(false);
@@ -1305,18 +1268,15 @@ class PostApiProvider with ChangeNotifier {
 
     // FIX: disconnect() clears _activeSocketToken + _authUserId properly
     Provider.of<SocketProvider>(context, listen: false).disconnect();
-    // Fire and forget logout — bypass common_api_helper
-    if (logoutToken.trim().isNotEmpty) {
-      http.post(
-        Uri.parse('${AppConfigProvider.apiUrl}auth/logout'),
-        headers: {
-          'authorization': 'Bearer $logoutToken',
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-        },
-      ).catchError((_) => http.Response('' , 0));
-    }
     AppConstant.token = '';
+
+    final res = logoutToken.trim().isEmpty
+        ? null
+        : await postData(
+      'auth/logout',
+      context,
+      headers: {'authorization': 'Bearer $logoutToken'},
+    );
 
     _clearSessionState(context);
     await Provider.of<UserController>(context, listen: false)
@@ -1541,6 +1501,7 @@ class PostApiProvider with ChangeNotifier {
       'common/send_messageTo_admin',
       {'description': message.toString()},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {
@@ -1563,6 +1524,7 @@ class PostApiProvider with ChangeNotifier {
       'user/delete_account',
       {'reason': message.toString()},
       context,
+      headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
 
     if (res != null) {

@@ -21,15 +21,15 @@ import '../controller/my_profile/my_visibility_controller.dart';
 import '../controller/my_profile/profile_indicator_controller.dart';
 import '../controller/notification/notification_controller.dart';
 import '../controller/notification/notification_setting_controller.dart';
-import '../controller/poll/poll_controller.dart';
-import '../controller/contest/contest_controller.dart';
 import '../controller/search/search_calender_filter_controller.dart';
 import '../controller/search/search_filter_controller.dart';
 import '../controller/support/faq_controller.dart';
 import '../controller/venues/my_venues_controller.dart';
 import '../controller/venues/venues_details_controller.dart';
 import '../controller/vibe_check/vibe_check_controller.dart';
+import '../controller/poll/poll_controller.dart';
 import '../controller/vibe_preference/vibe_prefernce_controller.dart';
+import 'ai_assistant_provider.dart';
 import 'darkmode_provider.dart';
 import 'post_api_provider.dart';
 import 'socket_provider.dart';
@@ -55,6 +55,8 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => EventPreferenceController()),
     ChangeNotifierProvider(create: (_) => VibePreferenceController()),
     ChangeNotifierProvider(create: (_) => VibeCheckController()),
+    ChangeNotifierProvider(create: (_) => AiAssistantProvider()),
+    ChangeNotifierProvider(create: (_) => PollController()),
     ChangeNotifierProvider(create: (_) => HomeController()),
     ChangeNotifierProvider(create: (_) => InviteEventVenueListController()),
     ChangeNotifierProvider(create: (_) => ProfileController()),
@@ -77,7 +79,5 @@ List<SingleChildWidget> buildAppProviders() {
     ChangeNotifierProvider(create: (_) => NotificationSettingController()),
     ChangeNotifierProvider(create: (_) => MyProfleCompltetionController()),
     ChangeNotifierProvider(create: (_) => BlockedUsersController()),
-    ChangeNotifierProvider(create: (_) => PollController()),
-    ChangeNotifierProvider(create: (_) => ContestController()),
   ];
 }

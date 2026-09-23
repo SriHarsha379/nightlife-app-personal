@@ -19,6 +19,12 @@ class PollOption {
     this.votes = 0,
   });
 
+  factory PollOption.fromJson(Map<String, dynamic> json) => PollOption(
+    id: (json['id'] ?? '').toString(),
+    text: (json['text'] ?? '').toString(),
+    votes: (json['votes'] is num) ? (json['votes'] as num).toInt() : 0,
+  );
+
   PollOption copyWith({String? id, String? text, int? votes}) {
     return PollOption(
       id: id ?? this.id,
@@ -34,8 +40,9 @@ class PollData {
   final String question;
   final List<PollOption> options;
 
-  /// Set from the real API response when this user has already voted —
-  /// lets the popup open straight into results instead of the voting UI.
+  // Set from the backend's poll/active response (see pollController.js /
+  // shapePoll) — lets the app skip a poll this member has already voted
+  // on instead of showing it again.
   final bool alreadyVoted;
   final String? selectedOptionId;
 
@@ -46,6 +53,17 @@ class PollData {
     this.alreadyVoted = false,
     this.selectedOptionId,
   });
+
+  factory PollData.fromJson(Map<String, dynamic> json) => PollData(
+    id: (json['id'] ?? '').toString(),
+    question: (json['question'] ?? '').toString(),
+    options: (json['options'] as List? ?? [])
+        .whereType<Map>()
+        .map((o) => PollOption.fromJson(Map<String, dynamic>.from(o)))
+        .toList(),
+    alreadyVoted: json['already_voted'] == true,
+    selectedOptionId: json['selected_option']?.toString(),
+  );
 
   int get totalVotes => options.fold(0, (sum, o) => sum + o.votes);
 }
@@ -101,12 +119,10 @@ const List<PollData> samplePolls = [
 class PollPopup extends StatefulWidget {
   final PollData data;
 
-  /// Called with the selected option's index when the user votes. Should
-  /// submit the vote to the real API and return the server's authoritative
-  /// option list (with real counts) so the UI can reconcile the optimistic
-  /// local update — or null if the request failed, in which case the
-  /// optimistic local update is left as-is.
-  final Future<List<PollOption>?> Function(int optionIndex)? onVote;
+  // Real vote submission (see PollController.submitVote) — when provided,
+  // the popup calls the actual poll/:id/vote API and shows the real
+  // returned tallies instead of just incrementing local sample data.
+  final Future<PollData?> Function(String optionId)? onVote;
 
   const PollPopup({super.key, required this.data, this.onVote});
 
@@ -116,7 +132,7 @@ class PollPopup extends StatefulWidget {
   static Future<void> show(
       BuildContext context,
       PollData data, {
-        Future<List<PollOption>?> Function(int optionIndex)? onVote,
+        Future<PollData?> Function(String optionId)? onVote,
       }) {
     return showGeneralDialog<void>(
       context: context,
@@ -148,6 +164,7 @@ class _PollPopupState extends State<PollPopup>
     with SingleTickerProviderStateMixin {
   String? _selectedOptionId;
   bool _hasVoted = false;
+  bool _isSubmitting = false;
 
   /// Live copy of options – updated when the user votes.
   late List<PollOption> _options;
@@ -159,6 +176,13 @@ class _PollPopupState extends State<PollPopup>
   void initState() {
     super.initState();
     _options = List<PollOption>.from(widget.data.options);
+    // Defensive: callers should already filter out polls the member has
+    // voted on, but if one slips through, show the results view rather
+    // than letting them vote twice.
+    if (widget.data.alreadyVoted) {
+      _hasVoted = true;
+      _selectedOptionId = widget.data.selectedOptionId;
+    }
     _barAnimController = AnimationController(
       duration: const Duration(milliseconds: 750),
       vsync: this,
@@ -167,12 +191,7 @@ class _PollPopupState extends State<PollPopup>
       parent: _barAnimController,
       curve: Curves.easeOut,
     );
-
-    // If the API says this user already voted, open straight into the
-    // results view instead of letting them vote again.
-    if (widget.data.alreadyVoted) {
-      _selectedOptionId = widget.data.selectedOptionId;
-      _hasVoted = true;
+    if (_hasVoted) {
       _barAnimController.value = 1.0;
     }
   }
@@ -190,32 +209,42 @@ class _PollPopupState extends State<PollPopup>
     setState(() => _selectedOptionId = id);
   }
 
-  void _submitVote() {
+  void _submitVote() async {
     final id = _selectedOptionId;
-    if (id == null) return;
+    if (id == null || _isSubmitting) return;
+
+    if (widget.onVote == null) {
+      // No backend hookup provided — fall back to local-only sample
+      // behaviour so this widget still works standalone/in demos.
+      setState(() {
+        _options = _options.map((opt) {
+          return opt.id == id ? opt.copyWith(votes: opt.votes + 1) : opt;
+        }).toList();
+        _hasVoted = true;
+      });
+      _barAnimController.forward();
+      return;
+    }
+
+    setState(() => _isSubmitting = true);
+    final result = await widget.onVote!(id);
+    if (!mounted) return;
 
     setState(() {
-      _options = _options.map((opt) {
-        return opt.id == id ? opt.copyWith(votes: opt.votes + 1) : opt;
-      }).toList();
+      _isSubmitting = false;
       _hasVoted = true;
+      if (result != null) {
+        // Real tallies from the server replace the seed/local counts.
+        _options = result.options;
+      } else {
+        // Vote call failed — still reflect the tap locally rather than
+        // leaving the popup stuck, but don't fabricate a server count.
+        _options = _options.map((opt) {
+          return opt.id == id ? opt.copyWith(votes: opt.votes + 1) : opt;
+        }).toList();
+      }
     });
     _barAnimController.forward();
-
-    // Fire the real vote off in the background — the optimistic local
-    // update above already gives instant feedback, and if the server
-    // returns real tallies we reconcile to them; if the request fails
-    // (e.g. offline), the optimistic update is left as the final state
-    // rather than reverting and confusing the user.
-    final onVote = widget.onVote;
-    if (onVote != null) {
-      final optionIndex = _options.indexWhere((o) => o.id == id);
-      onVote(optionIndex).then((serverOptions) {
-        if (serverOptions != null && mounted) {
-          setState(() => _options = serverOptions);
-        }
-      });
-    }
   }
 
   void _dismiss() => Navigator.of(context).pop();
@@ -580,7 +609,8 @@ class _PollPopupState extends State<PollPopup>
     return SizedBox(
       width: double.infinity,
       child: ElevatedButton(
-        onPressed: _selectedOptionId != null ? _submitVote : null,
+        onPressed:
+        (_selectedOptionId != null && !_isSubmitting) ? _submitVote : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.buttonColor,
           disabledBackgroundColor: AppColor.buttonColor.withOpacity(0.35),
@@ -591,7 +621,16 @@ class _PollPopupState extends State<PollPopup>
           ),
           elevation: 0,
         ),
-        child: const Text(
+        child: _isSubmitting
+            ? const SizedBox(
+          width: 18,
+          height: 18,
+          child: CircularProgressIndicator(
+            color: Colors.white,
+            strokeWidth: 2,
+          ),
+        )
+            : const Text(
           'Submit Vote',
           style: TextStyle(
             fontFamily: AppFont.fontFamily,

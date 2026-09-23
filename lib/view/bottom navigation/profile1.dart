@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:night_life/utilities/app_footer.dart';
 import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:night_life/view/authentication/edit_Swipe_profile.dart';
 import 'package:night_life/view/authentication/edit_profile_screen.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/view_all_events.dart';
+import 'package:night_life/view/other/city_Preference/edit_vibes.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -20,6 +20,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/media_picker_helper.dart';
+import '../../utilities/profile_completion_navigation.dart';
 import '../../utilities/url_utils.dart';
 import '../authentication/profile.dart';
 import '../other/MySplashSection/EventSection/Liked/liked_event_details.dart';
@@ -30,7 +31,13 @@ import '../../helper/ImagePreviewScreen.dart';
 
 class Profile1 extends StatefulWidget {
   static String routeName = './Profile1';
-  const Profile1({super.key});
+  // Set when arriving here specifically to add missing gallery media
+  // (e.g. from a "profile X% complete" prompt) — opens the media picker
+  // automatically instead of waiting for the member to find the button,
+  // and enables chaining to the next missing field once they've added
+  // enough media.
+  final bool autoOpenMediaPicker;
+  const Profile1({super.key, this.autoOpenMediaPicker = false});
 
   @override
   State<Profile1> createState() => _Profile1State();
@@ -92,6 +99,7 @@ class _Profile1State extends State<Profile1> {
             setState(() {
               _selectedMediaList.remove(imageData);
             });
+            _maybeContinueAfterGalleryUpload();
             return;
           }
           setState(() {
@@ -112,6 +120,7 @@ class _Profile1State extends State<Profile1> {
             setState(() {
               _selectedMediaList.remove(videoData);
             });
+            _maybeContinueAfterGalleryUpload();
             return;
           }
           setState(() {
@@ -154,6 +163,7 @@ class _Profile1State extends State<Profile1> {
             setState(() {
               _selectedMediaList.removeWhere((item) => toAdd.contains(item));
             });
+            _maybeContinueAfterGalleryUpload();
             return;
           }
           setState(() {
@@ -216,10 +226,29 @@ class _Profile1State extends State<Profile1> {
       final profileController =
       Provider.of<ProfileController>(context, listen: false);
       profileController.fetchProfileData(context);
+
+      if (widget.autoOpenMediaPicker) {
+        _openMediaPicker();
+      }
     });
   }
 
   int selectedId = 1;
+
+  // After a successful gallery upload, checks whether the member still
+  // needs to add more media (they may need up to 9 total) or has moved on
+  // to being complete elsewhere — only relevant when they arrived here via
+  // the "profile X% complete" flow.
+  void _maybeContinueAfterGalleryUpload() {
+    if (!widget.autoOpenMediaPicker) return;
+    continueToNextMissingProfileField(
+      context,
+      cameFromCompletionPrompt: true,
+      // Not passed as "just completed" — a single upload doesn't
+      // necessarily satisfy the 9-item gallery requirement, so let the
+      // fresh status check decide whether "gallery" is still next.
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -238,11 +267,9 @@ class _Profile1State extends State<Profile1> {
       child: PopScope(
         canPop: false,
         onPopInvoked: (didPop) {
-          if (didPop) return;
-          AppConstant.selectFooterIndex = 0;
-          // Actually switch the visible tab back to Home instead of just
-          // setting a static field that nothing reactively reads.
-          context.findAncestorStateOfType<MyAppFooterState>()?.onItemTapped(0);
+          setState(() {
+            AppConstant.selectFooterIndex = 0;
+          });
         },
         child: Scaffold(
           body: Container(
@@ -659,50 +686,6 @@ class _Profile1State extends State<Profile1> {
                           ? SizedBox(height: size.height * 0.02)
                           : SizedBox(),
 
-                      //! I'm looking for Section
-                      profileController.hasInterestedIn
-                          ? Text(
-                        AppLanguage.imLookingForText[language],
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w600,
-                            color: AppColor.secondryColor(context)),
-                      )
-                          : SizedBox(),
-                      profileController.hasInterestedIn
-                          ? SizedBox(height: size.height * 0.01)
-                          : SizedBox(),
-                      profileController.hasInterestedIn
-                          ? Text(
-                        profileController.interestedIn,
-                        style: TextStyle(
-                            fontSize: 16,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w400,
-                            color: AppColor.greyLightColor(context)),
-                      )
-                          : SizedBox(),
-                      profileController.hasInterestedIn
-                          ? SizedBox(height: size.height * 0.01)
-                          : SizedBox(),
-                      profileController.hasInterestedIn
-                          ? ClipRRect(
-                        borderRadius: const BorderRadius.vertical(
-                          bottom: Radius.circular(30),
-                          top: Radius.circular(30),
-                        ),
-                        child: Image.asset(
-                          AppImage.lineIcon,
-                          fit: BoxFit.cover,
-                          color: AppColor.secondryColor(context),
-                        ),
-                      )
-                          : SizedBox(),
-                      profileController.hasInterestedIn
-                          ? SizedBox(height: size.height * 0.02)
-                          : SizedBox(),
-
                       //! Event Preferences Section
                       Text(
                         AppLanguage.eventPreferencetext[language],
@@ -715,6 +698,31 @@ class _Profile1State extends State<Profile1> {
                       SizedBox(height: size.height * 0.01),
                       _buildEventPreferences(context, profileController),
                       SizedBox(height: size.height * 0.02),
+                      ClipRRect(
+                        borderRadius: const BorderRadius.vertical(
+                          bottom: Radius.circular(30),
+                          top: Radius.circular(30),
+                        ),
+                        child: Image.asset(
+                          AppImage.lineIcon,
+                          fit: BoxFit.cover,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      ),
+                      SizedBox(height: size.height * 0.02),
+
+                      //! Vibes Section
+                      Text(
+                        AppLanguage.vibe[language],
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontFamily: AppFont.fontFamily,
+                            fontWeight: FontWeight.w600,
+                            color: AppColor.secondryColor(context)),
+                      ),
+                      SizedBox(height: size.height * 0.01),
+                      _buildVibesSection(context, profileController),
+                      SizedBox(height: size.height * 0.01),
                       ClipRRect(
                         borderRadius: const BorderRadius.vertical(
                           bottom: Radius.circular(30),
@@ -939,6 +947,156 @@ class _Profile1State extends State<Profile1> {
                 ),
               ),
             ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildVibesSection(
+      BuildContext context, ProfileController controller) {
+    final vibeItems = controller.getVibesWithImages();
+    final customVibes = controller.getCustomVibeNames();
+    final preSelectedVibeIds = controller.vibes
+        .map((vibe) {
+      if (vibe is Map) {
+        final dynamic rawId = vibe['vibe_id'] ?? vibe['_id'] ?? vibe['id'];
+        return rawId?.toString() ?? '';
+      }
+      return '';
+    })
+        .where((id) => id.isNotEmpty)
+        .toSet();
+
+    final allItems = [
+      ...vibeItems.map((vibe) => {
+        'name': vibe['name']?.toString() ?? '',
+        'image': vibe['image']?.toString() ?? '',
+      }),
+      ...customVibes.map((name) => {
+        'name': name,
+        'image': '',
+      }),
+    ];
+
+    return SizedBox(
+      height: 100,
+      child: ListView.separated(
+        scrollDirection: Axis.horizontal,
+        padding: EdgeInsets.zero,
+        itemCount: allItems.length + 1,
+        separatorBuilder: (_, __) => const SizedBox(width: 10),
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      PageTransition(
+                        type: PageTransitionType.rightToLeftWithFade,
+                        child: EditVibePreference(
+                          initialSelectedVibeIds: preSelectedVibeIds,
+                        ),
+                        duration: const Duration(milliseconds: 400),
+                      ),
+                    );
+                  },
+                  child: Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: AppColor.themeColor,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.add,
+                        color: Colors.white,
+                        size: 32,
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                SizedBox(
+                  width: 70,
+                  child: Text(
+                    'Add new',
+                    textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      fontFamily: AppFont.fontFamily,
+                      fontWeight: FontWeight.w400,
+                      color: AppColor.secondryColor(context),
+                    ),
+                  ),
+                ),
+              ],
+            );
+          }
+
+          final item = allItems[index - 1];
+          final name = item['name'] ?? '';
+          final imageUrl = item['image'] ?? '';
+
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 50,
+                height: 50,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColor.themeColor,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: imageUrl.isNotEmpty
+                      ? ClipRRect(
+                    borderRadius: BorderRadius.circular(22),
+                    child: Image.network(
+                      imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Icon(
+                          Icons.music_note,
+                          size: 15,
+                          color: AppColor.secondryColor(context)
+                              .withOpacity(0.3),
+                        );
+                      },
+                    ),
+                  )
+                      : Icon(
+                    Icons.music_note,
+                    size: 15,
+                    color:
+                    AppColor.secondryColor(context).withOpacity(0.3),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              SizedBox(
+                width: 70,
+                child: Text(
+                  name,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 11.5,
+                    fontFamily: AppFont.fontFamily,
+                    fontWeight: FontWeight.w400,
+                    color: AppColor.secondryColor(context),
+                  ),
+                ),
+              ),
+            ],
           );
         },
       ),

@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/controller/venues/venues_details_controller.dart';
+import 'package:night_life/controller/members/members_controller.dart';
 import 'package:night_life/utilities/app_constant.dart';
 import 'package:night_life/utilities/app_language.dart';
 import 'package:night_life/view/other/MySplashSection/VenuesSection/venuedetails6_screen.dart';
@@ -15,6 +16,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../provider/darkmode_provider.dart';
 import '../../../../utilities/app_button.dart';
 import '../../../../utilities/app_color.dart';
+import '../../../../utilities/app_config_provider.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 
@@ -38,6 +40,10 @@ class _BookTableState extends State<BookTable> {
   bool showAllSlots = false;
   String selectedDate = '';
   final GlobalKey _guestDropdownAnchorKey = GlobalKey();
+
+  // "Reservation with friends" — connection IDs invited to this table,
+  // picked from the member's accepted connections (MembersController).
+  final Set<String> selectedFriendIds = {};
   Offset? _guestTapPosition;
   String currentMonth = '';
 
@@ -102,23 +108,182 @@ class _BookTableState extends State<BookTable> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (widget.venueId != null && widget.venueId!.isNotEmpty) {
         final controller =
-            Provider.of<VenuesDetailsController>(context, listen: false);
+        Provider.of<VenuesDetailsController>(context, listen: false);
         controller.fetchVenuesDetail(context, venueId: widget.venueId!);
       }
       _fetchSlots();
+      // For the "invite friends" picker below the guest count.
+      Provider.of<MembersController>(context, listen: false)
+          .fetchMyMembers(context, type: 'connected');
     });
   }
 
   void _fetchSlots() {
     if (widget.venueId != null && selectedDate.isNotEmpty) {
       final controller =
-          Provider.of<VenuesDetailsController>(context, listen: false);
+      Provider.of<VenuesDetailsController>(context, listen: false);
       controller.fetchVenueSlots(
         context,
         venueId: widget.venueId!,
         date: selectedDate,
       );
     }
+  }
+
+  Widget _buildInviteFriendsSection(Size size) {
+    return Consumer<MembersController>(
+      builder: (context, membersController, _) {
+        final connections = membersController.connectedMembers;
+
+        // Nothing to invite from — don't show an empty section.
+        if (!membersController.isConnectedMembersLoading &&
+            connections.isEmpty) {
+          return const SizedBox.shrink();
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  "Invite friends",
+                  style: TextStyle(
+                    fontFamily: AppFont.fontFamily1,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                    color: AppColor.secondryColor(context),
+                  ),
+                ),
+                if (selectedFriendIds.isNotEmpty)
+                  Text(
+                    "${selectedFriendIds.length} selected",
+                    style: TextStyle(
+                      fontSize: 13,
+                      color: AppColor.pinkColor,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+              ],
+            ),
+            SizedBox(height: size.height * 1.5 / 100),
+            if (membersController.isConnectedMembersLoading)
+              const Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 8),
+                  child: CircularProgressIndicator(color: AppColor.pinkColor),
+                ),
+              )
+            else
+              SizedBox(
+                height: size.height * 11 / 100,
+                child: ListView.separated(
+                  scrollDirection: Axis.horizontal,
+                  itemCount: connections.length,
+                  separatorBuilder: (_, __) =>
+                      SizedBox(width: size.width * 3 / 100),
+                  itemBuilder: (context, index) {
+                    final friend = connections[index];
+                    final friendId = (friend is Map ? friend['_id'] : null)
+                        ?.toString() ??
+                        '';
+                    final friendName =
+                        (friend is Map ? friend['name'] : null)?.toString() ??
+                            'Member';
+                    final profileImage =
+                        (friend is Map ? friend['profile_image'] : null)
+                            ?.toString() ??
+                            '';
+                    final isSelected = selectedFriendIds.contains(friendId);
+
+                    return GestureDetector(
+                      onTap: () {
+                        if (friendId.isEmpty) return;
+                        setState(() {
+                          if (isSelected) {
+                            selectedFriendIds.remove(friendId);
+                          } else {
+                            selectedFriendIds.add(friendId);
+                          }
+                        });
+                      },
+                      child: SizedBox(
+                        width: size.width * 18 / 100,
+                        child: Column(
+                          children: [
+                            Stack(
+                              children: [
+                                Container(
+                                  width: size.width * 15 / 100,
+                                  height: size.width * 15 / 100,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? AppColor.pinkColor
+                                          : Colors.transparent,
+                                      width: 2.5,
+                                    ),
+                                  ),
+                                  child: ClipOval(
+                                    child: profileImage.isNotEmpty
+                                        ? Image.network(
+                                      '${AppConfigProvider.imageUrl}$profileImage',
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (_, __, ___) =>
+                                          Image.asset(
+                                            AppImage.userImage1,
+                                            fit: BoxFit.cover,
+                                          ),
+                                    )
+                                        : Image.asset(
+                                      AppImage.userImage1,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                                if (isSelected)
+                                  Positioned(
+                                    right: 0,
+                                    bottom: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(2),
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: AppColor.pinkColor,
+                                      ),
+                                      child: const Icon(
+                                        Icons.check,
+                                        size: 12,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              friendName,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColor.secondryColor(context),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 
   Widget _buildAdaptiveImage(String url,
@@ -138,7 +303,7 @@ class _BookTableState extends State<BookTable> {
           child: CircularProgressIndicator(
             value: loadingProgress.expectedTotalBytes != null
                 ? loadingProgress.cumulativeBytesLoaded /
-                    loadingProgress.expectedTotalBytes!
+                loadingProgress.expectedTotalBytes!
                 : null,
             color: AppColor.buttonColor,
           ),
@@ -159,7 +324,7 @@ class _BookTableState extends State<BookTable> {
     final double itemHeight = 35;
     final double maxHeight = screen.height * 0.4;
     final double dropdownHeight =
-        ((15 * itemHeight) > maxHeight ? maxHeight : (15 * itemHeight));
+    ((15 * itemHeight) > maxHeight ? maxHeight : (15 * itemHeight));
     final double popupTop = (_guestTapPosition?.dy ?? anchorOffset.dy)
         .clamp(20.0, screen.height - dropdownHeight - 20.0);
 
@@ -235,16 +400,16 @@ class _BookTableState extends State<BookTable> {
                                 ),
                                 child: isSelected
                                     ? Center(
-                                        child: Container(
-                                          width: 8,
-                                          height: 8,
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color:
-                                                AppColor.secondryColor(context),
-                                          ),
-                                        ),
-                                      )
+                                  child: Container(
+                                    width: 8,
+                                    height: 8,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.circle,
+                                      color:
+                                      AppColor.secondryColor(context),
+                                    ),
+                                  ),
+                                )
                                     : null,
                               ),
                             ],
@@ -300,14 +465,14 @@ class _BookTableState extends State<BookTable> {
                             child: ClipRRect(
                               child: imageUrl.isNotEmpty
                                   ? _buildAdaptiveImage(
-                                      imageUrl,
-                                      fit: BoxFit.fill,
-                                      fallbackAsset: AppImage.dummyImageIcon,
-                                    )
+                                imageUrl,
+                                fit: BoxFit.fill,
+                                fallbackAsset: AppImage.dummyImageIcon,
+                              )
                                   : Image.asset(
-                                      AppImage.dummyImageIcon,
-                                      fit: BoxFit.fill,
-                                    ),
+                                AppImage.dummyImageIcon,
+                                fit: BoxFit.fill,
+                              ),
                             ),
                           );
                         },
@@ -368,14 +533,14 @@ class _BookTableState extends State<BookTable> {
                                       width: size.width * 75 / 100,
                                       child: Text(
                                         controller.getVenuesDetail?[
-                                                'venue_name'] ??
+                                        'venue_name'] ??
                                             "",
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontWeight: FontWeight.w500,
                                           fontSize: 12,
                                           color:
-                                              AppColor.secondryColor(context),
+                                          AppColor.secondryColor(context),
                                         ),
                                       ),
                                     );
@@ -385,17 +550,17 @@ class _BookTableState extends State<BookTable> {
                                   builder: (BuildContext context, controller,
                                       Widget? child) {
                                     final venueDetails =
-                                        Map<String, dynamic>.from(
+                                    Map<String, dynamic>.from(
                                       controller.getVenuesDetail ?? {},
                                     );
                                     final address =
-                                        (venueDetails['address'] ?? '')
-                                            .toString();
+                                    (venueDetails['address'] ?? '')
+                                        .toString();
                                     return GestureDetector(
                                       onTap: address.trim().isEmpty
                                           ? null
                                           : () => _openVenueLocationInMaps(
-                                              venueDetails),
+                                          venueDetails),
                                       child: SizedBox(
                                         width: size.width * 75 / 100,
                                         child: Text(
@@ -417,14 +582,14 @@ class _BookTableState extends State<BookTable> {
                               builder: (BuildContext context, controller,
                                   Widget? child) {
                                 final totalLikes =
-                                    controller.getVenuesDetail?['total_likes'];
+                                controller.getVenuesDetail?['total_likes'];
 
                                 String likesText;
                                 if (totalLikes == null) {
                                   likesText = "0";
                                 } else if (totalLikes >= 1000) {
                                   likesText =
-                                      "${(totalLikes / 1000).toStringAsFixed(1)}K";
+                                  "${(totalLikes / 1000).toStringAsFixed(1)}K";
                                 } else {
                                   likesText = totalLikes.toString();
                                 }
@@ -485,7 +650,7 @@ class _BookTableState extends State<BookTable> {
                             child: Center(
                               child: Row(
                                 mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
+                                MainAxisAlignment.spaceBetween,
                                 children: [
                                   SizedBox(width: size.width * 1 / 100),
                                   Text(
@@ -509,7 +674,7 @@ class _BookTableState extends State<BookTable> {
                                     child: Center(
                                       child: Row(
                                         mainAxisAlignment:
-                                            MainAxisAlignment.center,
+                                        MainAxisAlignment.center,
                                         children: [
                                           Text(
                                             '$selectedGuests',
@@ -535,6 +700,11 @@ class _BookTableState extends State<BookTable> {
                             ),
                           ),
                         ),
+
+                        SizedBox(height: size.height * 4 / 100),
+
+                        // Invite friends — "Reservation with friends"
+                        _buildInviteFriendsSection(size),
 
                         SizedBox(height: size.height * 4 / 100),
 
@@ -572,7 +742,7 @@ class _BookTableState extends State<BookTable> {
                                 height: size.height * 11 / 100,
                                 decoration: BoxDecoration(
                                   color:
-                                      AppColor.lightgreyColor.withOpacity(0.3),
+                                  AppColor.lightgreyColor.withOpacity(0.3),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Center(
@@ -625,19 +795,19 @@ class _BookTableState extends State<BookTable> {
                                               ? Colors.white
                                               : AppColor.primaryColor(context),
                                           borderRadius:
-                                              BorderRadius.circular(15),
+                                          BorderRadius.circular(15),
                                           border: Border.all(
                                             color: isSelected
                                                 ? AppColor.buttonColor
                                                 : AppColor.secondryColor(
-                                                        context)
-                                                    .withOpacity(0.3),
+                                                context)
+                                                .withOpacity(0.3),
                                             width: 0.8,
                                           ),
                                         ),
                                         child: Column(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               dateItem['day']!,
@@ -648,12 +818,12 @@ class _BookTableState extends State<BookTable> {
                                                 color: isSelected
                                                     ? AppColor.buttonColor
                                                     : AppColor.secondryColor(
-                                                        context),
+                                                    context),
                                               ),
                                             ),
                                             SizedBox(
                                                 height:
-                                                    size.height * 0.5 / 100),
+                                                size.height * 0.5 / 100),
                                             Text(
                                               dateItem['dayName']!,
                                               style: TextStyle(
@@ -663,7 +833,7 @@ class _BookTableState extends State<BookTable> {
                                                 color: isSelected
                                                     ? AppColor.buttonColor
                                                     : AppColor.secondryColor(
-                                                        context),
+                                                    context),
                                               ),
                                             ),
                                           ],
@@ -721,8 +891,8 @@ class _BookTableState extends State<BookTable> {
                             final displaySlots = showAllSlots
                                 ? slots
                                 : (slots.length > 6
-                                    ? slots.sublist(0, 6)
-                                    : slots);
+                                ? slots.sublist(0, 6)
+                                : slots);
 
                             return Column(
                               children: [
@@ -734,7 +904,7 @@ class _BookTableState extends State<BookTable> {
                                     runSpacing: 18,
                                     children: List.generate(
                                       displaySlots.length,
-                                      (index) {
+                                          (index) {
                                         final slot = displaySlots[index];
                                         final isSelected =
                                             selectedSlotIndex == index;
@@ -751,31 +921,31 @@ class _BookTableState extends State<BookTable> {
                                               color: AppColor.primaryColor(
                                                   context),
                                               borderRadius:
-                                                  BorderRadius.circular(15),
+                                              BorderRadius.circular(15),
                                               border: Border.all(
                                                 color: isSelected
                                                     ? AppColor.pinkColor
                                                     : AppColor.secondryColor(
-                                                        context),
+                                                    context),
                                                 width: 0.8,
                                               ),
                                             ),
                                             child: Column(
                                               mainAxisAlignment:
-                                                  MainAxisAlignment.center,
+                                              MainAxisAlignment.center,
                                               children: [
                                                 Text(
                                                   slot['display_time'] ?? '',
                                                   style: TextStyle(
                                                     fontFamily:
-                                                        AppFont.fontFamily1,
+                                                    AppFont.fontFamily1,
                                                     fontWeight: FontWeight.w600,
                                                     fontSize: 14,
                                                     color: isSelected
                                                         ? AppColor.pinkColor
                                                         : AppColor
-                                                            .secondryColor(
-                                                                context),
+                                                        .secondryColor(
+                                                        context),
                                                   ),
                                                 ),
                                               ],
@@ -801,7 +971,7 @@ class _BookTableState extends State<BookTable> {
                                         },
                                         child: Row(
                                           mainAxisAlignment:
-                                              MainAxisAlignment.center,
+                                          MainAxisAlignment.center,
                                           children: [
                                             Text(
                                               showAllSlots
@@ -850,6 +1020,23 @@ class _BookTableState extends State<BookTable> {
                             final coverChargepercent =
                                 venuesData['bill_discount_percentage'] ?? 0;
 
+                            // This club hasn't configured a discount offer
+                            // — the discount option above won't render, so
+                            // make sure the selected option matches what's
+                            // actually being shown instead of silently
+                            // staying on the (now invisible) default.
+                            if (coverChargepercent <= 0 &&
+                                coverChargeApplied == true) {
+                              WidgetsBinding.instance
+                                  .addPostFrameCallback((_) {
+                                if (mounted && coverChargeApplied == true) {
+                                  setState(() {
+                                    coverChargeApplied = false;
+                                  });
+                                }
+                              });
+                            }
+
                             return AnimatedSwitcher(
                               duration: const Duration(milliseconds: 320),
                               switchInCurve: Curves.easeOutCubic,
@@ -869,238 +1056,251 @@ class _BookTableState extends State<BookTable> {
                               },
                               child: hasSelectedTime
                                   ? GestureDetector(
-                                      key:
-                                          const ValueKey('reservation_options'),
-                                      onTap: () {
-                                        setState(() {
-                                          coverChargeApplied = true;
-                                        });
-                                      },
-                                      child: Container(
-                                        height: size.height * 22 / 100,
-                                        width: size.width * 90 / 100,
-                                        decoration: BoxDecoration(
-                                          color: AppColor.primaryColor(context),
-                                          boxShadow: [
-                                            BoxShadow(
-                                              color: AppColor.secondryColor(
-                                                      context)
-                                                  .withOpacity(0.1),
-                                              spreadRadius: 2,
-                                              blurRadius: 8,
-                                              offset: const Offset(0, 4),
-                                            ),
-                                          ],
-                                          borderRadius:
-                                              BorderRadius.circular(30),
-                                          border: Border.all(
-                                            color: AppColor.pinkColor,
-                                            width: 0.5,
-                                          ),
-                                        ),
-                                        child: Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: 25),
-                                          child: Column(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.center,
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.center,
+                                key:
+                                const ValueKey('reservation_options'),
+                                onTap: () {
+                                  setState(() {
+                                    coverChargeApplied = true;
+                                  });
+                                },
+                                child: Container(
+                                  height: size.height * 22 / 100,
+                                  width: size.width * 90 / 100,
+                                  decoration: BoxDecoration(
+                                    color: AppColor.primaryColor(context),
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: AppColor.secondryColor(
+                                            context)
+                                            .withOpacity(0.1),
+                                        spreadRadius: 2,
+                                        blurRadius: 8,
+                                        offset: const Offset(0, 4),
+                                      ),
+                                    ],
+                                    borderRadius:
+                                    BorderRadius.circular(30),
+                                    border: Border.all(
+                                      color: AppColor.pinkColor,
+                                      width: 0.5,
+                                    ),
+                                  ),
+                                  child: Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 25),
+                                    child: Column(
+                                      mainAxisAlignment:
+                                      MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                      CrossAxisAlignment.center,
+                                      children: [
+                                        // "Flat X% OFF" cover-charge
+                                        // option — per-club config
+                                        // (bill_discount_percentage,
+                                        // already set from the admin
+                                        // dashboard). A club that
+                                        // hasn't configured a discount
+                                        // simply doesn't get this
+                                        // option shown to its
+                                        // members, instead of every
+                                        // club showing the same
+                                        // hardcoded "Flat 0% OFF".
+                                        if (coverChargepercent > 0) ...[
+                                          Row(
                                             children: [
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        coverChargeApplied =
-                                                            true;
-                                                      });
-                                                    },
+                                              GestureDetector(
+                                                onTap: () {
+                                                  setState(() {
+                                                    coverChargeApplied =
+                                                    true;
+                                                  });
+                                                },
+                                                child: Container(
+                                                  height:
+                                                  size.height * 3 / 100,
+                                                  width:
+                                                  size.height * 3 / 100,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.circle,
+                                                    border: Border.all(
+                                                      color: coverChargeApplied ==
+                                                          true
+                                                          ? AppColor
+                                                          .darkPurpleColor
+                                                          : AppColor
+                                                          .lightgreyColor,
+                                                      width: 2,
+                                                    ),
+                                                  ),
+                                                  child: Center(
                                                     child: Container(
-                                                      height:
-                                                          size.height * 3 / 100,
-                                                      width:
-                                                          size.height * 3 / 100,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: coverChargeApplied ==
-                                                                  true
-                                                              ? AppColor
-                                                                  .darkPurpleColor
-                                                              : AppColor
-                                                                  .lightgreyColor,
-                                                          width: 2,
-                                                        ),
-                                                      ),
-                                                      child: Center(
-                                                        child: Container(
-                                                          height: size.height *
-                                                              1.5 /
-                                                              100,
-                                                          width: size.height *
-                                                              1.5 /
-                                                              100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: coverChargeApplied ==
-                                                                    true
-                                                                ? AppColor
-                                                                    .darkPurpleColor
-                                                                : Colors
-                                                                    .transparent,
-                                                          ),
-                                                        ),
+                                                      height: size.height *
+                                                          1.5 /
+                                                          100,
+                                                      width: size.height *
+                                                          1.5 /
+                                                          100,
+                                                      decoration:
+                                                      BoxDecoration(
+                                                        shape:
+                                                        BoxShape.circle,
+                                                        color: coverChargeApplied ==
+                                                            true
+                                                            ? AppColor
+                                                            .darkPurpleColor
+                                                            : Colors
+                                                            .transparent,
                                                       ),
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                      width:
-                                                          size.width * 4 / 100),
-                                                  Column(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    children: [
-                                                      Text(
-                                                        'Flat $coverChargepercent% OFF on total bill',
-                                                        style: TextStyle(
-                                                          fontFamily: AppFont
-                                                              .fontFamily1,
-                                                          fontWeight:
-                                                              FontWeight.w600,
-                                                          fontSize: 14,
-                                                          color: AppColor
-                                                              .secondryColor(
-                                                                  context),
-                                                        ),
-                                                      ),
-                                                      Text(
-                                                        '₹$coverChargeAmount cover charge required',
-                                                        style: const TextStyle(
-                                                          fontFamily: AppFont
-                                                              .fontFamily1,
-                                                          fontWeight:
-                                                              FontWeight.w400,
-                                                          fontSize: 14,
-                                                          color: AppColor
-                                                              .darkPurpleColor,
-                                                        ),
-                                                      ),
-                                                    ],
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                  width:
+                                                  size.width * 4 / 100),
+                                              Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    'Flat $coverChargepercent% OFF on total bill',
+                                                    style: TextStyle(
+                                                      fontFamily: AppFont
+                                                          .fontFamily1,
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                          context),
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    '₹$coverChargeAmount cover charge required',
+                                                    style: const TextStyle(
+                                                      fontFamily: AppFont
+                                                          .fontFamily1,
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .darkPurpleColor,
+                                                    ),
                                                   ),
                                                 ],
                                               ),
-                                              SizedBox(
-                                                  height:
-                                                      size.height * 1 / 100),
-                                              const Divider(
-                                                  color: AppColor.pinkColor),
-                                              SizedBox(
-                                                  height:
-                                                      size.height * 1 / 100),
-                                              Row(
-                                                children: [
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        coverChargeApplied =
-                                                            false;
-                                                      });
-                                                    },
-                                                    child: Container(
-                                                      height:
-                                                          size.height * 3 / 100,
-                                                      width:
-                                                          size.height * 3 / 100,
-                                                      decoration: BoxDecoration(
-                                                        shape: BoxShape.circle,
-                                                        border: Border.all(
-                                                          color: coverChargeApplied == false
-                                                              ? AppColor
-                                                                  .darkPurpleColor
-                                                              : AppColor
-                                                                  .lightgreyColor,
-                                                          width: 2,
-                                                        ),
-                                                      ),
-                                                      child: Center(
-                                                        child: Container(
-                                                          height: size.height *
-                                                              1.5 /
-                                                              100,
-                                                          width: size.height *
-                                                              1.5 /
-                                                              100,
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            shape:
-                                                                BoxShape.circle,
-                                                            color: coverChargeApplied == false
-                                                                ? AppColor
-                                                                    .darkPurpleColor
-                                                                : Colors
-                                                                    .transparent,
-                                                          ),
-                                                        ),
-                                                      ),
+                                            ],
+                                          ),
+                                          SizedBox(
+                                              height:
+                                              size.height * 1 / 100),
+                                          const Divider(
+                                              color: AppColor.pinkColor),
+                                          SizedBox(
+                                              height:
+                                              size.height * 1 / 100),
+                                        ],
+                                        Row(
+                                          children: [
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  coverChargeApplied =
+                                                  false;
+                                                });
+                                              },
+                                              child: Container(
+                                                height:
+                                                size.height * 3 / 100,
+                                                width:
+                                                size.height * 3 / 100,
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  border: Border.all(
+                                                    color: coverChargeApplied == false
+                                                        ? AppColor
+                                                        .darkPurpleColor
+                                                        : AppColor
+                                                        .lightgreyColor,
+                                                    width: 2,
+                                                  ),
+                                                ),
+                                                child: Center(
+                                                  child: Container(
+                                                    height: size.height *
+                                                        1.5 /
+                                                        100,
+                                                    width: size.height *
+                                                        1.5 /
+                                                        100,
+                                                    decoration:
+                                                    BoxDecoration(
+                                                      shape:
+                                                      BoxShape.circle,
+                                                      color: coverChargeApplied == false
+                                                          ? AppColor
+                                                          .darkPurpleColor
+                                                          : Colors
+                                                          .transparent,
                                                     ),
                                                   ),
-                                                  SizedBox(
-                                                      width:
-                                                          size.width * 4 / 100),
-                                                  GestureDetector(
-                                                    onTap: () {
-                                                      setState(() {
-                                                        coverChargeApplied =
-                                                            false;
-                                                      });
-                                                    },
-                                                    child: Column(
-                                                      crossAxisAlignment:
-                                                          CrossAxisAlignment
-                                                              .start,
-                                                      children: [
-                                                        Text(
-                                                          'Regular table reservation',
-                                                          style: TextStyle(
-                                                            fontFamily: AppFont
-                                                                .fontFamily1,
-                                                            fontWeight:
-                                                                FontWeight.w600,
-                                                            fontSize: 14,
-                                                            color: AppColor
-                                                                .secondryColor(
-                                                                    context),
-                                                          ),
-                                                        ),
-                                                        const Text(
-                                                          'No cover charge required',
-                                                          style: TextStyle(
-                                                            fontFamily: AppFont
-                                                                .fontFamily1,
-                                                            fontWeight:
-                                                                FontWeight.w400,
-                                                            fontSize: 14,
-                                                            color: AppColor
-                                                                .darkPurpleColor,
-                                                          ),
-                                                        ),
-                                                      ],
+                                                ),
+                                              ),
+                                            ),
+                                            SizedBox(
+                                                width:
+                                                size.width * 4 / 100),
+                                            GestureDetector(
+                                              onTap: () {
+                                                setState(() {
+                                                  coverChargeApplied =
+                                                  false;
+                                                });
+                                              },
+                                              child: Column(
+                                                crossAxisAlignment:
+                                                CrossAxisAlignment
+                                                    .start,
+                                                children: [
+                                                  Text(
+                                                    'Regular table reservation',
+                                                    style: TextStyle(
+                                                      fontFamily: AppFont
+                                                          .fontFamily1,
+                                                      fontWeight:
+                                                      FontWeight.w600,
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .secondryColor(
+                                                          context),
+                                                    ),
+                                                  ),
+                                                  const Text(
+                                                    'No cover charge required',
+                                                    style: TextStyle(
+                                                      fontFamily: AppFont
+                                                          .fontFamily1,
+                                                      fontWeight:
+                                                      FontWeight.w400,
+                                                      fontSize: 14,
+                                                      color: AppColor
+                                                          .darkPurpleColor,
                                                     ),
                                                   ),
                                                 ],
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    )
-                                  : const SizedBox(
-                                      key: ValueKey('reservation_empty'),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
                                     ),
+                                  ),
+                                ),
+                              )
+                                  : const SizedBox(
+                                key: ValueKey('reservation_empty'),
+                              ),
                             );
                           },
                         ),
@@ -1115,35 +1315,37 @@ class _BookTableState extends State<BookTable> {
                                   : Colors.grey,
                               onPress: () {
                                 final controller =
-                                    Provider.of<VenuesDetailsController>(
+                                Provider.of<VenuesDetailsController>(
                                   context,
                                   listen: false,
                                 );
                                 final slotsData = controller.getVenueSlots;
                                 final List slots = slotsData != null &&
-                                        slotsData['slots'] is List
+                                    slotsData['slots'] is List
                                     ? slotsData['slots'] as List
                                     : [];
                                 final String selectedSlotTime =
-                                    selectedSlotIndex >= 0 &&
-                                            selectedSlotIndex < slots.length
-                                        ? (slots[selectedSlotIndex]
-                                                ['display_time'] ??
-                                            '')
-                                        : '';
+                                selectedSlotIndex >= 0 &&
+                                    selectedSlotIndex < slots.length
+                                    ? (slots[selectedSlotIndex]
+                                ['display_time'] ??
+                                    '')
+                                    : '';
 
                                 Navigator.push(
                                   context,
                                   PageTransition(
                                     type:
-                                        PageTransitionType.rightToLeftWithFade,
+                                    PageTransitionType.rightToLeftWithFade,
                                     child: ReviewBooking2Details(
                                       selectedDateApi: selectedDate,
                                       selectedDateLabel:
-                                          _formatBookingDate(selectedDate),
+                                      _formatBookingDate(selectedDate),
                                       selectedSlotTime: selectedSlotTime,
                                       selectedGuests: selectedGuests,
                                       coverChargeApplied: coverChargeApplied,
+                                      selectedFriendIds:
+                                      selectedFriendIds.toList(),
                                     ),
                                     duration: const Duration(milliseconds: 500),
                                   ),
