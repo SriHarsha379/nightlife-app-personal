@@ -1290,9 +1290,19 @@ class _HomeState extends State<Home> {
           // three live in this one screen (see `selectedTab`), so one
           // launcher here covers all of them.
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: const Padding(
-            padding: EdgeInsets.only(bottom: 8),
-            child: AiAssistantLauncher(),
+          // Lifted above the floating nav bar (app_footer.dart), which is
+          // size.height * 8 / 100 tall and anchored to the same bottom edge.
+          // Drops back down when the footer hides (e.g. search focused).
+          floatingActionButton: ValueListenableBuilder<bool>(
+            valueListenable: footerVisibilityNotifier,
+            builder: (context, footerVisible, _) => Padding(
+              padding: EdgeInsets.only(
+                bottom: footerVisible
+                    ? MediaQuery.of(context).size.height * 8 / 100 + 12
+                    : 8,
+              ),
+              child: const AiAssistantLauncher(),
+            ),
           ),
           body: SafeArea(
             child: SizedBox(

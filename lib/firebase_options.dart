@@ -51,19 +51,20 @@ class DefaultFirebaseOptions {
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyAxTaTD2SqVAGseh_qvtITOf6bIpJS_3Iw',
-    appId: '1:337909267770:android:46c44ad191e48c31e4a403',
-    messagingSenderId: '337909267770',
-    projectId: 'nightlife-app-9a7f1',
-    storageBucket: 'nightlife-app-9a7f1.firebasestorage.app',
+    apiKey: 'AIzaSyBbNwIo_Z9Xo0kLe3BE7ieAAKTFWInCwsI',
+    appId: '1:954804179384:android:8534cfa4a7b4abe0f2bf4d',
+    messagingSenderId: '954804179384',
+    projectId: 'hii-app-aa0f1',
+    storageBucket: 'hii-app-aa0f1.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCEI31JBYsYDZ_ilwQhiD8QMIrDrAd9Fds',
-    appId: '1:337909267770:ios:9bf10e618cd62c9ae4a403',
-    messagingSenderId: '337909267770',
-    projectId: 'nightlife-app-9a7f1',
-    storageBucket: 'nightlife-app-9a7f1.firebasestorage.app',
+    apiKey: 'AIzaSyCBFKJcmqvIttHNsyvPk_gAq_wU41tf-II',
+    appId: '1:954804179384:ios:b6d1e2d0734e8951f2bf4d',
+    messagingSenderId: '954804179384',
+    projectId: 'hii-app-aa0f1',
+    storageBucket: 'hii-app-aa0f1.firebasestorage.app',
+    iosClientId: '954804179384-a3rvu5o7b5c05gjhepdnmfsfai7k0h34.apps.googleusercontent.com',
     iosBundleId: 'com.davisantony.nightlife',
   );
 
