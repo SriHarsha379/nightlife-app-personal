@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -9,22 +11,33 @@ import '../utilities/app_config_provider.dart';
 import '../utilities/app_font.dart';
 import '../view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import '../view/other/MySplashSection/VenuesSection/venuepages.dart';
+import 'owl_mascot.dart';
 
-/// Floating owl button (Home). Opens Hii Owl in a bottom sheet.
-class AiAssistantLauncher extends StatelessWidget {
+/// Floating owl button (Home): the DJ owl peeking into a neon ring with a
+/// soft pulsing glow. Presses in on tap; shows music notes while a reply is
+/// being worked on. Opens Hii Owl in a bottom sheet.
+class AiAssistantLauncher extends StatefulWidget {
   const AiAssistantLauncher({super.key});
+
+  @override
+  State<AiAssistantLauncher> createState() => _AiAssistantLauncherState();
+}
+
+class _AiAssistantLauncherState extends State<AiAssistantLauncher> {
+  bool _pressed = false;
 
   void _openAssistantSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withOpacity(0.55),
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
         child: SizedBox(
           height: MediaQuery.of(sheetContext).size.height * 0.86,
           child: ClipRRect(
-            borderRadius: const BorderRadius.vertical(top: Radius.circular(24)),
+            borderRadius: const BorderRadius.vertical(top: Radius.circular(28)),
             child: OwlChatView(onClose: () => Navigator.pop(sheetContext)),
           ),
         ),
@@ -34,26 +47,24 @@ class AiAssistantLauncher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final busy = context.select<AiAssistantProvider, bool>((p) => p.isSending);
     return Semantics(
       button: true,
       label: 'Hii Owl assistant',
       child: GestureDetector(
+        onTapDown: (_) => setState(() => _pressed = true),
+        onTapCancel: () => setState(() => _pressed = false),
+        onTapUp: (_) => setState(() => _pressed = false),
         onTap: () => _openAssistantSheet(context),
-        child: Container(
-          width: 56,
-          height: 56,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: AppColor.pinkColor,
-            boxShadow: [
-              BoxShadow(
-                color: AppColor.pinkColor.withOpacity(0.45),
-                blurRadius: 14,
-                offset: const Offset(0, 4),
-              ),
-            ],
+        child: AnimatedScale(
+          scale: _pressed ? 0.9 : 1.0,
+          duration: const Duration(milliseconds: 120),
+          curve: Curves.easeOut,
+          child: OwlBadge(
+            size: 66,
+            glow: true,
+            mood: busy ? OwlMood.thinking : OwlMood.idle,
           ),
-          child: const Center(child: Text('🦉', style: TextStyle(fontSize: 28))),
         ),
       ),
     );
@@ -76,9 +87,29 @@ class _OwlChatViewState extends State<OwlChatView> {
   final TextEditingController _input = TextEditingController();
   final ScrollController _scroll = ScrollController();
   int _lastSignature = -1;
+  bool _wasSending = false;
+  DateTime? _happyUntil;
+  Timer? _happyTimer;
+
+  /// Thinking while working, a short happy smile when a reply lands.
+  OwlMood _moodFor(AiAssistantProvider provider) {
+    if (_wasSending && !provider.isSending) {
+      _happyUntil = DateTime.now().add(const Duration(milliseconds: 2200));
+      _happyTimer?.cancel();
+      _happyTimer = Timer(const Duration(milliseconds: 2300), () {
+        if (mounted) setState(() {});
+      });
+    }
+    _wasSending = provider.isSending;
+    if (provider.isSending) return OwlMood.thinking;
+    final until = _happyUntil;
+    if (until != null && DateTime.now().isBefore(until)) return OwlMood.happy;
+    return OwlMood.idle;
+  }
 
   @override
   void dispose() {
+    _happyTimer?.cancel();
     _input.dispose();
     _scroll.dispose();
     super.dispose();
@@ -120,6 +151,7 @@ class _OwlChatViewState extends State<OwlChatView> {
     final fg = AppColor.secondryColor(context);
     final provider = context.watch<AiAssistantProvider>();
     final messages = provider.messages;
+    final mood = _moodFor(provider);
 
     final signature = messages.length * 100000 +
         (messages.isEmpty ? 0 : messages.last.content.length + messages.last.cards.length) +
@@ -131,24 +163,37 @@ class _OwlChatViewState extends State<OwlChatView> {
 
     return Material(
       color: bg,
-      child: SafeArea(
+      child: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [AppColor.pinkColor.withOpacity(0.10), bg, bg],
+            stops: const [0, 0.35, 1],
+          ),
+        ),
+        child: SafeArea(
         top: widget.fullScreen,
         child: Column(
           children: [
-            _header(context, fg, provider),
+            _header(context, fg, provider, mood),
             Divider(height: 1, color: fg.withOpacity(0.1)),
             Expanded(
               child: messages.isEmpty
-                  ? _welcome(context, fg)
+                  ? _welcome(context, fg, mood)
                   : ListView.builder(
                       controller: _scroll,
                       padding: const EdgeInsets.fromLTRB(14, 14, 14, 8),
                       itemCount: messages.length,
-                      itemBuilder: (context, i) => _messageItem(
-                        context,
-                        messages[i],
-                        fg,
-                        status: i == messages.length - 1 ? provider.status : null,
+                      itemBuilder: (context, i) => _Appear(
+                        key: ValueKey('owl-msg-$i'),
+                        child: _messageItem(
+                          context,
+                          messages[i],
+                          fg,
+                          status: i == messages.length - 1 ? provider.status : null,
+                          isLast: i == messages.length - 1,
+                        ),
                       ),
                     ),
             ),
@@ -156,11 +201,12 @@ class _OwlChatViewState extends State<OwlChatView> {
           ],
         ),
       ),
+      ),
     );
   }
 
   // ------------------------------------------------------------- header
-  Widget _header(BuildContext context, Color fg, AiAssistantProvider provider) {
+  Widget _header(BuildContext context, Color fg, AiAssistantProvider provider, OwlMood mood) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(8, 10, 8, 10),
       child: Row(
@@ -172,15 +218,7 @@ class _OwlChatViewState extends State<OwlChatView> {
             )
           else
             const SizedBox(width: 8),
-          Container(
-            width: 38,
-            height: 38,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: AppColor.pinkColor.withOpacity(0.15),
-            ),
-            child: const Center(child: Text('🦉', style: TextStyle(fontSize: 20))),
-          ),
+          OwlBadge(size: 44, mood: mood),
           const SizedBox(width: 10),
           Expanded(
             child: Column(
@@ -193,7 +231,7 @@ class _OwlChatViewState extends State<OwlChatView> {
                         fontSize: 17,
                         fontWeight: FontWeight.w700,
                         color: fg)),
-                Text(provider.isSending ? 'typing…' : 'Your nightlife guide',
+                Text(provider.isSending ? (provider.status ?? 'typing…') : 'Your nightlife guide · online',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: TextStyle(
@@ -223,38 +261,50 @@ class _OwlChatViewState extends State<OwlChatView> {
   }
 
   // ------------------------------------------------------------ welcome
-  Widget _welcome(BuildContext context, Color fg) {
+  Widget _welcome(BuildContext context, Color fg, OwlMood mood) {
     final name = _firstName(context);
     return SingleChildScrollView(
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 16),
+      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('🦉', style: TextStyle(fontSize: 44)),
-          const SizedBox(height: 12),
+          Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: RadialGradient(colors: [
+                    AppColor.pinkColor.withOpacity(0.22),
+                    AppColor.pinkColor.withOpacity(0.0),
+                  ]),
+                ),
+              ),
+              OwlMascot(size: 128, mood: mood == OwlMood.idle ? OwlMood.idle : mood),
+            ],
+          ),
+          const SizedBox(height: 8),
           Text(name.isEmpty ? 'Hey there 👋' : 'Hey $name 👋',
+              textAlign: TextAlign.center,
               style: TextStyle(
                   fontFamily: AppFont.fontFamily,
-                  fontSize: 22,
+                  fontSize: 24,
                   fontWeight: FontWeight.w700,
                   color: fg)),
           const SizedBox(height: 6),
           Text(
-            "I'm Hii Owl. Tell me what you're in the mood for and I'll find the "
-            'right place, with distances, prices and deals.',
-            style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 14, color: fg.withOpacity(0.75)),
+            "I'm Hii Owl, your nightlife guide. Tell me the vibe and I'll find "
+            'the spot, with distances, prices and deals.',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+                fontFamily: AppFont.fontFamily, fontSize: 14, height: 1.4, color: fg.withOpacity(0.72)),
           ),
-          const SizedBox(height: 22),
-          Text('Try asking',
-              style: TextStyle(
-                  fontFamily: AppFont.fontFamily,
-                  fontSize: 13,
-                  fontWeight: FontWeight.w600,
-                  color: fg.withOpacity(0.6))),
-          const SizedBox(height: 10),
+          const SizedBox(height: 24),
           Wrap(
+            alignment: WrapAlignment.center,
             spacing: 8,
-            runSpacing: 8,
+            runSpacing: 10,
             children: AiAssistantProvider.suggestions
                 .map((s) => _chip(s, fg, () => _send(s)))
                 .toList(),
@@ -268,11 +318,14 @@ class _OwlChatViewState extends State<OwlChatView> {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: AppColor.pinkColor.withOpacity(0.7)),
-          color: AppColor.pinkColor.withOpacity(0.08),
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: AppColor.pinkColor.withOpacity(0.55)),
+          gradient: LinearGradient(colors: [
+            AppColor.pinkColor.withOpacity(0.14),
+            const Color(0xFF7B2FF7).withOpacity(0.10),
+          ]),
         ),
         child: Text(label,
             style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 13, color: fg)),
@@ -281,7 +334,7 @@ class _OwlChatViewState extends State<OwlChatView> {
   }
 
   // ----------------------------------------------------------- messages
-  Widget _messageItem(BuildContext context, AiAssistantMessage m, Color fg, {String? status}) {
+  Widget _messageItem(BuildContext context, AiAssistantMessage m, Color fg, {String? status, bool isLast = false}) {
     if (m.isUser) {
       return Align(
         alignment: Alignment.centerRight,
@@ -289,7 +342,7 @@ class _OwlChatViewState extends State<OwlChatView> {
           margin: const EdgeInsets.only(bottom: 10, left: 48),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
           decoration: const BoxDecoration(
-            color: AppColor.pinkColor,
+            gradient: LinearGradient(colors: [AppColor.pinkColor, Color(0xFFB02BE0)]),
             borderRadius: BorderRadius.only(
               topLeft: Radius.circular(18),
               topRight: Radius.circular(18),
@@ -310,10 +363,19 @@ class _OwlChatViewState extends State<OwlChatView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: Alignment.centerLeft,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              OwlBadge(
+                size: 30,
+                ring: false,
+                animate: isLast && m.isStreaming,
+                mood: isLast && m.isStreaming ? OwlMood.thinking : OwlMood.idle,
+              ),
+              const SizedBox(width: 8),
+              Flexible(
             child: Container(
-              margin: const EdgeInsets.only(right: 36),
+              margin: const EdgeInsets.only(right: 28),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
                 color: m.isError ? Colors.red.withOpacity(0.12) : fg.withOpacity(0.07),
@@ -328,10 +390,12 @@ class _OwlChatViewState extends State<OwlChatView> {
                   ? _TypingIndicator(label: status, color: fg)
                   : OwlRichText(text: m.content, color: fg),
             ),
+              ),
+            ],
           ),
           if (m.isStreaming && !waiting && status != null)
             Padding(
-              padding: const EdgeInsets.only(top: 6, left: 4),
+              padding: const EdgeInsets.only(top: 6, left: 42),
               child: _TypingIndicator(label: status, color: fg),
             ),
           if (m.cards.isNotEmpty) ...[
@@ -339,6 +403,7 @@ class _OwlChatViewState extends State<OwlChatView> {
             SizedBox(
               height: 196,
               child: ListView.separated(
+                padding: const EdgeInsets.only(left: 38),
                 scrollDirection: Axis.horizontal,
                 itemCount: m.cards.length,
                 separatorBuilder: (_, __) => const SizedBox(width: 10),
@@ -392,9 +457,14 @@ class _OwlChatViewState extends State<OwlChatView> {
               height: 46,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: provider.isSending
-                    ? AppColor.pinkColor.withOpacity(0.4)
-                    : AppColor.pinkColor,
+                gradient: LinearGradient(
+                  colors: provider.isSending
+                      ? [AppColor.pinkColor.withOpacity(0.35), const Color(0xFF7B2FF7).withOpacity(0.35)]
+                      : const [AppColor.pinkColor, Color(0xFF7B2FF7)],
+                ),
+                boxShadow: provider.isSending
+                    ? const []
+                    : [BoxShadow(color: AppColor.pinkColor.withOpacity(0.45), blurRadius: 12, offset: const Offset(0, 3))],
               ),
               child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
             ),
@@ -637,6 +707,26 @@ class _OwlResultCard extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Fade + slide-up for newly added chat messages.
+class _Appear extends StatelessWidget {
+  final Widget child;
+  const _Appear({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: const Duration(milliseconds: 260),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(offset: Offset(0, (1 - t) * 12), child: child),
+      ),
+      child: child,
     );
   }
 }
