@@ -25,6 +25,10 @@ class AppButton extends StatelessWidget {
   final double fontSize;
   final FontWeight fontWeight;
 
+  /// Secondary style: transparent with a pink outline and pink text
+  /// (e.g. "Skip for now" next to the main Continue button).
+  final bool outlined;
+
   const AppButton({
     Key? key,
     required this.text,
@@ -35,6 +39,7 @@ class AppButton extends StatelessWidget {
     this.widthPercent = 80,
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
+    this.outlined = false,
   }) : super(key: key);
 
   @override
@@ -50,7 +55,8 @@ class AppButton extends StatelessWidget {
         // button size should track finger/text size, not screen height.
         height: height,
         decoration: BoxDecoration(
-          color: backgroundColor ?? AppColor.buttonColor,
+          color: outlined ? Colors.transparent : (backgroundColor ?? AppColor.buttonColor),
+          border: outlined ? Border.all(color: AppColor.pinkColor, width: 1.8) : null,
           borderRadius: const BorderRadius.all(Radius.circular(40)),
         ),
         alignment: Alignment.center,
@@ -58,13 +64,13 @@ class AppButton extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             if (leadingIcon != null) ...[
-              Icon(leadingIcon, color: Colors.white, size: 20),
+              Icon(leadingIcon, color: outlined ? AppColor.pinkColor : Colors.white, size: 20),
               const SizedBox(width: 8),
             ],
             Text(
               text,
               style: TextStyle(
-                color: Colors.white,
+                color: outlined ? AppColor.pinkColor : Colors.white,
                 fontWeight: fontWeight,
                 fontFamily: AppFont.fontFamily,
                 fontSize: fontSize,

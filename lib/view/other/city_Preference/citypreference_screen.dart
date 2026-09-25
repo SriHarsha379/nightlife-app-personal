@@ -55,6 +55,36 @@ class _CityPreferenceState extends State<CityPreference> {
     super.dispose();
   }
 
+  // Client rule: members can pick ANY city; the preferred cities (the ones
+  // the business operates in) are featured first. While searching, it's
+  // one plain list. Strings in the result are section labels.
+  List<dynamic> _citySections(List<dynamic> cities) {
+    if (searchController.text.isNotEmpty) return cities;
+    final preferred = cities.where((c) => c is Map && c['is_preferred'] == true).toList();
+    final others = cities.where((c) => !(c is Map && c['is_preferred'] == true)).toList();
+    if (preferred.isEmpty || others.isEmpty) return cities;
+    return <dynamic>['⭐  Popular', ...preferred, 'All cities', ...others];
+  }
+
+  Widget _cityGroupLabel(String label) {
+    return SizedBox(
+      width: double.infinity,
+      child: Padding(
+        padding: const EdgeInsets.only(top: 6, bottom: 2),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontFamily: AppFont.fontFamily,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.4,
+            color: AppColor.secondryColor(context).withOpacity(0.6),
+          ),
+        ),
+      ),
+    );
+  }
+
   List<dynamic> _getFilteredCities(List<dynamic> cities) {
     if (searchController.text.isEmpty) {
       return cities;
@@ -513,7 +543,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   .spaceBetween,
                                               children: [
                                                 Text(
-                                                  AppLanguage.popularCitiesText[
+                                                  AppLanguage.chooseCitiesText[
                                                   language],
                                                   style: TextStyle(
                                                     fontFamily:
@@ -586,10 +616,9 @@ class _CityPreferenceState extends State<CityPreference> {
                                               runSpacing:
                                               size.height *
                                                   _cityChipRunSpacingRatio,
-                                              children: _getFilteredCities(
-                                                  controller
-                                                      .getCityList)
+                                              children: _citySections(_getFilteredCities(controller.getCityList))
                                                   .map((city) {
+                                                if (city is String) return _cityGroupLabel(city);
                                                 String cityId =
                                                     city['_id'] ?? '';
                                                 String cityName =
@@ -728,6 +757,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                                 },
                                                               ),
                                                             ),
+                                                          ),
+                                                        if (city['is_preferred'] == true && !isSelected)
+                                                          const Padding(
+                                                            padding: EdgeInsets.only(right: 5),
+                                                            child: Icon(Icons.star_rounded, size: 15, color: AppColor.pinkColor),
                                                           ),
                                                         Text(
                                                           cityName,

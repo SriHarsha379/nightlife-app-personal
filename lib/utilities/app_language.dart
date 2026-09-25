@@ -766,6 +766,7 @@ class AppLanguage {
   ];
   static const cityPreferenceText = ["City Preferences"];
   static const popularCitiesText = ["Popular cities"];
+  static const chooseCitiesText = ["Choose your cities"];
   static const mapViewText = ["Map View"];
   static const distanceText = ["Distance"];
   static const currentLocationText = ["Use current location"];

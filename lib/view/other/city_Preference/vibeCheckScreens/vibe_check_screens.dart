@@ -1,3 +1,4 @@
+import '../../../../utilities/vibe_answer_rules.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/other/city_Preference/stay_connected_screen.dart';
@@ -83,9 +84,25 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     for (final question in distributedQuestions[pageIndex]) {
       final questionId = question['_id'] ?? '';
       final answer = vibeCheckProvider.getAnswer(questionId);
-      if (answer.trim().isNotEmpty) return true;
+      if (isValidVibeAnswer(answer)) return true;
     }
     return false;
+  }
+
+  bool _hasUnfinishedAnswerOnPage(
+      VibeCheckController vibeCheckProvider, int pageIndex) {
+    final pages = vibeCheckProvider.distributeQuestionsToPages();
+    if (pages.length <= pageIndex) return false;
+    for (final question in pages[pageIndex]) {
+      if (isUnfinishedVibeAnswer(vibeCheckProvider.getAnswer(question['_id'] ?? ''))) return true;
+    }
+    return false;
+  }
+
+  void _vibeToast(String message) {
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(SnackBar(content: Text(message), backgroundColor: AppColor.pinkColor));
   }
 
   void _nextPage() {
@@ -108,6 +125,19 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     //   return;
     // }
 
+    // Client rule: an answer needs $kVibeMinWords+ words; page 1 needs at
+    // least one before moving on.
+    final rulesProvider = Provider.of<VibeCheckController>(context, listen: false);
+    if (_hasUnfinishedAnswerOnPage(rulesProvider, currentPage)) {
+      _vibeToast('Answers need at least $kVibeMinWords words - finish your answer or clear the box.');
+      return;
+    }
+    if (currentPage == _restrictedPageIndex &&
+        !_hasAnyAnswerOnPage(rulesProvider, currentPage)) {
+      _vibeToast('Answer at least one question in $kVibeMinWords+ words to continue.');
+      return;
+    }
+
     if (currentPage < 2) {
       setState(() {
         currentPage++;
@@ -128,8 +158,11 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     Provider.of<VibeCheckController>(context, listen: false);
 
     // Get formatted answers
-    List<Map<String, String>> formattedAnswers =
-    vibeCheckProvider.getFormattedAnswers();
+    // Only answers that meet the $kVibeMinWords-word rule are sent.
+    List<Map<String, String>> formattedAnswers = vibeCheckProvider
+        .getFormattedAnswers()
+        .where((a) => isValidVibeAnswer(a['answer'] ?? ''))
+        .toList();
 
     // Print for debugging
     print("Formatted Answers for API: $formattedAnswers");
@@ -156,8 +189,15 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
     );
   }
 
+  // "Skip for now" skips the rest of Vibe Check (answers so far are kept).
+  // Only visible on page 1 once one answer has $kVibeMinWords+ words.
   void _skipToNext() {
-    _nextPage();
+    final rulesProvider = Provider.of<VibeCheckController>(context, listen: false);
+    if (!_hasAnyAnswerOnPage(rulesProvider, _restrictedPageIndex)) {
+      _vibeToast('Answer at least one question in $kVibeMinWords+ words first.');
+      return;
+    }
+    _submitAndNavigate();
   }
 
   void _previousPage() {
@@ -325,7 +365,10 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                           children: [
                             if (showSkip) ...[
                               AppButton(
-                                backgroundColor: AppColor.borderColor,
+                                outlined: true,
+                                height: 58,
+                                fontSize: 18,
+                                fontWeight: FontWeight.w700,
                                 text: AppLanguage.skip[language],
                                 onPress: _skipToNext,
                               ),
@@ -577,6 +620,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                           ),
                         ),
                       ),
+                      SizedBox(width: size.width * 90 / 100, child: VibeWordCounter(controller: controller)),
 
                       // Example answer, to give a sense of what a good
                       // response looks like. Uses a per-question example

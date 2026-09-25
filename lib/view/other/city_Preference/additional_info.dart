@@ -275,12 +275,12 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       },
                       child: Container(
                         width: MediaQuery.of(context).size.width * 80 / 100,
-                        padding: const EdgeInsets.symmetric(vertical: 12),
+                        height: 58,
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
+                          borderRadius: BorderRadius.circular(40),
                           border: Border.all(
                             color: AppColor.pinkColor,
-                            width: 1.4,
+                            width: 1.8,
                           ),
                         ),
                         child: Center(
@@ -289,7 +289,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                             AppLanguage.skip[language],
                             style: TextStyle(
                               fontFamily: AppFont.fontFamily,
-                              fontSize: 14,
+                              fontSize: 18,
                               fontWeight: FontWeight.w700,
                               color: AppColor.pinkColor,
                             ),
@@ -303,6 +303,9 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       color: AppColor.pinkColor,
                     )
                         : AppButton(
+                      height: 58,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
                       text: AppLanguage.continueText[language],
                       onPress: () {
                         FocusScope.of(context).unfocus();

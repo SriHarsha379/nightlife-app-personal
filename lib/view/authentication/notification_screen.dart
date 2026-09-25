@@ -11,6 +11,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
+import '../../utilities/profile_completion_navigation.dart';
 import '../other/MySplashSection/EventSection/Liked/booked_event_details.dart';
 import '../other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
@@ -45,8 +46,13 @@ class _NotificationsState extends State<Notifications> {
     return '';
   }
 
-  String _ctaText(String action) {
+  String _ctaText(String action, [Map<String, dynamic> actionJson = const {}]) {
     switch (action) {
+      case 'profile_completion':
+        final field = _str(actionJson['next_step_field']);
+        return field.isEmpty ? 'Complete your profile \u203a' : '${profileCompletionFieldLabel(field)} \u203a';
+      case 'inactivity_reminder':
+        return "See what's new \u203a";
       case 'someone_liked_you':
         return 'See Who';
       case 'event_booking_confirmed':
@@ -190,6 +196,18 @@ class _NotificationsState extends State<Notifications> {
         );
         break;
 
+      case 'profile_completion':
+        // Straight to whatever is missing (photos -> photo picker opens,
+        // bio / Instagram -> Edit Profile with that field focused, ...).
+        final field = _firstNonEmpty(actionJson, <String>['next_step_field']);
+        navigateToProfileCompletionField(context, field.isEmpty ? null : field);
+        break;
+
+      case 'inactivity_reminder':
+        // "We miss you" -> back to Home to see what's new.
+        Navigator.of(context).popUntil((route) => route.isFirst);
+        break;
+
       default:
         break;
     }
@@ -203,7 +221,7 @@ class _NotificationsState extends State<Notifications> {
     final messageTime = split[1];
     final lastSeen = _formatRelativeTime(_str(item['createtime']));
     final action = _str(item['action']).toLowerCase();
-    final viewText = _ctaText(action);
+    final viewText = _ctaText(action, _map(item['action_json']));
 
     return GestureDetector(
       onTap: () => _handleNotificationTap(item),
@@ -320,10 +338,12 @@ class _NotificationsState extends State<Notifications> {
                         child: Text(
                           viewText,
                           style: const TextStyle(
-                            color: AppColor.buttonColor,
+                            color: AppColor.pinkColor,
                             fontSize: 14,
                             fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w500,
+                            fontWeight: FontWeight.w600,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColor.pinkColor,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,

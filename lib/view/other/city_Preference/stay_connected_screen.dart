@@ -459,7 +459,10 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
               Consumer<PostApiProvider>(
                 builder: (context, provider, child) {
                   return AppButton(
-                    backgroundColor: AppColor.borderColor,
+                    outlined: true,
+                    height: 58,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                     text: AppLanguage.skip[language],
                     onPress: () {
                       if (provider.loading) return;
@@ -477,6 +480,9 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
               Consumer<PostApiProvider>(
                 builder: (context, provider, child) {
                   return AppButton(
+                    height: 58,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700,
                     text: AppLanguage.continueText[language],
                     onPress: _continueWithEmail,
                   );

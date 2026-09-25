@@ -13,6 +13,7 @@ import '../../utilities/app_header.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/profile_completion_navigation.dart';
+import '../../utilities/vibe_answer_rules.dart';
 
 /// Answers Vibe Check questions after signup — the onboarding version
 /// (vibeCheckScreens/vibe_check_screens.dart) is coupled to the rest of
@@ -62,12 +63,23 @@ class _EditVibeCheckScreenState extends State<EditVibeCheckScreen> {
   Future<void> _save() async {
     final vibeCheckProvider =
     Provider.of<VibeCheckController>(context, listen: false);
-    final formattedAnswers = vibeCheckProvider.getFormattedAnswers();
+    final allAnswers = vibeCheckProvider.getFormattedAnswers();
+
+    // Same rule as signup: $kVibeMinWords+ real words per answer.
+    if (allAnswers.any((a) => isUnfinishedVibeAnswer(a['answer'] ?? ''))) {
+      SnackBarToastMessage.info(
+        context,
+        "Answers need at least $kVibeMinWords words - finish your answer or clear the box.",
+      );
+      return;
+    }
+    final formattedAnswers =
+        allAnswers.where((a) => isValidVibeAnswer(a['answer'] ?? '')).toList();
 
     if (formattedAnswers.isEmpty) {
       SnackBarToastMessage.info(
         context,
-        "Answer at least one question to save.",
+        "Answer at least one question in $kVibeMinWords+ words to save.",
       );
       return;
     }
@@ -237,6 +249,7 @@ class _EditVibeCheckScreenState extends State<EditVibeCheckScreen> {
                                       ),
                                     ),
                                   ),
+                                  VibeWordCounter(controller: controller),
                                 ],
                               ),
                             );
