@@ -16,6 +16,7 @@ import '../other/MySplashSection/EventSection/Liked/booked_event_details.dart';
 import '../other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import '../other/MySplashSection/MembersSection/member_liked_details.dart';
 import '../other/MySplashSection/VenuesSection/venue_booking_details.dart';
+import '../other/MySplashSection/VenuesSection/venuepages.dart';
 
 class Notifications extends StatefulWidget {
   static String routeName = './Notifications';
@@ -51,6 +52,10 @@ class _NotificationsState extends State<Notifications> {
       case 'profile_completion':
         final field = _str(actionJson['next_step_field']);
         return field.isEmpty ? 'Complete your profile \u203a' : '${profileCompletionFieldLabel(field)} \u203a';
+      case 'venue_booking_invite':
+        return 'View venue \u203a';
+      case 'welcome':
+        return 'Start exploring \u203a';
       case 'inactivity_reminder':
         return "See what's new \u203a";
       case 'someone_liked_you':
@@ -203,6 +208,17 @@ class _NotificationsState extends State<Notifications> {
         navigateToProfileCompletionField(context, field.isEmpty ? null : field);
         break;
 
+      case 'venue_booking_invite':
+        // A friend invited you to their reservation -> that venue's page.
+        final venueId = _firstNonEmpty(actionJson, <String>['venue_id']);
+        if (venueId.isEmpty) return;
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (_) => VenuePages(venueId: venueId)),
+        );
+        break;
+
+      case 'welcome':
       case 'inactivity_reminder':
         // "We miss you" -> back to Home to see what's new.
         Navigator.of(context).popUntil((route) => route.isFirst);

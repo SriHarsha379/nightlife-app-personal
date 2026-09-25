@@ -367,7 +367,28 @@ class _MyAppState extends State<MyApp> {
       return;
     }
 
-    // welcome / signup / unknown actions -> Notifications screen
+    if (action == 'venue_booking_invite') {
+      // A friend invited you to their reservation -> that venue's page.
+      final String venueId = _firstNonEmpty(
+        actionJson.isNotEmpty ? actionJson : data,
+        <String>['venue_id'],
+      );
+      if (venueId.isNotEmpty) {
+        navigator.push(
+          MaterialPageRoute(builder: (_) => VenuePages(venueId: venueId)),
+        );
+        return;
+      }
+      _openNotificationScreen();
+      return;
+    }
+    if (action == 'welcome' || action == 'inactivity_reminder') {
+      // Nothing specific to open - land on Home.
+      navigator.popUntil((route) => route.isFirst);
+      return;
+    }
+    // announcements / blog / unknown actions -> Notifications screen,
+    // where the full message is shown
     _openNotificationScreen();
   }
 
