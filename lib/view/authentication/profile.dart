@@ -438,20 +438,6 @@ class _ProfileState extends State<Profile> {
                           SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 2 / 100),
-                          // Dark/Light theme — ThemeProvider was already
-                          // fully built (persistence, MaterialApp wiring,
-                          // isDarkMode read across 15+ screens) but had no
-                          // UI control anywhere that actually called
-                          // toggleTheme().
-                          SettingSwitchRow(
-                            leadingIcon: AppImage.settingApppreference,
-                            title: AppLanguage.darkModeText[language],
-                            value: themeProvider.isDarkMode,
-                            onChanged: (isOn) => themeProvider.toggleTheme(isOn),
-                          ),
-                          SizedBox(
-                              height:
-                              MediaQuery.of(context).size.height * 2 / 100),
                           // About Us / Terms & Conditions / Contact Us —
                           // client's own ask, explicitly suggested for the
                           // profile page. About Us content wasn't
