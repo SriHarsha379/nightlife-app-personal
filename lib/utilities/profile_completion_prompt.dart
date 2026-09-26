@@ -91,7 +91,8 @@ class ProfileCompletionPrompt with WidgetsBindingObserver {
           hint: messages.isNotEmpty ? messages.first : null,
           onCompleteNow: () {
             Navigator.pop(sheetCtx);
-            navigateToProfileCompletionField(ctx, fields.isNotEmpty ? fields.first : null);
+            navigateToProfileCompletionField(ctx, fields.isNotEmpty ? fields.first
+                : (messages.isNotEmpty ? profileCompletionFieldFromMessage(messages.first) : null));
           },
         ),
       );

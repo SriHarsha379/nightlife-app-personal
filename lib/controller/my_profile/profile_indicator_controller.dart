@@ -1,3 +1,4 @@
+import '../../utilities/profile_completion_navigation.dart';
 import 'package:flutter/material.dart';
 import '../../provider/common_api_helper.dart';
 import '../../utilities/app_constant.dart';
@@ -61,6 +62,12 @@ class MyProfleCompltetionController with ChangeNotifier {
               .whereType<String>()
               .map((e) => e.trim())
               .where((e) => e.isNotEmpty)
+              .toList();
+        }
+        // Older servers send only `messages` - work the keys out from the text.
+        if (_completionFields.length != _completionMessages.length) {
+          _completionFields = _completionMessages
+              .map((m) => profileCompletionFieldFromMessage(m) ?? '')
               .toList();
         }
       }

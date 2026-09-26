@@ -13,6 +13,18 @@ import 'app_snack_bar_toast_message.dart';
 /// common/profile_complete_status) to a short, member-facing label, used
 /// for the "next up" toast shown when chaining from one missing field to
 /// the next.
+/// Works out the field key from a checklist message, for servers that
+/// send only `messages` (no `fields`), e.g. "Answer Vibe Check Questions".
+String? profileCompletionFieldFromMessage(String message) {
+  final m = message.toLowerCase();
+  if (m.contains('vibe')) return 'vibe_check';
+  if (m.contains('image') || m.contains('photo') || m.contains('video')) return 'gallery';
+  if (m.contains('instagram')) return 'instagram';
+  if (m.contains('hobb')) return 'hobbies';
+  if (m.contains('bio')) return 'bio';
+  return null;
+}
+
 String profileCompletionFieldLabel(String field) {
   switch (field) {
     case 'gallery':
