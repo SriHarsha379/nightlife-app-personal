@@ -620,7 +620,7 @@ class _VibeCheckPageContentState extends State<VibeCheckPageContent> {
                           ),
                         ),
                       ),
-                      SizedBox(width: size.width * 90 / 100, child: VibeWordCounter(controller: controller)),
+                      if (controller != null) SizedBox(width: size.width * 90 / 100, child: VibeWordCounter(controller: controller)),
 
                       // Example answer, to give a sense of what a good
                       // response looks like. Uses a per-question example
