@@ -1,3 +1,4 @@
+import '../../utilities/profile_completion_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:night_life/view/authentication/app_preference_screen.dart';
@@ -285,9 +286,11 @@ class _ProfileState extends State<Profile> {
                                             Colors.purpleAccent,
                                             Colors.redAccent,
                                           ];
+                                          final fields = profileCompletionController.completionFields;
                                           return buildTaskRow(
                                             tasksToShow[index],
                                             colors[index % colors.length],
+                                            field: index < fields.length ? fields[index] : null,
                                           );
                                         }),
                                   ],
@@ -631,19 +634,12 @@ class _ProfileState extends State<Profile> {
     );
   }
 
-  Widget buildTaskRow(String text, Color color) {
+  Widget buildTaskRow(String text, Color color, {String? field}) {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
-      onTap: () {
-        Navigator.push(
-          context,
-          PageTransition(
-            type: PageTransitionType.rightToLeftWithFade,
-            child: const EditProfile(),
-            duration: const Duration(milliseconds: 500),
-          ),
-        );
-      },
+      // Opens the screen for THIS item (photos, Instagram, Vibe Check...).
+      // It used to open Edit Details for every item.
+      onTap: () => navigateToProfileCompletionField(context, field),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 3),
         child: Row(
