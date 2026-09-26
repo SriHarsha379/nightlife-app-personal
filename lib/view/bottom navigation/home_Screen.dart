@@ -1,3 +1,4 @@
+import '../../utilities/fcm_token_service.dart';
 import '../../utilities/profile_completion_prompt.dart';
 import 'dart:async';
 import 'dart:developer';
@@ -64,6 +65,7 @@ class _HomeState extends State<Home> {
           .fetchActivePolls(context);
     });
     context.read<UserController>().getUserDetails();
+    FcmTokenService.syncWithServer(); // keep this phone's push token current
     // PDF #5: profile % prompt every time the app opens.
     ProfileCompletionPrompt.attach(context);
   }

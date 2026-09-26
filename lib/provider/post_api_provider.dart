@@ -18,6 +18,7 @@ import '../utilities/app_config_provider.dart';
 import '../utilities/app_constant.dart';
 import '../utilities/app_footer.dart';
 import '../utilities/app_snack_bar_toast_message.dart';
+import '../utilities/firebase_otp_service.dart';
 import '../utilities/session_manager.dart';
 import '../view/authentication/login_screen.dart';
 import '../view/authentication/otp_verify_screen.dart';
@@ -467,9 +468,21 @@ class PostApiProvider with ChangeNotifier {
     if (_loading) return false;
     setLoading(true);
 
+    // The backend verifies this Firebase token (not the typed code) and checks
+    // it belongs to this phone number. Without it every signup was rejected.
+    final idToken = await FirebaseOtpService.getVerifiedIdToken();
+    if (idToken == null || idToken.isEmpty) {
+      setLoading(false);
+      if (context.mounted) {
+        SnackBarToastMessage.error(context, 'Could not verify your number. Please request a new OTP.');
+      }
+      return false;
+    }
+
     final Map<String, String> fields = {
       'phone_number': mobile.toString(),
       'otp': otp.toString(),
+      'firebase_id_token': idToken,
     };
 
     final res = await postJsonData(

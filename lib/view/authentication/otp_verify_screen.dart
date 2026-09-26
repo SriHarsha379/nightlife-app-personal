@@ -157,6 +157,7 @@ class _OtpVerifyState extends State<OtpVerify> {
     try {
       final firebaseVerified = await FirebaseOtpService.verifyOtp(
         otp: pinputInputController.text,
+        phoneNumber: widget.mobile.toString(),
         onError: (error) {
           if (!mounted) return;
           SnackBarToastMessage.error(context, error);

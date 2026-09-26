@@ -98,14 +98,40 @@ class FirebaseOtpService {
 
   /// Verify OTP entered by user
   /// Returns true if OTP is correct and sign-in succeeded
+  /// Last 10 digits of two numbers match (verified must be non-empty).
+  static bool _samePhone(String? verified, String? requested) {
+    String last10(String? s) {
+      final d = (s ?? '').replaceAll(RegExp(r'\D'), '');
+      return d.length > 10 ? d.substring(d.length - 10) : d;
+    }
+    final v = last10(verified);
+    if (v.isEmpty) return false;
+    return requested == null || v == last10(requested);
+  }
+
+  /// Firebase's proof that the phone number was verified - the backend
+  /// checks it (auth/otp_verify), so a typed code alone can't be faked.
+  static Future<String?> getVerifiedIdToken() async {
+    try {
+      return await _auth.currentUser?.getIdToken(true);
+    } catch (e) {
+      debugPrint('getVerifiedIdToken failed: $e');
+      return null;
+    }
+  }
+
   static Future<bool> verifyOtp({
     required String otp,
     required Function(String error) onError,
+    String? phoneNumber,
   }) async {
-    // If verificationCompleted already signed the user in (auto-verification
-    // or test number instant verification), there's nothing left to verify.
-    if (_auth.currentUser != null) {
-      debugPrint('User already signed in via auto-verification');
+    // Already verified THIS number (Android auto-read / test number)? Then
+    // there's nothing left to check. NB: the app also signs in to Firebase
+    // anonymously after the first signup step - that is NOT a verified
+    // phone, so it must not count (it used to make any code "correct").
+    final current = _auth.currentUser;
+    if (current != null && _samePhone(current.phoneNumber, phoneNumber)) {
+      debugPrint('Phone already verified via auto-verification');
       return true;
     }
 

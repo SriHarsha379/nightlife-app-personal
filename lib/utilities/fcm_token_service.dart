@@ -3,8 +3,32 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import '/utilities/app_constant.dart';
 import '/utilities/local_notification_service.dart';
+import '/provider/common_api_helper.dart';
 
 class FcmTokenService {
+  static String? _lastSynced;
+
+  /// Tell the backend this phone's current push token. Called when Home opens
+  /// (every launch) and whenever Firebase rotates the token. Before, the token
+  /// was only sent at login/signup, so members who stayed logged in silently
+  /// stopped receiving notifications after a rotation.
+  static Future<void> syncWithServer() async {
+    final String token = AppConstant.playerID.toString();
+    // "123456" is the placeholder used when Firebase gave no token.
+    if (token.length < 20 || AppConstant.token.isEmpty || token == _lastSynced) return;
+    try {
+      final res = await postJsonData(
+        'user/update_player_id',
+        {'player_id': token, 'device_type': AppConstant.deviceType},
+        null,
+        headers: {'authorization': 'Bearer ${AppConstant.token}'},
+      );
+      if (res != null && res['success'] == true) _lastSynced = token;
+    } catch (e) {
+      debugPrint('Push token sync failed: $e');
+    }
+  }
+
   static Future<void> generateAndStoreToken() async {
     final FirebaseMessaging messaging = FirebaseMessaging.instance;
 
@@ -34,6 +58,7 @@ class FcmTokenService {
       (String refreshedToken) {
         AppConstant.playerID = refreshedToken;
         debugPrint('FCM token refreshed: ${AppConstant.playerID}');
+        syncWithServer();
       },
       onError: (Object error) {
         debugPrint('FCM token refresh listener error: $error');
