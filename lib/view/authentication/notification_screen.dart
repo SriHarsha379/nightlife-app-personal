@@ -221,7 +221,9 @@ class _NotificationsState extends State<Notifications> {
       case 'welcome':
       case 'inactivity_reminder':
         // "We miss you" -> back to Home to see what's new.
-        Navigator.of(context).popUntil((route) => route.isFirst);
+        // Back to Home (the bell list is opened from Home). NOT popUntil(isFirst):
+        // after login the first screen is the login page, which looked like a logout.
+        Navigator.of(context).maybePop();
         break;
 
       default:

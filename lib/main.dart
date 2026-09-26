@@ -384,7 +384,8 @@ class _MyAppState extends State<MyApp> {
     }
     if (action == 'welcome' || action == 'inactivity_reminder') {
       // Nothing specific to open - land on Home.
-      navigator.popUntil((route) => route.isFirst);
+      // Nothing to open - stay where the app is (Home on a fresh start).
+      // NOT popUntil(isFirst): after login that's the login page (looked like a logout).
       return;
     }
     // announcements / blog / unknown actions -> Notifications screen,
