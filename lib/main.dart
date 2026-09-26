@@ -60,7 +60,18 @@ Future<void> main() async {
   SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
   ]);
-  runApp(const MyApp());
+  if (kReleaseMode) {
+    // Release builds: no log output. The app logs login tokens and full
+    // server replies (emails, phone numbers) - fine while developing,
+    // not on members' phones. `flutter run` (debug) keeps every log line.
+    debugPrint = (String? message, {int? wrapWidth}) {};
+    runZoned(
+      () => runApp(const MyApp()),
+      zoneSpecification: ZoneSpecification(print: (_, __, ___, ____) {}),
+    );
+  } else {
+    runApp(const MyApp());
+  }
 }
 
 class MyApp extends StatefulWidget {

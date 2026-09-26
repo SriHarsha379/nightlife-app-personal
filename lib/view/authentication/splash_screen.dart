@@ -155,8 +155,14 @@ class _SplashState extends State<Splash> {
     Provider.of<GetMySwipeProfileController>(context, listen: false);
 
     try {
-      if (!SessionManager.hasAuthenticatedUser) {
-        print('🔍 DECISION → No Firebase user, going to unauthenticated ❌');
+      // Email/password members have NO Firebase user (anonymous Firebase sign-in
+      // is disabled in the Firebase project) but a valid backend login. Only
+      // treat as logged out when BOTH are missing - this used to log every
+      // email-login member out on every app launch.
+      final hasBackendSession =
+          cachedToken.isNotEmpty && !SessionManager.isTokenExpired(cachedToken);
+      if (!SessionManager.hasAuthenticatedUser && !hasBackendSession) {
+        print('🔍 DECISION → No Firebase user and no valid login, going to unauthenticated ❌');
         await _clearSessionAndNavigateUnauthenticated(
           userController,
           homeController,
@@ -166,21 +172,24 @@ class _SplashState extends State<Splash> {
         return;
       }
 
-      print('🔍 DECISION → Firebase user found, refreshing token...');
-
-      try {
-        await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
-        print('🔍 TOKEN REFRESH → Success ✅');
-      } on SessionExpiredAuthException {
-        print('🔍 TOKEN REFRESH → SessionExpiredAuthException ❌');
-        if (!mounted) return; // ← GUARD: stop if already navigated away
-        await _clearSessionAndNavigateUnauthenticated(
-          userController,
-          homeController,
-          profileController,
-          swipeProfileController,
-        );
-        return;
+      if (SessionManager.hasAuthenticatedUser) {
+        print('🔍 DECISION → Firebase user found, refreshing token...');
+        try {
+          await SessionManager.getFreshFirebaseIdToken(forceRefresh: true);
+          print('🔍 TOKEN REFRESH → Success ✅');
+        } on SessionExpiredAuthException {
+          print('🔍 TOKEN REFRESH → SessionExpiredAuthException ❌');
+          if (!mounted) return; // ← GUARD: stop if already navigated away
+          await _clearSessionAndNavigateUnauthenticated(
+            userController,
+            homeController,
+            profileController,
+            swipeProfileController,
+          );
+          return;
+        }
+      } else {
+        print('🔍 DECISION → Valid backend login (no Firebase user), continuing ✅');
       }
 
       if (!mounted) return; // ← GUARD after async Firebase call
