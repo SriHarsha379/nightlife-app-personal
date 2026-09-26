@@ -232,6 +232,9 @@ class _Profile1State extends State<Profile1> {
     });
   }
 
+  // true when pushed from the profile checklist (not the bottom-bar tab)
+  bool get openedOnItsOwn => widget.autoOpenMediaPicker;
+
   int selectedId = 1;
 
   // After a successful gallery upload, checks whether the member still
@@ -264,8 +267,12 @@ class _Profile1State extends State<Profile1> {
         statusBarBrightness: isDark ? Brightness.dark : Brightness.light, // iOS
       ),
       child: PopScope(
-        canPop: false,
+        // As a bottom-bar tab, back switches to Home. Opened on its own
+        // (profile checklist), back must simply go back - it used to do
+        // nothing, leaving members stuck with no bottom bar.
+        canPop: openedOnItsOwn,
         onPopInvoked: (didPop) {
+          if (didPop) return;
           setState(() {
             AppConstant.selectFooterIndex = 0;
           });
@@ -299,14 +306,26 @@ class _Profile1State extends State<Profile1> {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(
-                            AppLanguage.yourProfileText[language],
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w700,
-                              fontFamily: AppFont.fontFamily,
-                              color: AppColor.secondryColor(context),
-                            ),
+                          Row(
+                            children: [
+                              if (openedOnItsOwn)
+                                GestureDetector(
+                                  onTap: () => Navigator.of(context).maybePop(),
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(right: 10),
+                                    child: Icon(Icons.arrow_back_ios_new, size: 20, color: AppColor.secondryColor(context)),
+                                  ),
+                                ),
+                              Text(
+                                AppLanguage.yourProfileText[language],
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w700,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: AppColor.secondryColor(context),
+                                ),
+                              ),
+                            ],
                           ),
                           GestureDetector(
                             onTap: () {
