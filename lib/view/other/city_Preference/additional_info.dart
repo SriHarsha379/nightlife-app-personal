@@ -15,6 +15,7 @@ import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
 import '../../../utilities/app_validation.dart';
 import '../../../utilities/widgets.dart';
+import '../../../commonWidget/signup_step_header.dart';
 
 class AdditionalInfoScreen extends StatefulWidget {
   final List<Map<String, dynamic>>? preferredCities;
@@ -226,6 +227,29 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
   }
 
   TextEditingController messageTextEditingController = TextEditingController();
+  // "Skip for now" (top-right corner of the header).
+  void _skipForNow() {
+    final apiprovider = Provider.of<PostApiProvider>(context, listen: false);
+    if (apiprovider.loading) return;
+    final apiProvider = Provider.of<PostApiProvider>(
+      context,
+      listen: false,
+    );
+    apiProvider.signupStepTwoUserApi(
+      context,
+      widget.preferredCities,
+      "",
+      "",
+      "",
+      "",
+      <String>[],
+      0,
+      latitude: widget.latitude,
+      longitude: widget.longitude,
+      radius: widget.radius,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
@@ -248,56 +272,6 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    // "Skip for now" moved above Continue and made more
-                    // prominent (outlined pill button instead of plain text)
-                    // per onboarding feedback: "Make SKIP more prominent and
-                    // move it on top".
-                    GestureDetector(
-                      onTap: () {
-                        if (apiprovider.loading) return;
-                        final apiProvider = Provider.of<PostApiProvider>(
-                          context,
-                          listen: false,
-                        );
-                        apiProvider.signupStepTwoUserApi(
-                          context,
-                          widget.preferredCities,
-                          "",
-                          "",
-                          "",
-                          "",
-                          <String>[],
-                          0,
-                          latitude: widget.latitude,
-                          longitude: widget.longitude,
-                          radius: widget.radius,
-                        );
-                      },
-                      child: Container(
-                        width: MediaQuery.of(context).size.width * 80 / 100,
-                        height: 58,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(40),
-                          border: Border.all(
-                            color: AppColor.pinkColor,
-                            width: 1.8,
-                          ),
-                        ),
-                        child: Center(
-                          child: Text(
-                            textAlign: TextAlign.center,
-                            AppLanguage.skip[language],
-                            style: TextStyle(
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700,
-                              color: AppColor.pinkColor,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 12),
                     apiprovider.loading
                         ? const CircularProgressIndicator(
                       color: AppColor.pinkColor,
@@ -337,53 +311,10 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                             children: [
                               Column(
                                 children: [
-                                  Row(
-                                    children: [
-                                      GestureDetector(
-                                        onTap: () {
-                                          Navigator.pop(context);
-                                        },
-                                        child: SizedBox(
-                                          width: MediaQuery.of(context)
-                                              .size
-                                              .width *
-                                              4 /
-                                              100,
-                                          child: SizedBox(
-                                            height: MediaQuery.of(context)
-                                                .size
-                                                .height *
-                                                5 /
-                                                100,
-                                            child: Image.asset(
-                                              AppImage.backArrowIcon,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      SizedBox(
-                                        width:
-                                        MediaQuery.of(context).size.width *
-                                            80 /
-                                            100,
-                                        child: Center(
-                                          child: Text(
-                                            textAlign: TextAlign.center,
-                                            AppLanguage
-                                                .additionalInfoText[language],
-                                            style: TextStyle(
-                                              fontFamily: AppFont.fontFamily,
-                                              fontSize: 18,
-                                              fontWeight: FontWeight.w600,
-                                              color: AppColor.secondryColor(
-                                                  context),
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                    ],
+                                  SignupStepHeader(
+                                    title: AppLanguage.additionalInfoText[language],
+                                    onBack: () => Navigator.pop(context),
+                                    onSkip: _skipForNow,
                                   ),
                                   SizedBox(
                                       height:

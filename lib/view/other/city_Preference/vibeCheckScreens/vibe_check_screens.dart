@@ -12,6 +12,7 @@ import '../../../../utilities/app_constant.dart';
 import '../../../../utilities/app_font.dart';
 import '../../../../utilities/app_image.dart';
 import '../../../../utilities/app_language.dart';
+import '../../../../commonWidget/signup_step_header.dart';
 
 class VibeCheckScreen extends StatefulWidget {
   final String? selectedGenres;
@@ -274,37 +275,12 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                       ),
                       // App Header
                       SizedBox(
-                        width: size.width * 0.9,
                         height: size.height * 0.08,
-                        child: Row(
-                          children: [
-                            GestureDetector(
-                              onTap: _previousPage,
-                              child: SizedBox(
-                                width: size.width * 0.04,
-                                height: size.height * 0.05,
-                                child: Image.asset(
-                                  AppImage.backArrowIcon,
-                                  color: AppColor.secondryColor(context),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: size.width * 0.02),
-                            Expanded(
-                              child: Center(
-                                child: Text(
-                                  AppLanguage.vibeCheck[language],
-                                  style: TextStyle(
-                                    fontFamily: AppFont.fontFamily,
-                                    fontSize: 18,
-                                    fontWeight: FontWeight.w700,
-                                    color: AppColor.secondryColor(context),
-                                  ),
-                                ),
-                              ),
-                            ),
-                            SizedBox(width: size.width * 0.06),
-                          ],
+                        child: SignupStepHeader(
+                          title: AppLanguage.vibeCheck[language],
+                          onBack: _previousPage,
+                          // top-right; shown once page 1 has a 6-word answer
+                          onSkip: showSkip ? _skipToNext : null,
                         ),
                       ),
                       SizedBox(height: size.height * 0.02),
@@ -363,17 +339,6 @@ class _VibeCheckScreenState extends State<VibeCheckScreen> {
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
-                            if (showSkip) ...[
-                              AppButton(
-                                outlined: true,
-                                height: 58,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                text: AppLanguage.skip[language],
-                                onPress: _skipToNext,
-                              ),
-                              const SizedBox(height: 12),
-                            ],
                             AppButton(
                               height: 62,
                               fontSize: 18,

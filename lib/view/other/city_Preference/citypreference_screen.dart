@@ -15,6 +15,8 @@ import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_snack_bar_toast_message.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CityPreference extends StatefulWidget {
   const CityPreference({super.key});
@@ -43,9 +45,12 @@ class _CityPreferenceState extends State<CityPreference> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<CityPreferenceController>(context, listen: false)
-          .fetchCityList(context);
+      final controller = Provider.of<CityPreferenceController>(context, listen: false);
+      // "All cities" was removed - clear it if left over from before.
+      if (controller.getAllCitiesSelected) controller.clearSelections();
+      controller.fetchCityList(context);
     });
+    _loadSignupCity();
   }
 
   @override
@@ -55,15 +60,48 @@ class _CityPreferenceState extends State<CityPreference> {
     super.dispose();
   }
 
-  // Client rule: members can pick ANY city; the preferred cities (the ones
-  // the business operates in) are featured first. While searching, it's
-  // one plain list. Strings in the result are section labels.
+  // Client rule (final): after signup, members choose from the MAJOR cities
+  // (starred in Admin > Manage Filters > Cities) plus their own signup city.
   List<dynamic> _citySections(List<dynamic> cities) {
-    if (searchController.text.isNotEmpty) return cities;
-    final preferred = cities.where((c) => c is Map && c['is_preferred'] == true).toList();
-    final others = cities.where((c) => !(c is Map && c['is_preferred'] == true)).toList();
-    if (preferred.isEmpty || others.isEmpty) return cities;
-    return <dynamic>['⭐  Popular', ...preferred, 'All cities', ...others];
+    final shown = cities.where((c) =>
+        c is Map &&
+        (c['is_preferred'] == true ||
+            (_signupCityId != null && c['_id']?.toString() == _signupCityId))).toList();
+    _preselectSignupCity(cities);
+    return shown;
+  }
+
+  // The city picked on the signup form (saved on the phone after signup).
+  String? _signupCityId;
+  bool _signupCityPreselected = false;
+
+  Future<void> _loadSignupCity() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString('user_details');
+      if (raw == null) return;
+      final data = jsonDecode(raw);
+      final c = data is Map ? data['city_id'] : null;
+      final id = (c is Map ? (c['_id'] ?? '') : (c ?? '')).toString();
+      if (id.isNotEmpty && mounted) setState(() => _signupCityId = id);
+    } catch (_) {}
+  }
+
+  // Pre-select the signup city once - only when nothing is selected yet.
+  void _preselectSignupCity(List<dynamic> cities) {
+    if (_signupCityPreselected || _signupCityId == null) return;
+    final match = cities.firstWhere(
+        (c) => c is Map && c['_id']?.toString() == _signupCityId,
+        orElse: () => null);
+    if (match == null) return;
+    _signupCityPreselected = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final controller = Provider.of<CityPreferenceController>(context, listen: false);
+      if (controller.getSelectedCities.isEmpty) {
+        controller.toggleCitySelection(Map<String, dynamic>.from(match as Map));
+      }
+    });
   }
 
   Widget _cityGroupLabel(String label) {
@@ -455,63 +493,9 @@ class _CityPreferenceState extends State<CityPreference> {
 
                                     SizedBox(height: size.height * 2 / 100),
 
-                                    // "All Cities" option — lets the member
-                                    // opt out of picking specific active/
-                                    // preferred cities altogether.
-                                    GestureDetector(
-                                      onTap: () {
-                                        controller.selectAllCities();
-                                      },
-                                      child: Container(
-                                        width: size.width * 0.9,
-                                        padding: const EdgeInsets.symmetric(
-                                            vertical: 14, horizontal: 18),
-                                        decoration: BoxDecoration(
-                                          color: controller.getAllCitiesSelected
-                                              ? AppColor.pinkColor
-                                              .withOpacity(0.12)
-                                              : cardColor,
-                                          borderRadius:
-                                          BorderRadius.circular(18),
-                                          border: Border.all(
-                                            width: controller
-                                                .getAllCitiesSelected
-                                                ? 1.4
-                                                : 0.7,
-                                            color: AppColor.pinkColor,
-                                          ),
-                                        ),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "All Cities",
-                                              style: TextStyle(
-                                                fontFamily: AppFont.fontFamily,
-                                                fontSize: 16,
-                                                fontWeight: FontWeight.w600,
-                                                color: AppColor.secondryColor(
-                                                    context),
-                                              ),
-                                            ),
-                                            Icon(
-                                              controller.getAllCitiesSelected
-                                                  ? Icons.check_circle
-                                                  : Icons.circle_outlined,
-                                              color: AppColor.pinkColor,
-                                              size: 22,
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-
-                                    SizedBox(height: size.height * 2 / 100),
-
                                     const OnboardingFootnote(
                                       text:
-                                      "Tip: pick All Cities if you're not sure yet — you can always narrow it down later from your profile.",
+                                      "Tip: pick up to 5 cities — you can change them anytime from your profile.",
                                     ),
 
                                     SizedBox(height: size.height * 1 / 100),
@@ -638,12 +622,11 @@ class _CityPreferenceState extends State<CityPreference> {
                                                     if (!isSelected &&
                                                         controller
                                                             .getSelectedCities
-                                                            .length >=
-                                                            4) {
+                                                            .length >= 5) {
                                                       SnackBarToastMessage
                                                           .showSnackBar(
                                                         context,
-                                                        "Maximum 4 cities can be selected",
+                                                        "Maximum 5 cities can be selected",
                                                       );
                                                       return;
                                                     }

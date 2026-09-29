@@ -16,6 +16,7 @@ import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
 import '../../../utilities/app_snack_bar_toast_message.dart';
 import 'stay_connected_otp_verification.dart';
+import '../../../commonWidget/signup_step_header.dart';
 
 class StayConnectedScreen extends StatefulWidget {
   final String? selectedGenres;
@@ -325,47 +326,16 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
 
               //! App Header
               SizedBox(
-                width: MediaQuery.of(context).size.width * 90 / 100,
                 height: MediaQuery.of(context).size.height * 8 / 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        GestureDetector(
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                          child: SizedBox(
-                            width: MediaQuery.of(context).size.width * 4 / 100,
-                            child: SizedBox(
-                              height:
-                              MediaQuery.of(context).size.height * 5 / 100,
-                              child: Image.asset(
-                                AppImage.backArrowIcon,
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 80 / 100,
-                          child: Center(
-                            child: Text(
-                              textAlign: TextAlign.center,
-                              AppLanguage.stayConnectedText[language],
-                              style: TextStyle(
-                                fontFamily: AppFont.fontFamily,
-                                fontSize: 18,
-                                fontWeight: FontWeight.w700,
-                                color: AppColor.secondryColor(context),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
+                child: Consumer<PostApiProvider>(
+                  builder: (context, provider, _) => SignupStepHeader(
+                    title: AppLanguage.stayConnectedText[language],
+                    onBack: () => Navigator.pop(context),
+                    onSkip: () {
+                      if (provider.loading) return;
+                      _skipAndSubmit();
+                    },
+                  ),
                 ),
               ),
               SizedBox(
@@ -453,27 +423,6 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                     ],
                   ),
                 ),
-              ),
-
-              // Skip Button - now a real button, placed above Continue
-              Consumer<PostApiProvider>(
-                builder: (context, provider, child) {
-                  return AppButton(
-                    outlined: true,
-                    height: 58,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700,
-                    text: AppLanguage.skip[language],
-                    onPress: () {
-                      if (provider.loading) return;
-                      _skipAndSubmit();
-                    },
-                  );
-                },
-              ),
-
-              SizedBox(
-                height: MediaQuery.of(context).size.height * 2 / 100,
               ),
 
               // Continue Button
