@@ -13,6 +13,7 @@ import '../../utilities/app_snack_bar_toast_message.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_font.dart';
 import '../../utilities/media_picker_helper.dart';
+import '../../commonWidget/support_category_picker.dart';
 
 class ReportProblemScreen extends StatefulWidget {
   static String routeName = './ReportProblemScreen';
@@ -23,6 +24,7 @@ class ReportProblemScreen extends StatefulWidget {
 }
 
 class _ReportProblemScreenState extends State<ReportProblemScreen> {
+  String _category = 'Other';
   static const int _maxReportMediaItems = 6;
   TextEditingController messageTextEditingController = TextEditingController();
   final List<Map<String, String>> selectedMediaList = [];
@@ -131,6 +133,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
       images: images,
       videos: videos,
       thumbnails: thumbnails,
+      category: _category,
     );
 
     if (!mounted) return;
@@ -188,6 +191,12 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                         ),
                       ),
 
+                      SizedBox(height: size.height * 2 / 100),
+
+                      SupportCategoryPicker(
+                        selected: _category,
+                        onChanged: (c) => setState(() => _category = c),
+                      ),
                       SizedBox(height: size.height * 2 / 100),
 
                       /// Description Field

@@ -10,6 +10,7 @@ import '../../utilities/app_font.dart';
 import '../../utilities/app_header.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_button.dart';
+import '../../commonWidget/support_category_picker.dart';
 
 /// A real "Contact Us" screen — previously
 /// PostApiProvider.contactUsApiCalling existed (posts to
@@ -29,6 +30,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _messageController = TextEditingController();
+  String _category = 'Other';
 
   @override
   void dispose() {
@@ -63,6 +65,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
       _nameController.text.trim(),
       _emailController.text.trim(),
       _messageController.text.trim(),
+      category: _category,
     );
   }
 
@@ -132,6 +135,11 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                             }
                             return null;
                           },
+                        ),
+                        SizedBox(height: size.height * 2 / 100),
+                        SupportCategoryPicker(
+                          selected: _category,
+                          onChanged: (c) => setState(() => _category = c),
                         ),
                         SizedBox(height: size.height * 2 / 100),
                         TextFormField(

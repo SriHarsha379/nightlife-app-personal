@@ -1336,6 +1336,7 @@ class PostApiProvider with ChangeNotifier {
         required List<XFile> images,
         required List<XFile> videos,
         required List<XFile> thumbnails,
+        String category = 'Other',
       }) async {
     final trimmedDescription = description.trim();
     final totalMedia = images.length + videos.length;
@@ -1356,6 +1357,7 @@ class PostApiProvider with ChangeNotifier {
       var request = http.MultipartRequest('POST', url);
       request.headers['authorization'] = 'Bearer ${AppConstant.token}';
       request.fields['description'] = trimmedDescription;
+      request.fields['category'] = category;
 
       for (final image in images) {
         final fileName = image.path.split('/').last;
@@ -1506,13 +1508,14 @@ class PostApiProvider with ChangeNotifier {
       BuildContext context,
       String name,
       String email,
-      String message,
-      ) async {
+      String message, {
+      String category = 'Other',
+      }) async {
     setLoading(true);
 
     final res = await postJsonData(
       'common/send_messageTo_admin',
-      {'description': message.toString()},
+      {'description': message.toString(), 'category': category},
       context,
       headers: {'authorization': 'Bearer ${AppConstant.token}'},
     );
