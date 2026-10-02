@@ -193,7 +193,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                           width: 1,
                         ),
                       ),
-                      child: ListTile(
+                      child: Material(type: MaterialType.transparency, child: ListTile(
                         leading: Container(
                           width: 40,
                           height: 40,
@@ -271,7 +271,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                           horizontal: 16,
                           vertical: 3,
                         ),
-                      ),
+                      )),
                     );
                   },
                 );

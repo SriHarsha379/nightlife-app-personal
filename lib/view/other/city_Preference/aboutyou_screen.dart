@@ -179,7 +179,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
           backgroundColor: AppColor.secondryColor(context),
           floatingActionButtonLocation:
               FloatingActionButtonLocation.centerFloat,
-          floatingActionButton: Padding(
+          floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
             padding: EdgeInsets.only(
               bottom: 40 + MediaQuery.of(context).padding.bottom,
             ),

@@ -68,7 +68,9 @@ class _EventPreferenceState extends State<EventPreference> {
       ),
       child: Scaffold(
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Consumer<EventPreferenceController>(
+        floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Consumer<EventPreferenceController>(
           builder: (context, controller, child) {
             return Padding(
               padding: const EdgeInsets.only(bottom: 20),

@@ -1,4 +1,6 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +9,68 @@ class FirebaseOtpService {
   static final FirebaseAuth _auth = FirebaseAuth.instance;
   static String? _verificationId;
   static int? _resendToken;
+
+  // Saved on the phone so a verification survives the app being closed
+  // (Android may close it while Firebase's browser captcha is open).
+  static const String _sessionKey = 'otp_session';
+  static const String _attemptKey = 'otp_attempt';
+
+  static Future<void> _saveSession(String phone) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_sessionKey, jsonEncode({
+        'vid': _verificationId,
+        'token': _resendToken,
+        'phone': phone,
+        'at': DateTime.now().millisecondsSinceEpoch,
+      }));
+    } catch (_) {}
+  }
+
+  static Future<void> _saveAttempt(String phone) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString(_attemptKey, jsonEncode({
+        'phone': phone,
+        'at': DateTime.now().millisecondsSinceEpoch,
+      }));
+    } catch (_) {}
+  }
+
+  static Future<Map<String, dynamic>?> _readFresh(String key, String phone, Duration maxAge) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(key);
+      if (raw == null) return null;
+      final data = jsonDecode(raw);
+      if (data is! Map) return null;
+      final at = DateTime.fromMillisecondsSinceEpoch((data['at'] ?? 0) as int);
+      if (DateTime.now().difference(at) > maxAge) return null;
+      if (!_samePhone(data['phone']?.toString(), phone)) return null;
+      return Map<String, dynamic>.from(data);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// A code was sent to this number recently (app reopened after being
+  /// closed) - restore that session so the SMS code can still be entered.
+  static Future<bool> restoreRecentSession(String phone,
+      {Duration maxAge = const Duration(minutes: 10)}) async {
+    final data = await _readFresh(_sessionKey, phone, maxAge);
+    final vid = data?['vid']?.toString();
+    if (vid == null || vid.isEmpty) return false;
+    _verificationId = vid;
+    _resendToken = data!['token'] is int ? data['token'] as int : null;
+    return true;
+  }
+
+  /// A send to this number was started recently but never completed
+  /// (e.g. the app was closed during the captcha).
+  static Future<bool> hadRecentAttempt(String phone,
+      {Duration within = const Duration(minutes: 2)}) async {
+    return (await _readFresh(_attemptKey, phone, within)) != null;
+  }
 
   /// Send OTP to phone number
   /// Returns true if the request was submitted successfully
@@ -20,6 +84,7 @@ class FirebaseOtpService {
   }) async {
     final String formattedNumber =
     phoneNumber.startsWith('+') ? phoneNumber : '+91$phoneNumber';
+    _saveAttempt(phoneNumber);
 
     // ---- DEBUG: platform + input sanity check ----
     debugPrint('=== sendOtp START ===');
@@ -75,6 +140,7 @@ class FirebaseOtpService {
         codeSent: (String verificationId, int? resendToken) {
           _verificationId = verificationId;
           _resendToken = resendToken;
+          _saveSession(phoneNumber);
           debugPrint('[callback] codeSent fired, verificationId set: $verificationId');
           onCodeSent();
         },
@@ -135,6 +201,10 @@ class FirebaseOtpService {
       return true;
     }
 
+    // App reopened after being closed? Pick up the saved session.
+    if (_verificationId == null && phoneNumber != null) {
+      await restoreRecentSession(phoneNumber);
+    }
     if (_verificationId == null) {
       onError('Session expired. Please request OTP again.');
       return false;
@@ -185,5 +255,9 @@ class FirebaseOtpService {
   static void reset() {
     _verificationId = null;
     _resendToken = null;
+    SharedPreferences.getInstance().then((prefs) {
+      prefs.remove(_sessionKey);
+      prefs.remove(_attemptKey);
+    }).catchError((_) {});
   }
 }

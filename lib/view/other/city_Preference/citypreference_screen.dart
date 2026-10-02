@@ -233,7 +233,9 @@ class _CityPreferenceState extends State<CityPreference> {
               child: Scaffold(
                 floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerFloat,
-                floatingActionButton: Padding(
+                floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
                   padding: const EdgeInsets.only(bottom: 40),
                   child: AppButton(
                     text: (controller.getAllCitiesSelected ||

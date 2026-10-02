@@ -46,8 +46,32 @@ class _OtpVerifyState extends State<OtpVerify> {
     super.initState();
     _startTimer();
     if (widget.autoSendOtp) {
-      _sendInitialFirebaseOtp();
+      _resumeOrSendOtp();
     }
+  }
+
+  // If Android closed the app during verification (it can, while Firebase's
+  // browser captcha is open), carry on instead of sending a new code -
+  // sending again re-opened the captcha and could loop.
+  Future<void> _resumeOrSendOtp() async {
+    final phone = widget.mobile.toString();
+    if (await FirebaseOtpService.restoreRecentSession(phone)) {
+      if (mounted) {
+        SnackBarToastMessage.info(context, 'Enter the code we sent to your phone.');
+      }
+      return;
+    }
+    if (await FirebaseOtpService.hadRecentAttempt(phone)) {
+      if (!mounted) return;
+      _timer?.cancel();
+      setState(() {
+        _canResend = true;
+        _remainingSeconds = 0;
+      });
+      SnackBarToastMessage.info(context, 'Verification was interrupted. Tap Resend code to try again.');
+      return;
+    }
+    _sendInitialFirebaseOtp();
   }
 
   Future<void> _sendInitialFirebaseOtp() async {
