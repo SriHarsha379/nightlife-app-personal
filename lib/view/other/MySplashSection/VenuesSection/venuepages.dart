@@ -397,6 +397,7 @@ class _VenuePagesState extends State<VenuePages> {
         // Show loading indicator
         if (isLoading) {
           return Scaffold(
+            appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: BackButton(color: AppColor.secondryColor(context))), // iPhones have no back button
             backgroundColor: AppColor.primaryColor(context),
             body: Center(
               child: CircularProgressIndicator(
@@ -409,6 +410,7 @@ class _VenuePagesState extends State<VenuePages> {
         // Show error if no data
         if (venueData == null) {
           return Scaffold(
+            appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: BackButton(color: AppColor.secondryColor(context))), // iPhones have no back button
             backgroundColor: AppColor.primaryColor(context),
             body: Center(
               child: Text(

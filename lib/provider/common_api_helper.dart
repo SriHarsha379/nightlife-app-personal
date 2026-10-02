@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
 import 'dart:developer';
 
 import 'package:firebase_auth/firebase_auth.dart';
@@ -25,6 +27,34 @@ class _SessionExpiredHandled implements Exception {}
 
 // ------------------ COMMON REQUEST HANDLER ------------------
 
+// Normal requests give up after this (uploads have no limit).
+const Duration _requestTimeout = Duration(seconds: 25);
+
+// Show a network problem at most once every few seconds (several
+// requests usually fail together).
+DateTime? _lastNetworkToast;
+void _networkErrorToast(BuildContext? context, String message) {
+  if (context == null || !context.mounted) return;
+  final now = DateTime.now();
+  if (_lastNetworkToast != null && now.difference(_lastNetworkToast!) < const Duration(seconds: 4)) return;
+  _lastNetworkToast = now;
+  TopNotification.error(context, message);
+}
+
+const String _offlineMessage = "You're offline. Check your internet connection and try again.";
+const String _slowMessage = 'The connection is slow. Please try again.';
+
+// Server error pages (HTML) must never be shown to members as text.
+String _friendlyError(int status, String message) {
+  final looksLikePage = RegExp(r'<\s*(!doctype|html|head|body|pre)\b', caseSensitive: false).hasMatch(message) ||
+      message.length > 300;
+  if (!looksLikePage && message.trim().isNotEmpty) return message;
+  if (status == 413) return 'This file is too large to upload.';
+  if (status == 502 || status == 503 || status == 504) return 'Hii is updating. Please try again in a minute.';
+  if (status == 404) return "This isn't available right now. Please try again later.";
+  return 'Something went wrong. Please try again.';
+}
+
 Future<Map<String, dynamic>?> _handleRequest(
     Future<http.Response> Function(
         Uri url,
@@ -49,7 +79,7 @@ Future<Map<String, dynamic>?> _handleRequest(
 
     print("REQUEST HEADERS: $requestHeaders");
 
-    http.Response response = await requestFn(url, requestHeaders);
+    http.Response response = await requestFn(url, requestHeaders).timeout(_requestTimeout);
 
     // Retry once if token expired
     if (!skipAuth && (response.statusCode == 401 || response.statusCode == 403)) {
@@ -60,7 +90,7 @@ Future<Map<String, dynamic>?> _handleRequest(
           requestHeaders,
         );
 
-        response = await requestFn(url, requestHeaders);
+        response = await requestFn(url, requestHeaders).timeout(_requestTimeout);
       }
     }
 
@@ -72,6 +102,15 @@ Future<Map<String, dynamic>?> _handleRequest(
       context,
     );
   } on _SessionExpiredHandled {
+    return null;
+  } on TimeoutException {
+    _networkErrorToast(context, _slowMessage);
+    return null;
+  } on SocketException {
+    _networkErrorToast(context, _offlineMessage);
+    return null;
+  } on http.ClientException {
+    _networkErrorToast(context, _offlineMessage);
     return null;
   } catch (e, s) {
     print("API ERROR: $e");
@@ -195,15 +234,8 @@ Future<Map<String, dynamic>?> _handleStatusCode(
       if (SessionManager.extractToken(body).isNotEmpty ||
           SessionManager.extractRefreshToken(body).isNotEmpty) {
         await SessionManager.captureSessionFromAuthPayload(body);
-
-        if (FirebaseAuth.instance.currentUser == null) {
-          try {
-            await FirebaseAuth.instance.signInAnonymously();
-            debugPrint('Firebase anonymous login success');
-          } catch (e) {
-            debugPrint('Firebase anonymous login failed: $e');
-          }
-        }
+        // (No anonymous Firebase sign-in: it's disabled in the Firebase project
+        // and the app no longer needs it to stay logged in.)
       }
 
       return body;
@@ -224,7 +256,7 @@ Future<Map<String, dynamic>?> _handleStatusCode(
 
   if (statusCode == 400) {
     if (context != null) {
-      TopNotification.error(context, _getErrorMessage(body));
+      TopNotification.error(context, _friendlyError(statusCode, _getErrorMessage(body)));
     }
     return null;
   }
@@ -252,7 +284,7 @@ Future<Map<String, dynamic>?> _handleStatusCode(
   if (context != null) {
     TopNotification.error(
       context,
-      _getErrorMessage(body),
+      _friendlyError(statusCode, _getErrorMessage(body)),
     );
   }
 
@@ -489,6 +521,12 @@ Future<Map<String, dynamic>?> postMultipartData(
       context,
     );
   } on _SessionExpiredHandled {
+    return null;
+  } on SocketException {
+    _networkErrorToast(context, _offlineMessage);
+    return null;
+  } on http.ClientException {
+    _networkErrorToast(context, _offlineMessage);
     return null;
   } catch (e, s) {
     print("MULTIPART ERROR: $e");

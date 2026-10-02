@@ -398,6 +398,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
     if (isLoading) {
       return Scaffold(
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: BackButton(color: AppColor.secondryColor(context))), // iPhones have no back button
         backgroundColor: AppColor.primaryColor(context),
         body: Center(
           child: CircularProgressIndicator(
@@ -409,6 +410,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
 
     if (eventDetails is! Map || eventDetails.isEmpty) {
       return Scaffold(
+        appBar: AppBar(backgroundColor: Colors.transparent, elevation: 0, leading: BackButton(color: AppColor.secondryColor(context))), // iPhones have no back button
         backgroundColor: AppColor.primaryColor(context),
         body: Center(
           child: Text(
