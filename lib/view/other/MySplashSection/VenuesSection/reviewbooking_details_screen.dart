@@ -151,7 +151,9 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
+        floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
           padding: EdgeInsets.only(
             bottom: 20 + MediaQuery.of(context).padding.bottom,
           ),
@@ -765,7 +767,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(
@@ -873,7 +875,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(
@@ -986,7 +988,7 @@ class _ReviewBookingDetailsState extends State<ReviewBookingDetails> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(

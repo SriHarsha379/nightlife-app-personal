@@ -203,7 +203,9 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
+        floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
           padding: const EdgeInsets.only(bottom: 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -947,7 +949,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(
@@ -1060,7 +1062,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(
@@ -1171,7 +1173,7 @@ class _ReviewBooking2DetailsState extends State<ReviewBooking2Details> {
           onTap: () => Navigator.pop(context),
           child: Scaffold(
             backgroundColor: Colors.transparent,
-            resizeToAvoidBottomInset: false,
+            resizeToAvoidBottomInset: true, // fields can scroll above the keyboard
             body: GestureDetector(
               onTap: () {}, // Prevents closing when tapping on the content
               child: Container(

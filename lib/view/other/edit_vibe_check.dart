@@ -265,7 +265,9 @@ class _EditVibeCheckScreenState extends State<EditVibeCheckScreen> {
           ),
         ),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
+        floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
           padding: const EdgeInsets.only(bottom: 24),
           child: _isSaving
               ? const CircularProgressIndicator(color: AppColor.pinkColor)

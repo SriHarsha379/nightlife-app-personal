@@ -50,7 +50,9 @@ class _CompletePaymentState extends State<CompletePayment> {
       child: Scaffold(
         backgroundColor: AppColor.primaryColor(context),
         floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-        floatingActionButton: Padding(
+        floatingActionButton: MediaQuery.of(context).viewInsets.bottom > 0
+              ? null // keyboard open: don't cover the form
+              : Padding(
           padding: EdgeInsets.only(
             bottom: 40 + MediaQuery.of(context).padding.bottom,
           ),
