@@ -261,7 +261,16 @@ Future<Map<String, dynamic>?> _handleStatusCode(
     return null;
   }
 
-  if (statusCode == 401 || statusCode == 403 || statusCode == 423) {
+  // Log out only on a real "session over": 401 (login invalid / account
+  // deleted) or 423 (deactivated). A 403 means "not allowed" - show it,
+  // don't log the member out.
+  if (statusCode == 403) {
+    if (context != null && context.mounted) {
+      TopNotification.error(context, _getErrorMessage(body));
+    }
+    return null;
+  }
+  if (statusCode == 401 || statusCode == 423) {
     if (context != null) {
       await _redirectToLogin(
         context,

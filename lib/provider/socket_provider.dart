@@ -55,6 +55,52 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
   @protected
   final List<Map<String, dynamic>> pendingConversationMessages = [];
 
+  // The outbox is also saved on the phone, so messages typed while offline
+  // survive the app being closed. Belongs to the logged-in account only.
+  static const String _outboxKey = 'pending_chat_messages';
+
+  String _outboxOwner() {
+    final t = AppConstant.token.trim();
+    return t.length > 24 ? t.substring(t.length - 24) : t;
+  }
+
+  Future<void> _savePendingQueue() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (pendingConversationMessages.isEmpty) {
+        await prefs.remove(_outboxKey);
+        return;
+      }
+      await prefs.setString(_outboxKey, jsonEncode({
+        'owner': _outboxOwner(),
+        'at': DateTime.now().millisecondsSinceEpoch,
+        'items': pendingConversationMessages,
+      }));
+    } catch (_) {}
+  }
+
+  Future<void> _loadSavedQueue() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final raw = prefs.getString(_outboxKey);
+      if (raw == null) return;
+      final data = jsonDecode(raw);
+      final fresh = data is Map &&
+          data['owner'] == _outboxOwner() &&
+          DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch((data['at'] ?? 0) as int)) <
+              const Duration(hours: 24);
+      if (fresh && data['items'] is List) {
+        final known = pendingConversationMessages.map(jsonEncode).toSet();
+        for (final item in data['items'] as List) {
+          if (item is Map && !known.contains(jsonEncode(item))) {
+            pendingConversationMessages.add(Map<String, dynamic>.from(item));
+          }
+        }
+      }
+      await prefs.remove(_outboxKey);
+    } catch (_) {}
+  }
+
   // ── Messages ──
   List<Map<String, dynamic>> _messages = [];
   List<Map<String, dynamic>> get messages => _messages;
@@ -153,6 +199,7 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
     _pendingConversationListRequest = null;
     _conversationListRetryCount = 0;
     pendingConversationMessages.clear();
+    _savePendingQueue(); // empty -> removes the saved outbox
     isConnectedValue = false;
     _activeSocketToken = '';
 
@@ -938,11 +985,16 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
   }
 
   void _flushPendingQueue() {
+    _loadSavedQueue().then((_) => _flushPendingQueueNow());
+  }
+
+  void _flushPendingQueueNow() {
     if (pendingConversationMessages.isEmpty) return;
     if (socket == null || !socket!.connected) return;
     final pending =
         List<Map<String, dynamic>>.from(pendingConversationMessages);
     pendingConversationMessages.clear();
+    _savePendingQueue();
     for (final item in pending) {
       _logSocket('flush queued send_message => $item');
       socket!.emit('send_message', item);
@@ -1274,6 +1326,7 @@ class SocketProvider extends ChangeNotifier with WidgetsBindingObserver {
       _logSocket('queue send_message, socket disconnected');
       // Queue without the temp _id so server assigns real id
       pendingConversationMessages.add(Map<String, dynamic>.from(data));
+      _savePendingQueue();
       if (socket == null && AppConstant.token.trim().isNotEmpty) {
         initSocket(AppConstant.token);
       } else {
