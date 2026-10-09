@@ -6,6 +6,7 @@ import 'app_font.dart';
 
 class CustomTextFieldInput extends StatefulWidget {
   final TextEditingController controller;
+  final TextCapitalization textCapitalization;
   final String hintText;
   final int maxLength;
   final TextInputType keyboardType;
@@ -15,6 +16,7 @@ class CustomTextFieldInput extends StatefulWidget {
   final List<TextInputFormatter>? inputFormatters;
 
   const CustomTextFieldInput({
+    this.textCapitalization = TextCapitalization.none,
     Key? key,
     required this.controller,
     required this.hintText,
@@ -34,6 +36,7 @@ class _CustomTextFieldInputState extends State<CustomTextFieldInput> {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      textCapitalization: widget.textCapitalization,
       style: TextStyle(color: AppColor.secondryColor(context)),
       keyboardType: widget.keyboardType,
       controller: widget.controller,
@@ -160,6 +163,7 @@ class CustomDescriptionBox extends StatelessWidget {
 
 class CustomTextField extends StatefulWidget {
   final TextEditingController controller;
+  final TextCapitalization textCapitalization;
   final String hintText;
   final int maxLength;
   final bool readOnly;
@@ -169,6 +173,7 @@ class CustomTextField extends StatefulWidget {
   final Function(String)? onChanged;
 
   const CustomTextField({
+    this.textCapitalization = TextCapitalization.none,
     Key? key,
     required this.controller,
     required this.hintText,
@@ -208,6 +213,7 @@ class _CustomTextFieldState extends State<CustomTextField> {
     final bool isDark = Theme.of(context).brightness == Brightness.dark;
 
     return TextFormField(
+      textCapitalization: widget.textCapitalization,
       controller: widget.controller,
       focusNode: _focusNode,
       maxLength: widget.maxLength,

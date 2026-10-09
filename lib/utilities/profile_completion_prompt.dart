@@ -51,7 +51,12 @@ class ProfileCompletionPrompt with WidgetsBindingObserver {
     } else if (state == AppLifecycleState.resumed) {
       final since = _backgroundedAt;
       _backgroundedAt = null;
-      if (since != null && DateTime.now().difference(since) >= _minBackgroundTime) {
+      // Only re-prompt on resume if we haven't already shown the sheet this
+      // launch. Previously this fired after every >2min background trip, which
+      // meant adding photos (which backgrounds the app) kept re-popping it.
+      if (!_shownThisLaunch &&
+          since != null && DateTime.now().difference(since) >= _minBackgroundTime) {
+        _shownThisLaunch = true;
         Future.delayed(const Duration(milliseconds: 600), _maybeShow);
       }
     }

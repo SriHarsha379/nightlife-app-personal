@@ -33,6 +33,7 @@ import 'package:http_parser/http_parser.dart' as http_parser;
 
 import 'socket_provider.dart';
 import 'user_controller.dart';
+import 'package:night_life/utilities/name_formatter.dart';
 
 class PostApiProvider with ChangeNotifier {
   bool _loading = false;
@@ -394,11 +395,21 @@ class PostApiProvider with ChangeNotifier {
     if (_loading) return;
     setLoading(true);
 
+    // Clean slate: a previous (possibly failed) delete may have left an old
+    // Firebase user / token behind. Clear it before creating the new account
+    // so the fresh session isn't rejected as a deleted one.
+    if (!isSocialSignup) {
+      await SessionManager.clearAuthSession(
+        signOutFromFirebase: true,
+        clearAllPreferences: true,
+      );
+    }
+
     final String trimmedPassword = password.toString().trim();
 
     final Map<String, String> fields = {
-      'first_name': name.toString(),
-      'last_name': lastName.toString(),
+      'first_name': NameFormatter.capitalizeWords(name),
+      'last_name': NameFormatter.capitalizeWords(lastName),
       'username': userName.toString().trim(),
       'email': email.toString().trim(),
       'phone_number': mobile.toString().trim(),
@@ -989,7 +1000,7 @@ class PostApiProvider with ChangeNotifier {
     setLoading(true);
 
     Map<String, String> fields = {
-      'first_name': firstName,
+      'first_name': NameFormatter.capitalizeWords(firstName),
       'last_name': lastName,
       'username': userName,
       'gender': gender,
@@ -1541,6 +1552,16 @@ class PostApiProvider with ChangeNotifier {
       {'reason': message.toString()},
       context,
       headers: {'authorization': 'Bearer ${AppConstant.token}'},
+    );
+
+    // Always clear local auth, regardless of whether the delete response came
+    // back (firewall/500/timeout). Leaving the old Firebase user signed in is
+    // what caused the stuck "account no longer exists, please log in again"
+    // banner on the next signup.
+    _clearSessionState(context);
+    await SessionManager.clearAuthSession(
+      signOutFromFirebase: true,
+      clearAllPreferences: true,
     );
 
     if (res != null) {

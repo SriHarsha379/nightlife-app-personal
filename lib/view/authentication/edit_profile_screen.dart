@@ -22,6 +22,7 @@ import '../../utilities/app_validation.dart';
 import '../../utilities/profile_completion_navigation.dart';
 import '../../utilities/widgets.dart';
 import '../other/edit_hobbies.dart';
+import 'package:night_life/utilities/name_formatter.dart';
 
 class EditProfile extends StatefulWidget {
   static String routeName = './EditProfile';
@@ -200,8 +201,8 @@ class _EditProfileState extends State<EditProfile> {
   }
 
   Future<void> _updateProfile() async {
-    final firstName = firstNameController.text.trim();
-    final lastName = lastNameController.text.trim();
+    final firstName = NameFormatter.capitalizeWords(firstNameController.text);
+    final lastName = NameFormatter.capitalizeWords(lastNameController.text);
 
     if (Validation.isFieldEmpty(context,
         value: firstName, fieldName: AppLanguage.firstNameText[language])) {
@@ -706,6 +707,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxLength: AppConstant.fullNameText,
                     keyboardType: TextInputType.name,
                     controller: firstNameController,
+                    textCapitalization: TextCapitalization.words,
                     fillColor: AppColor.textfieldcontainercolor(context),
                   ),
                 ),
@@ -735,6 +737,7 @@ class _EditProfileState extends State<EditProfile> {
                     maxLength: AppConstant.fullNameText,
                     keyboardType: TextInputType.name,
                     controller: lastNameController,
+                    textCapitalization: TextCapitalization.words,
                     fillColor: AppColor.textfieldcontainercolor(context),
                   ),
                 ),
