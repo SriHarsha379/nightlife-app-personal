@@ -665,6 +665,15 @@ class AppLanguage {
   ];
   static const searchGenresText = ["Search Genres"];
   static const vibePreferenceText = ["Vibe Preference"];
+  static const vibeFootnoteText = [
+    "Your vibes help us tailor events, venues and people for you. You can change them anytime from your profile."
+  ];
+  static const signupFootnoteText = [
+    "We'll text you a one-time code to verify your number."
+  ];
+  static const aboutYouFootnoteText = [
+    "These details help us suggest people who suit you. You can update them anytime from your profile."
+  ];
   static const selectEventstatementText = [
     "Select Events that best describe your party style."
   ];

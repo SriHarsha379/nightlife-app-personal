@@ -16,6 +16,7 @@ import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
 import '../other/profile_details.dart';
 import 'refer_code_screen.dart';
+import 'package:night_life/commonWidget/onboarding_footnote.dart';
 
 class SignUp extends StatefulWidget {
   static String routeName = './SignUp';
@@ -209,6 +210,12 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                         controller: mobileNumberTextEditingController,
                         prefixText: "+91",
                         readOnly: false,
+                      ),
+                    ),
+                    SizedBox(
+                      width: size.width * 0.85,
+                      child: OnboardingFootnote(
+                        text: AppLanguage.signupFootnoteText[language],
                       ),
                     ),
                     SizedBox(height: size.height * 0.02),

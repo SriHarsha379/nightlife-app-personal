@@ -11,6 +11,7 @@ import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
+import 'package:night_life/commonWidget/onboarding_footnote.dart';
 
 class AboutYouScreen extends StatefulWidget {
   final String? selectedGenres;
@@ -261,6 +262,9 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                             fontWeight: FontWeight.w400,
                             color: AppColor.listTextColor(context),
                           ),
+                        ),
+                        OnboardingFootnote(
+                          text: AppLanguage.aboutYouFootnoteText[language],
                         ),
                         SizedBox(height: size.height * 2 / 100),
 

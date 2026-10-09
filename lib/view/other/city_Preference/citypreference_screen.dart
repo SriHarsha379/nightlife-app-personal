@@ -400,7 +400,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                             ),
                                           ),
                                           TextSpan(
-                                            text: " (Max 4)",
+                                            text: " (Max 5)",
                                             style: TextStyle(
                                               fontFamily: AppFont.fontFamily,
                                               fontSize: 17,
@@ -541,7 +541,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   ),
                                                 ),
                                                 Text(
-                                                  "${controller.getSelectedCities.length}/4",
+                                                  "${controller.getSelectedCities.length}/5",
                                                   style: TextStyle(
                                                     fontFamily:
                                                     AppFont.fontFamily,

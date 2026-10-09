@@ -14,6 +14,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import '../../../commonWidget/onboarding_footnote.dart';
 
 class MusicGenresScreen extends StatefulWidget {
   static String routeName = './MusicGenresScreen';
@@ -320,6 +321,11 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                       ),
                     ),
                   ),
+                  OnboardingFootnote(
+                    text:
+                    "Pick a few genres you love — it shapes what you see first, and you can change them anytime later.",
+                  ),
+                  SizedBox(height: size.height * 1.5 / 100),
                   Padding(
                     padding: EdgeInsets.only(
                       bottom: 16 + MediaQuery.of(context).padding.bottom,

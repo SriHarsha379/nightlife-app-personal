@@ -15,6 +15,7 @@ import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
 import '../../../utilities/app_image.dart';
 import '../../../utilities/app_language.dart';
+import 'package:night_life/commonWidget/onboarding_footnote.dart';
 
 /// The curated vibe picker (a fetched grid of fixed options like "Chill
 /// pill", "High Energy" with images, tap to select up to 5) has been
@@ -294,6 +295,12 @@ class _VibePreferenceState extends State<VibePreference> {
                             ),
 
                             SizedBox(
+                              width: MediaQuery.of(context).size.width * 90 / 100,
+                              child: OnboardingFootnote(
+                                text: AppLanguage.vibeFootnoteText[language],
+                              ),
+                            ),
+                            SizedBox(
                               height:
                               MediaQuery.of(context).size.height * 2 / 100,
                             ),
@@ -367,7 +374,7 @@ class _VibePreferenceState extends State<VibePreference> {
                     Padding(
                       padding: const EdgeInsets.only(bottom: 16, top: 8),
                       child: AppButton(
-                        text: '${AppLanguage.continueText[language]}',
+                        text: AppLanguage.continueText[language],
                         onPress: () {
                           final String selectedVibes =
                           controller.getSelectedVibesString();
