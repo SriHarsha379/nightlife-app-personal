@@ -674,6 +674,9 @@ class AppLanguage {
   static const aboutYouFootnoteText = [
     "These details help us suggest people who suit you. You can update them anytime from your profile."
   ];
+  static const stayConnectedFootnoteText = [
+    "Used for event and offer updates. You'll verify it with a code, or you can skip this step."
+  ];
   static const selectEventstatementText = [
     "Select Events that best describe your party style."
   ];

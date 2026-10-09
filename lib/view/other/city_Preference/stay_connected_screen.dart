@@ -17,6 +17,7 @@ import '../../../utilities/app_language.dart';
 import '../../../utilities/app_snack_bar_toast_message.dart';
 import 'stay_connected_otp_verification.dart';
 import '../../../commonWidget/signup_step_header.dart';
+import 'package:night_life/commonWidget/onboarding_footnote.dart';
 
 class StayConnectedScreen extends StatefulWidget {
   final String? selectedGenres;
@@ -415,6 +416,12 @@ class _StayConnectedScreenState extends State<StayConnectedScreen> {
                               ),
                             ),
                           ),
+                        ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * 85 / 100,
+                        child: OnboardingFootnote(
+                          text: AppLanguage.stayConnectedFootnoteText[language],
                         ),
                       ),
                       SizedBox(
