@@ -488,6 +488,8 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                                   const SizedBox(height: 2),
                                   Text(
                                     'Your custom vibe tags and energy style',
+                                    overflow: TextOverflow.ellipsis,
+                                    maxLines: 1,
                                     style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
                                       fontSize: 11,

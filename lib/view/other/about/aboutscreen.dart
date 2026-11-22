@@ -123,8 +123,9 @@ class _AboutScreenState extends State<AboutScreen> {
             height: h,
             width: w,
             color: AppColor.primaryColor(context),
-            child: Column(
-              children: [
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
                 AppHeader(
                   text: AppLanguage.aboutText[language],
                   onPress: () => Navigator.pop(context),
@@ -269,6 +270,7 @@ class _AboutScreenState extends State<AboutScreen> {
                 ),
               ],
             ),
+            ), // closes SingleChildScrollView
           ),
         ),
       ),
