@@ -22,7 +22,7 @@ import '../../utilities/media_picker_helper.dart';
 import '../../utilities/profile_completion_navigation.dart';
 import '../../utilities/url_utils.dart';
 import '../authentication/profile.dart';
-import '../other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import '../other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import '../other/MySplashSection/VenuesSection/venuepages.dart';
 import '../other/MySplashSection/VenuesSection/view_all_venues.dart';
 import '../other/city_Preference/edit_event_prefrence.dart';

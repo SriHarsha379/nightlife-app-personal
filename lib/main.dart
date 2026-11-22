@@ -21,7 +21,7 @@ import 'utilities/responsive_app_clamp.dart';
 import 'view/authentication/auth_state_gate.dart';
 import 'view/authentication/notification_screen.dart';
 import 'view/other/MySplashSection/EventSection/Liked/booked_event_details.dart';
-import 'view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'view/other/MySplashSection/MembersSection/member_liked_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venue_booking_details.dart';
 import 'view/other/MySplashSection/VenuesSection/venuepages.dart';

@@ -11,7 +11,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
-import 'package:night_life/view/other/MySplashSection/EventSection/Liked/liked_event_details.dart';
+import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../commonWidget/home_widget.dart';

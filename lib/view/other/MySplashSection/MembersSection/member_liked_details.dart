@@ -14,7 +14,7 @@ import '../../../../controller/home/home_controller.dart';
 import '../../../../helper/ImagePreviewScreen.dart';
 import '../../../../commonWidget/invite_members_type_bottomsheet.dart';
 import '../../../../provider/darkmode_provider.dart';
-import '../EventSection/Liked/liked_event_details.dart';
+import '../EventSection/Liked/Liked_event_details.dart';
 import '../VenuesSection/venuepages.dart';
 
 class _NoGlowScrollBehavior extends MaterialScrollBehavior {
