@@ -11,23 +11,13 @@ class AppButton extends StatelessWidget {
   final String text;
   final Function onPress;
   final Color? backgroundColor;
-
-  /// Optional Material icon displayed to the left of [text].
-  /// Use this for semantic action buttons (e.g. Icons.check for YES/ACCEPT,
-  /// Icons.close for NO/REJECT) to improve visual clarity.
   final IconData? leadingIcon;
-
-  /// Optional size overrides - default to the values every existing call
-  /// site already relies on, so adding these doesn't change any button
-  /// that doesn't explicitly opt in to a different size.
   final double height;
   final double widthPercent;
   final double fontSize;
   final FontWeight fontWeight;
-
-  /// Secondary style: transparent with a pink outline and pink text
-  /// (e.g. "Skip for now" next to the main Continue button).
   final bool outlined;
+  final bool isLoading;
 
   const AppButton({
     Key? key,
@@ -40,44 +30,57 @@ class AppButton extends StatelessWidget {
     this.fontSize = 16,
     this.fontWeight = FontWeight.w600,
     this.outlined = false,
+    this.isLoading = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        onPress();
-      },
+      onTap: isLoading ? null : () => onPress(),
       child: Container(
         width: MediaQuery.of(context).size.width * widthPercent / 100,
-        // Fixed height (not a % of screen height) so the button looks the
-        // same size on a small phone (iPhone SE) and a large one (Pro Max) —
-        // button size should track finger/text size, not screen height.
         height: height,
         decoration: BoxDecoration(
-          color: outlined ? Colors.transparent : (backgroundColor ?? AppColor.buttonColor),
-          border: outlined ? Border.all(color: AppColor.pinkColor, width: 1.8) : null,
+          color: outlined
+              ? Colors.transparent
+              : (backgroundColor ?? AppColor.buttonColor),
+          border: outlined
+              ? Border.all(color: AppColor.pinkColor, width: 1.8)
+              : null,
           borderRadius: const BorderRadius.all(Radius.circular(40)),
         ),
         alignment: Alignment.center,
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (leadingIcon != null) ...[
-              Icon(leadingIcon, color: outlined ? AppColor.pinkColor : Colors.white, size: 20),
-              const SizedBox(width: 8),
-            ],
-            Text(
-              text,
-              style: TextStyle(
-                color: outlined ? AppColor.pinkColor : Colors.white,
-                fontWeight: fontWeight,
-                fontFamily: AppFont.fontFamily,
-                fontSize: fontSize,
+        child: isLoading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  color: Colors.white,
+                  strokeWidth: 2.5,
+                ),
+              )
+            : Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (leadingIcon != null) ...[
+                    Icon(
+                      leadingIcon,
+                      color: outlined ? AppColor.pinkColor : Colors.white,
+                      size: 20,
+                    ),
+                    const SizedBox(width: 8),
+                  ],
+                  Text(
+                    text,
+                    style: TextStyle(
+                      color: outlined ? AppColor.pinkColor : Colors.white,
+                      fontWeight: fontWeight,
+                      fontFamily: AppFont.fontFamily,
+                      fontSize: fontSize,
+                    ),
+                  ),
+                ],
               ),
-            ),
-          ],
-        ),
       ),
     );
   }

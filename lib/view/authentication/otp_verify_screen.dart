@@ -314,21 +314,35 @@ class _OtpVerifyState extends State<OtpVerify> {
                                 fontFamily: AppFont.fontFamily,
                               ),
                             ),
-                            SizedBox(
-                              width:
-                              MediaQuery.of(context).size.width * 1 / 100,
+                            const SizedBox(width: 6),
+                            // ✅ FIX: "Change number" link — audit #08
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: const Text(
+                                'Change',
+                                style: TextStyle(
+                                  color: AppColor.buttonColor,
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w600,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: AppColor.buttonColor,
+                                ),
+                              ),
                             ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 7 / 100,
-                      ),
+                      const SizedBox(height: 32),
 
                       // OTP Input Pinput
                       Pinput(
                         length: 6,
                         controller: pinputInputController,
+                        // ✅ FIX: SMS autofill on iOS + Android — audit #08
+                        keyboardType: TextInputType.number,
+                        autofillHints: const [AutofillHints.oneTimeCode],
+                        hapticFeedbackType: HapticFeedbackType.lightImpact,
+                        closeKeyboardWhenCompleted: true,
                         defaultPinTheme: PinTheme(
                           width: MediaQuery.of(context).size.width * 12 / 100,
                           height: MediaQuery.of(context).size.width * 12 / 100,
@@ -349,7 +363,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                               BoxShadow(
                                   blurRadius: 0,
                                   color: AppColor.primaryColor(context)
-                                      .withOpacity(0.25))
+                                      .withValues(alpha: 0.25))
                             ],
                             borderRadius: BorderRadius.circular(13),
                           ),
@@ -418,9 +432,7 @@ class _OtpVerifyState extends State<OtpVerify> {
                         ),
                       ),
 
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 36 / 100,
-                      ),
+                      const SizedBox(height: 24),
                       SizedBox(
                         width: MediaQuery.of(context).size.width * 80 / 100,
                         height: MediaQuery.of(context).size.height * 4.5 / 100,
@@ -478,13 +490,12 @@ class _OtpVerifyState extends State<OtpVerify> {
 
                       // Verify Button
 
+                      SizedBox(height: MediaQuery.of(context).padding.bottom + 8),
                       Consumer<PostApiProvider>(
                         builder: (context, apiprovider, child) {
-                          return apiprovider.loading
-                              ? const CircularProgressIndicator(
-                              color: AppColor.pinkColor)
-                              : AppButton(
+                          return AppButton(
                             text: AppLanguage.verifyButtonText[language],
+                            isLoading: apiprovider.loading,
                             onPress: () {
                               FocusScope.of(context).unfocus();
                               _verifyOTP();

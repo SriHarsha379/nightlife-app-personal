@@ -14,7 +14,6 @@ import '../../utilities/app_image.dart';
 import '../../utilities/app_language.dart';
 import '../../utilities/app_validation.dart';
 import '../../utilities/widgets.dart';
-import '../other/profile_details.dart';
 import 'refer_code_screen.dart';
 import 'package:night_life/commonWidget/onboarding_footnote.dart';
 
@@ -105,7 +104,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       ),
       child: PopScope(
         canPop: true,
-        onPopInvoked: (didPop) {},
+        onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
           resizeToAvoidBottomInset: false,
           body: Stack(
@@ -161,7 +160,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
       builder: (BuildContext context) {
         return PopScope(
           canPop: true,
-          onPopInvoked: (didPop) {},
+          onPopInvokedWithResult: (didPop, _) {},
           child: GestureDetector(
             onTap: () {},
             child: Container(
@@ -178,7 +177,8 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                   ),
                 ),
                 padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                  bottom: MediaQuery.of(context).viewInsets.bottom +
+                      MediaQuery.of(context).padding.bottom + 16,
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -291,7 +291,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                               );
                             },
                             child: Text(
-                              "Enter Here",
+                              "Enter Referral Code",
                               style: const TextStyle(
                                   color: AppColor.buttonColor,
                                   fontWeight: FontWeight.w600,
@@ -325,7 +325,7 @@ class _SignUpState extends State<SignUp> with TickerProviderStateMixin {
                           GestureDetector(
                             onTap: _openOrganizerWebsite,
                             child: Text(
-                              AppLanguage.clickhereText[language],
+                              "Sign in as Organiser",
                               style: const TextStyle(
                                   color: AppColor.buttonColor,
                                   fontWeight: FontWeight.w600,
