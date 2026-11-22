@@ -207,7 +207,18 @@ class _InviteMembersTypeBottomSheetState
                 fit: BoxFit.fill,
                 color: AppColor.secondryColor(context),
               ),
-              SizedBox(height: size.height * 0.02),
+              SizedBox(height: size.height * 0.015),
+              // ✅ FIX: audit #38 — clear sheet heading
+              Text(
+                'Share an Event or Venue',
+                style: TextStyle(
+                  color: AppColor.secondryColor(context),
+                  fontFamily: AppFont.fontFamily,
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+              SizedBox(height: size.height * 0.015),
               _tabs(context, size),
               _tabIndicator(context),
               SizedBox(height: size.height * 0.02),

@@ -475,12 +475,27 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                             width: MediaQuery.of(context).size.width * 78 / 100,
                             child: Padding(
                               padding: const EdgeInsets.all(14.0),
-                              child: Text(AppLanguage.vibesText[language],
-                                  style: TextStyle(
-                                      color: AppColor.secondryColor(context),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(AppLanguage.vibesText[language],
+                                      style: TextStyle(
+                                          color: AppColor.secondryColor(context),
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600)),
+                                  // ✅ FIX: audit #43 — explain what Vibes includes
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    'Your custom vibe tags and energy style',
+                                    style: TextStyle(
                                       fontFamily: AppFont.fontFamily,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600)),
+                                      fontSize: 11,
+                                      color: AppColor.hinttextcolor(context),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           SizedBox(

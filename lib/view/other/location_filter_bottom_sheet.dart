@@ -370,6 +370,16 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                   color: AppColor.pinkColor,
                 ),
               ),
+              const SizedBox(height: 4),
+              // ✅ FIX: audit #25 — explain what filter affects
+              Text(
+                "Filters members, events and venues shown in Search and Home",
+                style: TextStyle(
+                  fontFamily: AppFont.fontFamily,
+                  fontSize: 12,
+                  color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                ),
+              ),
               SizedBox(height: size.height * 0.01),
               Container(
                 width: double.infinity,

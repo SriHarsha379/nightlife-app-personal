@@ -1408,13 +1408,9 @@ class HomeWidget {
                                     color: const Color(0xFF9C27B0),
                                     width: 1,
                                   ),
+                                  // ✅ FIX: audit #20 — reduced shadow so
+                                  // chips don't compete with the photo
                                   boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF9C27B0)
-                                          .withValues(alpha: 0.7),
-                                      blurRadius: 12,
-                                      spreadRadius: 1,
-                                    ),
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
                                           .withValues(alpha: 0.3),
@@ -1948,13 +1944,9 @@ class HomeWidget {
                                   border: Border.all(
                                       color: const Color(0xFF9C27B0),
                                       width: 1),
+                                  // ✅ FIX: audit #20 — reduced shadow so
+                                  // chips don't compete with the photo
                                   boxShadow: [
-                                    BoxShadow(
-                                      color: const Color(0xFF9C27B0)
-                                          .withValues(alpha: 0.7),
-                                      blurRadius: 12,
-                                      spreadRadius: 1,
-                                    ),
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
                                           .withValues(alpha: 0.3),
