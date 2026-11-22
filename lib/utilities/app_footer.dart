@@ -50,22 +50,27 @@ class MyAppFooterState extends State<MyAppFooter> {
     {
       "id": 1,
       "icon": AppImage.homeIcon,
+      "label": "Home",
     },
     {
       "id": 2,
       "icon": AppImage.searchIcon,
+      "label": "Search",
     },
     {
       "id": 3,
       "icon": AppImage.vectionIcon,
+      "label": "My Space",
     },
     {
       "id": 5,
       "icon": AppImage.chatIcon,
+      "label": "Chats",
     },
     {
       "id": 4,
       "icon": AppImage.whiteProfileicon,
+      "label": "Profile",
     },
   ];
 
@@ -178,7 +183,7 @@ class MyAppFooterState extends State<MyAppFooter> {
                               ? [
                                   BoxShadow(
                                     color:
-                                        AppColor.buttonColor.withOpacity(1.0),
+                                        AppColor.buttonColor,
                                     blurRadius: 20,
                                     spreadRadius: 3,
                                     offset: const Offset(0, 1),
@@ -187,11 +192,30 @@ class MyAppFooterState extends State<MyAppFooter> {
                               : [],
                         ),
                         alignment: Alignment.center,
-                        child: Image.asset(
-                          iconList[index]['icon'],
-                          width: getIconWidth(index),
-                          height: getIconHeight(index),
-                          color: Colors.white,
+                        // ✅ FIX: Add labels to nav items — audit #19
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Image.asset(
+                              iconList[index]['icon'],
+                              width: getIconWidth(index),
+                              height: getIconHeight(index),
+                              color: Colors.white,
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              iconList[index]['label'] ?? '',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: selectedIndex == index
+                                    ? FontWeight.w700
+                                    : FontWeight.w400,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     );
