@@ -791,7 +791,10 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     SizedBox(
                                       height: size.height * 1 / 100,
                                     ),
-                                    Row(
+                                    // ✅ FIX: audit #34 — Wrap for scan-friendly details
+                                    Wrap(
+                                      spacing: 8,
+                                      runSpacing: 4,
                                       children: [
                                         /// AGE (show only if exists)
                                         if (_str(_memberData?['age'])

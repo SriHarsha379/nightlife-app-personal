@@ -3111,7 +3111,8 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                               color: Colors.white,
                             ),
                           ),
-                          Text(AppLanguage.eventsText[language],
+                          // ✅ FIX: audit #37 — clarify label covers events AND venues
+                          Text('Events & Venues',
                               style: TextStyle(
                                   fontSize: 15,
                                   decoration: TextDecoration.none,

@@ -283,6 +283,9 @@ class _EditProfileState extends State<EditProfile> {
       fullName = combinedName;
     });
 
+    // ✅ FIX: audit #41 — save feedback
+    SnackBarToastMessage.success(context, "Profile updated successfully");
+
     if (widget.focusField != null) {
       await continueToNextMissingProfileField(
         context,

@@ -236,7 +236,20 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: size.height * 2 / 100),
+                  SizedBox(height: size.height * 1 / 100),
+                  // ✅ FIX: audit #13 — explain who sees these answers
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+                    child: Text(
+                      'Only members you match with can see these details.',
+                      style: TextStyle(
+                        fontFamily: AppFont.fontFamily,
+                        fontSize: 12,
+                        color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: size.height * 1 / 100),
                   Container(
                     width: size.width * 90 / 100,
                     child: Column(
