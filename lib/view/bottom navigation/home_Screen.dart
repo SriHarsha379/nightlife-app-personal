@@ -6,12 +6,12 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
-import '../../commonWidget/swipe_tutorial_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
 import 'package:night_life/view/authentication/profile.dart';
 import 'package:night_life/view/other/MySplashSection/EventSection/Liked/Liked_event_details.dart';
+import 'package:night_life/commonWidget/swipe_tutorial_overlay.dart';
 import 'package:night_life/utilities/page_transition.dart';
 import 'package:provider/provider.dart';
 import '../../commonWidget/home_widget.dart';
@@ -222,7 +222,7 @@ class _HomeState extends State<Home> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColor.themeColor.withValues(alpha: 0.35),
+              color: AppColor.themeColor.withOpacity(0.35),
               blurRadius: 12,
               offset: const Offset(0, 5),
             ),
@@ -242,7 +242,7 @@ class _HomeState extends State<Home> {
             SizedBox(width: MediaQuery.of(context).size.width * 0.01),
             Icon(
               Icons.close,
-              color: Colors.white.withValues(alpha: 0.95),
+              color: Colors.white.withOpacity(0.95),
               size: 16,
             ),
           ],
@@ -1316,7 +1316,7 @@ class _HomeState extends State<Home> {
           ),
           body: SwipeTutorialOverlay(
             child: SafeArea(
-              child: SizedBox(
+            child: SizedBox(
               width: MediaQuery.of(context).size.width * 100 / 100,
               height: MediaQuery.of(context).size.height * 100 / 100,
               child: Column(
@@ -2224,6 +2224,7 @@ class _HomeState extends State<Home> {
           ),
         ),
       ),
+    ),  // ✅ closes SwipeTutorialOverlay
     );
   }
 

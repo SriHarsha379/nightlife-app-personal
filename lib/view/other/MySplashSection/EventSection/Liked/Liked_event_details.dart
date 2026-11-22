@@ -819,15 +819,6 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     SizedBox(
                                       height: size.height * 3 / 100,
                                     ),
-                                    // ✅ FIX: grouped date/time/location — audit #26
-                                    Container(
-                                      padding: const EdgeInsets.all(14),
-                                      decoration: BoxDecoration(
-                                        color: AppColor.textFieldColor(context),
-                                        borderRadius: BorderRadius.circular(14),
-                                      ),
-                                      child: Column(
-                                        children: [
                                     Row(
                                       children: [
                                         SizedBox(
@@ -1646,7 +1637,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                               ),
                                                             );
                                                           },
-                                                          // ✅ FIX: audit #27 — clear closed-sales state
+                                                          // ✅ FIX: audit #27
                                                           child: Container(
                                                             width: size.width * 45 / 100,
                                                             decoration: BoxDecoration(
@@ -1670,9 +1661,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                     fontSize: 18,
                                                                     fontFamily: AppFont.fontFamily,
                                                                     fontWeight: FontWeight.w600,
-                                                                    color: isEnded
-                                                                        ? Colors.grey
-                                                                        : AppColor.pinkColor,
+                                                                    color: isEnded ? Colors.grey : AppColor.pinkColor,
                                                                   ),
                                                                 ),
                                                               ),
