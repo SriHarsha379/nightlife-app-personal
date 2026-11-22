@@ -65,7 +65,7 @@ class _WelcomeScreen1State extends State<WelcomeScreen1>
 
     return PopScope(
       canPop: false,
-      onPopInvoked: (didPop) {},
+      onPopInvokedWithResult: (didPop, _) {},
       child: Scaffold(
         body: Stack(
           children: [

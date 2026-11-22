@@ -756,7 +756,7 @@ class _SearchScreenState extends State<SearchScreen> {
       ),
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           setState(() {
             AppConstant.selectFooterIndex = 0;
           });

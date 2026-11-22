@@ -94,7 +94,7 @@ class _BookEventState extends State<BookEvent> {
       ),
       child: PopScope(
         canPop: true,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           final bookingDetails =
               Provider.of<BookingEventDetails>(context, listen: false);
           bookingDetails.clearSelections();

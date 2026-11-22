@@ -2739,8 +2739,12 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                       AnimatedPadding(
                         duration: const Duration(milliseconds: 180),
                         curve: Curves.easeOut,
+                        // ✅ FIX: include home indicator padding — audit #36
                         padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).viewInsets.bottom),
+                            bottom: MediaQuery.of(context).viewInsets.bottom +
+                                (MediaQuery.of(context).viewInsets.bottom == 0
+                                    ? MediaQuery.of(context).padding.bottom
+                                    : 0)),
                         child: Column(
                           children: [
                             SizedBox(height: size.height * 1 / 100),
@@ -3226,7 +3230,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                   await _showConfirmActionDialog(
                                     title: 'Block User',
                                     message:
-                                    'Are you sure you want to block this user?',
+                                    'Blocking will remove this match and prevent them from seeing your profile or messaging you. They won't be notified.',
                                     confirmText: 'Block',
                                   );
                                   if (shouldBlock != true) return;
@@ -3256,7 +3260,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                   await _showConfirmActionDialog(
                                     title: 'Unmatch',
                                     message:
-                                    'Are you sure you want to unmatch this user?',
+                                    'Unmatching will delete this conversation and remove the connection. You can still see each other on the feed.',
                                     confirmText: 'Unmatch',
                                   );
                                   if (shouldUnmatch != true) return;

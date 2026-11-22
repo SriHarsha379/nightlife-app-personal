@@ -1280,7 +1280,7 @@ class _HomeState extends State<Home> {
       ),
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           final now = DateTime.now();
           const maxDuration = Duration(seconds: 2);
           final isWarning =

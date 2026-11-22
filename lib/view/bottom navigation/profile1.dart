@@ -271,7 +271,7 @@ class _Profile1State extends State<Profile1> {
         // (profile checklist), back must simply go back - it used to do
         // nothing, leaving members stuck with no bottom bar.
         canPop: openedOnItsOwn,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           if (didPop) return;
           setState(() {
             AppConstant.selectFooterIndex = 0;

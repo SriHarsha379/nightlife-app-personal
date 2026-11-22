@@ -637,7 +637,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
       ),
       child: PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvokedWithResult: (didPop, _) {
           if (didPop) return;
           AppConstant.selectFooterIndex = 0;
           context.findAncestorStateOfType<MyAppFooterState>()?.onItemTapped(0);

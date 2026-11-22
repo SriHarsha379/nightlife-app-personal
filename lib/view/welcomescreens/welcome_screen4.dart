@@ -75,7 +75,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
       ),
       child: PopScope(
         canPop: true,
-        onPopInvoked: (didPop) {},
+        onPopInvokedWithResult: (didPop, _) {},
         child: Scaffold(
           backgroundColor: AppColor.primaryColor(context),
           resizeToAvoidBottomInset: false,

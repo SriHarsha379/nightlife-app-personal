@@ -819,6 +819,15 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                     SizedBox(
                                       height: size.height * 3 / 100,
                                     ),
+                                    // ✅ FIX: grouped date/time/location — audit #26
+                                    Container(
+                                      padding: const EdgeInsets.all(14),
+                                      decoration: BoxDecoration(
+                                        color: AppColor.textFieldColor(context),
+                                        borderRadius: BorderRadius.circular(14),
+                                      ),
+                                      child: Column(
+                                        children: [
                                     Row(
                                       children: [
                                         SizedBox(

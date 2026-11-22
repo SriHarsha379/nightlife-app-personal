@@ -706,9 +706,19 @@ class _VenuePagesState extends State<VenuePages> {
                               ],
                             ),
                           ),
-                          SizedBox(height: size.height * 3 / 100),
-                          SizedBox(
+                          SizedBox(height: size.height * 2 / 100),
+                          // ✅ FIX: grouped venue info — audit #26
+                          Container(
                             width: size.width * 92 / 100,
+                            padding: const EdgeInsets.all(14),
+                            decoration: BoxDecoration(
+                              color: AppColor.textFieldColor(context),
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Column(
+                              children: [
+                          SizedBox(
+                            width: double.infinity,
                             child: Row(
                               children: [
                                 Container(
@@ -815,7 +825,10 @@ class _VenuePagesState extends State<VenuePages> {
                               ),
                             ),
                           ),
-                          SizedBox(height: size.height * 3 / 100),
+                              ], // Column children
+                            ), // Column
+                          ), // Container grouping
+                          SizedBox(height: size.height * 2 / 100),
 
                           // Embedded map preview — venue location was only
                           // ever a text address + "open in external maps"

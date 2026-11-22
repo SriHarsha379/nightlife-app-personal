@@ -206,7 +206,7 @@ class _CityPreferenceState extends State<CityPreference> {
       builder: (context, controller, child) {
         return PopScope(
           canPop: false,
-          onPopInvoked: (didPop) {
+          onPopInvokedWithResult: (didPop, _) {
             final now = DateTime.now();
             const maxDuration = Duration(seconds: 2);
             final isWarning = lastPressed == null ||
