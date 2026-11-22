@@ -154,7 +154,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                   boxShadow: [
                                     BoxShadow(
                                       color:
-                                          AppColor.pinkColor.withOpacity(0.7),
+                                          AppColor.pinkColor.withValues(alpha: 0.7),
                                       blurRadius: 10,
                                       spreadRadius: 2,
                                       offset: const Offset(0, 2),
@@ -247,7 +247,7 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                       fontSize: 14,
                                       fontWeight: FontWeight.w500,
                                       color: AppColor.secondryColor(context)
-                                          .withOpacity(0.6),
+                                          .withValues(alpha: 0.6),
                                     ),
                                   ),
                                 );

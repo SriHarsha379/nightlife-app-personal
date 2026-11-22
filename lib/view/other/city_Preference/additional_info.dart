@@ -736,7 +736,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                         boxShadow: [
                                           BoxShadow(
                                             color:
-                                            Colors.black.withOpacity(0.05),
+                                            Colors.black.withValues(alpha: 0.05),
                                             blurRadius: 4,
                                             offset: const Offset(0, 2),
                                           ),
@@ -888,7 +888,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                       style: TextStyle(
                         fontSize: 13,
                         fontFamily: AppFont.fontFamily,
-                        color: Colors.white.withOpacity(0.6),
+                        color: Colors.white.withValues(alpha: 0.6),
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -909,7 +909,7 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                     horizontal: 14, vertical: 10),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColor.pinkColor.withOpacity(0.18)
+                                      ? AppColor.pinkColor.withValues(alpha: 0.18)
                                       : AppColor.primaryColor(context),
                                   borderRadius: BorderRadius.circular(30),
                                   border: Border.all(

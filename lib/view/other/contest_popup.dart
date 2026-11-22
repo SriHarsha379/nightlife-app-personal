@@ -46,7 +46,7 @@ class ContestPopup extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Contest',
-      barrierColor: Colors.black.withOpacity(0.65),
+      barrierColor: Colors.black.withValues(alpha: 0.65),
       transitionDuration: const Duration(milliseconds: 400),
       transitionBuilder: (ctx, animation, _, child) {
         final slideAnimation = Tween<Offset>(
@@ -137,7 +137,7 @@ class _ContestPopupState extends State<ContestPopup> {
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.30),
+                  color: Colors.black.withValues(alpha: 0.30),
                   blurRadius: 32,
                   offset: const Offset(0, 14),
                 ),
@@ -155,7 +155,7 @@ class _ContestPopupState extends State<ContestPopup> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                         decoration: BoxDecoration(
-                          color: AppColor.buttonColor.withOpacity(0.12),
+                          color: AppColor.buttonColor.withValues(alpha: 0.12),
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Row(
@@ -207,9 +207,9 @@ class _ContestPopupState extends State<ContestPopup> {
                       width: double.infinity,
                       padding: const EdgeInsets.all(14),
                       decoration: BoxDecoration(
-                        color: AppColor.buttonColor.withOpacity(0.08),
+                        color: AppColor.buttonColor.withValues(alpha: 0.08),
                         borderRadius: BorderRadius.circular(14),
-                        border: Border.all(color: AppColor.buttonColor.withOpacity(0.25)),
+                        border: Border.all(color: AppColor.buttonColor.withValues(alpha: 0.25)),
                       ),
                       child: Row(
                         children: [
@@ -261,8 +261,8 @@ class _ContestPopupState extends State<ContestPopup> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColor.buttonColor,
                         disabledBackgroundColor: _entered
-                            ? AppColor.buttonColor.withOpacity(0.5)
-                            : AppColor.buttonColor.withOpacity(0.35),
+                            ? AppColor.buttonColor.withValues(alpha: 0.5)
+                            : AppColor.buttonColor.withValues(alpha: 0.35),
                         padding: const EdgeInsets.symmetric(vertical: 14),
                         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
                       ),

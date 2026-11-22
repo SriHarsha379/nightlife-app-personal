@@ -78,7 +78,7 @@ class _BookingSuccessDialogState extends State<BookingSuccessDialog>
                 ),
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.buttonColor.withOpacity(0.25),
+                    color: AppColor.buttonColor.withValues(alpha: 0.25),
                     blurRadius: 32,
                     spreadRadius: 2,
                   ),
@@ -94,7 +94,7 @@ class _BookingSuccessDialogState extends State<BookingSuccessDialog>
                       height: 88,
                       decoration: BoxDecoration(
                         shape: BoxShape.circle,
-                        color: const Color(0xff4CAF50).withOpacity(0.12),
+                        color: const Color(0xff4CAF50).withValues(alpha: 0.12),
                         border: Border.all(
                           color: const Color(0xff4CAF50),
                           width: 2.5,

@@ -137,7 +137,7 @@ class _ProgressHUDState extends State<ProgressHUD>
     final loaderColor = widget.loaderColor ?? theme.primaryColor;
     final backgroundColor = widget.backgroundColor ??
         (widget.showBackground
-            ? Colors.white.withOpacity(0.9)
+            ? Colors.white.withValues(alpha: 0.9)
             : Colors.transparent);
 
     return Scaffold(
@@ -168,7 +168,7 @@ class _ProgressHUDState extends State<ProgressHUD>
                   child: contentOpacity > 0
                       ? Container(
                           key: const ValueKey("smooth_loader"),
-                          color: backgroundColor.withOpacity(backgroundOpacity),
+                          color: backgroundColor.withValues(alpha: backgroundOpacity),
                           child: Center(
                             child: Opacity(
                               opacity: contentOpacity,
@@ -211,7 +211,7 @@ class _ProgressHUDState extends State<ProgressHUD>
             child: CircularProgressIndicator(
               strokeWidth: 3.0,
               valueColor: AlwaysStoppedAnimation<Color>(color),
-              backgroundColor: color.withOpacity(0.1),
+              backgroundColor: color.withValues(alpha: 0.1),
             ),
           ),
         );
@@ -260,7 +260,7 @@ class _ProgressHUDState extends State<ProgressHUD>
                   height: 8,
                   decoration: BoxDecoration(
                     shape: BoxShape.circle,
-                    color: color.withOpacity(0.4 + (animValue * 0.6)),
+                    color: color.withValues(alpha: 0.4 + (animValue * 0.6)),
                   ),
                 ),
               ),

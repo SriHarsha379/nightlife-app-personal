@@ -228,7 +228,7 @@ class _FriendsListState extends State<FriendsList> {
                         offset: const Offset(0, 4),
                         spreadRadius: 0,
                         blurRadius: 4,
-                        color: AppColor.primaryColor(context).withOpacity(0.1),
+                        color: AppColor.primaryColor(context).withValues(alpha: 0.1),
                       ),
                     ],
                   ),
@@ -386,7 +386,7 @@ class _FriendsListState extends State<FriendsList> {
                                         boxShadow: [
                                           BoxShadow(
                                             color:
-                                                Colors.black.withOpacity(0.25),
+                                                Colors.black.withValues(alpha: 0.25),
                                             blurRadius: 4,
                                             offset: const Offset(0, 4),
                                           ),

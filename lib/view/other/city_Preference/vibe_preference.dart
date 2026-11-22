@@ -353,7 +353,7 @@ class _VibePreferenceState extends State<VibePreference> {
                                               size: 16,
                                               color: AppColor.secondryColor(
                                                   context)
-                                                  .withOpacity(0.6),
+                                                  .withValues(alpha: 0.6),
                                             ),
                                           ),
                                         ],

@@ -249,7 +249,7 @@ class _splashMembersState extends State<splashMembers> {
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.10),
+          color: Colors.black.withValues(alpha: 0.10),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),

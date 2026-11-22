@@ -44,7 +44,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     return InputDecoration(
       hintText: hint,
       hintStyle: TextStyle(
-        color: AppColor.secondryColor(context).withOpacity(0.5),
+        color: AppColor.secondryColor(context).withValues(alpha: 0.5),
         fontFamily: AppFont.fontFamily,
         fontSize: 14,
       ),
@@ -107,7 +107,7 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
                         Text(
                           "Have a question or feedback? Send us a message and we'll get back to you.",
                           style: TextStyle(
-                            color: AppColor.secondryColor(context).withOpacity(0.7),
+                            color: AppColor.secondryColor(context).withValues(alpha: 0.7),
                             fontFamily: AppFont.fontFamily,
                             fontSize: 14,
                             height: 1.4,

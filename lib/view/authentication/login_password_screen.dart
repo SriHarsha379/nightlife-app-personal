@@ -127,7 +127,7 @@ class _LoginPasswordScreenState extends State<LoginPasswordScreen> {
                                 overflow: TextOverflow.ellipsis,
                                 style: TextStyle(
                                   color: AppColor.secondryColor(context)
-                                      .withOpacity(0.7),
+                                      .withValues(alpha: 0.7),
                                   fontFamily: AppFont.fontFamily,
                                   fontSize: 13,
                                 ),

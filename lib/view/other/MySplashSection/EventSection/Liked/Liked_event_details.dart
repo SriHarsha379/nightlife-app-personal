@@ -253,8 +253,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Colors.transparent.withOpacity(0.4),
-      barrierColor: Colors.transparent.withOpacity(0.4),
+      backgroundColor: Colors.transparent.withValues(alpha: 0.4),
+      barrierColor: Colors.transparent.withValues(alpha: 0.4),
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
@@ -376,7 +376,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             boxShadow: filled
                 ? [
               BoxShadow(
-                color: backgroundColor.withOpacity(0.28),
+                color: backgroundColor.withValues(alpha: 0.28),
                 blurRadius: 14,
                 offset: const Offset(0, 6),
               ),
@@ -466,7 +466,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                   Container(
                     decoration: BoxDecoration(
                       color:
-                      AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
+                      AppColor.sendinvitecontainercolor(context).withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(32),
                     ),
                     width: size.width * 0.9,
@@ -1368,7 +1368,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                       BoxShadow(
                                                                         color: Colors
                                                                             .black
-                                                                            .withOpacity(
+                                                                            .withValues(alpha: 
                                                                             0.25),
                                                                         blurRadius:
                                                                         4,
@@ -1807,7 +1807,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
             return Container(
               height: size.height * 0.8,
               decoration: BoxDecoration(
-                color: AppColor.transparentColor.withOpacity(.5),
+                color: AppColor.transparentColor.withValues(alpha: .5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -1828,7 +1828,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.2),
+                              color: Colors.grey.withValues(alpha: 0.2),
                             ),
                             child: Icon(
                               Icons.close,
@@ -1899,7 +1899,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withValues(alpha: 0.5),
                                 ),
                                 child: const Icon(
                                   Icons.chevron_left,
@@ -1926,7 +1926,7 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                 padding: const EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withValues(alpha: 0.5),
                                 ),
                                 child: const Icon(
                                   Icons.chevron_right,

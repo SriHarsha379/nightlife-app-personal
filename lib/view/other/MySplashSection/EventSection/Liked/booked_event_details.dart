@@ -112,7 +112,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
     final dividerColor = isDark ? Colors.white24 : const Color(0xffDDDDDD);
     final guestPillBg = isDark ? Colors.black : const Color(0xff1A0F29);
     final guestPillBorder =
-        isDark ? Colors.white.withOpacity(0.4) : Colors.white.withOpacity(0.3);
+        isDark ? Colors.white.withValues(alpha: 0.4) : Colors.white.withValues(alpha: 0.3);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: SystemUiOverlayStyle(
@@ -271,7 +271,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                     style: TextStyle(
                                       fontSize: 7,
                                       fontWeight: FontWeight.w500,
-                                      color: Colors.white.withOpacity(0.8),
+                                      color: Colors.white.withValues(alpha: 0.8),
                                     ),
                                   ),
                                   SizedBox(height: size.height * 0.5 / 100),
@@ -647,7 +647,7 @@ class _BookedEventDetailsState extends State<BookedEventDetails> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                       color: AppColor.lightGreyColor(context)
-                                          .withOpacity(0.8),
+                                          .withValues(alpha: 0.8),
                                       fontFamily: AppFont.fontFamily,
                                     ),
                                     textAlign: TextAlign.center,

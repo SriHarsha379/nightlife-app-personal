@@ -221,7 +221,7 @@ class _HomeState extends State<Home> {
           borderRadius: BorderRadius.circular(20),
           boxShadow: [
             BoxShadow(
-              color: AppColor.themeColor.withOpacity(0.35),
+              color: AppColor.themeColor.withValues(alpha: 0.35),
               blurRadius: 12,
               offset: const Offset(0, 5),
             ),
@@ -241,7 +241,7 @@ class _HomeState extends State<Home> {
             SizedBox(width: MediaQuery.of(context).size.width * 0.01),
             Icon(
               Icons.close,
-              color: Colors.white.withOpacity(0.95),
+              color: Colors.white.withValues(alpha: 0.95),
               size: 16,
             ),
           ],

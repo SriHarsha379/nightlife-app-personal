@@ -125,7 +125,7 @@ class _PromptSheet extends StatelessWidget {
         decoration: BoxDecoration(
           color: AppColor.primaryColor(context),
           borderRadius: BorderRadius.circular(24),
-          border: Border.all(color: AppColor.pinkColor.withOpacity(0.35)),
+          border: Border.all(color: AppColor.pinkColor.withValues(alpha: 0.35)),
         ),
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -142,7 +142,7 @@ class _PromptSheet extends StatelessWidget {
               child: LinearProgressIndicator(
                 value: percent / 100,
                 minHeight: 8,
-                backgroundColor: text.withOpacity(0.12),
+                backgroundColor: text.withValues(alpha: 0.12),
                 valueColor: const AlwaysStoppedAnimation<Color>(AppColor.pinkColor),
               ),
             ),
@@ -150,7 +150,7 @@ class _PromptSheet extends StatelessWidget {
             Text(
               hint ?? 'Complete profiles get more matches and invites.',
               style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 14,
-                  color: text.withOpacity(0.8)),
+                  color: text.withValues(alpha: 0.8)),
             ),
             const SizedBox(height: 18),
             Row(
@@ -160,7 +160,7 @@ class _PromptSheet extends StatelessWidget {
                     onPressed: () => Navigator.pop(context),
                     child: Text('Later',
                         style: TextStyle(fontFamily: AppFont.fontFamily,
-                            fontSize: 15, color: text.withOpacity(0.7))),
+                            fontSize: 15, color: text.withValues(alpha: 0.7))),
                   ),
                 ),
                 const SizedBox(width: 12),

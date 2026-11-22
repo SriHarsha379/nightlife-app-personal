@@ -25,7 +25,7 @@ class AppHeader extends StatelessWidget {
         color: AppColor.primaryColor(context),
         boxShadow: [
           BoxShadow(
-            color: AppColor.grayColor.withOpacity(0.4),
+            color: AppColor.grayColor.withValues(alpha: 0.4),
             blurRadius: 2,
             offset: Offset(1, 1),
           ),
@@ -99,7 +99,7 @@ class AppHeader1 extends StatelessWidget {
                 color: AppColor.secondryColor(context), // background color
                 boxShadow: [
                   BoxShadow(
-                    color: AppColor.grayColor.withOpacity(0.4), // shadow color
+                    color: AppColor.grayColor.withValues(alpha: 0.4), // shadow color
                     // spreadRadius: 1,
                     blurRadius: 2, // blur effect
                     offset: Offset(1, 1),

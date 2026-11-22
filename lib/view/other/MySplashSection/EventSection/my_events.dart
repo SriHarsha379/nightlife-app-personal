@@ -168,8 +168,8 @@ class _MyEventsState extends State<MyEvents> {
       boxShadow: [
         BoxShadow(
           color: isDark
-              ? Colors.black.withOpacity(0.35)
-              : Colors.black.withOpacity(0.13),
+              ? Colors.black.withValues(alpha: 0.35)
+              : Colors.black.withValues(alpha: 0.13),
           blurRadius: isDark ? 10 : 18,
           spreadRadius: isDark ? 0 : 1,
           offset: const Offset(0, 4),
@@ -185,7 +185,7 @@ class _MyEventsState extends State<MyEvents> {
       borderRadius: BorderRadius.circular(radius),
       boxShadow: [
         BoxShadow(
-          color: Colors.black.withOpacity(0.10),
+          color: Colors.black.withValues(alpha: 0.10),
           blurRadius: 8,
           offset: const Offset(0, 2),
         ),

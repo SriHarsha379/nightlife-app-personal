@@ -723,14 +723,14 @@ class _ChatSupportState extends State<ChatSupport> {
             if (isVideo)
               Container(
                 decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle),
                 child:
                     const Icon(Icons.play_arrow, color: Colors.white, size: 26),
               ),
             if (extraCount > 0)
               Container(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 alignment: Alignment.center,
                 child: Text('+$extraCount',
                     style: const TextStyle(

@@ -138,7 +138,7 @@ class PollPopup extends StatefulWidget {
       context: context,
       barrierDismissible: true,
       barrierLabel: 'Poll',
-      barrierColor: Colors.black.withOpacity(0.65),
+      barrierColor: Colors.black.withValues(alpha: 0.65),
       transitionDuration: const Duration(milliseconds: 400),
       transitionBuilder: (ctx, animation, _, child) {
         final slideAnimation = Tween<Offset>(
@@ -281,7 +281,7 @@ class _PollPopupState extends State<PollPopup>
               borderRadius: BorderRadius.circular(24),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.30),
+                  color: Colors.black.withValues(alpha: 0.30),
                   blurRadius: 32,
                   offset: const Offset(0, 14),
                 ),
@@ -346,7 +346,7 @@ class _PollPopupState extends State<PollPopup>
             height: 32,
             decoration: BoxDecoration(
               color: isDark
-                  ? Colors.white.withOpacity(0.08)
+                  ? Colors.white.withValues(alpha: 0.08)
                   : Colors.grey.shade100,
               shape: BoxShape.circle,
             ),
@@ -407,16 +407,16 @@ class _PollPopupState extends State<PollPopup>
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         decoration: BoxDecoration(
           color: isSelected
-              ? AppColor.buttonColor.withOpacity(0.10)
+              ? AppColor.buttonColor.withValues(alpha: 0.10)
               : isDark
-              ? Colors.white.withOpacity(0.05)
+              ? Colors.white.withValues(alpha: 0.05)
               : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
             color: isSelected
                 ? AppColor.buttonColor
                 : isDark
-                ? Colors.white.withOpacity(0.12)
+                ? Colors.white.withValues(alpha: 0.12)
                 : Colors.grey.shade200,
             width: isSelected ? 2 : 1,
           ),
@@ -456,7 +456,7 @@ class _PollPopupState extends State<PollPopup>
                   color: isSelected
                       ? AppColor.buttonColor
                       : isDark
-                      ? Colors.white.withOpacity(0.87)
+                      ? Colors.white.withValues(alpha: 0.87)
                       : Colors.black87,
                 ),
               ),
@@ -480,16 +480,16 @@ class _PollPopupState extends State<PollPopup>
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 13),
           decoration: BoxDecoration(
             color: isVoted
-                ? AppColor.buttonColor.withOpacity(0.08)
+                ? AppColor.buttonColor.withValues(alpha: 0.08)
                 : isDark
-                ? Colors.white.withOpacity(0.04)
+                ? Colors.white.withValues(alpha: 0.04)
                 : Colors.grey.shade50,
             borderRadius: BorderRadius.circular(14),
             border: Border.all(
               color: isVoted
-                  ? AppColor.buttonColor.withOpacity(0.50)
+                  ? AppColor.buttonColor.withValues(alpha: 0.50)
                   : isDark
-                  ? Colors.white.withOpacity(0.08)
+                  ? Colors.white.withValues(alpha: 0.08)
                   : Colors.grey.shade200,
               width: isVoted ? 1.5 : 1,
             ),
@@ -515,7 +515,7 @@ class _PollPopupState extends State<PollPopup>
                         color: isVoted
                             ? AppColor.buttonColor
                             : isDark
-                            ? Colors.white.withOpacity(0.87)
+                            ? Colors.white.withValues(alpha: 0.87)
                             : Colors.black87,
                       ),
                     ),
@@ -546,7 +546,7 @@ class _PollPopupState extends State<PollPopup>
                           height: 6,
                           width: constraints.maxWidth,
                           color: isDark
-                              ? Colors.white.withOpacity(0.08)
+                              ? Colors.white.withValues(alpha: 0.08)
                               : Colors.grey.shade200,
                         ),
                         Container(
@@ -613,7 +613,7 @@ class _PollPopupState extends State<PollPopup>
         (_selectedOptionId != null && !_isSubmitting) ? _submitVote : null,
         style: ElevatedButton.styleFrom(
           backgroundColor: AppColor.buttonColor,
-          disabledBackgroundColor: AppColor.buttonColor.withOpacity(0.35),
+          disabledBackgroundColor: AppColor.buttonColor.withValues(alpha: 0.35),
           foregroundColor: Colors.white,
           padding: const EdgeInsets.symmetric(vertical: 14),
           shape: RoundedRectangleBorder(

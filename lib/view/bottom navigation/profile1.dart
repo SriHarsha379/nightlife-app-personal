@@ -405,7 +405,7 @@ class _Profile1State extends State<Profile1> {
                                           backgroundColor: AppColor
                                               .secondryColor(
                                               context)
-                                              .withOpacity(0.2),
+                                              .withValues(alpha: 0.2),
                                         ),
                                       ),
                                     ),
@@ -1087,7 +1087,7 @@ class _Profile1State extends State<Profile1> {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.55),
+                            color: Colors.white.withValues(alpha: 0.55),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -1187,7 +1187,7 @@ class _Profile1State extends State<Profile1> {
                         child: Container(
                           padding: const EdgeInsets.all(4),
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.55),
+                            color: Colors.white.withValues(alpha: 0.55),
                             shape: BoxShape.circle,
                           ),
                           child: const Icon(
@@ -1220,7 +1220,7 @@ class _Profile1State extends State<Profile1> {
             color: AppColor.capsuleColor(context),
             boxShadow: [
               BoxShadow(
-                color: AppColor.grayColor.withOpacity(0.4),
+                color: AppColor.grayColor.withValues(alpha: 0.4),
                 blurRadius: 2,
                 offset: const Offset(1, 1),
               ),
@@ -1460,8 +1460,8 @@ class _Profile1State extends State<Profile1> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.5),
-                        Colors.black.withOpacity(0.85),
+                        Colors.black.withValues(alpha: 0.5),
+                        Colors.black.withValues(alpha: 0.85),
                       ],
                     ),
                   ),
@@ -1482,7 +1482,7 @@ class _Profile1State extends State<Profile1> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: AppColor.themeColor.withOpacity(.7),
+                        color: AppColor.themeColor.withValues(alpha: .7),
                         border: Border.all(
                             color: const Color(0xFF9C27B0), width: 2),
                       ),

@@ -363,7 +363,7 @@
 //                                                   boxShadow: [
 //                                                     BoxShadow(
 //                                                       color: Colors.black
-//                                                           .withOpacity(0.2),
+//                                                           .withValues(alpha: 0.2),
 //                                                       blurRadius: 10,
 //                                                       offset:
 //                                                           const Offset(0, 4),
@@ -629,7 +629,7 @@
 //                             decoration: BoxDecoration(
 //                               boxShadow: [
 //                                 BoxShadow(
-//                                   color: Colors.black.withOpacity(0.2),
+//                                   color: Colors.black.withValues(alpha: 0.2),
 //                                   blurRadius: 10,
 //                                   offset: const Offset(0, 4),
 //                                 ),
@@ -720,7 +720,7 @@
 //                                               6 /
 //                                               100,
 //                                           color: AppColor.secondryColor(context)
-//                                               .withOpacity(0.5),
+//                                               .withValues(alpha: 0.5),
 //                                         ),
 //                                         SizedBox(
 //                                             width: MediaQuery.of(context)
@@ -741,7 +741,7 @@
 //                                               6 /
 //                                               100,
 //                                           color: AppColor.secondryColor(context)
-//                                               .withOpacity(0.5),
+//                                               .withValues(alpha: 0.5),
 //                                         ),
 //                                         SizedBox(
 //                                             width: MediaQuery.of(context)
@@ -779,7 +779,7 @@
 //                                                 100,
 //                                             color:
 //                                                 AppColor.secondryColor(context)
-//                                                     .withOpacity(0.5),
+//                                                     .withValues(alpha: 0.5),
 //                                           ),
 //                                         ),
 //                                         SizedBox(
@@ -1022,7 +1022,7 @@
 //                           color: AppColor.washpressColor,
 //                           boxShadow: [
 //                             BoxShadow(
-//                               color: Colors.black.withOpacity(0.2),
+//                               color: Colors.black.withValues(alpha: 0.2),
 //                               blurRadius: 10,
 //                               spreadRadius: 2,
 //                               offset: Offset(0, 4),

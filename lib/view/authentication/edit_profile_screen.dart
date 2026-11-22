@@ -104,7 +104,7 @@ class _EditProfileState extends State<EditProfile> {
       border: Border.all(color: AppColor.pinkColor, width: 2),
       boxShadow: [
         BoxShadow(
-          color: AppColor.pinkColor.withOpacity(0.35),
+          color: AppColor.pinkColor.withValues(alpha: 0.35),
           blurRadius: 10,
           spreadRadius: 1,
         ),
@@ -384,7 +384,7 @@ class _EditProfileState extends State<EditProfile> {
         color: AppColor.textfieldcontainercolor(context),
         boxShadow: [
           BoxShadow(
-            color: AppColor.grayColor.withOpacity(0.4),
+            color: AppColor.grayColor.withValues(alpha: 0.4),
             blurRadius: 2,
             offset: const Offset(2, 2),
           ),
@@ -814,7 +814,7 @@ class _EditProfileState extends State<EditProfile> {
                     BoxDecoration(
                       boxShadow: [
                         BoxShadow(
-                          color: AppColor.grayColor.withOpacity(0.4),
+                          color: AppColor.grayColor.withValues(alpha: 0.4),
                           blurRadius: 4,
                           offset: const Offset(0, 2),
                         ),

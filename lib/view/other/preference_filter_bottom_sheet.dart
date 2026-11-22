@@ -117,8 +117,8 @@ class _PreferenceFilterBottomSheetState
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(25),
-                color: isSelected ? AppColor.buttonColor.withOpacity(0.2) : Colors.white.withOpacity(0.06),
-                border: Border.all(color: isSelected ? AppColor.buttonColor : Colors.white.withOpacity(0.2), width: isSelected ? 1.5 : 1),
+                color: isSelected ? AppColor.buttonColor.withValues(alpha: 0.2) : Colors.white.withValues(alpha: 0.06),
+                border: Border.all(color: isSelected ? AppColor.buttonColor : Colors.white.withValues(alpha: 0.2), width: isSelected ? 1.5 : 1),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -175,7 +175,7 @@ class _PreferenceFilterBottomSheetState
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Container(
-              decoration: BoxDecoration(color: Colors.white.withOpacity(0.06), borderRadius: BorderRadius.circular(12)),
+              decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.06), borderRadius: BorderRadius.circular(12)),
               child: TabBar(
                 controller: _tabController,
                 indicator: BoxDecoration(color: AppColor.buttonColor, borderRadius: BorderRadius.circular(10)),

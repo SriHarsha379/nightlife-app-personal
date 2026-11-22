@@ -126,7 +126,7 @@ void paintOwl(
       final alpha = (1 - t).clamp(0.0, 1.0);
       final np = Paint()
         ..isAntiAlias = true
-        ..color = _pink.withOpacity(alpha);
+        ..color = _pink.withValues(alpha: alpha);
       canvas.drawOval(Rect.fromCenter(center: o, width: 6.5, height: 5.2), np);
       np
         ..style = PaintingStyle.stroke
@@ -365,7 +365,7 @@ class _OwlBadgePainter extends CustomPainter {
         c,
         r * 0.86,
         Paint()
-          ..color = _pink.withOpacity(0.55 * glow)
+          ..color = _pink.withValues(alpha: 0.55 * glow)
           ..maskFilter = MaskFilter.blur(BlurStyle.normal, r * 0.22),
       );
     }

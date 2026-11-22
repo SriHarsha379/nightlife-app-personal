@@ -156,7 +156,7 @@ class _ContentScreenState extends State<ContentScreen>
                                           ),
                                           strokeWidth: 2.5,
                                           backgroundColor:
-                                              Colors.grey.withOpacity(0.2),
+                                              Colors.grey.withValues(alpha: 0.2),
                                         ),
                                       ),
                                     ),

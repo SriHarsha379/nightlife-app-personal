@@ -42,7 +42,7 @@ class VibeWordCounter extends StatelessWidget {
         Color color;
         if (text.trim().isEmpty) {
           label = 'Minimum $kVibeMinWords words';
-          color = AppColor.secondryColor(context).withOpacity(0.5);
+          color = AppColor.secondryColor(context).withValues(alpha: 0.5);
         } else if (isValidVibeAnswer(text)) {
           label = '\u2713 $n words';
           color = const Color(0xFF34C759);

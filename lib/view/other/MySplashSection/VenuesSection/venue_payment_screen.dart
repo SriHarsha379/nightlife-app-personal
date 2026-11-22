@@ -155,7 +155,7 @@ class _CompletePayment2State extends State<CompletePayment2>
     showDialog(
       context: context,
       barrierDismissible: false,
-      barrierColor: Colors.black.withOpacity(0.65),
+      barrierColor: Colors.black.withValues(alpha: 0.65),
       builder: (ctx) => BookingSuccessDialog(
         message: message,
         onDone: () {
@@ -986,7 +986,7 @@ class _CompletePayment2State extends State<CompletePayment2>
                                                       vertical: 2),
                                                   decoration: BoxDecoration(
                                                     color: AppColor.themeColor
-                                                        .withOpacity(0.15),
+                                                        .withValues(alpha: 0.15),
                                                     borderRadius:
                                                         BorderRadius.circular(
                                                             6),
@@ -1077,7 +1077,7 @@ class _CompletePayment2State extends State<CompletePayment2>
                 child: GestureDetector(
                   onTap: _dismissCouponPopup,
                   child: Container(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     child: Center(
                       child: FadeTransition(
                         opacity: _popupFadeAnimation,
@@ -1091,12 +1091,12 @@ class _CompletePayment2State extends State<CompletePayment2>
                               color: const Color(0xff1E1A24),
                               borderRadius: BorderRadius.circular(24),
                               border: Border.all(
-                                color: AppColor.themeColor.withOpacity(0.4),
+                                color: AppColor.themeColor.withValues(alpha: 0.4),
                                 width: 1,
                               ),
                               boxShadow: [
                                 BoxShadow(
-                                  color: AppColor.themeColor.withOpacity(0.18),
+                                  color: AppColor.themeColor.withValues(alpha: 0.18),
                                   blurRadius: 32,
                                   spreadRadius: 2,
                                 ),
@@ -1113,7 +1113,7 @@ class _CompletePayment2State extends State<CompletePayment2>
                                     decoration: BoxDecoration(
                                       shape: BoxShape.circle,
                                       color: const Color(0xff4CAF50)
-                                          .withOpacity(0.12),
+                                          .withValues(alpha: 0.12),
                                       border: Border.all(
                                         color: const Color(0xff4CAF50),
                                         width: 2,
@@ -1142,7 +1142,7 @@ class _CompletePayment2State extends State<CompletePayment2>
                                       horizontal: 14, vertical: 5),
                                   decoration: BoxDecoration(
                                     color:
-                                        AppColor.themeColor.withOpacity(0.12),
+                                        AppColor.themeColor.withValues(alpha: 0.12),
                                     borderRadius: BorderRadius.circular(8),
                                     border: Border.all(
                                       color: AppColor.themeColor,

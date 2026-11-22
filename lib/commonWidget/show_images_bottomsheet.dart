@@ -31,7 +31,7 @@ class GalleryBottomSheet {
             return Container(
               height: size.height * 0.8,
               decoration: BoxDecoration(
-                color: AppColor.transparentColor.withOpacity(.5),
+                color: AppColor.transparentColor.withValues(alpha: .5),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(30),
                   topRight: Radius.circular(30),
@@ -53,7 +53,7 @@ class GalleryBottomSheet {
                             padding: const EdgeInsets.all(6),
                             decoration: BoxDecoration(
                               shape: BoxShape.circle,
-                              color: Colors.grey.withOpacity(0.2),
+                              color: Colors.grey.withValues(alpha: 0.2),
                             ),
                             child: Icon(
                               Icons.close,
@@ -112,7 +112,7 @@ class GalleryBottomSheet {
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withValues(alpha: 0.5),
                                 ),
                                 child: Icon(
                                   Icons.chevron_left,
@@ -139,7 +139,7 @@ class GalleryBottomSheet {
                                 padding: EdgeInsets.all(8),
                                 decoration: BoxDecoration(
                                   shape: BoxShape.circle,
-                                  color: Colors.black.withOpacity(0.5),
+                                  color: Colors.black.withValues(alpha: 0.5),
                                 ),
                                 child: Icon(
                                   Icons.chevron_right,

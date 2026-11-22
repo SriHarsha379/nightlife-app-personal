@@ -71,7 +71,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColor.greyLightColor(context).withOpacity(0.5),
+              color: AppColor.greyLightColor(context).withValues(alpha: 0.5),
               borderRadius: BorderRadius.circular(2),
             ),
           ),
@@ -183,7 +183,7 @@ class _CitySelectionBottomSheetState extends State<CitySelectionBottomSheet> {
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
-                            ? AppColor.buttonColor.withOpacity(0.1)
+                            ? AppColor.buttonColor.withValues(alpha: 0.1)
                             : Colors.transparent,
                         borderRadius: BorderRadius.circular(12),
                         border: Border.all(

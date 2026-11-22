@@ -81,7 +81,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                     //     color: AppColor.notificationContainerColor(context),
                     //     boxShadow: [
                     //       BoxShadow(
-                    //         color: AppColor.primaryColor(context).withOpacity(0.3),
+                    //         color: AppColor.primaryColor(context).withValues(alpha: 0.3),
                     //         spreadRadius: 3,
                     //         blurRadius: 7,
                     //         offset: const Offset(0, 1),
@@ -518,7 +518,7 @@ class _AppPreferencesState extends State<AppPreferences> {
                     //       boxShadow: [
                     //         BoxShadow(
                     //           color:
-                    //               AppColor.primaryColor(context).withOpacity(0.3),
+                    //               AppColor.primaryColor(context).withValues(alpha: 0.3),
                     //           spreadRadius: 3,
                     //           blurRadius: 7,
                     //           offset: const Offset(0, 1),

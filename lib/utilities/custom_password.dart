@@ -95,7 +95,7 @@ class _CustomPasswordFieldState extends State<CustomPasswordField> {
             onTap: _togglePasswordVisibility,
             child: Icon(
               _obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Colors.black.withOpacity(0.6),
+              color: Colors.black.withValues(alpha: 0.6),
               size: 22,
             ),
           ),

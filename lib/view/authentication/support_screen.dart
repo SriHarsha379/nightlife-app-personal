@@ -143,7 +143,7 @@ class _SupportScreenState extends State<SupportScreen> {
                             boxShadow: [
                               BoxShadow(
                                 color: AppColor.primaryColor(context)
-                                    .withOpacity(0.6),
+                                    .withValues(alpha: 0.6),
                                 blurRadius: 6,
                                 offset: const Offset(0, 2),
                               ),

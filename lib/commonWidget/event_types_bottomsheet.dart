@@ -383,7 +383,7 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
             Icon(
               Icons.people_outline,
               size: 38,
-              color: AppColor.secondryColor(context).withOpacity(0.4),
+              color: AppColor.secondryColor(context).withValues(alpha: 0.4),
             ),
             SizedBox(height: size.height * 0.012),
             Text(
@@ -392,7 +392,7 @@ class _InviteMembersBottomSheetState extends State<_InviteMembersBottomSheet> {
                 fontSize: 15,
                 fontWeight: FontWeight.w500,
                 fontFamily: AppFont.fontFamily,
-                color: AppColor.secondryColor(context).withOpacity(0.5),
+                color: AppColor.secondryColor(context).withValues(alpha: 0.5),
               ),
             ),
           ],

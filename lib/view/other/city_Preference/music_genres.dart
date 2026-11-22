@@ -266,7 +266,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                                   offset: const Offset(0, 1),
                                   spreadRadius: 0,
                                   blurRadius: 0,
-                                  color: AppColor.transparentColor.withOpacity(0.1),
+                                  color: AppColor.transparentColor.withValues(alpha: 0.1),
                                 ),
                               ],
                             ),
@@ -514,7 +514,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                     child: Icon(
                       _iconForGenre(genreName),
                       size: 40,
-                      color: Colors.white.withOpacity(0.35),
+                      color: Colors.white.withValues(alpha: 0.35),
                     ),
                   ),
                 ),
@@ -527,7 +527,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.7),
+                        Colors.black.withValues(alpha: 0.7),
                       ],
                     ),
                   ),

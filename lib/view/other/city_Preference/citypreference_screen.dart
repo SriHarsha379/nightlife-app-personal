@@ -116,7 +116,7 @@ class _CityPreferenceState extends State<CityPreference> {
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.4,
-            color: AppColor.secondryColor(context).withOpacity(0.6),
+            color: AppColor.secondryColor(context).withValues(alpha: 0.6),
           ),
         ),
       ),
@@ -156,7 +156,7 @@ class _CityPreferenceState extends State<CityPreference> {
           circleId: const CircleId('radius'),
           center: LatLng(lat, lng),
           radius: controller.getCurrentDistance * 1000,
-          fillColor: AppColor.pinkColor.withOpacity(0.2),
+          fillColor: AppColor.pinkColor.withValues(alpha: 0.2),
           strokeColor: AppColor.pinkColor,
           strokeWidth: 2,
         ),
@@ -428,7 +428,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                             spreadRadius: 0,
                                             blurRadius: 0,
                                             color: AppColor.transparentColor
-                                                .withOpacity(0.1),
+                                                .withValues(alpha: 0.1),
                                           ),
                                         ],
                                       ),
@@ -549,7 +549,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                     fontWeight: FontWeight.w600,
                                                     color: AppColor
                                                         .pinkColor
-                                                        .withOpacity(0.9),
+                                                        .withValues(alpha: 0.9),
                                                   ),
                                                 ),
                                               ],
@@ -692,7 +692,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                       color: isSelected
                                                           ? AppColor
                                                           .pinkColor
-                                                          .withOpacity(
+                                                          .withValues(alpha: 
                                                           0.18)
                                                           : AppColor
                                                           .filledcolor(
@@ -704,7 +704,7 @@ class _CityPreferenceState extends State<CityPreference> {
                                                             .pinkColor
                                                             : AppColor
                                                             .borderColor
-                                                            .withOpacity(
+                                                            .withValues(alpha: 
                                                             0.55),
                                                         width: 1.1,
                                                       ),

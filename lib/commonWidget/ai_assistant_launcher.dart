@@ -31,7 +31,7 @@ class _AiAssistantLauncherState extends State<AiAssistantLauncher> {
       context: context,
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
-      barrierColor: Colors.black.withOpacity(0.55),
+      barrierColor: Colors.black.withValues(alpha: 0.55),
       builder: (sheetContext) => Padding(
         padding: EdgeInsets.only(bottom: MediaQuery.of(sheetContext).viewInsets.bottom),
         child: SizedBox(
@@ -168,7 +168,7 @@ class _OwlChatViewState extends State<OwlChatView> {
           gradient: LinearGradient(
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
-            colors: [AppColor.pinkColor.withOpacity(0.10), bg, bg],
+            colors: [AppColor.pinkColor.withValues(alpha: 0.10), bg, bg],
             stops: const [0, 0.35, 1],
           ),
         ),
@@ -177,7 +177,7 @@ class _OwlChatViewState extends State<OwlChatView> {
         child: Column(
           children: [
             _header(context, fg, provider, mood),
-            Divider(height: 1, color: fg.withOpacity(0.1)),
+            Divider(height: 1, color: fg.withValues(alpha: 0.1)),
             Expanded(
               child: messages.isEmpty
                   ? _welcome(context, fg, mood)
@@ -239,20 +239,20 @@ class _OwlChatViewState extends State<OwlChatView> {
                         fontSize: 12,
                         color: provider.isSending
                             ? AppColor.pinkColor
-                            : fg.withOpacity(0.6))),
+                            : fg.withValues(alpha: 0.6))),
               ],
             ),
           ),
           if (provider.messages.isNotEmpty)
             IconButton(
               tooltip: 'New chat',
-              icon: Icon(Icons.refresh_rounded, color: fg.withOpacity(0.8)),
+              icon: Icon(Icons.refresh_rounded, color: fg.withValues(alpha: 0.8)),
               onPressed: () => context.read<AiAssistantProvider>().clearConversation(),
             ),
           if (!widget.fullScreen && widget.onClose != null)
             IconButton(
               tooltip: 'Close',
-              icon: Icon(Icons.close_rounded, color: fg.withOpacity(0.8)),
+              icon: Icon(Icons.close_rounded, color: fg.withValues(alpha: 0.8)),
               onPressed: widget.onClose,
             ),
         ],
@@ -276,8 +276,8 @@ class _OwlChatViewState extends State<OwlChatView> {
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
                   gradient: RadialGradient(colors: [
-                    AppColor.pinkColor.withOpacity(0.22),
-                    AppColor.pinkColor.withOpacity(0.0),
+                    AppColor.pinkColor.withValues(alpha: 0.22),
+                    AppColor.pinkColor.withValues(alpha: 0.0),
                   ]),
                 ),
               ),
@@ -298,7 +298,7 @@ class _OwlChatViewState extends State<OwlChatView> {
             'the spot, with distances, prices and deals.',
             textAlign: TextAlign.center,
             style: TextStyle(
-                fontFamily: AppFont.fontFamily, fontSize: 14, height: 1.4, color: fg.withOpacity(0.72)),
+                fontFamily: AppFont.fontFamily, fontSize: 14, height: 1.4, color: fg.withValues(alpha: 0.72)),
           ),
           const SizedBox(height: 24),
           Wrap(
@@ -321,10 +321,10 @@ class _OwlChatViewState extends State<OwlChatView> {
         padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(22),
-          border: Border.all(color: AppColor.pinkColor.withOpacity(0.55)),
+          border: Border.all(color: AppColor.pinkColor.withValues(alpha: 0.55)),
           gradient: LinearGradient(colors: [
-            AppColor.pinkColor.withOpacity(0.14),
-            const Color(0xFF7B2FF7).withOpacity(0.10),
+            AppColor.pinkColor.withValues(alpha: 0.14),
+            const Color(0xFF7B2FF7).withValues(alpha: 0.10),
           ]),
         ),
         child: Text(label,
@@ -378,7 +378,7 @@ class _OwlChatViewState extends State<OwlChatView> {
               margin: const EdgeInsets.only(right: 28),
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
               decoration: BoxDecoration(
-                color: m.isError ? Colors.red.withOpacity(0.12) : fg.withOpacity(0.07),
+                color: m.isError ? Colors.red.withValues(alpha: 0.12) : fg.withValues(alpha: 0.07),
                 borderRadius: const BorderRadius.only(
                   topLeft: Radius.circular(18),
                   topRight: Radius.circular(18),
@@ -421,7 +421,7 @@ class _OwlChatViewState extends State<OwlChatView> {
     return Container(
       padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
       decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: fg.withOpacity(0.08))),
+        border: Border(top: BorderSide(color: fg.withValues(alpha: 0.08))),
       ),
       child: Row(
         children: [
@@ -429,7 +429,7 @@ class _OwlChatViewState extends State<OwlChatView> {
             child: Container(
               padding: const EdgeInsets.symmetric(horizontal: 16),
               decoration: BoxDecoration(
-                color: fg.withOpacity(0.07),
+                color: fg.withValues(alpha: 0.07),
                 borderRadius: BorderRadius.circular(26),
               ),
               child: TextField(
@@ -443,7 +443,7 @@ class _OwlChatViewState extends State<OwlChatView> {
                 decoration: InputDecoration(
                   border: InputBorder.none,
                   hintText: 'Ask Hii Owl…',
-                  hintStyle: TextStyle(fontFamily: AppFont.fontFamily, color: fg.withOpacity(0.45)),
+                  hintStyle: TextStyle(fontFamily: AppFont.fontFamily, color: fg.withValues(alpha: 0.45)),
                 ),
               ),
             ),
@@ -459,12 +459,12 @@ class _OwlChatViewState extends State<OwlChatView> {
                 shape: BoxShape.circle,
                 gradient: LinearGradient(
                   colors: provider.isSending
-                      ? [AppColor.pinkColor.withOpacity(0.35), const Color(0xFF7B2FF7).withOpacity(0.35)]
+                      ? [AppColor.pinkColor.withValues(alpha: 0.35), const Color(0xFF7B2FF7).withValues(alpha: 0.35)]
                       : const [AppColor.pinkColor, Color(0xFF7B2FF7)],
                 ),
                 boxShadow: provider.isSending
                     ? const []
-                    : [BoxShadow(color: AppColor.pinkColor.withOpacity(0.45), blurRadius: 12, offset: const Offset(0, 3))],
+                    : [BoxShadow(color: AppColor.pinkColor.withValues(alpha: 0.45), blurRadius: 12, offset: const Offset(0, 3))],
               ),
               child: const Icon(Icons.send_rounded, color: Colors.white, size: 20),
             ),
@@ -569,7 +569,7 @@ class _TypingIndicatorState extends State<_TypingIndicator> with SingleTickerPro
                 height: 7,
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  color: AppColor.pinkColor.withOpacity(0.5 + 0.5 * lift),
+                  color: AppColor.pinkColor.withValues(alpha: 0.5 + 0.5 * lift),
                 ),
               );
             }),
@@ -584,7 +584,7 @@ class _TypingIndicatorState extends State<_TypingIndicator> with SingleTickerPro
                 style: TextStyle(
                     fontFamily: AppFont.fontFamily,
                     fontSize: 12.5,
-                    color: widget.color.withOpacity(0.65))),
+                    color: widget.color.withValues(alpha: 0.65))),
           ),
         ],
       ],
@@ -613,7 +613,7 @@ class _OwlResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final placeholder = Container(
-      color: AppColor.pinkColor.withOpacity(0.12),
+      color: AppColor.pinkColor.withValues(alpha: 0.12),
       child: Center(
         child: Icon(card.isEvent ? Icons.event_rounded : Icons.local_bar_rounded,
             color: AppColor.pinkColor),
@@ -625,9 +625,9 @@ class _OwlResultCard extends StatelessWidget {
       child: Container(
         width: 164,
         decoration: BoxDecoration(
-          color: fg.withOpacity(0.06),
+          color: fg.withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: fg.withOpacity(0.08)),
+          border: Border.all(color: fg.withValues(alpha: 0.08)),
         ),
         clipBehavior: Clip.antiAlias,
         child: Column(
@@ -691,7 +691,7 @@ class _OwlResultCard extends StatelessWidget {
                 [card.subtitle, distance].where((s) => s.isNotEmpty).join(' · '),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 12, color: fg.withOpacity(0.6)),
+                style: TextStyle(fontFamily: AppFont.fontFamily, fontSize: 12, color: fg.withValues(alpha: 0.6)),
               ),
             ),
             const Spacer(),

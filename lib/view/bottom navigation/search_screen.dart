@@ -646,7 +646,7 @@ class _SearchScreenState extends State<SearchScreen> {
                   style: TextStyle(
                       fontFamily: AppFont.fontFamily,
                       fontSize: 12,
-                      color: AppColor.secondryColor(context).withOpacity(0.6))),
+                      color: AppColor.secondryColor(context).withValues(alpha: 0.6))),
           ],
         ),
       ),
@@ -662,7 +662,7 @@ class _SearchScreenState extends State<SearchScreen> {
         margin: const EdgeInsets.only(bottom: 10),
         padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: AppColor.secondryColor(context).withOpacity(0.06),
+          color: AppColor.secondryColor(context).withValues(alpha: 0.06),
           borderRadius: BorderRadius.circular(14),
         ),
         child: Row(
@@ -688,12 +688,12 @@ class _SearchScreenState extends State<SearchScreen> {
                         style: TextStyle(
                             fontFamily: AppFont.fontFamily,
                             fontSize: 12,
-                            color: AppColor.secondryColor(context).withOpacity(0.6))),
+                            color: AppColor.secondryColor(context).withValues(alpha: 0.6))),
                 ],
               ),
             ),
             Icon(Icons.chevron_right_rounded,
-                color: AppColor.secondryColor(context).withOpacity(0.5)),
+                color: AppColor.secondryColor(context).withValues(alpha: 0.5)),
           ],
         ),
       ),
@@ -713,8 +713,8 @@ class _SearchScreenState extends State<SearchScreen> {
   Color _featuredCardBorderColor(BuildContext context) {
     final isDark = context.read<ThemeProvider>().isDarkMode;
     return isDark
-        ? AppColor.greyLightColor(context).withOpacity(0.18)
-        : AppColor.greyLightColor(context).withOpacity(0.55);
+        ? AppColor.greyLightColor(context).withValues(alpha: 0.18)
+        : AppColor.greyLightColor(context).withValues(alpha: 0.55);
   }
 
   List<BoxShadow> _featuredCardShadow(BuildContext context) {
@@ -722,8 +722,8 @@ class _SearchScreenState extends State<SearchScreen> {
     return [
       BoxShadow(
         color: isDark
-            ? Colors.black.withOpacity(0.35)
-            : Colors.black.withOpacity(0.10),
+            ? Colors.black.withValues(alpha: 0.35)
+            : Colors.black.withValues(alpha: 0.10),
         blurRadius: isDark ? 10 : 16,
         offset: const Offset(0, 4),
       ),
@@ -733,7 +733,7 @@ class _SearchScreenState extends State<SearchScreen> {
   BoxDecoration _featuredTagDecoration() {
     return BoxDecoration(
       borderRadius: BorderRadius.circular(20),
-      color: AppColor.pinkColor.withOpacity(0.18),
+      color: AppColor.pinkColor.withValues(alpha: 0.18),
       border: Border.all(
         color: AppColor.pinkColor,
         width: 1.2,
@@ -902,13 +902,13 @@ class _SearchScreenState extends State<SearchScreen> {
                             spreadRadius: 1,
                             blurRadius: 4,
                             color: AppColor.greyLightColor(context)
-                                .withOpacity(0.4),
+                                .withValues(alpha: 0.4),
                           ),
                           BoxShadow(
                             offset: const Offset(0, 1),
                             spreadRadius: 0,
                             blurRadius: 4,
-                            color: Colors.black.withOpacity(0.15),
+                            color: Colors.black.withValues(alpha: 0.15),
                           ),
                         ],
                       ),

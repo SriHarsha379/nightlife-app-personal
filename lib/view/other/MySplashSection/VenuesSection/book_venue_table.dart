@@ -353,7 +353,7 @@ class _BookTableState extends State<BookTable> {
                     color: AppColor.primaryColor(context),
                     borderRadius: BorderRadius.circular(16),
                     border: Border.all(
-                      color: AppColor.pinkColor.withOpacity(0.35),
+                      color: AppColor.pinkColor.withValues(alpha: 0.35),
                       width: 1,
                     ),
                   ),
@@ -635,7 +635,7 @@ class _BookTableState extends State<BookTable> {
                               boxShadow: [
                                 BoxShadow(
                                   color: AppColor.secondryColor(context)
-                                      .withOpacity(0.1),
+                                      .withValues(alpha: 0.1),
                                   spreadRadius: 2,
                                   blurRadius: 8,
                                   offset: const Offset(0, 4),
@@ -742,7 +742,7 @@ class _BookTableState extends State<BookTable> {
                                 height: size.height * 11 / 100,
                                 decoration: BoxDecoration(
                                   color:
-                                  AppColor.lightgreyColor.withOpacity(0.3),
+                                  AppColor.lightgreyColor.withValues(alpha: 0.3),
                                   borderRadius: BorderRadius.circular(15),
                                 ),
                                 child: Center(
@@ -801,7 +801,7 @@ class _BookTableState extends State<BookTable> {
                                                 ? AppColor.buttonColor
                                                 : AppColor.secondryColor(
                                                 context)
-                                                .withOpacity(0.3),
+                                                .withValues(alpha: 0.3),
                                             width: 0.8,
                                           ),
                                         ),
@@ -1072,7 +1072,7 @@ class _BookTableState extends State<BookTable> {
                                       BoxShadow(
                                         color: AppColor.secondryColor(
                                             context)
-                                            .withOpacity(0.1),
+                                            .withValues(alpha: 0.1),
                                         spreadRadius: 2,
                                         blurRadius: 8,
                                         offset: const Offset(0, 4),

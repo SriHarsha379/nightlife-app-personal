@@ -129,8 +129,8 @@ class _MyVenueState extends State<MyVenue> {
       boxShadow: [
         BoxShadow(
           color: isDark
-              ? Colors.black.withOpacity(0.35)
-              : Colors.black.withOpacity(0.13),
+              ? Colors.black.withValues(alpha: 0.35)
+              : Colors.black.withValues(alpha: 0.13),
           blurRadius: isDark ? 10 : 18,
           spreadRadius: isDark ? 0 : 1,
           offset: const Offset(0, 4),
@@ -146,11 +146,11 @@ class _MyVenueState extends State<MyVenue> {
     final isDark = _isDarkMode(context);
     return BoxDecoration(
       color: isDark
-          ? AppColor.secondryColor(context).withOpacity(0.08)
-          : AppColor.pinkColor.withOpacity(0.08),
+          ? AppColor.secondryColor(context).withValues(alpha: 0.08)
+          : AppColor.pinkColor.withValues(alpha: 0.08),
       borderRadius: BorderRadius.circular(radius),
       border: Border.all(
-        color: AppColor.pinkColor.withOpacity(isDark ? 0.3 : 0.6),
+        color: AppColor.pinkColor.withValues(alpha: isDark ? 0.3 : 0.6),
         width: 1.2,
       ),
     );
@@ -591,7 +591,7 @@ class _MyVenueState extends State<MyVenue> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.10),
+                          color: Colors.black.withValues(alpha: 0.10),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -932,7 +932,7 @@ class _MyVenueState extends State<MyVenue> {
                       borderRadius: BorderRadius.circular(12),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.10),
+                          color: Colors.black.withValues(alpha: 0.10),
                           blurRadius: 8,
                           offset: const Offset(0, 2),
                         ),
@@ -1098,7 +1098,7 @@ class _MyVenueState extends State<MyVenue> {
                 borderRadius: BorderRadius.circular(8),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.10),
+                    color: Colors.black.withValues(alpha: 0.10),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

@@ -793,7 +793,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                             spreadRadius: 0,
                             blurRadius: 4,
                             color:
-                            AppColor.primaryColor(context).withOpacity(0.1),
+                            AppColor.primaryColor(context).withValues(alpha: 0.1),
                           ),
                         ],
                       ),
@@ -993,7 +993,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                                     color: AppColor
                                                         .primaryColor(
                                                         context)
-                                                        .withOpacity(
+                                                        .withValues(alpha: 
                                                         0.25),
                                                     blurRadius: 4,
                                                     offset: const Offset(

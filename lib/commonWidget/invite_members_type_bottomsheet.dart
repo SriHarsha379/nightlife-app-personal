@@ -474,7 +474,7 @@ class _InviteMembersTypeBottomSheetState
           Container(
             width: MediaQuery.of(context).size.width,
             height: 2,
-            color: AppColor.greyLightColor(context).withOpacity(0.3),
+            color: AppColor.greyLightColor(context).withValues(alpha: 0.3),
           ),
           AnimatedAlign(
             duration: const Duration(milliseconds: 300),

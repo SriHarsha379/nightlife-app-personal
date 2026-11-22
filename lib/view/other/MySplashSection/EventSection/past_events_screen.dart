@@ -140,7 +140,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       .black, // background same as screenshot
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.4),
+                                    color: Colors.white.withValues(alpha: 0.4),
                                     width: 1.2,
                                   ),
                                 ),
@@ -153,7 +153,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       style: TextStyle(
                                         fontSize: 7,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.white.withOpacity(0.8),
+                                        color: Colors.white.withValues(alpha: 0.8),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.5 / 100),
@@ -613,7 +613,7 @@ class _PastEventScreenState extends State<PastEventScreen> {
                                       fontSize: 15,
                                       fontWeight: FontWeight.w500,
                                       color: AppColor.lightGreyColor(context)
-                                          .withOpacity(0.8),
+                                          .withValues(alpha: 0.8),
                                       fontFamily: AppFont.fontFamily,
                                     ),
                                     textAlign: TextAlign.center,

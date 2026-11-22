@@ -148,7 +148,7 @@ class _CalendarScreen1State extends State<CalendarScreen1> {
                                   boxShadow: [
                                     // Added shadow to selected date
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.3),
+                                      color: Colors.black.withValues(alpha: 0.3),
                                       blurRadius: 8,
                                       spreadRadius: 1,
                                       offset: const Offset(0, 2),

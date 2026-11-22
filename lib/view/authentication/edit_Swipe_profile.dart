@@ -197,7 +197,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         color: AppColor.primaryColor(context),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.grayColor.withOpacity(0.4),
+                            color: AppColor.grayColor.withValues(alpha: 0.4),
                             // spreadRadius: 1,
                             blurRadius: 2,
                             offset: Offset(1, 1),
@@ -461,7 +461,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
+                                .withValues(alpha: 0.4), // shadow color
                             // spreadRadius: 1,
                             blurRadius: 2, // blur effect
                             offset: Offset(1, 1),
@@ -521,7 +521,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                           color: cardColor,
                           boxShadow: [
                             BoxShadow(
-                              color: AppColor.grayColor.withOpacity(0.4),
+                              color: AppColor.grayColor.withValues(alpha: 0.4),
                               blurRadius: 2,
                               offset: Offset(1, 1),
                             ),
@@ -673,7 +673,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         color: cardColor,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.grayColor.withOpacity(0.4),
+                            color: AppColor.grayColor.withValues(alpha: 0.4),
                             // spreadRadius: 1,
                             blurRadius: 2,
                             offset: Offset(1, 1),
@@ -770,7 +770,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         color: cardColor,
                         boxShadow: [
                           BoxShadow(
-                            color: AppColor.grayColor.withOpacity(0.4),
+                            color: AppColor.grayColor.withValues(alpha: 0.4),
                             // spreadRadius: 1,
                             blurRadius: 2,
                             offset: Offset(1, 1),
@@ -871,7 +871,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
+                                .withValues(alpha: 0.4), // shadow color
                             // spreadRadius: 1,
                             blurRadius: 2, // blur effect
                             offset: Offset(1, 1),
@@ -950,7 +950,7 @@ class _EditSwipeProfileState extends State<EditSwipeProfile> {
                         boxShadow: [
                           BoxShadow(
                             color: AppColor.grayColor
-                                .withOpacity(0.4), // shadow color
+                                .withValues(alpha: 0.4), // shadow color
                             // spreadRadius: 1,
                             blurRadius: 2, // blur effect
                             offset: Offset(1, 1),

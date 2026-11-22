@@ -279,7 +279,7 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                         circleId: const CircleId('selected_radius'),
                         center: LatLng(_selectedLat, _selectedLng),
                         radius: _currentDistance * 1000,
-                        fillColor: AppColor.pinkColor.withOpacity(0.2),
+                        fillColor: AppColor.pinkColor.withValues(alpha: 0.2),
                         strokeColor: AppColor.pinkColor,
                         strokeWidth: 2,
                       ),
@@ -329,7 +329,7 @@ class _LocationFilterBottomSheetState extends State<LocationFilterBottomSheet> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
                           color: selected
-                              ? AppColor.pinkColor.withOpacity(0.15)
+                              ? AppColor.pinkColor.withValues(alpha: 0.15)
                               : null,
                           border: Border.all(
                             color: selected

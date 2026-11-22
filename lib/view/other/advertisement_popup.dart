@@ -68,7 +68,7 @@ class AdvertisementPopup extends StatefulWidget {
       context: context,
       barrierDismissible: false,
       barrierLabel: 'Advertisement',
-      barrierColor: Colors.black.withOpacity(0.75),
+      barrierColor: Colors.black.withValues(alpha: 0.75),
       transitionDuration: const Duration(milliseconds: 350),
       transitionBuilder: (ctx, animation, _, child) {
         return FadeTransition(
@@ -161,12 +161,12 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
               color: isDark ? const Color(0xFF1E0E2A) : Colors.white,
               borderRadius: BorderRadius.circular(24),
               border: Border.all(
-                color: AppColor.themeColor.withOpacity(0.85),
+                color: AppColor.themeColor.withValues(alpha: 0.85),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: AppColor.themeColor.withOpacity(0.45),
+                  color: AppColor.themeColor.withValues(alpha: 0.45),
                   blurRadius: 32,
                   offset: const Offset(0, 14),
                 ),
@@ -277,7 +277,7 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
                 padding:
                 const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                 decoration: BoxDecoration(
-                  color: AppColor.themeColor.withOpacity(0.92),
+                  color: AppColor.themeColor.withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: const Text(
@@ -300,8 +300,8 @@ class _AdvertisementPopupState extends State<AdvertisementPopup> {
                   height: 34,
                   decoration: BoxDecoration(
                     color: _canClose
-                        ? Colors.black.withOpacity(0.60)
-                        : Colors.black.withOpacity(0.30),
+                        ? Colors.black.withValues(alpha: 0.60)
+                        : Colors.black.withValues(alpha: 0.30),
                     shape: BoxShape.circle,
                   ),
                   child: Center(

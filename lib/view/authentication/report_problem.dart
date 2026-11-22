@@ -299,7 +299,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                             style: TextStyle(
                               fontSize: 10,
                               fontFamily: AppFont.fontFamily,
-                              color: Colors.white.withOpacity(0.5),
+                              color: Colors.white.withValues(alpha: 0.5),
                               fontWeight: FontWeight.w400,
                             ),
                             children: [

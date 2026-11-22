@@ -203,9 +203,9 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
             vertical: size.height * 0.008,
           ),
           decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.08),
+            color: Colors.white.withValues(alpha: 0.08),
             borderRadius: BorderRadius.circular(30),
-            border: Border.all(color: Colors.white.withOpacity(0.10)),
+            border: Border.all(color: Colors.white.withValues(alpha: 0.10)),
           ),
           child: Text(
             'Hii',
@@ -237,9 +237,9 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                 vertical: size.height * 0.008,
               ),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.08),
+                color: Colors.white.withValues(alpha: 0.08),
                 borderRadius: BorderRadius.circular(24),
-                border: Border.all(color: Colors.white.withOpacity(0.12)),
+                border: Border.all(color: Colors.white.withValues(alpha: 0.12)),
               ),
               child: Text(
                 'Skip',
@@ -286,7 +286,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                       AppColor.welcomefrontCardcolor(context),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(.20),
+                          color: Colors.black.withValues(alpha: .20),
                           blurRadius: 24,
                           offset: const Offset(0, 12),
                         ),
@@ -350,7 +350,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                             slide.description,
                             style: TextStyle(
                               color: Colors.white
-                                  .withOpacity(.9),
+                                  .withValues(alpha: .9),
                               fontSize:
                               size.width * .031,
                               height: 1.45,
@@ -406,11 +406,11 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                       borderRadius: BorderRadius.circular(32),
                       gradient: AppColor.welcomefrontCardcolor(context),
                       border: Border.all(
-                        color: Colors.white.withOpacity(0.08),
+                        color: Colors.white.withValues(alpha: 0.08),
                       ),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.25),
+                          color: Colors.black.withValues(alpha: 0.25),
                           blurRadius: 22,
                           offset: const Offset(0, 14),
                         ),
@@ -422,7 +422,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                           width: size.width * 0.18,
                           height: size.width * 0.18,
                           decoration: BoxDecoration(
-                            color: Colors.white.withOpacity(0.12),
+                            color: Colors.white.withValues(alpha: 0.12),
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
@@ -447,7 +447,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                           'Get ready to discover the best venues, explore events, and connect with people who share your vibe.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
-                            color: Colors.white.withOpacity(0.88),
+                            color: Colors.white.withValues(alpha: 0.88),
                             fontSize: size.width * 0.039,
                             height: 1.55,
                             fontWeight: FontWeight.w500,
@@ -501,7 +501,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                             style: OutlinedButton.styleFrom(
                               foregroundColor: Colors.white,
                               side: BorderSide(
-                                color: Colors.white.withOpacity(0.24),
+                                color: Colors.white.withValues(alpha: 0.24),
                               ),
                               padding: EdgeInsets.symmetric(
                                 vertical: size.height * 0.018,
@@ -546,7 +546,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
             height: size.width * 0.1,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: Colors.white.withOpacity(0.10),
+              color: Colors.white.withValues(alpha: 0.10),
             ),
             child: Icon(
               icon,
@@ -559,7 +559,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
             child: Text(
               text,
               style: TextStyle(
-                color: Colors.white.withOpacity(0.95),
+                color: Colors.white.withValues(alpha: 0.95),
                 fontSize: size.width * 0.036,
                 fontWeight: FontWeight.w500,
                 fontFamily: AppFont.fontFamily,
@@ -584,13 +584,13 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
         size.height * 0.032,
       ),
       decoration: BoxDecoration(
-        color: Colors.black.withOpacity(0.18),
+        color: Colors.black.withValues(alpha: 0.18),
         borderRadius: const BorderRadius.only(
           topLeft: Radius.circular(28),
           topRight: Radius.circular(28),
         ),
         border: Border(
-          top: BorderSide(color: Colors.white.withOpacity(0.08)),
+          top: BorderSide(color: Colors.white.withValues(alpha: 0.08)),
         ),
       ),
       child: Column(
@@ -601,7 +601,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
             child: LinearProgressIndicator(
               value: progress,
               minHeight: 6,
-              backgroundColor: Colors.white.withOpacity(0.12),
+              backgroundColor: Colors.white.withValues(alpha: 0.12),
               valueColor: const AlwaysStoppedAnimation<Color>(
                 Color(0xFFFF2CDF),
               ),
@@ -620,7 +620,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                 decoration: BoxDecoration(
                   color: index == _currentPage
                       ? const Color(0xFFFF2CDF)
-                      : Colors.white.withOpacity(0.28),
+                      : Colors.white.withValues(alpha: 0.28),
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
@@ -636,7 +636,7 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.white,
                       disabledForegroundColor: Colors.white38,
-                      side: BorderSide(color: Colors.white.withOpacity(0.18)),
+                      side: BorderSide(color: Colors.white.withValues(alpha: 0.18)),
                       padding: EdgeInsets.symmetric(
                         vertical: size.height * 0.018,
                       ),

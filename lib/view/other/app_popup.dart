@@ -293,12 +293,12 @@ class _ModernPopupDialogState extends State<ModernPopupDialog>
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
+                      color: Colors.black.withValues(alpha: 0.1),
                       blurRadius: 20,
                       offset: const Offset(0, 8),
                     ),
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 40,
                       offset: const Offset(0, 16),
                     ),
@@ -315,7 +315,7 @@ class _ModernPopupDialogState extends State<ModernPopupDialog>
                           width: 64,
                           height: 64,
                           decoration: BoxDecoration(
-                            color: _iconColor.withOpacity(0.1),
+                            color: _iconColor.withValues(alpha: 0.1),
                             borderRadius: BorderRadius.circular(32),
                           ),
                           child: Icon(
@@ -367,11 +367,11 @@ class _ModernPopupDialogState extends State<ModernPopupDialog>
                                 child: Container(
                                   height: 48,
                                   decoration: BoxDecoration(
-                                    color: _cancelButtonColor.withOpacity(0.1),
+                                    color: _cancelButtonColor.withValues(alpha: 0.1),
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(
                                       color:
-                                          _cancelButtonColor.withOpacity(0.3),
+                                          _cancelButtonColor.withValues(alpha: 0.3),
                                     ),
                                   ),
                                   child: Center(
@@ -406,7 +406,7 @@ class _ModernPopupDialogState extends State<ModernPopupDialog>
                                     boxShadow: [
                                       BoxShadow(
                                         color: _confirmButtonColor
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 8,
                                         offset: const Offset(0, 4),
                                       ),

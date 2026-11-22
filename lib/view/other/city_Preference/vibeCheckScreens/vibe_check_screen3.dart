@@ -339,7 +339,7 @@ class _VibeCheckScreen3State extends State<VibeCheckScreen3> {
                                 offset: const Offset(0, 1),
                                 spreadRadius: 0,
                                 blurRadius: 0,
-                                color: AppColor.transparentColor.withOpacity(0.1),
+                                color: AppColor.transparentColor.withValues(alpha: 0.1),
                               ),
                             ],
                           ),

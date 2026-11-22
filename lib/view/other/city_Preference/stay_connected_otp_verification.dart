@@ -284,7 +284,7 @@ class _StayConnectedOTPVerifyState extends State<StayConnectedOTPVerify> {
                               BoxShadow(
                                   blurRadius: 0,
                                   color: AppColor.primaryColor(context)
-                                      .withOpacity(0.25))
+                                      .withValues(alpha: 0.25))
                             ],
                             borderRadius: BorderRadius.circular(13),
                           ),

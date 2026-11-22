@@ -145,7 +145,7 @@
 //                                               height: 80,
 //                                               decoration: BoxDecoration(
 //                                                 color: Colors.black
-//                                                     .withOpacity(0.7),
+//                                                     .withValues(alpha: 0.7),
 //                                                 shape: BoxShape.circle,
 //                                               ),
 //                                               child: const Icon(
@@ -312,7 +312,7 @@ class _MediaViewerBottomSheetState extends State<MediaViewerBottomSheet> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-        backgroundColor: Colors.transparent.withOpacity(0.2),
+        backgroundColor: Colors.transparent.withValues(alpha: 0.2),
         body: Column(
           children: [
             /// ================= MAIN VIEW =================
@@ -362,7 +362,7 @@ class _MediaViewerBottomSheetState extends State<MediaViewerBottomSheet> {
                                                     height: 80,
                                                     decoration: BoxDecoration(
                                                       color: Colors.black
-                                                          .withOpacity(0.7),
+                                                          .withValues(alpha: 0.7),
                                                       shape: BoxShape.circle,
                                                     ),
                                                     child: const Icon(

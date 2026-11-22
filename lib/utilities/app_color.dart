@@ -353,7 +353,7 @@ class AppColor {
   static const Color sixthColor = Colors.amber;
   static const Color lightwhite = Color.fromARGB(255, 250, 249, 249);
   static Color blurColor =
-      const Color.fromRGBO(255, 255, 255, 1).withOpacity(0.3);
+      const Color.fromRGBO(255, 255, 255, 1).withValues(alpha: 0.3);
   static const Color grayColor = Color(0xff212529);
   static const Color successColor = Color(0xff4CAF50);
   static const Color earningContainercolor = Color(0xffFFF3EB);

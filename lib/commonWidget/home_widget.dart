@@ -145,7 +145,7 @@ class HomeWidget {
                         ),
                         boxShadow: [
                           BoxShadow(
-                            color: const Color(0xFF9C27B0).withOpacity(0.6),
+                            color: const Color(0xFF9C27B0).withValues(alpha: 0.6),
                             blurRadius: 10,
                             spreadRadius: 1,
                           ),
@@ -191,7 +191,7 @@ class HomeWidget {
         border: Border.all(color: Color(0xFF9C27B0), width: 3),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -302,18 +302,18 @@ class HomeWidget {
               // backgrounds instead of blending in - it previously had
               // only soft shadows, no actual border.
               border: Border.all(
-                color: Colors.white.withOpacity(0.25),
+                color: Colors.white.withValues(alpha: 0.25),
                 width: 1.5,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.white.withOpacity(0.16),
+                  color: Colors.white.withValues(alpha: 0.16),
                   blurRadius: 1,
                   spreadRadius: 1.5,
                   offset: const Offset(0, 1),
                 ),
                 BoxShadow(
-                  color: Colors.black.withOpacity(0.28),
+                  color: Colors.black.withValues(alpha: 0.28),
                   blurRadius: 22,
                   offset: const Offset(0, 10),
                 ),
@@ -331,10 +331,10 @@ class HomeWidget {
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
                         colors: [
-                          Colors.black.withOpacity(0.10),
+                          Colors.black.withValues(alpha: 0.10),
                           Colors.transparent,
                           Colors.transparent,
-                          Colors.black.withOpacity(0.08),
+                          Colors.black.withValues(alpha: 0.08),
                         ],
                       ),
                     ),
@@ -353,7 +353,7 @@ class HomeWidget {
                   padding:
                   const EdgeInsets.symmetric(horizontal: 9, vertical: 4),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF5F2A8B).withOpacity(0.95),
+                    color: const Color(0xFF5F2A8B).withValues(alpha: 0.95),
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: const Text(
@@ -371,7 +371,7 @@ class HomeWidget {
                     borderRadius: BorderRadius.circular(20),
                     child: Container(
                       height: 5,
-                      color: Colors.white.withOpacity(0.35),
+                      color: Colors.white.withValues(alpha: 0.35),
                       child: Align(
                         alignment: Alignment.centerLeft,
                         child: FractionallySizedBox(
@@ -445,16 +445,16 @@ class HomeWidget {
             height: size.width * 0.13,
             decoration: BoxDecoration(
               color: isActive
-                  ? color.withOpacity(0.95)
-                  : Colors.black.withOpacity(0.45),
+                  ? color.withValues(alpha: 0.95)
+                  : Colors.black.withValues(alpha: 0.45),
               shape: BoxShape.circle,
               border: Border.all(
-                color: isActive ? color : color.withOpacity(0.6),
+                color: isActive ? color : color.withValues(alpha: 0.6),
                 width: 2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: color.withOpacity(isActive ? 0.5 : 0.25),
+                  color: color.withValues(alpha: isActive ? 0.5 : 0.25),
                   blurRadius: isActive ? 20 : 10,
                   spreadRadius: isActive ? 2 : 0,
                   offset: const Offset(0, 4),
@@ -576,7 +576,7 @@ class HomeWidget {
                   color: (isDraggingLeft
                       ? AppColor.redColor
                       : AppColor.greenColor)
-                      .withOpacity(dragOpacity * 0.6),
+                      .withValues(alpha: dragOpacity * 0.6),
                   blurRadius: 45,
                   spreadRadius: 10,
                 ),
@@ -595,13 +595,13 @@ class HomeWidget {
                       borderRadius: BorderRadius.circular(32),
                       boxShadow: [
                         BoxShadow(
-                          color: Colors.white.withOpacity(0.2),
+                          color: Colors.white.withValues(alpha: 0.2),
                           blurRadius: 1,
                           spreadRadius: 2,
                           offset: const Offset(0, 1),
                         ),
                         BoxShadow(
-                          color: Colors.black.withOpacity(0.2),
+                          color: Colors.black.withValues(alpha: 0.2),
                           blurRadius: 20,
                           offset: const Offset(0, 10),
                         ),
@@ -681,9 +681,9 @@ class HomeWidget {
                                         end: Alignment.bottomCenter,
                                         colors: [
                                           Colors.transparent,
-                                          Colors.black.withOpacity(0.1),
-                                          Colors.black.withOpacity(0.1),
-                                          Colors.black.withOpacity(0.1),
+                                          Colors.black.withValues(alpha: 0.1),
+                                          Colors.black.withValues(alpha: 0.1),
+                                          Colors.black.withValues(alpha: 0.1),
                                           Colors.black,
                                         ],
                                         stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -727,7 +727,7 @@ class HomeWidget {
                                     Text(
                                       hasBio ? safeBio : '',
                                       style: TextStyle(
-                                        color: Colors.white.withOpacity(0.9),
+                                        color: Colors.white.withValues(alpha: 0.9),
                                         fontSize: 13,
                                         height: 1.4,
                                       ),
@@ -822,7 +822,7 @@ class HomeWidget {
                                 child: Container(
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
-                                    color: AppColor.themeColor.withOpacity(.7),
+                                    color: AppColor.themeColor.withValues(alpha: .7),
                                     border: Border.all(
                                       color: const Color(0xFF9C27B0),
                                       width: 1,
@@ -830,13 +830,13 @@ class HomeWidget {
                                     boxShadow: [
                                       BoxShadow(
                                         color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.7),
+                                            .withValues(alpha: 0.7),
                                         blurRadius: 12,
                                         spreadRadius: 1,
                                       ),
                                       BoxShadow(
                                         color: const Color(0xFF9C27B0)
-                                            .withOpacity(0.3),
+                                            .withValues(alpha: 0.3),
                                         blurRadius: 4,
                                         spreadRadius: 0,
                                       ),
@@ -876,7 +876,7 @@ class HomeWidget {
                             color: (isDraggingLeft
                                 ? AppColor.redColor
                                 : AppColor.greenColor)
-                                .withOpacity(dragOpacity * 0.45),
+                                .withValues(alpha: dragOpacity * 0.45),
                           ),
                         ),
                       ),
@@ -924,13 +924,13 @@ class HomeWidget {
                                       spreadRadius: 2.5,
                                     ),
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.45),
+                                      color: Colors.black.withValues(alpha: 0.45),
                                       blurRadius: 12,
                                       spreadRadius: 1,
                                       offset: const Offset(0, 3),
                                     ),
                                     BoxShadow(
-                                      color: AppColor.redColor.withOpacity(
+                                      color: AppColor.redColor.withValues(alpha: 
                                           isDraggingLeft ? 0.8 : 0.5),
                                       blurRadius: isDraggingLeft ? 18 : 10,
                                       spreadRadius: isDraggingLeft ? 1 : 0,
@@ -1002,13 +1002,13 @@ class HomeWidget {
                                       spreadRadius: 2.5,
                                     ),
                                     BoxShadow(
-                                      color: Colors.black.withOpacity(0.45),
+                                      color: Colors.black.withValues(alpha: 0.45),
                                       blurRadius: 12,
                                       spreadRadius: 1,
                                       offset: const Offset(0, 3),
                                     ),
                                     BoxShadow(
-                                      color: AppColor.greenColor.withOpacity(
+                                      color: AppColor.greenColor.withValues(alpha: 
                                           isDraggingRight ? 0.8 : 0.5),
                                       blurRadius: isDraggingRight ? 18 : 10,
                                       spreadRadius: isDraggingRight ? 1 : 0,
@@ -1038,7 +1038,7 @@ class HomeWidget {
                         width: 40,
                         height: 130,
                         decoration: BoxDecoration(
-                          color: const Color(0xff341941).withOpacity(.6),
+                          color: const Color(0xff341941).withValues(alpha: .6),
                           borderRadius: const BorderRadius.only(
                             topLeft: Radius.circular(20),
                             bottomLeft: Radius.circular(20),
@@ -1157,13 +1157,13 @@ class HomeWidget {
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         blurRadius: 1,
                         spreadRadius: 2,
                         offset: const Offset(0, 1),
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -1221,9 +1221,9 @@ class HomeWidget {
                                       end: Alignment.bottomCenter,
                                       colors: [
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withValues(alpha: 0.1),
+                                        Colors.black.withValues(alpha: 0.1),
+                                        Colors.black.withValues(alpha: 0.1),
                                         Colors.black,
                                       ],
                                       stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -1267,7 +1267,7 @@ class HomeWidget {
                                   Text(
                                     about ?? '',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                       fontSize: 13,
                                       height: 1.4,
                                     ),
@@ -1403,7 +1403,7 @@ class HomeWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: AppColor.themeColor.withOpacity(.7),
+                                  color: AppColor.themeColor.withValues(alpha: .7),
                                   border: Border.all(
                                     color: const Color(0xFF9C27B0),
                                     width: 1,
@@ -1411,13 +1411,13 @@ class HomeWidget {
                                   boxShadow: [
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
-                                          .withOpacity(0.7),
+                                          .withValues(alpha: 0.7),
                                       blurRadius: 12,
                                       spreadRadius: 1,
                                     ),
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
-                                          .withOpacity(0.3),
+                                          .withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       spreadRadius: 0,
                                     ),
@@ -1462,7 +1462,7 @@ class HomeWidget {
                           color: (isDraggingLeft
                               ? AppColor.redColor
                               : AppColor.greenColor)
-                              .withOpacity(dragOpacity * 0.45),
+                              .withValues(alpha: dragOpacity * 0.45),
                         ),
                       ),
                     ),
@@ -1508,13 +1508,13 @@ class HomeWidget {
                                     spreadRadius: 2.5,
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.45),
+                                    color: Colors.black.withValues(alpha: 0.45),
                                     blurRadius: 12,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 3),
                                   ),
                                   BoxShadow(
-                                    color: AppColor.redColor.withOpacity(
+                                    color: AppColor.redColor.withValues(alpha: 
                                         isDraggingLeft ? 0.8 : 0.5),
                                     blurRadius: isDraggingLeft ? 18 : 10,
                                     spreadRadius: isDraggingLeft ? 1 : 0,
@@ -1585,13 +1585,13 @@ class HomeWidget {
                                     spreadRadius: 2.5,
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.45),
+                                    color: Colors.black.withValues(alpha: 0.45),
                                     blurRadius: 12,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 3),
                                   ),
                                   BoxShadow(
-                                    color: AppColor.greenColor.withOpacity(
+                                    color: AppColor.greenColor.withValues(alpha: 
                                         isDraggingRight ? 0.8 : 0.5),
                                     blurRadius: isDraggingRight ? 18 : 10,
                                     spreadRadius: isDraggingRight ? 1 : 0,
@@ -1621,7 +1621,7 @@ class HomeWidget {
                       width: 40,
                       height: 130,
                       decoration: BoxDecoration(
-                        color: const Color(0xff341941).withOpacity(.6),
+                        color: const Color(0xff341941).withValues(alpha: .6),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           bottomLeft: Radius.circular(20),
@@ -1736,13 +1736,13 @@ class HomeWidget {
                     borderRadius: BorderRadius.circular(32),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         blurRadius: 1,
                         spreadRadius: 2,
                         offset: const Offset(0, 1),
                       ),
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 0.2),
                         blurRadius: 20,
                         offset: const Offset(0, 10),
                       ),
@@ -1800,9 +1800,9 @@ class HomeWidget {
                                       end: Alignment.bottomCenter,
                                       colors: [
                                         Colors.transparent,
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
-                                        Colors.black.withOpacity(0.1),
+                                        Colors.black.withValues(alpha: 0.1),
+                                        Colors.black.withValues(alpha: 0.1),
+                                        Colors.black.withValues(alpha: 0.1),
                                         Colors.black,
                                       ],
                                       stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -1846,7 +1846,7 @@ class HomeWidget {
                                   Text(
                                     about ?? '',
                                     style: TextStyle(
-                                      color: Colors.white.withOpacity(0.9),
+                                      color: Colors.white.withValues(alpha: 0.9),
                                       fontSize: 13,
                                       height: 1.4,
                                     ),
@@ -1944,20 +1944,20 @@ class HomeWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20),
-                                  color: AppColor.themeColor.withOpacity(.7),
+                                  color: AppColor.themeColor.withValues(alpha: .7),
                                   border: Border.all(
                                       color: const Color(0xFF9C27B0),
                                       width: 1),
                                   boxShadow: [
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
-                                          .withOpacity(0.7),
+                                          .withValues(alpha: 0.7),
                                       blurRadius: 12,
                                       spreadRadius: 1,
                                     ),
                                     BoxShadow(
                                       color: const Color(0xFF9C27B0)
-                                          .withOpacity(0.3),
+                                          .withValues(alpha: 0.3),
                                       blurRadius: 4,
                                       spreadRadius: 0,
                                     ),
@@ -2002,7 +2002,7 @@ class HomeWidget {
                           color: (isDraggingLeft
                               ? AppColor.redColor
                               : AppColor.greenColor)
-                              .withOpacity(dragOpacity * 0.45),
+                              .withValues(alpha: dragOpacity * 0.45),
                         ),
                       ),
                     ),
@@ -2048,13 +2048,13 @@ class HomeWidget {
                                     spreadRadius: 2.5,
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.45),
+                                    color: Colors.black.withValues(alpha: 0.45),
                                     blurRadius: 12,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 3),
                                   ),
                                   BoxShadow(
-                                    color: AppColor.redColor.withOpacity(
+                                    color: AppColor.redColor.withValues(alpha: 
                                         isDraggingLeft ? 0.8 : 0.5),
                                     blurRadius: isDraggingLeft ? 18 : 10,
                                     spreadRadius: isDraggingLeft ? 1 : 0,
@@ -2125,13 +2125,13 @@ class HomeWidget {
                                     spreadRadius: 2.5,
                                   ),
                                   BoxShadow(
-                                    color: Colors.black.withOpacity(0.45),
+                                    color: Colors.black.withValues(alpha: 0.45),
                                     blurRadius: 12,
                                     spreadRadius: 1,
                                     offset: const Offset(0, 3),
                                   ),
                                   BoxShadow(
-                                    color: AppColor.greenColor.withOpacity(
+                                    color: AppColor.greenColor.withValues(alpha: 
                                         isDraggingRight ? 0.8 : 0.5),
                                     blurRadius: isDraggingRight ? 18 : 10,
                                     spreadRadius: isDraggingRight ? 1 : 0,
@@ -2161,7 +2161,7 @@ class HomeWidget {
                       width: 40,
                       height: 130,
                       decoration: BoxDecoration(
-                        color: const Color(0xff341941).withOpacity(.6),
+                        color: const Color(0xff341941).withValues(alpha: .6),
                         borderRadius: const BorderRadius.only(
                           topLeft: Radius.circular(20),
                           bottomLeft: Radius.circular(20),
@@ -2543,7 +2543,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                         ),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: const Color(0xFF9C27B0).withOpacity(0.6),
+//                             color: const Color(0xFF9C27B0).withValues(alpha: 0.6),
 //                             blurRadius: 10,
 //                             spreadRadius: 1,
 //                           ),
@@ -2589,7 +2589,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //         border: Border.all(color: Color(0xFF9C27B0), width: 3),
 //         boxShadow: [
 //           BoxShadow(
-//             color: Colors.black.withOpacity(0.2),
+//             color: Colors.black.withValues(alpha: 0.2),
 //             blurRadius: 8,
 //             offset: const Offset(0, 2),
 //           ),
@@ -2705,13 +2705,13 @@ class _HeartBurstState extends State<_HeartBurst>
 //                   borderRadius: BorderRadius.circular(32),
 //                   boxShadow: [
 //                     BoxShadow(
-//                       color: Colors.white.withOpacity(0.2),
+//                       color: Colors.white.withValues(alpha: 0.2),
 //                       blurRadius: 1,
 //                       spreadRadius: 2,
 //                       offset: const Offset(0, 1),
 //                     ),
 //                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.2),
+//                       color: Colors.black.withValues(alpha: 0.2),
 //                       blurRadius: 20,
 //                       offset: const Offset(0, 10),
 //                     ),
@@ -2775,9 +2775,9 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                     end: Alignment.bottomCenter,
 //                                     colors: [
 //                                       Colors.transparent,
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
 //                                       Colors.black,
 //                                     ],
 //                                     stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -2820,7 +2820,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                               Text(
 //                                 hasBio ? safeBio : '',
 //                                 style: TextStyle(
-//                                   color: Colors.white.withOpacity(0.9),
+//                                   color: Colors.white.withValues(alpha: 0.9),
 //                                   fontSize: 13,
 //                                   height: 1.4,
 //                                 ),
@@ -2906,11 +2906,11 @@ class _HeartBurstState extends State<_HeartBurst>
 //                       width: MediaQuery.of(context).size.width * 10 / 100,
 //                       height: MediaQuery.of(context).size.width * 10 / 100,
 //                       decoration: BoxDecoration(
-//                         color: AppColor.redColor.withOpacity(0.8),
+//                         color: AppColor.redColor.withValues(alpha: 0.8),
 //                         borderRadius: BorderRadius.circular(100),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.redColor.withOpacity(0.5),
+//                             color: AppColor.redColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),
@@ -2949,11 +2949,11 @@ class _HeartBurstState extends State<_HeartBurst>
 //                       width: MediaQuery.of(context).size.width * 10 / 100,
 //                       height: MediaQuery.of(context).size.width * 10 / 100,
 //                       decoration: BoxDecoration(
-//                         color: AppColor.greenColor.withOpacity(0.8),
+//                         color: AppColor.greenColor.withValues(alpha: 0.8),
 //                         borderRadius: BorderRadius.circular(100),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.greenColor.withOpacity(0.5),
+//                             color: AppColor.greenColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),
@@ -2980,7 +2980,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                     width: 40,
 //                     height: 130,
 //                     decoration: BoxDecoration(
-//                       color: const Color(0xff341941).withOpacity(.6),
+//                       color: const Color(0xff341941).withValues(alpha: .6),
 //                       borderRadius: const BorderRadius.only(
 //                         topLeft: Radius.circular(20),
 //                         bottomLeft: Radius.circular(20),
@@ -3061,13 +3061,13 @@ class _HeartBurstState extends State<_HeartBurst>
 //                   borderRadius: BorderRadius.circular(32),
 //                   boxShadow: [
 //                     BoxShadow(
-//                       color: Colors.white.withOpacity(0.2),
+//                       color: Colors.white.withValues(alpha: 0.2),
 //                       blurRadius: 1,
 //                       spreadRadius: 2,
 //                       offset: const Offset(0, 1),
 //                     ),
 //                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.2),
+//                       color: Colors.black.withValues(alpha: 0.2),
 //                       blurRadius: 20,
 //                       offset: const Offset(0, 10),
 //                     ),
@@ -3125,9 +3125,9 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                     end: Alignment.bottomCenter,
 //                                     colors: [
 //                                       Colors.transparent,
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
 //                                       Colors.black,
 //                                     ],
 //                                     stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -3170,7 +3170,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                               Text(
 //                                 about ?? '',
 //                                 style: TextStyle(
-//                                   color: Colors.white.withOpacity(0.9),
+//                                   color: Colors.white.withValues(alpha: 0.9),
 //                                   fontSize: 13,
 //                                   height: 1.4,
 //                                 ),
@@ -3263,7 +3263,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                 child: Container(
 //                                   decoration: BoxDecoration(
 //                                     borderRadius: BorderRadius.circular(20),
-//                                     color: AppColor.themeColor.withOpacity(.7),
+//                                     color: AppColor.themeColor.withValues(alpha: .7),
 //                                     border: Border.all(
 //                                       color: const Color(0xFF9C27B0),
 //                                       width: 1,
@@ -3271,13 +3271,13 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                     boxShadow: [
 //                                       BoxShadow(
 //                                         color: const Color(0xFF9C27B0)
-//                                             .withOpacity(0.7),
+//                                             .withValues(alpha: 0.7),
 //                                         blurRadius: 12,
 //                                         spreadRadius: 1,
 //                                       ),
 //                                       BoxShadow(
 //                                         color: const Color(0xFF9C27B0)
-//                                             .withOpacity(0.3),
+//                                             .withValues(alpha: 0.3),
 //                                         blurRadius: 4,
 //                                         spreadRadius: 0,
 //                                       ),
@@ -3319,7 +3319,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                     width: 40,
 //                     height: 130,
 //                     decoration: BoxDecoration(
-//                       color: const Color(0xff341941).withOpacity(.6),
+//                       color: const Color(0xff341941).withValues(alpha: .6),
 //                       borderRadius: const BorderRadius.only(
 //                         topLeft: Radius.circular(20),
 //                         bottomLeft: Radius.circular(20),
@@ -3377,7 +3377,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                         borderRadius: BorderRadius.circular(8),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.greenColor.withOpacity(0.5),
+//                             color: AppColor.greenColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),
@@ -3424,7 +3424,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                         borderRadius: BorderRadius.circular(8),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.redColor.withOpacity(0.5),
+//                             color: AppColor.redColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),
@@ -3494,13 +3494,13 @@ class _HeartBurstState extends State<_HeartBurst>
 //                   borderRadius: BorderRadius.circular(32),
 //                   boxShadow: [
 //                     BoxShadow(
-//                       color: Colors.white.withOpacity(0.2),
+//                       color: Colors.white.withValues(alpha: 0.2),
 //                       blurRadius: 1,
 //                       spreadRadius: 2,
 //                       offset: const Offset(0, 1),
 //                     ),
 //                     BoxShadow(
-//                       color: Colors.black.withOpacity(0.2),
+//                       color: Colors.black.withValues(alpha: 0.2),
 //                       blurRadius: 20,
 //                       offset: const Offset(0, 10),
 //                     ),
@@ -3558,9 +3558,9 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                     end: Alignment.bottomCenter,
 //                                     colors: [
 //                                       Colors.transparent,
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
-//                                       Colors.black.withOpacity(0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
+//                                       Colors.black.withValues(alpha: 0.1),
 //                                       Colors.black,
 //                                     ],
 //                                     stops: const [0.0, 0.6, 0.7, 0.8, 1.0],
@@ -3603,7 +3603,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                               Text(
 //                                 about ?? '',
 //                                 style: TextStyle(
-//                                   color: Colors.white.withOpacity(0.9),
+//                                   color: Colors.white.withValues(alpha: 0.9),
 //                                   fontSize: 13,
 //                                   height: 1.4,
 //                                 ),
@@ -3696,20 +3696,20 @@ class _HeartBurstState extends State<_HeartBurst>
 //                                 child: Container(
 //                                   decoration: BoxDecoration(
 //                                     borderRadius: BorderRadius.circular(20),
-//                                     color: AppColor.themeColor.withOpacity(.7),
+//                                     color: AppColor.themeColor.withValues(alpha: .7),
 //                                     border: Border.all(
 //                                         color: const Color(0xFF9C27B0),
 //                                         width: 1),
 //                                     boxShadow: [
 //                                       BoxShadow(
 //                                         color: const Color(0xFF9C27B0)
-//                                             .withOpacity(0.7),
+//                                             .withValues(alpha: 0.7),
 //                                         blurRadius: 12,
 //                                         spreadRadius: 1,
 //                                       ),
 //                                       BoxShadow(
 //                                         color: const Color(0xFF9C27B0)
-//                                             .withOpacity(0.3),
+//                                             .withValues(alpha: 0.3),
 //                                         blurRadius: 4,
 //                                         spreadRadius: 0,
 //                                       ),
@@ -3751,7 +3751,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                     width: 40,
 //                     height: 130,
 //                     decoration: BoxDecoration(
-//                       color: const Color(0xff341941).withOpacity(.6),
+//                       color: const Color(0xff341941).withValues(alpha: .6),
 //                       borderRadius: const BorderRadius.only(
 //                         topLeft: Radius.circular(20),
 //                         bottomLeft: Radius.circular(20),
@@ -3809,7 +3809,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                         borderRadius: BorderRadius.circular(8),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.greenColor.withOpacity(0.5),
+//                             color: AppColor.greenColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),
@@ -3856,7 +3856,7 @@ class _HeartBurstState extends State<_HeartBurst>
 //                         borderRadius: BorderRadius.circular(8),
 //                         boxShadow: [
 //                           BoxShadow(
-//                             color: AppColor.redColor.withOpacity(0.5),
+//                             color: AppColor.redColor.withValues(alpha: 0.5),
 //                             blurRadius: 10,
 //                             spreadRadius: 2,
 //                           ),

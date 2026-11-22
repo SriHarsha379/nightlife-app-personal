@@ -199,7 +199,7 @@ class _ProfileState extends State<Profile> {
                                                         255, 201, 59, 106),
                                                   ],
                                                   backgroundColor: Colors.white
-                                                      .withOpacity(0.18),
+                                                      .withValues(alpha: 0.18),
                                                 ),
                                               ),
                                             );
@@ -645,7 +645,7 @@ class _ProfileState extends State<Profile> {
             Icon(
               Icons.chevron_right,
               size: 18,
-              color: AppColor.secondryColor(context).withOpacity(0.4),
+              color: AppColor.secondryColor(context).withValues(alpha: 0.4),
             ),
           ],
         ),
@@ -873,7 +873,7 @@ class GradientCircularProgressPainter extends CustomPainter {
             begin: Alignment.centerLeft,
             end: Alignment.centerRight,
             colors: [
-              Colors.white.withOpacity(0.8),
+              Colors.white.withValues(alpha: 0.8),
               Colors.transparent,
             ],
             stops: const [0.0, 0.3],

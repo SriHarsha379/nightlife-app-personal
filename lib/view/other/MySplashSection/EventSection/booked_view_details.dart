@@ -126,7 +126,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                       .black, // background same as screenshot
                                   borderRadius: BorderRadius.circular(14),
                                   border: Border.all(
-                                    color: Colors.white.withOpacity(0.4),
+                                    color: Colors.white.withValues(alpha: 0.4),
                                     width: 1.2,
                                   ),
                                 ),
@@ -139,7 +139,7 @@ class _BookedViewDetailsState extends State<BookedViewDetails> {
                                       style: TextStyle(
                                         fontSize: 7,
                                         fontWeight: FontWeight.w500,
-                                        color: Colors.white.withOpacity(0.8),
+                                        color: Colors.white.withValues(alpha: 0.8),
                                       ),
                                     ),
                                     SizedBox(height: size.height * 0.5 / 100),

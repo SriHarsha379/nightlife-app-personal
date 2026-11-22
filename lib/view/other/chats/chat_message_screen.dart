@@ -1173,7 +1173,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     final spoken = _speechLiveText.trim();
     return Positioned.fill(
       child: Material(
-        color: Colors.black.withOpacity(0.45),
+        color: Colors.black.withValues(alpha: 0.45),
         child: InkWell(
           onTap: _stopSpeechToText,
           child: Center(
@@ -1735,7 +1735,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
           borderRadius: BorderRadius.circular(14),
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.2),
+              color: Colors.black.withValues(alpha: 0.2),
               blurRadius: 10,
               offset: const Offset(0, 4),
             ),
@@ -1920,7 +1920,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
               Center(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.5),
+                    color: Colors.black.withValues(alpha: 0.5),
                     shape: BoxShape.circle,
                   ),
                   padding: const EdgeInsets.all(6),
@@ -1930,7 +1930,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
               ),
             if (extraCount > 0)
               Container(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 alignment: Alignment.center,
                 child: Text(
                   '+$extraCount',
@@ -1943,7 +1943,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
               ),
             if (isPending)
               Container(
-                color: Colors.black.withOpacity(0.38),
+                color: Colors.black.withValues(alpha: 0.38),
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1970,7 +1970,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
               ),
             if (isFailed)
               Container(
-                color: Colors.black.withOpacity(0.45),
+                color: Colors.black.withValues(alpha: 0.45),
                 alignment: Alignment.center,
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -1991,7 +1991,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                       padding: const EdgeInsets.symmetric(
                           horizontal: 10, vertical: 5),
                       decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.2),
+                        color: Colors.white.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: const Text(
@@ -2156,9 +2156,9 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                     begin: Alignment.topCenter,
                                     end: Alignment.bottomCenter,
                                     colors: [
-                                      Colors.black.withOpacity(0.12),
-                                      Colors.black.withOpacity(0.28),
-                                      Colors.black.withOpacity(0.72),
+                                      Colors.black.withValues(alpha: 0.12),
+                                      Colors.black.withValues(alpha: 0.28),
+                                      Colors.black.withValues(alpha: 0.72),
                                     ],
                                   ),
                                 ),
@@ -2654,7 +2654,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                                                 BoxShadow(
                                                                   color: Colors
                                                                       .black
-                                                                      .withOpacity(
+                                                                      .withValues(alpha: 
                                                                       0.2),
                                                                   blurRadius:
                                                                   10,
@@ -2780,7 +2780,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                         boxShadow: [
                                           BoxShadow(
                                               color:
-                                              Colors.black.withOpacity(0.1),
+                                              Colors.black.withValues(alpha: 0.1),
                                               blurRadius: 20,
                                               offset: const Offset(0, 2))
                                         ],
@@ -3196,7 +3196,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                           color: AppColor.washpressColor,
                           boxShadow: [
                             BoxShadow(
-                                color: Colors.black.withOpacity(0.2),
+                                color: Colors.black.withValues(alpha: 0.2),
                                 blurRadius: 10,
                                 spreadRadius: 2,
                                 offset: const Offset(0, 4))

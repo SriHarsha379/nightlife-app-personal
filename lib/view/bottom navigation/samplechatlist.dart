@@ -233,7 +233,7 @@
 //                             offset: const Offset(0, 4),
 //                             spreadRadius: 0,
 //                             blurRadius: 4,
-//                             color: AppColor.primaryColor(context).withOpacity(0.1),
+//                             color: AppColor.primaryColor(context).withValues(alpha: 0.1),
 //                           ),
 //                         ],
 //                       ),
@@ -331,7 +331,7 @@
 //                                                   BoxShadow(
 //                                                     color: AppColor.primaryColor(
 //                                                                 context)
-//                                                         .withOpacity(0.25),
+//                                                         .withValues(alpha: 0.25),
 //                                                     blurRadius: 4,
 //                                                     offset: const Offset(0, 4),
 //                                                   ),

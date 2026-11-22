@@ -394,7 +394,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             boxShadow: filled
                 ? [
               BoxShadow(
-                color: backgroundColor.withOpacity(0.28),
+                color: backgroundColor.withValues(alpha: 0.28),
                 blurRadius: 14,
                 offset: const Offset(0, 6),
               ),
@@ -451,7 +451,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
             floatingActionButton: Container(
               decoration: BoxDecoration(
                 color:
-                AppColor.sendinvitecontainercolor(context).withOpacity(0.9),
+                AppColor.sendinvitecontainercolor(context).withValues(alpha: 0.9),
                 borderRadius: BorderRadius.circular(25),
               ),
               width: _showDislikeOnly
@@ -579,7 +579,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                     boxShadow: [
                                       BoxShadow(
                                         color:
-                                        Colors.white.withOpacity(.5),
+                                        Colors.white.withValues(alpha: .5),
                                         blurRadius: 5,
                                         spreadRadius: .5,
                                         offset: Offset(2, 0),
@@ -630,11 +630,11 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               colors: [
                                                 Colors.transparent,
                                                 Colors.black
-                                                    .withOpacity(0.4),
+                                                    .withValues(alpha: 0.4),
                                                 Colors.black
-                                                    .withOpacity(0.8),
+                                                    .withValues(alpha: 0.8),
                                                 Colors.black
-                                                    .withOpacity(0.9),
+                                                    .withValues(alpha: 0.9),
                                               ],
                                             ),
                                           ),
@@ -658,7 +658,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                             padding: EdgeInsets.all(8),
                                             // decoration: BoxDecoration(
                                             //   color:
-                                            //       Colors.black.withOpacity(0.3),
+                                            //       Colors.black.withValues(alpha: 0.3),
                                             //   shape: BoxShape.circle,
                                             // ),
                                             child: Icon(
@@ -1216,7 +1216,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                           Container(
                                                             color: Colors
                                                                 .black
-                                                                .withOpacity(
+                                                                .withValues(alpha: 
                                                                 0.18),
                                                           ),
                                                         if (isVideo)
@@ -1229,7 +1229,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                                               BoxDecoration(
                                                                 color: Colors
                                                                     .black
-                                                                    .withOpacity(
+                                                                    .withValues(alpha: 
                                                                     0.45),
                                                                 shape: BoxShape
                                                                     .circle,
@@ -1389,7 +1389,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                                               BoxShadow(
                                                 color: AppColor
                                                     .grayColor
-                                                    .withOpacity(0.4),
+                                                    .withValues(alpha: 0.4),
                                                 blurRadius: 2,
                                                 offset: Offset(1, 1),
                                               ),
@@ -1824,7 +1824,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       fontSize: 13,
                       fontFamily: AppFont.fontFamily,
                       fontWeight: FontWeight.w500,
-                      color: AppColor.secondryColor(context).withOpacity(0.7),
+                      color: AppColor.secondryColor(context).withValues(alpha: 0.7),
                     ),
                   ),
                   const SizedBox(height: 6),
@@ -1924,8 +1924,8 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       end: Alignment.bottomCenter,
                       colors: [
                         Colors.transparent,
-                        Colors.black.withOpacity(0.5),
-                        Colors.black.withOpacity(0.85),
+                        Colors.black.withValues(alpha: 0.5),
+                        Colors.black.withValues(alpha: 0.85),
                       ],
                     ),
                   ),
@@ -1946,7 +1946,7 @@ class _LikedMemberDetailState extends State<LikedMemberDetail> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: AppColor.themeColor.withOpacity(.7),
+                        color: AppColor.themeColor.withValues(alpha: .7),
                         border: Border.all(
                             color: const Color(0xFF9C27B0), width: 2),
                       ),

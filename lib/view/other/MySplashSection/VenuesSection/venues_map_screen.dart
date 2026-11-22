@@ -124,7 +124,7 @@ class _VenuesMapScreenState extends State<VenuesMapScreen> {
                   "No venues with a location to show right now.",
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: AppColor.secondryColor(context).withOpacity(0.6),
+                    color: AppColor.secondryColor(context).withValues(alpha: 0.6),
                     fontFamily: AppFont.fontFamily,
                     fontSize: 14,
                   ),
@@ -213,7 +213,7 @@ class _VenuesMapScreenState extends State<VenuesMapScreen> {
                                         (_selectedVenue!['address'] ?? '').toString(),
                                         style: TextStyle(
                                           color: AppColor.secondryColor(context)
-                                              .withOpacity(0.6),
+                                              .withValues(alpha: 0.6),
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 12,
                                         ),

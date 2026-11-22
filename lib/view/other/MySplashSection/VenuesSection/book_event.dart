@@ -364,7 +364,7 @@ class _BookEventState extends State<BookEvent> {
                           //       boxShadow: [
                           //         BoxShadow(
                           //           color: AppColor.secondryColor(context)
-                          //               .withOpacity(0.1),
+                          //               .withValues(alpha: 0.1),
                           //           spreadRadius: 2,
                           //           blurRadius: 8,
                           //           offset: const Offset(0, 4),
@@ -933,7 +933,7 @@ class _BookEventState extends State<BookEvent> {
                         decoration: BoxDecoration(
                           border: Border(
                             bottom: BorderSide(
-                              color: AppColor.lightgreyColor.withOpacity(0.3),
+                              color: AppColor.lightgreyColor.withValues(alpha: 0.3),
                             ),
                           ),
                         ),

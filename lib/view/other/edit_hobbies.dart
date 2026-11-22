@@ -336,7 +336,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                     boxShadow: [
                                       BoxShadow(
                                         color: Colors.black
-                                            .withOpacity(isDark ? 0.05 : 0.08),
+                                            .withValues(alpha: isDark ? 0.05 : 0.08),
                                         blurRadius: 4,
                                         offset: const Offset(0, 2),
                                       ),
@@ -563,7 +563,7 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                                     horizontal: 14, vertical: 10),
                                 decoration: BoxDecoration(
                                   color: isSelected
-                                      ? AppColor.pinkColor.withOpacity(0.18)
+                                      ? AppColor.pinkColor.withValues(alpha: 0.18)
                                       : (isDark
                                       ? AppColor.primaryColor(context)
                                       : const Color(0xFFF0F0F0)),

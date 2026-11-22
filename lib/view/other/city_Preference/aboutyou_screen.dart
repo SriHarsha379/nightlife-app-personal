@@ -398,7 +398,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                                   fontSize: 16,
                                   fontWeight: FontWeight.w400,
                                   color: AppColor.secondryColor(context)
-                                      .withOpacity(0.5),
+                                      .withValues(alpha: 0.5),
                                 ),
 
                                 /// ✅ Border always visible
