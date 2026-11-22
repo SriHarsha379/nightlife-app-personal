@@ -384,13 +384,33 @@ class _MyVenueState extends State<MyVenue> {
 
         if (venues.isEmpty) {
           return Center(
-            child: Text(
-              'No liked venues yet',
-              style: TextStyle(
-                color: AppColor.secondryColor(context),
-                fontFamily: AppFont.fontFamily,
-                fontSize: 16,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.nightlife_outlined,
+                    size: 56,
+                    color: AppColor.buttonColor.withValues(alpha: 0.5)),
+                const SizedBox(height: 16),
+                Text(
+                  'No liked venues yet',
+                  style: TextStyle(
+                    color: AppColor.secondryColor(context),
+                    fontFamily: AppFont.fontFamily,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Go to Home and swipe right on venues you like',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
           );
         }

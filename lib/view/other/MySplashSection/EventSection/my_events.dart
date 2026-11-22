@@ -405,13 +405,33 @@ class _MyEventsState extends State<MyEvents> {
 
         if (events.isEmpty) {
           return Center(
-            child: Text(
-              'No liked events yet',
-              style: TextStyle(
-                color: AppColor.secondryColor(context),
-                fontFamily: AppFont.fontFamily,
-                fontSize: 16,
-              ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.event_outlined,
+                    size: 56,
+                    color: AppColor.buttonColor.withValues(alpha: 0.5)),
+                const SizedBox(height: 16),
+                Text(
+                  'No liked events yet',
+                  style: TextStyle(
+                    color: AppColor.secondryColor(context),
+                    fontFamily: AppFont.fontFamily,
+                    fontWeight: FontWeight.w600,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Go to Home and swipe right on events you like',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                    fontFamily: AppFont.fontFamily,
+                    fontSize: 13,
+                  ),
+                ),
+              ],
             ),
           );
         }

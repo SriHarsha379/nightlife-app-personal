@@ -487,14 +487,35 @@ class _splashMembersState extends State<splashMembers> {
                                 ? Container(
                                     height: size.height * 60 / 100,
                                     child: Center(
-                                      child: Text(
-                                        'No liked members yet',
-                                        style: TextStyle(
-                                          color:
-                                              AppColor.secondryColor(context),
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 16,
-                                        ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.favorite_outline_rounded,
+                                            size: 56,
+                                            color: AppColor.buttonColor.withValues(alpha: 0.5),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            'No liked members yet',
+                                            style: TextStyle(
+                                              color: AppColor.secondryColor(context),
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'Go to Home and swipe right on members you like',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   )
@@ -784,14 +805,35 @@ class _splashMembersState extends State<splashMembers> {
                                 ? Container(
                                     height: size.height * 50 / 100,
                                     child: Center(
-                                      child: Text(
-                                        'No connections yet',
-                                        style: TextStyle(
-                                          color:
-                                              AppColor.secondryColor(context),
-                                          fontFamily: AppFont.fontFamily,
-                                          fontSize: 16,
-                                        ),
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(
+                                            Icons.people_outline_rounded,
+                                            size: 56,
+                                            color: AppColor.buttonColor.withValues(alpha: 0.5),
+                                          ),
+                                          const SizedBox(height: 16),
+                                          Text(
+                                            'No matches yet',
+                                            style: TextStyle(
+                                              color: AppColor.secondryColor(context),
+                                              fontFamily: AppFont.fontFamily,
+                                              fontWeight: FontWeight.w600,
+                                              fontSize: 16,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 8),
+                                          Text(
+                                            'When both of you swipe right, you'll connect here',
+                                            textAlign: TextAlign.center,
+                                            style: TextStyle(
+                                              color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
                                       ),
                                     ),
                                   )
