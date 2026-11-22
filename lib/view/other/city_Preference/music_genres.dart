@@ -486,7 +486,7 @@ class _MusicGenresScreenState extends State<MusicGenresScreen> {
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 5),
         child: Container(
-          height: size.height * 18 / 100,
+          height: size.height * 10 / 100,
           decoration: BoxDecoration(
             border: Border.all(
               color: isSelected ? AppColor.buttonColor : Colors.transparent,

@@ -370,7 +370,7 @@ class _EventPreferenceState extends State<EventPreference> {
                             offset: const Offset(0, 1),
                             spreadRadius: 0,
                             blurRadius: 0,
-                            color: AppColor.transparentColor.withOpacity(0.1),
+                            color: AppColor.transparentColor.withValues(alpha: 0.1),
                           ),
                         ],
                       ),
@@ -416,7 +416,8 @@ class _EventPreferenceState extends State<EventPreference> {
                       ),
                     ),
 
-                    SizedBox(height: size.height * 18 / 100),
+                    // ✅ FIX: reduced bottom padding — audit #14
+                    SizedBox(height: size.height * 10 / 100),
                   ],
                 ),
               );

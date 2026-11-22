@@ -428,7 +428,7 @@ class _AboutYouScreenState extends State<AboutYouScreen> {
                             ),
                           ),
 
-                        SizedBox(height: size.height * 20 / 100),
+                        SizedBox(height: size.height * 10 / 100),
                       ],
                     ),
                   ),
