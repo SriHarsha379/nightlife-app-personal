@@ -240,15 +240,35 @@ class _CalendarScreenState extends State<CalendarScreen> {
                                           MediaQuery.of(context).size.height *
                                               3 /
                                               100),
-                                  child: Text(
-                                    "No events found",
-                                    style: TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w500,
-                                      color: AppColor.secondryColor(context)
-                                          .withValues(alpha: 0.6),
-                                    ),
+                                  // ✅ FIX: audit #24 — useful no-results state
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.event_busy_rounded,
+                                        size: 48,
+                                        color: AppColor.buttonColor.withValues(alpha: 0.4),
+                                      ),
+                                      const SizedBox(height: 12),
+                                      Text(
+                                        "No events on this date",
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 15,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColor.secondryColor(context),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        "Try another date or browse all events",
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 13,
+                                          color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 );
                               }

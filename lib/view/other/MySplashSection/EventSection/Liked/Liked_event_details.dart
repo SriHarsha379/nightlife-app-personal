@@ -1646,52 +1646,34 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                               ),
                                                             );
                                                           },
+                                                          // ✅ FIX: audit #27 — clear closed-sales state
                                                           child: Container(
-                                                            width: size.width *
-                                                                45 /
-                                                                100,
+                                                            width: size.width * 45 / 100,
                                                             decoration: BoxDecoration(
-                                                                color: Colors
-                                                                    .white,
-                                                                borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                    40)),
+                                                              color: isEnded
+                                                                  ? Colors.grey.withValues(alpha: 0.3)
+                                                                  : Colors.white,
+                                                              borderRadius: BorderRadius.circular(40),
+                                                              border: isEnded
+                                                                  ? Border.all(color: Colors.grey.withValues(alpha: 0.5))
+                                                                  : null,
+                                                            ),
                                                             child: Center(
                                                               child: Padding(
-                                                                padding: EdgeInsets
-                                                                    .symmetric(
-                                                                  horizontal: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .width *
-                                                                      3 /
-                                                                      100,
-                                                                  vertical: MediaQuery.of(
-                                                                      context)
-                                                                      .size
-                                                                      .height *
-                                                                      1.8 /
-                                                                      100,
+                                                                padding: EdgeInsets.symmetric(
+                                                                  horizontal: size.width * 3 / 100,
+                                                                  vertical: size.height * 1.8 / 100,
                                                                 ),
                                                                 child: Text(
-                                                                  AppLanguage
-                                                                      .getTicketsText[
-                                                                  language],
+                                                                  isEnded ? 'Sales Closed' : AppLanguage.getTicketsText[language],
                                                                   style: TextStyle(
-                                                                      fontSize:
-                                                                      20,
-                                                                      fontFamily:
-                                                                      AppFont
-                                                                          .fontFamily,
-                                                                      fontWeight:
-                                                                      FontWeight
-                                                                          .w600,
-                                                                      color: isEnded
-                                                                          ? AppColor
-                                                                          .textcolor
-                                                                          : AppColor
-                                                                          .pinkColor),
+                                                                    fontSize: 18,
+                                                                    fontFamily: AppFont.fontFamily,
+                                                                    fontWeight: FontWeight.w600,
+                                                                    color: isEnded
+                                                                        ? Colors.grey
+                                                                        : AppColor.pinkColor,
+                                                                  ),
                                                                 ),
                                                               ),
                                                             ),

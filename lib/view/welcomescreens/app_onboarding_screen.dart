@@ -607,25 +607,8 @@ class _AppOnboardingScreenState extends State<AppOnboardingScreen> {
               ),
             ),
           ),
-          SizedBox(height: size.height * 0.014),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              _slides.length + 1,
-                  (index) => AnimatedContainer(
-                duration: const Duration(milliseconds: 250),
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                width: index == _currentPage ? 18 : 6,
-                height: 6,
-                decoration: BoxDecoration(
-                  color: index == _currentPage
-                      ? const Color(0xFFFF2CDF)
-                      : Colors.white.withValues(alpha: 0.28),
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-            ),
-          ),
+          // ✅ FIX: audit #01 — removed page dots, keeping only
+          // LinearProgressIndicator above for one clear progress signal
           SizedBox(height: size.height * 0.02),
           if (!_isLastPage)
             Row(

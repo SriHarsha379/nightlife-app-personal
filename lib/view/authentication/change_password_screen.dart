@@ -8,6 +8,7 @@ import '../../../utilities/app_language.dart';
 import '../../provider/post_api_provider.dart';
 import '../../utilities/app_image.dart';
 import '../../utilities/app_validation.dart';
+import '../../utilities/app_text_field.dart';
 import '../../utilities/custom_password.dart';
 
 class ChangePasswordScreen extends StatefulWidget {
@@ -143,49 +144,58 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                       SizedBox(
                         height: MediaQuery.of(context).size.height * 4 / 100,
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 85 / 100,
-                        height: MediaQuery.of(context).size.height * 6 / 100,
-                        child: CustomPasswordField(
+                      // ✅ FIX: audit #46 — floating labels + password rules shown
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.075,
+                        ),
+                        child: AppTextField(
                           controller: currentController,
-                          hintText: "Current Password",
+                          label: 'Current Password',
                           maxLength: AppConstant.passwordMaxLength,
-                          fillColor: AppColor.otpboxColor(context),
-                          textColor: Colors.black,
-                          borderColor: AppColor.transparentColor,
-                          iconColor: AppColor.primaryColor(context),
+                          isPassword: true,
+                          textInputAction: TextInputAction.next,
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 2 / 100,
-                      ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 85 / 100,
-                        height: MediaQuery.of(context).size.height * 6 / 100,
-                        child: CustomPasswordField(
+                      const SizedBox(height: 16),
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.075,
+                        ),
+                        child: AppTextField(
                           controller: newPasswordTextController,
-                          hintText: "New Password",
+                          label: 'New Password',
+                          hint: 'Min 8 chars, uppercase, number, symbol',
                           maxLength: AppConstant.passwordMaxLength,
-                          fillColor: AppColor.otpboxColor(context),
-                          textColor: Colors.black,
-                          borderColor: AppColor.transparentColor,
-                          iconColor: AppColor.primaryColor(context),
+                          isPassword: true,
+                          textInputAction: TextInputAction.next,
                         ),
                       ),
-                      SizedBox(
-                        height: MediaQuery.of(context).size.height * 2 / 100,
+                      // ✅ audit #46 — show rules before error
+                      Padding(
+                        padding: EdgeInsets.only(
+                          left: MediaQuery.of(context).size.width * 0.08,
+                          top: 4, bottom: 8,
+                        ),
+                        child: Text(
+                          'Must contain uppercase, lowercase, number and symbol',
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: AppColor.hinttextcolor(context),
+                            fontFamily: AppFont.fontFamily,
+                          ),
+                        ),
                       ),
-                      SizedBox(
-                        width: MediaQuery.of(context).size.width * 85 / 100,
-                        height: MediaQuery.of(context).size.height * 6 / 100,
-                        child: CustomPasswordField(
+                      Padding(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width * 0.075,
+                        ),
+                        child: AppTextField(
                           controller: confirmPasswordTextEditingController,
-                          hintText: "Confirm New Password",
+                          label: 'Confirm New Password',
                           maxLength: AppConstant.passwordMaxLength,
-                          fillColor: AppColor.otpboxColor(context),
-                          textColor: Colors.black,
-                          borderColor: AppColor.transparentColor,
-                          iconColor: AppColor.primaryColor(context),
+                          isPassword: true,
+                          textInputAction: TextInputAction.done,
                         ),
                       ),
                     ],
@@ -196,8 +206,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 builder: (context, apiProvider, child) {
                   return apiProvider.loading
                       ? const CircularProgressIndicator(
-                          color: AppColor.pinkColor,
-                        )
+                          color: AppColor.pinkColor) // kept for compatibility
                       : AppButton(
                           text: AppLanguage.continueText[language],
                           onPress: () {

@@ -8,6 +8,7 @@ import '../../../provider/darkmode_provider.dart';
 import '../../../commonWidget/onboarding_footnote.dart';
 import '../../../provider/post_api_provider.dart';
 import '../../../utilities/app_button.dart';
+import '../../../utilities/app_text_field.dart';
 import '../../../utilities/app_color.dart';
 import '../../../utilities/app_constant.dart';
 import '../../../utilities/app_font.dart';
@@ -356,13 +357,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   height: MediaQuery.of(context).size.height *
                                       7 /
                                       100,
-                                  child: CustomTextField(
-                                    hintText:
-                                    AppLanguage.bioOptionalText[language],
+                                  child: AppTextField(
+                                    // ✅ FIX: audit #11 — floating label
+                                    label: AppLanguage.bioOptionalText[language],
+                                    hint: 'Tell people about yourself...',
                                     maxLength: AppConstant.fullNameText,
-                                    // keyboardType: TextInputType.name,
                                     controller: BioTextEditingController,
-                                    readOnly: false,
+                                    maxLines: 3,
                                   ),
                                 ),
                               ),
@@ -382,6 +383,13 @@ class _AdditionalInfoScreenState extends State<AdditionalInfoScreen> {
                                   focusNode: _instagramFocusNode,
                                   maxLength: AppConstant.fullNameText,
                                   decoration: InputDecoration(
+                                    // ✅ FIX: audit #11 — persistent label
+                                    labelText: 'Instagram',
+                                    floatingLabelBehavior: FloatingLabelBehavior.always,
+                                    labelStyle: TextStyle(
+                                      color: AppColor.hinttextcolor(context),
+                                      fontSize: 12,
+                                    ),
                                     prefixIcon: Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
