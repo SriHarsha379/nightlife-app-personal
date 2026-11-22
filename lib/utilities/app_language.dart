@@ -459,9 +459,9 @@ class AppLanguage {
   static const eventStatementtext = [
     "your events, venues, and connections, all about YOU"
   ];
-  static const addthreeMoreTExt = ["Add 3 more images"];
-  static const completeBio = ["Complete Bio"];
-  static const connectInstagramtext = ["Connect Instagram"];
+  static const addthreeMoreTExt = ["Add more images (optional)"];  // audit #44
+  static const completeBio = ["Add a bio (optional)"];  // audit #44
+  static const connectInstagramtext = ["Connect Instagram (optional)"];  // audit #44
   static const addFivevedios = ["Add 5 Videos"];
   static const addHobbyText = ["Add Hobby"];
 
@@ -815,7 +815,7 @@ class AppLanguage {
   static const setupYourPrefText = ["Set up your Preferences"];
   static const yourProfileText = ["Your Profile"];
   static const uploadPhotosstatementText = [
-    "Upload 1 to 9 photos/Videos to complete your profile and make it stand out."
+    "Upload photos or videos to make your profile stand out. You can add up to 9 — even one is a great start."  // audit #15
   ];
 
   //10/11

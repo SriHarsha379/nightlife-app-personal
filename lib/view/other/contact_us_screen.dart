@@ -40,17 +40,45 @@ class _ContactUsScreenState extends State<ContactUsScreen> {
     super.dispose();
   }
 
+  // ✅ FIX: audit #48 — floating labels visible after typing
   InputDecoration _decoration(BuildContext context, String hint) {
     return InputDecoration(
+      labelText: hint,
+      labelStyle: TextStyle(
+        color: AppColor.hinttextcolor(context),
+        fontFamily: AppFont.fontFamily,
+        fontSize: 14,
+      ),
+      floatingLabelBehavior: FloatingLabelBehavior.always,
+      floatingLabelStyle: TextStyle(
+        color: AppColor.hinttextcolor(context),
+        fontFamily: AppFont.fontFamily,
+        fontSize: 12,
+        fontWeight: FontWeight.w600,
+      ),
       hintText: hint,
       hintStyle: TextStyle(
-        color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+        color: AppColor.secondryColor(context).withValues(alpha: 0.4),
         fontFamily: AppFont.fontFamily,
         fontSize: 14,
       ),
       filled: true,
       fillColor: AppColor.filledcolor(context),
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      contentPadding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: BorderSide(
+          color: AppColor.greyLightColor(context),
+          width: 1,
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(12),
+        borderSide: const BorderSide(
+          color: AppColor.buttonColor,
+          width: 1.5,
+        ),
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide.none,

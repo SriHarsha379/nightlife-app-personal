@@ -997,13 +997,34 @@ class _VenuePagesState extends State<VenuePages> {
                                   ? 1
                                   : _recentEvents.length,
                               itemBuilder: (context, index) {
+                                // ✅ FIX: audit #30 — compact text empty state
+                                // replacing oversized image card
                                 if (_recentEvents.isEmpty) {
-                                  return _recentEventCard(
-                                    image: AppImage.eventCardImage,
-                                    name: "No upcoming events",
-                                    time: "",
-                                    tags: [],
-                                    isNetwork: false,
+                                  return Container(
+                                    width: size.width * 80 / 100,
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color: AppColor.textFieldColor(context),
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    child: Row(
+                                      children: [
+                                        Icon(
+                                          Icons.event_busy_outlined,
+                                          color: AppColor.buttonColor.withValues(alpha: 0.5),
+                                          size: 24,
+                                        ),
+                                        const SizedBox(width: 12),
+                                        Text(
+                                          'No upcoming events at this venue',
+                                          style: TextStyle(
+                                            color: AppColor.secondryColor(context).withValues(alpha: 0.6),
+                                            fontFamily: AppFont.fontFamily,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   );
                                 }
                                 final item = _recentEvents[index];
