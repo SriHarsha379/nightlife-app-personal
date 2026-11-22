@@ -11,7 +11,9 @@ const int kVibeMinWords = 6;
 List<String> _vibeWords(String text) => text
     .trim()
     .split(RegExp(r'\s+'))
-    .where((w) => RegExp(r'[A-Za-z0-9]').hasMatch(w))
+    // ✅ FIX: audit #17 — require at least 2 chars per word
+    // prevents "q w e r t y" loophole (single chars counted as words)
+    .where((w) => w.length >= 2 && RegExp(r'[A-Za-z0-9]').hasMatch(w))
     .toList();
 
 int vibeWordCount(String text) => _vibeWords(text).length;
@@ -19,7 +21,7 @@ int vibeWordCount(String text) => _vibeWords(text).length;
 bool isValidVibeAnswer(String text) {
   final words = _vibeWords(text);
   return words.length >= kVibeMinWords &&
-      words.map((w) => w.toLowerCase()).toSet().length >= 3;
+      words.map((w) => w.toLowerCase()).toSet().length >= 4;  // audit #17
 }
 
 /// Something typed, but not a valid answer yet (too short / repetitive).

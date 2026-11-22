@@ -787,21 +787,8 @@ class EditHobbiesScreenState extends State<EditHobbiesScreen> {
                         horizontal: 8,
                         vertical: 2,
                       ),
-                      decoration: BoxDecoration(
-                        color: isDark
-                            ? AppColor.primaryColor(context)
-                            : const Color(0xFFEEEEEE),
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: Text(
-                        'ID: $id',
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontWeight: FontWeight.w500,
-                          fontFamily: AppFont.fontFamily,
-                          color: isDark ? Colors.white : Colors.black87,
-                        ),
-                      ),
+                      // ✅ FIX: audit #42 — removed internal ID badge
+                      // Database identifiers have no use in the UI
                     ),
                   ],
                 ),

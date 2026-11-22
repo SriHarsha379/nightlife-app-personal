@@ -473,7 +473,7 @@ class AppLanguage {
   static const trendingSearchtext = ["Trending Search"];
   static const aroundMetext = ["Around Me"];
   static const allFriendstext = ["All Friends"];
-  static const editDetailsText = ["Edit Details"];
+  static const editDetailsText = ["Edit Profile"];  // audit #40 — was "Edit Details"
   static const enterYournameText = ["Enter your name"];
   static const date = ["11/11/2003"];
   static const edityourInterestsText = ["Edit your interests "];
@@ -548,7 +548,7 @@ class AppLanguage {
   static const onetwentyText = ["120"];
   static const friends = ["Friends"];
   static const fiveSixtyText = ["560"];
-  static const editSwipeprofileText = ["Edit Swipe Profile"];
+  static const editSwipeprofileText = ["Manage Visibility"];  // audit #40 — was "Edit Swipe Profile"
   static const sanjana05Text = ["@sanjana05"];
   static const travellerText = ["Traveller"];
   static const lifeisaMovieText = ["Life is a Movie 🎥"];

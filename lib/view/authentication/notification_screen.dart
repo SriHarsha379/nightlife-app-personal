@@ -512,19 +512,40 @@ class _NotificationsState extends State<Notifications> {
                                   padding: EdgeInsets.symmetric(vertical: 24),
                                   child: CircularProgressIndicator(),
                                 ),
+                              // ✅ FIX: audit #45 — friendly empty state
                               if (!controller.isLoading &&
                                   recent.isEmpty &&
                                   older.isEmpty)
                                 Padding(
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 250),
-                                  child: Text(
-                                    'No notifications found',
-                                    style: TextStyle(
-                                      fontFamily: AppFont.fontFamily,
-                                      color: AppColor.secondryColor(context),
-                                      fontWeight: FontWeight.w500,
-                                    ),
+                                  padding: const EdgeInsets.symmetric(vertical: 80),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        Icons.notifications_none_rounded,
+                                        size: 64,
+                                        color: AppColor.buttonColor.withValues(alpha: 0.4),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'You're all caught up!',
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColor.secondryColor(context),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'New activity will appear here',
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 13,
+                                          color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               if (recent.isNotEmpty)

@@ -103,7 +103,9 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                     alignment: Alignment.bottomCenter,
                     child: Container(
                       width: w,
-                      height: h * 0.56,
+                      // ✅ FIX: audit #02 — use constraints instead of fixed height
+                      // so Sign In is never clipped on small phones
+                      constraints: BoxConstraints(minHeight: h * 0.48),
                       decoration: BoxDecoration(
                         gradient:
                             AppColor.welcomebackgroundGradientcolor(context),
@@ -113,7 +115,7 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                         ),
                       ),
                       padding: EdgeInsets.only(
-                        bottom: MediaQuery.of(context).viewInsets.bottom,
+                        bottom: MediaQuery.of(context).padding.bottom + 16,
                       ),
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
@@ -170,7 +172,34 @@ class _WelcomeScreen4State extends State<WelcomeScreen4>
                             },
                           ),
 
-                          SizedBox(height: h * 0.04),
+                          SizedBox(height: h * 0.02),
+                          // ✅ FIX: audit #02 — returning users need Sign In
+                          GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                PageTransition(
+                                  type: PageTransitionType.bottomToTop,
+                                  child: const PurpleScreen(
+                                    nextScreen: LoginScreen(),
+                                  ),
+                                  duration: const Duration(milliseconds: 400),
+                                ),
+                              );
+                            },
+                            child: Text(
+                              'Already have an account? Sign In',
+                              style: TextStyle(
+                                color: Colors.white.withValues(alpha: 0.8),
+                                fontSize: 13,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w500,
+                                decoration: TextDecoration.underline,
+                                decorationColor: Colors.white.withValues(alpha: 0.8),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: h * 0.03),
                         ],
                       ),
                     ),
