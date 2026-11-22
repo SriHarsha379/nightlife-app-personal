@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_card_swiper/flutter_card_swiper.dart';
+import '../../commonWidget/swipe_tutorial_overlay.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:night_life/utilities/app_config_provider.dart';
 import 'package:night_life/view/authentication/notification_screen.dart';
@@ -1313,8 +1314,9 @@ class _HomeState extends State<Home> {
               child: const AiAssistantLauncher(),
             ),
           ),
-          body: SafeArea(
-            child: SizedBox(
+          body: SwipeTutorialOverlay(
+            child: SafeArea(
+              child: SizedBox(
               width: MediaQuery.of(context).size.width * 100 / 100,
               height: MediaQuery.of(context).size.height * 100 / 100,
               child: Column(
