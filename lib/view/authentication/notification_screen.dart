@@ -528,7 +528,7 @@ class _NotificationsState extends State<Notifications> {
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
-                                        'You're all caught up!',
+                                        "You're all caught up!",
                                         style: TextStyle(
                                           fontFamily: AppFont.fontFamily,
                                           fontSize: 16,

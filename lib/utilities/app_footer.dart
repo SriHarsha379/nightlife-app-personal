@@ -193,29 +193,32 @@ class MyAppFooterState extends State<MyAppFooter> {
                         ),
                         alignment: Alignment.center,
                         // ✅ FIX: Add labels to nav items — audit #19
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Image.asset(
-                              iconList[index]['icon'],
-                              width: getIconWidth(index),
-                              height: getIconHeight(index),
-                              color: Colors.white,
-                            ),
-                            const SizedBox(height: 2),
-                            Text(
-                              iconList[index]['label'] ?? '',
-                              style: TextStyle(
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Image.asset(
+                                iconList[index]['icon'],
+                                width: getIconWidth(index),
+                                height: getIconHeight(index),
                                 color: Colors.white,
-                                fontSize: 9,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: selectedIndex == index
-                                    ? FontWeight.w700
-                                    : FontWeight.w400,
                               ),
-                            ),
-                          ],
+                              const SizedBox(height: 1),
+                              Text(
+                                iconList[index]['label'] ?? '',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 8,
+                                  fontFamily: AppFont.fontFamily,
+                                  fontWeight: selectedIndex == index
+                                      ? FontWeight.w700
+                                      : FontWeight.w400,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     );

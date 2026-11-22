@@ -825,7 +825,7 @@ class _splashMembersState extends State<splashMembers> {
                                           ),
                                           const SizedBox(height: 8),
                                           Text(
-                                            'When both of you swipe right, you'll connect here',
+                                            "When both of you swipe right, you'll connect here",
                                             textAlign: TextAlign.center,
                                             style: TextStyle(
                                               color: AppColor.secondryColor(context).withValues(alpha: 0.5),

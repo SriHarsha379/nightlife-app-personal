@@ -3230,7 +3230,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                   await _showConfirmActionDialog(
                                     title: 'Block User',
                                     message:
-                                    'Blocking will remove this match and prevent them from seeing your profile or messaging you. They won't be notified.',
+                                    "Blocking will remove this match and prevent them from seeing your profile or messaging you. They won't be notified.",
                                     confirmText: 'Block',
                                   );
                                   if (shouldBlock != true) return;
