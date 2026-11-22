@@ -112,7 +112,7 @@ class _VenuePagesState extends State<VenuePages> {
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: AppColor.secondryColor(context).withOpacity(0.12),
+            color: AppColor.secondryColor(context).withValues(alpha: 0.12),
           ),
         ),
         child: Stack(
@@ -148,7 +148,7 @@ class _VenuePagesState extends State<VenuePages> {
                 padding:
                 const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
                 decoration: BoxDecoration(
-                  color: AppColor.primaryColor(context).withOpacity(0.92),
+                  color: AppColor.primaryColor(context).withValues(alpha: 0.92),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -356,7 +356,7 @@ class _VenuePagesState extends State<VenuePages> {
             boxShadow: filled
                 ? [
               BoxShadow(
-                color: backgroundColor.withOpacity(0.28),
+                color: backgroundColor.withValues(alpha: 0.28),
                 blurRadius: 14,
                 offset: const Offset(0, 6),
               ),
@@ -451,13 +451,12 @@ class _VenuePagesState extends State<VenuePages> {
               statusBarBrightness:
               isDark ? Brightness.dark : Brightness.light, // iOS
             ),
-            child: WillPopScope(
-              onWillPop: () async {
-                if (_swipeResult != null) {
+            child: PopScope(
+              canPop: _swipeResult == null,
+              onPopInvokedWithResult: (didPop, _) {
+                if (!didPop && _swipeResult != null) {
                   Navigator.pop(context, _swipeResult);
-                  return false;
                 }
-                return true;
               },
               child: GestureDetector(
                 onTap: () => FocusManager.instance.primaryFocus?.unfocus(),
@@ -467,7 +466,7 @@ class _VenuePagesState extends State<VenuePages> {
                   floatingActionButton: Container(
                     decoration: BoxDecoration(
                       color: AppColor.sendinvitecontainercolor(context)
-                          .withOpacity(0.9),
+                          .withValues(alpha: 0.9),
                       borderRadius: BorderRadius.circular(25),
                     ),
                     width: showDislikeOnly
@@ -544,7 +543,12 @@ class _VenuePagesState extends State<VenuePages> {
                     height: size.height * 100 / 100,
                     width: size.width * 100 / 100,
                     child: SingleChildScrollView(
-                      physics: BouncingScrollPhysics(),
+                      physics: const BouncingScrollPhysics(),
+                      // ✅ FIX: padding so Reserve button is never hidden
+                      // behind the floating action bar — audit #29
+                      padding: EdgeInsets.only(
+                        bottom: size.height * 9 / 100,
+                      ),
                       child: Column(
                         children: [
                           SizedBox(height: size.height * 4 / 100),
@@ -1161,7 +1165,7 @@ class _VenuePagesState extends State<VenuePages> {
                               color: AppColor.lightgreyColor,
                             ),
                           ),
-                          SizedBox(height: size.height * 12 / 100),
+                          SizedBox(height: size.height * 2 / 100),
                         ],
                       ),
                     ),
@@ -1215,8 +1219,8 @@ class _VenuePagesState extends State<VenuePages> {
                     end: Alignment.bottomCenter,
                     colors: [
                       Colors.transparent,
-                      Colors.black.withOpacity(0.5),
-                      Colors.black.withOpacity(0.85),
+                      Colors.black.withValues(alpha: 0.5),
+                      Colors.black.withValues(alpha: 0.85),
                     ],
                   ),
                 ),
@@ -1238,7 +1242,7 @@ class _VenuePagesState extends State<VenuePages> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
-                        color: AppColor.themeColor.withOpacity(.7),
+                        color: AppColor.themeColor.withValues(alpha: 0.7),
                         border: Border.all(
                             color: const Color(0xFF9C27B0), width: 2),
                       ),

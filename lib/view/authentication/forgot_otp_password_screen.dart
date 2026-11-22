@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import '../../../utilities/app_button.dart';
 import '../../../utilities/app_color.dart';
@@ -9,9 +8,9 @@ import '../../../utilities/app_font.dart';
 import '../../../utilities/app_language.dart';
 import '../../provider/darkmode_provider.dart';
 import '../../provider/post_api_provider.dart';
-import '../../utilities/app_image.dart';
 import '../../utilities/app_validation.dart';
-import '../../utilities/widgets.dart';
+import '../../utilities/app_image.dart';
+import '../../utilities/app_text_field.dart';
 import 'forgot_otp_verify_screen.dart';
 
 class ForgotPassword extends StatefulWidget {
@@ -168,18 +167,17 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         SizedBox(
                           height: MediaQuery.of(context).size.height * 10 / 100,
                         ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * 85 / 100,
-                          height: MediaQuery.of(context).size.height * 6 / 100,
-                          child: CustomLoginTextField(
+                        Padding(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: MediaQuery.of(context).size.width * 0.075,
+                          ),
+                          child: AppTextField(
                             controller: mobileNumberTextEditingController,
-                            hintText: AppLanguage
-                                .enterPhonenoAndenteremailidText[language],
+                            label: AppLanguage.enterPhonenoAndenteremailidText[language],
+                            hint: 'Enter email or phone number',
                             maxLength: 50,
-                            fillColor: AppColor.otpboxColor(context),
-                            textColor: Colors.black,
-                            borderColor: AppColor.transparentColor,
-                            // iconColor: AppColor.primaryColor,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.done,
                           ),
                         ),
                         SizedBox(
@@ -191,20 +189,16 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 ),
                 Consumer<PostApiProvider>(
                   builder: (context, apiProvider, child) {
-                    return apiProvider.loading
-                        ? const CircularProgressIndicator(
-                            color: AppColor.pinkColor,
-                          )
-                        : AppButton(
-                            text: AppLanguage.continueText[language],
-                            onPress: () {
-                              forgotPasswordValidation();
-                            },
-                          );
+                    return AppButton(
+                      text: AppLanguage.continueText[language],
+                      isLoading: apiProvider.loading,
+                      onPress: forgotPasswordValidation,
+                    );
                   },
                 ),
+                // ✅ FIX: safe area bottom padding — audit #02
                 SizedBox(
-                  height: MediaQuery.of(context).size.height * 3 / 100,
+                  height: MediaQuery.of(context).padding.bottom + 24,
                 ),
               ],
             ),
