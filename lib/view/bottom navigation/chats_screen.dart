@@ -777,7 +777,21 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                       ),
                     ),
 
-                    SizedBox(height: size.height * 2 / 100),
+                    SizedBox(height: size.height * 1 / 100),
+                    // ✅ FIX: audit #36 — clear chat heading
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 5 / 100),
+                      child: Text(
+                        'Chats',
+                        style: TextStyle(
+                          fontFamily: AppFont.fontFamily,
+                          fontSize: 22,
+                          fontWeight: FontWeight.w700,
+                          color: AppColor.secondryColor(context),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: size.height * 1 / 100),
 
                     // ── Search bar ──
                     Container(
