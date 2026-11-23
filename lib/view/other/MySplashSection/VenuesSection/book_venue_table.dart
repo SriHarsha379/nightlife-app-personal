@@ -660,9 +660,10 @@ class _BookTableState extends State<BookTable> {
                                     ),
                                   ),
                                   Container(
+                                    // ✅ FIX: audit #31 — wider guest selector
                                     key: _guestDropdownAnchorKey,
                                     height: size.height * 4.5 / 100,
-                                    width: size.width * 18 / 100,
+                                    width: size.width * 28 / 100,
                                     decoration: BoxDecoration(
                                       color: AppColor.primaryColor(context),
                                       borderRadius: BorderRadius.circular(30),
@@ -877,11 +878,36 @@ class _BookTableState extends State<BookTable> {
                             final slotsData = controller.getVenueSlots;
                             if (slotsData == null ||
                                 slotsData['slots'] == null) {
+                              // ✅ FIX: audit #31 — no slots empty state with action
                               return Center(
-                                child: Text(
-                                  'No slots available',
-                                  style: TextStyle(
-                                    color: AppColor.secondryColor(context),
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(Icons.event_busy_outlined,
+                                        color: AppColor.secondryColor(context).withValues(alpha: 0.4),
+                                        size: 36),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'No slots available for this day',
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                          color: AppColor.secondryColor(context),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 4),
+                                      Text(
+                                        'Try selecting a different date above',
+                                        style: TextStyle(
+                                          fontFamily: AppFont.fontFamily,
+                                          fontSize: 12,
+                                          color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               );
