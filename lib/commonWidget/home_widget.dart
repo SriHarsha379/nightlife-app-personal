@@ -1384,10 +1384,10 @@ class HomeWidget {
                   ),
                 ),
 
-                //! Categories on Left Side
+                //! Categories on Left Side — ✅ audit #20 moved to bottom
                 if (categories != null && categories.isNotEmpty)
                   Positioned(
-                    top: 2,
+                    bottom: 8,
                     left: -5,
                     child: SizedBox(
                       height: 41,
@@ -1921,10 +1921,10 @@ class HomeWidget {
                   ),
                 ),
 
-                //! Categories on Left Side
+                //! Categories on Left Side — ✅ audit #20 moved to bottom
                 if (categories != null && categories.isNotEmpty)
                   Positioned(
-                    top: 2,
+                    bottom: 8,
                     left: -5,
                     child: SizedBox(
                       height: 41,
