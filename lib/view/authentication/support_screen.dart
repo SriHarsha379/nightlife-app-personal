@@ -275,7 +275,7 @@ class _SupportScreenState extends State<SupportScreen> {
                                 ),
                                 // ✅ FIX: audit #48 — explain difference
                                 Text(
-                                  'Send us a message, we'll reply within 24 hours',
+                                  "Send us a message, we'll reply within 24 hours",
                                   style: TextStyle(
                                     color: AppColor.hinttextcolor(context),
                                     fontSize: 11,
