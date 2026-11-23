@@ -367,6 +367,25 @@ class _GalleryScreenState extends State<GalleryScreen> {
                 ),
               ),
             ),
+          // ✅ FIX: audit #16 — pending upload indicator
+          Positioned.fill(
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(21),
+                color: Colors.black.withValues(alpha: 0.3),
+              ),
+              child: const Center(
+                child: SizedBox(
+                  width: 24,
+                  height: 24,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+          ),
           // Remove button
           Positioned(
             top: 5,

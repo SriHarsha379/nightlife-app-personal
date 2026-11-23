@@ -1062,6 +1062,25 @@ class _Profile1State extends State<Profile1> {
                         fit: BoxFit.cover,
                       ),
                     ),
+                    // ✅ FIX: audit #16 — uploading overlay on local items
+                    Positioned.fill(
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: Colors.black.withValues(alpha: 0.45),
+                        ),
+                        child: const Center(
+                          child: SizedBox(
+                            width: 28,
+                            height: 28,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2.5,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                     if (isVideo)
                       const Positioned.fill(
                         child: Icon(
