@@ -261,14 +261,28 @@ class _SupportScreenState extends State<SupportScreen> {
                               ),
                             ),
                             SizedBox(width: size.width * 2 / 100),
-                            Text(
-                              AppLanguage.chatWithus[language],
-                              style: TextStyle(
-                                color: AppColor.secondryColor(context),
-                                fontSize: 14,
-                                fontFamily: AppFont.fontFamily,
-                                fontWeight: FontWeight.w600,
-                              ),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  AppLanguage.chatWithus[language],
+                                  style: TextStyle(
+                                    color: AppColor.secondryColor(context),
+                                    fontSize: 14,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                // ✅ FIX: audit #48 — explain difference
+                                Text(
+                                  'Send us a message, we'll reply within 24 hours',
+                                  style: TextStyle(
+                                    color: AppColor.hinttextcolor(context),
+                                    fontSize: 11,
+                                    fontFamily: AppFont.fontFamily,
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),

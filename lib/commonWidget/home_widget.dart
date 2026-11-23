@@ -1256,7 +1256,8 @@ class HomeWidget {
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    maxLines: 1,
+                                    // ✅ FIX: audit #20 — 2 lines so title isn't cut off
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   SizedBox(
@@ -1831,7 +1832,8 @@ class HomeWidget {
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold,
                                     ),
-                                    maxLines: 1,
+                                    // ✅ FIX: audit #20 — 2 lines so title isn't cut off
+                                    maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                   ),
                                   SizedBox(

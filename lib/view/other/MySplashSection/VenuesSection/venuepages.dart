@@ -1106,14 +1106,30 @@ class _VenuePagesState extends State<VenuePages> {
                                           ),
                                           SizedBox(
                                             width: size.width * 25 / 100,
-                                            child: Text(
-                                              "₹$reservationFee",
-                                              style: TextStyle(
-                                                fontSize: 24,
-                                                fontFamily: AppFont.fontFamily,
-                                                fontWeight: FontWeight.w600,
-                                                color: Colors.white,
-                                              ),
+                                            child: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                Text(
+                                                  reservationFee == 0 ? "Free" : "₹$reservationFee",
+                                                  style: TextStyle(
+                                                    fontSize: 24,
+                                                    fontFamily: AppFont.fontFamily,
+                                                    fontWeight: FontWeight.w600,
+                                                    color: Colors.white,
+                                                  ),
+                                                ),
+                                                // ✅ FIX: audit #29 — explain what fee covers
+                                                Text(
+                                                  reservationFee == 0
+                                                      ? "No booking fee"
+                                                      : "Booking token fee",
+                                                  style: TextStyle(
+                                                    fontSize: 10,
+                                                    fontFamily: AppFont.fontFamily,
+                                                    color: Colors.white.withValues(alpha: 0.6),
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ),
                                         ],

@@ -1026,19 +1026,30 @@ class _CityPreferenceState extends State<CityPreference> {
                                                   child: Padding(
                                                     padding: EdgeInsets.only(
                                                         left: 19.0),
-                                                    child: Text(
-                                                      "Broaden the vibe zone...",
-                                                      style: TextStyle(
-                                                        fontFamily:
-                                                        AppFont.fontFamily,
-                                                        fontWeight:
-                                                        FontWeight.w500,
-                                                        fontSize: 13,
-                                                        color: isDark
-                                                            ? AppColor
-                                                            .greygreyLightColor
-                                                            : Colors.black,
-                                                      ),
+                                                    child: Column(
+                                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                                      children: [
+                                                        Text(
+                                                          "Broaden the vibe zone",
+                                                          style: TextStyle(
+                                                            fontFamily: AppFont.fontFamily,
+                                                            fontWeight: FontWeight.w500,
+                                                            fontSize: 13,
+                                                            color: isDark
+                                                                ? AppColor.greygreyLightColor
+                                                                : Colors.black,
+                                                          ),
+                                                        ),
+                                                        // ✅ FIX: audit #10 — explain what broadening does
+                                                        Text(
+                                                          "Show members & venues beyond your selected cities",
+                                                          style: TextStyle(
+                                                            fontFamily: AppFont.fontFamily,
+                                                            fontSize: 10,
+                                                            color: AppColor.hinttextcolor(context),
+                                                          ),
+                                                        ),
+                                                      ],
                                                     ),
                                                   ),
                                                 ),

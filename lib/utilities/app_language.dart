@@ -90,7 +90,7 @@ class AppLanguage {
 
   static const demographicSurveyText = ["Demographic Survey"];
   static const settingsText = ["Settings"];
-  static const aboutUsText = ["About Us"];
+  static const aboutUsText = ["Our Story"];  // audit #44 — different from About (version)
   static const termsConditionText = ["Terms & Conditions"];
   static const privacyPolicyText = ["Privacy & Security"];
   static const contactUsText = ["Contact Us"];
@@ -451,7 +451,7 @@ class AppLanguage {
   static const accountSetting = ["Account Settings"];
   static const appPreferences = ["App Preferences"];
   static const darkModeText = ["Dark Mode"];
-  static const supportText = ["Support"];
+  static const supportText = ["Live Support & Chat"];  // audit #44
   static const aboutText = ["About"];
   static const deletetext = ["Delete"];
   static const recentFriends = ["Recent friends"];
