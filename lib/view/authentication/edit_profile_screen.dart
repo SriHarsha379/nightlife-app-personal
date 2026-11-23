@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:night_life/commonWidget/snack_bar_toast_message.dart';
+import 'package:night_life/utilities/app_snack_bar_toast_message.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
