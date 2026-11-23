@@ -1481,16 +1481,10 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       ),
                                                                     ),
                                                                     if (categoryList.isNotEmpty)
+                                                                      // ✅ FIX: audit #22 — chips at bottom, not covering key image content
                                                                       Positioned(
                                                                         left: 10,
-                                                                        top: 10,
-                                                                        // `right: 10` constrains this to the
-                                                                        // card's own width — previously
-                                                                        // unconstrained, so 2-3 longer
-                                                                        // category names (e.g. "Colleges &
-                                                                        // Universities") could overflow
-                                                                        // straight past the card and
-                                                                        // overlap whatever sits next to it.
+                                                                        bottom: 10,
                                                                         right: 10,
                                                                         child: Wrap(
                                                                           spacing: 6,
@@ -2158,7 +2152,7 @@ class _SearchScreenState extends State<SearchScreen> {
                                                                       if (categoryList.isNotEmpty)
                                                                         Positioned(
                                                                           left: 10,
-                                                                          top: 10,
+                                                                          bottom: 10,  // ✅ audit #22
                                                                           right: 10,
                                                                           child: Wrap(
                                                                             spacing: 6,
