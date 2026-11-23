@@ -748,23 +748,28 @@ class _CityPreferenceState extends State<CityPreference> {
                                                             padding: EdgeInsets.only(right: 5),
                                                             child: Icon(Icons.star_rounded, size: 15, color: AppColor.pinkColor),
                                                           ),
-                                                        Text(
-                                                          cityName,
-                                                          style:
-                                                          TextStyle(
-                                                            fontFamily:
-                                                            AppFont
-                                                                .fontFamily,
-                                                            fontSize:
-                                                            13,
-                                                            fontWeight:
-                                                            FontWeight
-                                                                .w500,
-                                                            color: isSelected
-                                                                ? AppColor
-                                                                .pinkColor
-                                                                : AppColor
-                                                                .secondryColor(context),
+                                                        // ✅ FIX: audit #07 — long city name wrapping
+                                                        Flexible(
+                                                          child: Text(
+                                                            cityName,
+                                                            maxLines: 1,
+                                                            overflow: TextOverflow.ellipsis,
+                                                            style:
+                                                            TextStyle(
+                                                              fontFamily:
+                                                              AppFont
+                                                                  .fontFamily,
+                                                              fontSize:
+                                                              13,
+                                                              fontWeight:
+                                                              FontWeight
+                                                                  .w500,
+                                                              color: isSelected
+                                                                  ? AppColor
+                                                                  .pinkColor
+                                                                  : AppColor
+                                                                  .secondryColor(context),
+                                                            ),
                                                           ),
                                                         ),
                                                         if (isSelected)
