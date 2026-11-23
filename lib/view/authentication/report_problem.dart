@@ -242,7 +242,7 @@ class _ReportProblemScreenState extends State<ReportProblemScreen> {
                       SizedBox(height: size.height * 0.1 / 100),
 
                       Text(
-                        'Add screenshots or videos to help us understand the issue better.',
+                        'Add screenshots or videos (up to $_maxReportMediaItems files — photos and videos supported).',
                         style: TextStyle(
                           color: AppColor.secondryColor(context),
                           fontSize: 12,
