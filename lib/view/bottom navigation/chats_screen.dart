@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'dart:io';
@@ -35,6 +37,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
   static const String _locationPrefix = '__loc__';
 
   late TextEditingController searchController;
+  final Set<String> _deletedUserIds = {}; // ✅ audit #46 — deleted users cache
   final ScrollController _conversationScrollController = ScrollController();
   final FocusNode _chatSearchFocusNode = FocusNode();
   UserChatSocketProvider? _socketProvider;
@@ -306,6 +309,25 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (senderId == _userId) return receiver;
     if (receiverId == _userId) return sender;
     return receiver.isNotEmpty ? receiver : sender;
+  }
+
+  // ✅ audit #46 — check if user is deleted
+  Future<void> _checkIfUserDeleted(String userId) async {
+    if (_deletedUserIds.contains(userId)) return;
+    try {
+      final uri = Uri.parse(
+        '${AppConstant.baseUrl}api/v1/app/feed/member_detail/$userId'
+      );
+      final resp = await http.get(uri, headers: {
+        'Authorization': 'Bearer ${AppConstant.token}',
+        'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
+        'Accept': 'application/json',
+      });
+      final json = jsonDecode(resp.body);
+      if (json['data'] == null || json['success'] == false) {
+        if (mounted) setState(() => _deletedUserIds.add(userId));
+      }
+    } catch (_) {}
   }
 
   String _conversationName(Map<String, dynamic> conversation) {
@@ -1151,8 +1173,15 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
                                 Map<String, dynamic>.from(
                                     filteredConversations[index]);
                                 final title = _conversationName(chat);
-                                final subtitle =
-                                _messagePreview(chat);
+                                // ✅ audit #46 — show deleted indicator
+                                final otherUserId = _conversationReceiverId(chat);
+                                if (otherUserId.isNotEmpty && !_deletedUserIds.contains(otherUserId)) {
+                                  _checkIfUserDeleted(otherUserId);
+                                }
+                                final isOtherDeleted = _deletedUserIds.contains(otherUserId);
+                                final subtitle = isOtherDeleted
+                                    ? '🚫 Account deleted'
+                                    : _messagePreview(chat);
                                 final time = _conversationTime(chat);
                                 final unreadCount =
                                 _conversationUnreadCount(chat);
