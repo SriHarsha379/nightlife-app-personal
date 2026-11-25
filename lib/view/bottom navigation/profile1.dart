@@ -95,16 +95,29 @@ class _Profile1State extends State<Profile1> {
         profileController.uploadGallery(context, [imageData]).then((success) {
           if (!mounted) return;
           if (success) {
-            setState(() {
-              _selectedMediaList.remove(imageData);
-            });
+            setState(() { _selectedMediaList.remove(imageData); });
+            SnackBarToastMessage.success(context, 'Photo uploaded successfully');
             _maybeContinueAfterGalleryUpload();
             return;
           }
-          setState(() {
-            _selectedMediaList.remove(imageData);
-          });
-          SnackBarToastMessage.error(context, _galleryLimitMessage);
+          setState(() { _selectedMediaList.remove(imageData); });
+          // ✅ FIX: audit #16 — retry option on failure
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Upload failed. Tap to retry.'),
+            backgroundColor: Colors.red.shade700,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: () {
+                setState(() { _selectedMediaList.add(imageData); });
+                profileController.uploadGallery(context, [imageData]).then((s) {
+                  if (!mounted) return;
+                  setState(() { _selectedMediaList.remove(imageData); });
+                  if (s) SnackBarToastMessage.success(context, 'Photo uploaded successfully');
+                });
+              },
+            ),
+          ));
         });
       },
       onVideoFromCamera: (videoData) {
@@ -116,16 +129,28 @@ class _Profile1State extends State<Profile1> {
         profileController.uploadGallery(context, [videoData]).then((success) {
           if (!mounted) return;
           if (success) {
-            setState(() {
-              _selectedMediaList.remove(videoData);
-            });
+            setState(() { _selectedMediaList.remove(videoData); });
+            SnackBarToastMessage.success(context, 'Video uploaded successfully');
             _maybeContinueAfterGalleryUpload();
             return;
           }
-          setState(() {
-            _selectedMediaList.remove(videoData);
-          });
-          SnackBarToastMessage.error(context, _galleryLimitMessage);
+          setState(() { _selectedMediaList.remove(videoData); });
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: const Text('Upload failed. Tap to retry.'),
+            backgroundColor: Colors.red.shade700,
+            action: SnackBarAction(
+              label: 'Retry',
+              textColor: Colors.white,
+              onPressed: () {
+                setState(() { _selectedMediaList.add(videoData); });
+                profileController.uploadGallery(context, [videoData]).then((s) {
+                  if (!mounted) return;
+                  setState(() { _selectedMediaList.remove(videoData); });
+                  if (s) SnackBarToastMessage.success(context, 'Video uploaded successfully');
+                });
+              },
+            ),
+          ));
         });
       },
       onMediaFromGallery: (mediaList) {
@@ -159,9 +184,8 @@ class _Profile1State extends State<Profile1> {
         profileController.uploadGallery(context, toAdd).then((success) {
           if (!mounted) return;
           if (success) {
-            setState(() {
-              _selectedMediaList.removeWhere((item) => toAdd.contains(item));
-            });
+            setState(() { _selectedMediaList.removeWhere((item) => toAdd.contains(item)); });
+            SnackBarToastMessage.success(context, '${toAdd.length} file${toAdd.length > 1 ? 's' : ''} uploaded successfully');
             _maybeContinueAfterGalleryUpload();
             return;
           }
@@ -743,13 +767,35 @@ class _Profile1State extends State<Profile1> {
                       SizedBox(height: size.height * 0.02),
 
                       //! Gallery Section
-                      Text(
-                        AppLanguage.GalleryText[language],
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontFamily: AppFont.fontFamily,
-                            fontWeight: FontWeight.w500,
-                            color: AppColor.secondryColor(context)),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            AppLanguage.GalleryText[language],
+                            style: TextStyle(
+                                fontSize: 18,
+                                fontFamily: AppFont.fontFamily,
+                                fontWeight: FontWeight.w500,
+                                color: AppColor.secondryColor(context)),
+                          ),
+                          // ✅ FIX: audit #16 — show file limit before selection
+                          Consumer<ProfileController>(
+                            builder: (context, ctrl, _) {
+                              final used = ctrl.getGalleryItems().length + _selectedMediaList.length;
+                              final remaining = MediaPickerHelper.maxMediaItems - used;
+                              return Text(
+                                '$used / ${MediaPickerHelper.maxMediaItems} photos',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontFamily: AppFont.fontFamily,
+                                  color: remaining <= 2
+                                      ? AppColor.pinkColor
+                                      : AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
                       ),
                       SizedBox(height: size.height * 0.02),
                       _buildGallerySection(context, profileController),
