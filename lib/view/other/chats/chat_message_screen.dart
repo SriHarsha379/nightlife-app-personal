@@ -1,4 +1,6 @@
 ﻿import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -108,6 +110,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   bool _unfriendByMe = false;
   bool _reportStatus = false;
   bool _isMyFirendStatus = false;
+  bool _isReceiverDeleted = false; // ✅ audit #46 — deleted account handling
 
   String _relationStatusLoadedForUserId = '';
   bool _relationStatusLoading = false;
@@ -220,6 +223,24 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
       _loadRelationStatusIfNeeded();
       _emitUserStatusIfNeeded(force: true);
       _startUserStatusPolling();
+    }
+
+    // ✅ audit #46 — check if receiver account is deleted
+    if (_receiverId.isNotEmpty && AppConstant.token.isNotEmpty) {
+      try {
+        final uri = Uri.parse(
+          '${AppConstant.baseUrl}api/v1/app/feed/member_detail/$_receiverId'
+        );
+        final resp = await http.get(uri, headers: {
+          'Authorization': 'Bearer ${AppConstant.token}',
+          'User-Agent': 'NightLifeApp/1.0 (Flutter; iOS)',
+          'Accept': 'application/json',
+        });
+        final json = jsonDecode(resp.body);
+        if (mounted && (json['data'] == null || json['success'] == false)) {
+          setState(() => _isReceiverDeleted = true);
+        }
+      } catch (_) {}
     }
 
     if (mounted) setState(() => _isBootstrapping = false);
@@ -1036,6 +1057,11 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
   }
 
   void _openOtherUserProfile() {
+    // ✅ audit #46 — block profile navigation for deleted accounts
+    if (_isReceiverDeleted) {
+      SnackBarToastMessage.info(context, 'This account is no longer available');
+      return;
+    }
     final memberId = _receiverId.trim().isNotEmpty
         ? _receiverId.trim()
         : _raw(widget.receiverId);
@@ -2357,6 +2383,28 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                   child: Column(
                     children: [
                       // -- Top bar --
+                      // ✅ audit #46 — deleted account banner
+                      if (_isReceiverDeleted)
+                        Container(
+                          width: size.width,
+                          color: Colors.red.withValues(alpha: 0.1),
+                          padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.info_outline, color: Colors.red.withValues(alpha: 0.7), size: 14),
+                              const SizedBox(width: 6),
+                              Text(
+                                'This account has been deleted',
+                                style: TextStyle(
+                                  fontFamily: AppFont.fontFamily,
+                                  fontSize: 12,
+                                  color: Colors.red.withValues(alpha: 0.7),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
                       Container(
                         width: size.width,
                         height: size.height * 9 / 100,
@@ -2774,6 +2822,34 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
                                     return _buildApprovalComposerPlaceholder(
                                       size,
                                       rejected: gateRejected,
+                                    );
+                                  }
+
+                                  // ✅ audit #46 — disabled composer for deleted accounts
+                                  if (_isReceiverDeleted) {
+                                    return Container(
+                                      width: size.width * 90 / 100,
+                                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
+                                      decoration: BoxDecoration(
+                                        color: AppColor.primaryColor(context),
+                                        borderRadius: BorderRadius.circular(16),
+                                        border: Border.all(color: Colors.red.withValues(alpha: 0.2)),
+                                      ),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.person_off_outlined, color: Colors.red.withValues(alpha: 0.6), size: 18),
+                                          const SizedBox(width: 8),
+                                          Text(
+                                            'This account is no longer available',
+                                            style: TextStyle(
+                                              fontFamily: AppFont.fontFamily,
+                                              fontSize: 13,
+                                              color: AppColor.secondryColor(context).withValues(alpha: 0.5),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
                                     );
                                   }
 
