@@ -132,7 +132,7 @@ class _BlockUserScreenState extends State<BlockUserScreen> {
                                   height: 200,
                                 ),
                                 const Text(
-                                  'No user found',
+                                  'No blocked users',
                                   style: TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w500,

@@ -170,13 +170,36 @@ class _ViewAllVenuesScreenState extends State<ViewAllVenuesScreen> {
                       // ── Empty state ──────────────────────────────────────
                       if (venues.isEmpty) {
                         return Center(
-                          child: Text(
-                            'No liked venues yet',
-                            style: TextStyle(
-                              color: AppColor.secondryColor(context),
-                              fontFamily: AppFont.fontFamily,
-                              fontSize: 16,
-                            ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(Icons.location_city_outlined,
+                                size: 48,
+                                color: AppColor.secondryColor(context).withValues(alpha: 0.2)),
+                              const SizedBox(height: 12),
+                              Text(
+                                'No liked venues yet',
+                                style: TextStyle(
+                                  color: AppColor.secondryColor(context),
+                                  fontFamily: AppFont.fontFamily,
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              GestureDetector(
+                                onTap: () => Navigator.pop(context),
+                                child: Text(
+                                  'Explore venues →',
+                                  style: TextStyle(
+                                    color: AppColor.pinkColor,
+                                    fontFamily: AppFont.fontFamily,
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         );
                       }
