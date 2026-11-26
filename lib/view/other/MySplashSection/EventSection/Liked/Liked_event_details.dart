@@ -431,6 +431,8 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
     // Ticket is only assigned by admin when this map is populated.
     final ticketsMap = eventDetails['tickets'] as Map<String, dynamic>? ?? {};
     final hasAssignedTicket = ticketsMap.isNotEmpty;
+    // ✅ Point 16 fix — ticketing link from admin
+    final ticketingLink = _str(eventDetails['ticketing_link']);
 
     final themeProvider = Provider.of<ThemeProvider>(context);
     bool isDark = themeProvider.isDarkMode;
@@ -1620,22 +1622,22 @@ class _LikedEventDetailState extends State<LikedEventDetail> {
                                                                   "This event has ended");
                                                               return;
                                                             }
-                                                            Navigator.push(
-                                                              context,
-                                                              PageTransition(
-                                                                type: PageTransitionType
-                                                                    .rightToLeftWithFade,
-                                                                child:
-                                                                BookEvent(
-                                                                  eventId: widget
-                                                                      .eventId,
+                                                            // ✅ Point 16 — open ticketing link if set
+                                                            if (ticketingLink.isNotEmpty) {
+                                                              final uri = Uri.tryParse(ticketingLink);
+                                                              if (uri != null) {
+                                                                await launchUrl(uri, mode: LaunchMode.externalApplication);
+                                                              }
+                                                            } else {
+                                                              Navigator.push(
+                                                                context,
+                                                                PageTransition(
+                                                                  type: PageTransitionType.rightToLeftWithFade,
+                                                                  child: BookEvent(eventId: widget.eventId),
+                                                                  duration: const Duration(milliseconds: 500),
                                                                 ),
-                                                                duration:
-                                                                const Duration(
-                                                                    milliseconds:
-                                                                    500),
-                                                              ),
-                                                            );
+                                                              );
+                                                            }
                                                           },
                                                           // ✅ FIX: audit #27
                                                           child: Container(
