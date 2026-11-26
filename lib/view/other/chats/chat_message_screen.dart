@@ -229,7 +229,7 @@ class _ChatMessageScreenState extends State<ChatMessageScreen>
     if (_receiverId.isNotEmpty && AppConstant.token.isNotEmpty) {
       try {
         final uri = Uri.parse(
-          '${AppConstant.baseUrl}api/v1/app/feed/member_detail/$_receiverId'
+          '${AppConfigProvider.apiUrl}feed/member_detail/$_receiverId'
         );
         final resp = await http.get(uri, headers: {
           'Authorization': 'Bearer ${AppConstant.token}',

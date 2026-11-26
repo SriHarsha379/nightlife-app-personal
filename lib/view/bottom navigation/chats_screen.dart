@@ -316,7 +316,7 @@ class _ChatScreenState extends State<ChatScreen> with WidgetsBindingObserver {
     if (_deletedUserIds.contains(userId)) return;
     try {
       final uri = Uri.parse(
-        '${AppConstant.baseUrl}api/v1/app/feed/member_detail/$userId'
+        '${AppConfigProvider.apiUrl}feed/member_detail/$userId'
       );
       final resp = await http.get(uri, headers: {
         'Authorization': 'Bearer ${AppConstant.token}',

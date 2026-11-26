@@ -237,7 +237,9 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _onSearchChanged(String value) {
     _searchDebounce?.cancel();
-    _searchDebounce = Timer(const Duration(milliseconds: 500), () async {
+    // ✅ Point 3 fix — trigger search only after 2+ characters
+    if (value.trim().length == 1) return;
+    _searchDebounce = Timer(const Duration(milliseconds: 400), () async {
       if (!mounted) return;
       await _loadSearchData(type: _currentType);
     });
