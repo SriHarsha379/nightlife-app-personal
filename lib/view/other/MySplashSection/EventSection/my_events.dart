@@ -684,13 +684,25 @@ class _MyEventsState extends State<MyEvents> {
                     SizedBox(
                       height: size.height * 30 / 100,
                       child: Center(
-                        child: Text(
-                          'No upcoming events',
-                          style: TextStyle(
-                            color: AppColor.secondryColor(context),
-                            fontFamily: AppFont.fontFamily,
-                            fontSize: 16,
-                          ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(Icons.event_outlined, size: 48,
+                              color: AppColor.secondryColor(context).withValues(alpha: 0.2)),
+                            const SizedBox(height: 12),
+                            Text('No upcoming events',
+                              style: TextStyle(color: AppColor.secondryColor(context),
+                                fontFamily: AppFont.fontFamily, fontSize: 16,
+                                fontWeight: FontWeight.w600)),
+                            const SizedBox(height: 8),
+                            GestureDetector(
+                              onTap: () => Navigator.pop(context),
+                              child: Text('Explore events →',
+                                style: TextStyle(color: AppColor.pinkColor,
+                                  fontFamily: AppFont.fontFamily, fontSize: 14,
+                                  fontWeight: FontWeight.w500)),
+                            ),
+                          ],
                         ),
                       ),
                     )
